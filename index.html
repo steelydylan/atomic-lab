@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<header class="cssLabHeader">
+		<div class="cssLabWrap">
+			<div class="cssLabHeaderSearchArea">
+				<script id="css_search" type="text/template">
+					<input type="text" data-action="searchComponents" data-bind="search">
+				</script>
+				<script id="css_search_result" type="text/template">
+				<ul class="cssLabHeaderSearchList {searchStatus}">
+					<!-- BEGIN searchResults:loop -->
+					<li>{name}
+						<span class="cssLabBtnGroup">
+							<button data-action="deleteComp({i})">削除</button>
+							<button data-action="insertCompToHtml({i})">追加</button>
+							<button data-action="editComp({i})">編集</button>
+						</span>
+					</li>
+					<!-- END searchResults:loop -->
+				</ul>
+				</script>
+			</div>
+			<div class="cssHeaderSettingArea">
+				<script id="css_setting">
+					<button data-action="outputComp">Zipで保存</button>
+					<input type="file" data-action="readSetting" size="100px">
+				</script>
+			</div>
+			<h1 class="cssLabLogo">CSS Lab</h1>
+		</div>
+	</header>
+	<div class="cssLabWrap">
+		<div class="cssLabGrid6">
+			<script id="css_preview" type="text/template">
+			<p>プレビュー</p>
+			<div class="cssLabRendered">
+				<style>
+				{css}
+				</style>
+				{html}[applyShortCord]
+			</div>
+			</script>
+		</div>
+		<div class="cssLabGrid6">
+			<script id="css_edit" type="text/template">
+			<p class="cssLabText">コンポーネント名</p>
+			<div class="cssLabEditInputWrap">
+				<input type="text" data-bind="name" data-action="changeStyle(name)">
+				<button data-action="addComponent">保存</button>
+			</div>
+			<p class="cssLabText">CSS</p>
+			<div class="cssLabEditAreaWrap">
+				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea"></textarea>
+			</div>
+			<p class="cssLabText">HTML</p>
+			<div class="cssLabEditAreaWrap">
+				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea"></textarea>
+			</div>
+			</script>
+		</div>
+	</div>
+	<script src="js/sass/sass.sync.js"></script>
+	<script src="js/jszip.min.js"></script>
+	<script src="js/FileSaver.min.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/aTemplate.js"></script>
+	<script src="js/defaultStyle.js"></script>
+	<script src="js/main.js"></script>
+</body>
+</html>
