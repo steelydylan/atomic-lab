@@ -71,7 +71,7 @@
             }
         }
     });
-    $(document).on("input click change keydown","[data-action]",function(e){
+    $(document).on("input click change","[data-action]",function(e){
         if(e.type == "click" && $(e.target).is("select")){
             return;
         }

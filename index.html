@@ -27,17 +27,18 @@
 				</ul>
 				</script>
 			</div>
-			<div class="cssHeaderSettingArea">
-				<script id="css_setting" type="text/template">
-					<button data-action="outputComp">Zipで保存</button>
-					<input type="file" data-action="readSetting" size="100px">
-				</script>
-			</div>
 			<h1 class="cssLabLogo">CSS Lab</h1>
 		</div>
 	</header>
 	<div class="cssLabWrap">
 		<div class="cssLabGrid6">
+			<div class="cssSettingArea">
+				<p>データの入出力</p>
+				<script id="css_setting" type="text/template">
+					<button data-action="outputComp">Zipで保存</button>
+					<input type="file" data-action="readSetting" size="100px">
+				</script>
+			</div>
 			<script id="css_preview" type="text/template">
 			<p>プレビュー</p>
 			<div class="cssLabRendered">
@@ -54,6 +55,7 @@
 			<div class="cssLabEditInputWrap">
 				<input type="text" data-bind="name" data-action="changeStyle(name)">
 				<button data-action="addComponent">保存</button>
+				<button data-action="clearEditor">クリア</button>
 			</div>
 			<ul class="cssLabTab">
 				<li<!-- BEGIN editMode:touch#css --> class="active"<!-- END editMode:touch#css --> data-action="changeMode(css)">CSS</li>
@@ -61,12 +63,12 @@
 			</ul>
 			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
-				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea"></textarea>
+				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea" id="js-css"></textarea>
 			</div>
 			<!-- END editMode:touch#css -->
 			<!-- BEGIN editMode:touch#html -->
 			<div class="cssLabEditAreaWrap">
-				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea"></textarea>
+				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea" id="js-html"></textarea>
 			</div>
 			<!-- END editMode:touch#html -->
 			</script>
@@ -74,6 +76,7 @@
 	</div>
 	<script src="js/jszip.min.js"></script>
 	<script src="js/FileSaver.min.js"></script>
+	<script src="ace/ace.js"></script>
 	<script src="js/jquery.js"></script>
 	<script src="js/aTemplate.js"></script>
 	<script src="js/defaultStyle.js"></script>
