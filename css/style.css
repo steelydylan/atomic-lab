@@ -8,6 +8,11 @@ html {
 	box-sizing: inherit;
 }
 
+.ace_editor {
+	height: 100%;
+	margin-top: 0;
+}
+
 .sourceCopied {
 	position: fixed;
 	top: 50%;
@@ -61,8 +66,8 @@ html {
 	width: 100%;
 }
 
-.cssHeaderSettingArea {
-	float: right;
+.cssSettingArea {
+	padding-top: 10px;
 }
 
 .cssLabHeaderSearchList {
@@ -120,7 +125,7 @@ html {
 
 .cssLabEditAreaWrap {
 	height: 450px;
-	padding: 10px;
+	padding: 0 10px;
 }
 
 .cssLabEditArea {
