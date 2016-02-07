@@ -22,6 +22,7 @@
         		css:"",
         		html:"",
         		search:"",
+            editMode:"css",
         		searchStatus:"inactive",
         		searchResults:function(){
         			var search = this.data.search;
@@ -100,7 +101,7 @@
         			var zip = new JSZip();
         			zip.file("setting.json", JSON.stringify(this.data));
         			var content = zip.generate({type:"blob"});
-					saveAs(content, "css-lab.zip");
+              saveAs(content, "css-lab.zip");
         		},
         		searchComponents:function(){
         			this.data.searchStatus = "active";
@@ -144,7 +145,6 @@
         			for (var i = 0, f; f = files[i]; i++) {
         				var reader = new FileReader();
         				reader.onload = (function(theFile) {
-        					//var json = atob(theFile.target.result);
         					var json = theFile.target.result.replace("data:application/json;base64,","");
         					json = atob(json);
         					json = JSON.parse(json);
@@ -153,7 +153,11 @@
         				});
         				reader.readAsDataURL(f);
         			}
-        		}        		
+        		},
+            changeMode:function(mode){
+              this.data.editMode = mode;
+              this.update();
+            }       		
         	},
         	convert:{
         		applyShortCord:function(data){
@@ -164,14 +168,7 @@
 	        			});
 	        		}
         			return data;
-        		},
-        		// parseSass:function(txt){
-        		// 	var test = Sass.compile(txt, function(result) {
-        		// 		txt = result;
-        		// 	});
-        		// 	console.log(test);
-        		// 	return txt;
-        		// }
+        		}
         	}
         });
 		cssLab.setData(defs);

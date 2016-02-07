@@ -28,7 +28,7 @@
 				</script>
 			</div>
 			<div class="cssHeaderSettingArea">
-				<script id="css_setting">
+				<script id="css_setting" type="text/template">
 					<button data-action="outputComp">Zipで保存</button>
 					<input type="file" data-action="readSetting" size="100px">
 				</script>
@@ -55,18 +55,23 @@
 				<input type="text" data-bind="name" data-action="changeStyle(name)">
 				<button data-action="addComponent">保存</button>
 			</div>
-			<p class="cssLabText">CSS</p>
+			<ul class="cssLabTab">
+				<li<!-- BEGIN editMode:touch#css --> class="active"<!-- END editMode:touch#css --> data-action="changeMode(css)">CSS</li>
+				<li<!-- BEGIN editMode:touch#html --> class="active"<!-- END editMode:touch#html --> data-action="changeMode(html)">HTML</li>
+			</ul>
+			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
 				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea"></textarea>
 			</div>
-			<p class="cssLabText">HTML</p>
+			<!-- END editMode:touch#css -->
+			<!-- BEGIN editMode:touch#html -->
 			<div class="cssLabEditAreaWrap">
 				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea"></textarea>
 			</div>
+			<!-- END editMode:touch#html -->
 			</script>
 		</div>
 	</div>
-	<script src="js/sass/sass.sync.js"></script>
 	<script src="js/jszip.min.js"></script>
 	<script src="js/FileSaver.min.js"></script>
 	<script src="js/jquery.js"></script>
