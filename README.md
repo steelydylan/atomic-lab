@@ -4,5 +4,3 @@ CSS Sharing and Coding Environment
 
 ## License
 MIT License
-
-
