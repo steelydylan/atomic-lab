@@ -6,7 +6,7 @@
 				cssLab.update("html","css_search_result");
 				cssLab.saveData("css_lab");
 			}
-		})
+		});
 		var cssLab = new aTemplate.View({
         	templates:[
         		"css_preview",
@@ -35,20 +35,20 @@
         	method:{
         		showAlert:function(msg){
         			var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
-	                $("body").append($alert);
-	                $alert.delay(1).queue(function(next){
-	                    $(this).addClass("active");
-	                    next();
-	                }).delay(700).queue(function(next){
-	                    $(this).removeClass('active');
-	                    next();
-	                }).delay(200).queue(function(next){
-	                    $(this).remove();
-	                    next();
-	                });
+              $("body").append($alert);
+              $alert.delay(1).queue(function(next){
+                  $(this).addClass("active");
+                  next();
+              }).delay(700).queue(function(next){
+                  $(this).removeClass('active');
+                  next();
+              }).delay(200).queue(function(next){
+                  $(this).remove();
+                  next();
+              });
         		},
         		changeStyle:function(target){
-					var e = this.e;
+							var e = this.e;
         			if (e.keyCode === 9) {
 	        			e.preventDefault();
 	        			var elem = e.target;
@@ -157,7 +157,7 @@
             changeMode:function(mode){
               this.data.editMode = mode;
               this.update();
-            }       		
+            }
         	},
         	convert:{
         		applyShortCord:function(data){
@@ -173,7 +173,6 @@
         });
 		cssLab.setData(defs);
 		cssLab.loadData("css_lab");
-        cssLab.update();
+    cssLab.update();
 	});
-
 })(jQuery);
