@@ -13,13 +13,20 @@
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
   	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
-					<div class="mdl-textfield mdl-js-textfield">
-						<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
-						<label class="mdl-textfield__label" for="search">Search...</label>
+					<div class="mdl-textfield-wrap">
+						<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+							<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
+							<label class="mdl-textfield__label" for="search">Search...</label>
+						</div>
 					</div>
 				</script>
 				<script id="css_search_result" type="text/template">
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
+						<tr>
+							<td colspan="4">
+								<button data-action="addNewComponent" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
+							</td>
+						</tr>
 						<!-- BEGIN searchResults:loop -->
 						<tr>
 							<td>{name}</td>

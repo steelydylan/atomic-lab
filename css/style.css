@@ -38,6 +38,10 @@ html {
 	width: 200px;
 }
 
+.mdl-textfield-wrap {
+	padding: 10px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;

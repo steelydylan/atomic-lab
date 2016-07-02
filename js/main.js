@@ -164,10 +164,17 @@ jQuery(function($){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 			},
+			addNewComponent:function(){
+				this.applyMethod("clearEditor");
+				$("#component").focus();
+			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
 				this.saveData("css_lab");
 				this.update();
+				if(this.data.editMode != "preview"){
+					this.applyMethod("runEditor",this.data.editMode);
+				}
 				componentHandler.upgradeDom();
 			},
 			runEditor:function(name){
