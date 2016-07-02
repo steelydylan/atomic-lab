@@ -60,6 +60,7 @@ jQuery(function($){
 				this.update("html","css_preview");
 				this.update("html","css_edit");
 				this.saveData("css_lab");
+				componentHandler.upgradeDom();
 				this.applyMethod("runEditor",this.data.editMode);
 			},
 			editComp:function(i){
@@ -73,6 +74,7 @@ jQuery(function($){
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
+				componentHandler.upgradeDom();
 				this.applyMethod("runEditor",this.data.editMode);
 			},
 			deleteComp:function(i){
@@ -90,6 +92,7 @@ jQuery(function($){
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
+				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
 				var zip = new JSZip();
@@ -100,6 +103,7 @@ jQuery(function($){
 			searchComponents:function(){
 				this.data.searchStatus = "active";
 				this.update("html","css_search_result");
+				componentHandler.upgradeDom();
 			},
 			convertCompToHtml:function(word){
 				var data = this.data.components;
@@ -130,6 +134,7 @@ jQuery(function($){
 					this.applyMethod("showAlert","コンポーネントを保存しました!!");
 				}
 				this.update("html","css_search_result");
+				componentHandler.upgradeDom();
 				this.saveData("css_lab");
 			},
 			readSetting:function(){
@@ -154,6 +159,7 @@ jQuery(function($){
 				}
 			  	this.data.editMode = mode;
 				this.update();
+				componentHandler.upgradeDom();
 				if(mode != "preview"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
@@ -162,6 +168,7 @@ jQuery(function($){
 				this.removeData(['name','html','css']);
 				this.saveData("css_lab");
 				this.update();
+				componentHandler.upgradeDom();
 			},
 			runEditor:function(name){
 				var that = this;

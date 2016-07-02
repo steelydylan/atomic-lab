@@ -13,16 +13,19 @@
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
   	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
-					<input type="text" data-action="searchComponents" data-bind="search">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
+						<label class="mdl-textfield__label" for="search">Search...</label>
+					</div>
 				</script>
 				<script id="css_search_result" type="text/template">
-					<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr>
 							<td>{name}</td>
-							<td><button data-action="deleteComp({i})">削除</button></td>
-							<td><button data-action="insertCompToHtml({i})">追加</button></td>
-							<td><button data-action="editComp({i})">編集</button></td>
+							<td><button data-action="deleteComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button></td>
+							<td><button data-action="insertCompToHtml({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button></td>
+							<td><button data-action="editComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">edit</i></button></td>
 						</tr>
 						<!-- END searchResults:loop -->
 					</table>
@@ -35,11 +38,11 @@
 					<input type="file" data-action="readSetting" size="100px">
 				</script> -->
 			<script id="css_edit" type="text/template">
-			<p class="cssLabText">コンポーネント名</p>
-			<div class="cssLabEditInputWrap">
-				<input type="text" data-bind="name" data-action="changeStyle(name)">
-				<button data-action="addComponent">保存</button>
-			</div>
+				<div class="mdl-textfield mdl-js-textfield">
+					<input class="mdl-textfield__input" type="text" data-bind="name" data-action="changeStyle(name)" id="component">
+					<label class="mdl-textfield__label" for="component">Component...</label>
+				</div>
+				<button data-action="addComponent" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</li>
