@@ -92,6 +92,9 @@ jQuery(function($){
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
+				if(this.data.editMode != "preview"){
+					this.applyMethod("runEditor",this.data.editMode);
+				}
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
