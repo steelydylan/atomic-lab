@@ -8,6 +8,36 @@ html {
 	box-sizing: inherit;
 }
 
+.mdl-layout {
+	height: 100vh;
+}
+
+.mdl-layout__drawer {
+	width: 350px;
+}
+
+.mdl-layout--fixed-drawer > .mdl-layout__content {
+	margin-left: 350px;
+	padding: 10px;
+}
+
+.mdl-layout__tab-bar {
+	width: 100%;
+	height: auto;
+}
+
+.mdl-layout__tab {
+	cursor: pointer;
+}
+
+.mdl-data-table {
+	width: 100%;
+}
+
+.mdl-data-table__name {
+	width: 200px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
@@ -15,6 +45,7 @@ html {
 
 .sourceCopied {
 	position: fixed;
+	z-index: 1000;
 	top: 50%;
 	left: 0;
 	width: 100%;
@@ -59,7 +90,6 @@ html {
 .cssLabHeaderSearchArea {
 	position: relative;
 	float: right;
-	width: 500px;
 }
 
 .cssLabHeaderSearchArea input {
@@ -81,7 +111,6 @@ html {
 	margin: 0;
 	padding: 0;
 	border: 1px solid #ccc;
-	background-color: #fff;
 }
 
 .cssLabHeaderSearchList li {
@@ -91,6 +120,12 @@ html {
 	padding: 5px;
 	list-style-type: none;
 	border-bottom: 1px solid #ccc;
+}
+
+.cssLabHeaderSearchList li::after {
+	display: table;
+	clear: both;
+	content: '';
 }
 
 .cssLabHeaderSearchList.active {
@@ -125,7 +160,6 @@ html {
 
 .cssLabEditAreaWrap {
 	height: 450px;
-	padding: 0 10px;
 }
 
 .cssLabEditArea {
@@ -170,5 +204,22 @@ html {
 
 .cssLabTab .active {
 	background-color: #ccc;
+}
+
+.cssLabSide {
+	position: fixed;
+	z-index: 5000;
+	top: 0;
+	left: 0;
+	width: 262px;
+	height: 100%;
+	color: #333;
+	border-right: 1px solid #e3e3e3;
+	background-color: #eee;
+}
+
+.cssLabMain {
+	width: 100%;
+	padding-left: 262px;
 }
 

@@ -4,62 +4,46 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
 	<link rel="stylesheet" href="css/style.css">
+	<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 <body>
-	<header class="cssLabHeader">
-		<div class="cssLabWrap">
-			<div class="cssLabHeaderSearchArea">
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+  	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
 					<input type="text" data-action="searchComponents" data-bind="search">
 				</script>
 				<script id="css_search_result" type="text/template">
-				<ul class="cssLabHeaderSearchList {searchStatus}">
-					<!-- BEGIN searchResults:loop -->
-					<li>{name}
-						<span class="cssLabBtnGroup">
-							<button data-action="deleteComp({i})">削除</button>
-							<button data-action="insertCompToHtml({i})">追加</button>
-							<button data-action="editComp({i})">編集</button>
-						</span>
-					</li>
-					<!-- END searchResults:loop -->
-				</ul>
+					<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+						<!-- BEGIN searchResults:loop -->
+						<tr>
+							<td>{name}</td>
+							<td><button data-action="deleteComp({i})">削除</button></td>
+							<td><button data-action="insertCompToHtml({i})">追加</button></td>
+							<td><button data-action="editComp({i})">編集</button></td>
+						</tr>
+						<!-- END searchResults:loop -->
+					</table>
 				</script>
-			</div>
-			<h1 class="cssLabLogo">CSS Lab</h1>
 		</div>
-	</header>
-	<div class="cssLabWrap">
-		<div class="cssLabGrid6">
+		<main class="mdl-layout__content">
 			<div class="cssSettingArea">
-				<p>データの入出力</p>
-				<script id="css_setting" type="text/template">
+				<!-- <script id="css_setting" type="text/template">
 					<button data-action="outputComp">Zipで保存</button>
 					<input type="file" data-action="readSetting" size="100px">
-				</script>
-			</div>
-			<script id="css_preview" type="text/template">
-			<p>プレビュー</p>
-			<div class="cssLabRendered">
-				<style>
-				{css}
-				</style>
-				{html}[applyShortCord]
-			</div>
-			</script>
-		</div>
-		<div class="cssLabGrid6">
+				</script> -->
 			<script id="css_edit" type="text/template">
 			<p class="cssLabText">コンポーネント名</p>
 			<div class="cssLabEditInputWrap">
 				<input type="text" data-bind="name" data-action="changeStyle(name)">
 				<button data-action="addComponent">保存</button>
-				<button data-action="clearEditor">クリア</button>
 			</div>
-			<ul class="cssLabTab">
-				<li<!-- BEGIN editMode:touch#css --> class="active"<!-- END editMode:touch#css --> data-action="changeMode(css)">CSS</li>
-				<li<!-- BEGIN editMode:touch#html --> class="active"<!-- END editMode:touch#html --> data-action="changeMode(html)">HTML</li>
+			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</li>
 			</ul>
 			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
@@ -71,8 +55,16 @@
 				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea" id="js-html"></textarea>
 			</div>
 			<!-- END editMode:touch#html -->
+			<!-- BEGIN editMode:touch#preview -->
+			<div class="cssLabRendered">
+				<style>
+				{css}
+				</style>
+				{html}[applyShortCord]
+			</div>
+			<!-- END editMode:touch#preview -->
 			</script>
-		</div>
+		</main>
 	</div>
 	<script src="js/jszip.min.js"></script>
 	<script src="js/FileSaver.min.js"></script>
