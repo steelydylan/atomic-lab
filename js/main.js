@@ -219,10 +219,10 @@ jQuery(function($){
 				console.log(that.data)
 				while(data.match(/\<\$(\w+)\>/)){
 					data = data.replace(/\<\$(\w+)\>/g,function(i,word){
-						// if(that.data.name === word){
-						// 	return "";
-						// }
-						// return that.applyMethod("convertCompToHtml",word);
+						if(that.data.name === word){
+							return "";
+						}
+						return that.applyMethod("convertCompToHtml",word);
 					});
 				}
 				return data;
