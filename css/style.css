@@ -8,6 +8,20 @@ html {
 	box-sizing: inherit;
 }
 
+.mdl-dialog--wide {
+	width: auto;
+	max-width: 600px;
+}
+
+.mdl-dialog__title {
+	font-size: 1.5em;
+	color: #888;
+}
+
+.mdl-radio {
+	margin-right: 20px;
+}
+
 .mdl-layout {
 	height: 100vh;
 }
@@ -80,5 +94,21 @@ html {
 	position: relative;
 	overflow: hidden;
 	border: 1px solid #ccc;
+}
+
+.cssLabAbout {
+	margin-top: 10px;
+	padding: 15px;
+	border-radius: 3px;
+	background-color: rgba(0, 0, 0, .06);
+}
+
+.cssLabLabel {
+	display: inline-block;
+	margin-right: 5px;
+	padding: 2px 5px;
+	color: #fff;
+	border-radius: 3px;
+	background: #ff4081;
 }
 

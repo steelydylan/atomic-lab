@@ -10,6 +10,38 @@
 	<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 <body>
+	<dialog class="mdl-dialog mdl-dialog--wide">
+		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
+		<script id="css_new">
+			<div class="mdl-dialog__content">
+					<p>カテゴリー</p>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
+					  <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" checked data-bind="newCategory">
+					  <span class="mdl-radio__label">Atom</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molucule">
+					  <input type="radio" id="molucule" class="mdl-radio__button" name="newCategory" value="molucule" data-bind="newCategory">
+					  <span class="mdl-radio__label">Molucule</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
+					  <input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
+					  <span class="mdl-radio__label">Organism</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="template">
+					  <input type="radio" id="template" class="mdl-radio__button" name="newCategory" value="template" data-bind="newCategory">
+					  <span class="mdl-radio__label">Template</span>
+					</label>
+				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					<input type="text" data-action="searchComponents" data-bind="newName" class="mdl-textfield__input" id="search">
+					<label class="mdl-textfield__label" for="search">Component Name...</label>
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="addComponent">追加</button>
+				<button class="mdl-button close" data-action="closeDialog">キャンセル</button>
+			</div>
+		</script>
+	</dialog>
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
   	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
@@ -19,12 +51,14 @@
 							<label class="mdl-textfield__label" for="search">Search...</label>
 						</div>
 					</div>
+					<button data-action="outputComp">Zipで保存</button>
+					<input type="file" data-action="readSetting" size="100px">
 				</script>
 				<script id="css_search_result" type="text/template">
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
 							<td colspan="4">
-								<button data-action="addNewComponent" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
+								<button data-action="openDialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
 							</td>
 						</tr>
 						<!-- BEGIN searchResults:loop -->
@@ -39,21 +73,16 @@
 				</script>
 		</div>
 		<main class="mdl-layout__content">
-
-				<!-- <script id="css_setting" type="text/template">
-					<button data-action="outputComp">Zipで保存</button>
-					<input type="file" data-action="readSetting" size="100px">
-				</script> -->
 			<script id="css_edit" type="text/template">
 				<div class="mdl-textfield mdl-js-textfield">
 					<input class="mdl-textfield__input" type="text" data-bind="name" data-action="changeStyle(name)" id="component">
 					<label class="mdl-textfield__label" for="component">Component...</label>
 				</div>
-				<button data-action="addComponent" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#about --> is-active<!-- END editMode:touch#about -->" data-action="changeMode(about)">About</li>
 			</ul>
 			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
@@ -68,11 +97,18 @@
 			<!-- BEGIN editMode:touch#preview -->
 			<div class="cssLabRendered">
 				<style>
-				{css}
+				{css}[deleteScriptTag]
 				</style>
 				{html}[applyShortCord]
 			</div>
 			<!-- END editMode:touch#preview -->
+			<!-- BEGIN editMode:touch#about -->
+			<div class="cssLabAbout">
+				<p><span class="cssLabLabel">カテゴリー</span>{category}</p>
+				<p><span class="cssLabLabel">使い方</span></p>
+				<input type="text" data-bind="category">
+			</div>
+			<!-- END editMode:touch#about -->
 			</script>
 		</main>
 	</div>

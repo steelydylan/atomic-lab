@@ -13,14 +13,18 @@ jQuery(function($){
 			"css_edit",
 			"css_search_result",
 			"css_search",
-			"css_setting"
+			"css_setting",
+			"css_new"
 		],
 		data:{
 			index:0,
 			components:[],
 			name:"",
+			newName:"",
 			css:"",
 			html:"",
+			newCategory:"",
+			category:"",
 			search:"",
 			editMode:"css",
 			searchStatus:"inactive",
@@ -70,6 +74,8 @@ jQuery(function($){
 				this.data.css = comp.css;
 				this.data.name = comp.name;
 				this.data.html = comp.html;
+				this.data.category = comp.category;
+				this.data.id = comp.id;
 				editor.destroy();
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
@@ -118,27 +124,55 @@ jQuery(function($){
 				}
 				return html;
 			},
-			addComponent:function(){
-				var data = this.data;
-				var obj = {html:data.html,css:data.css,name:data.name};
+			getUniqueId:function(){
 				var components = this.data.components;
+				var id = this.getRandText(15);
 				var flag = false;
-				for(var i = 0,n = components.length; i < n; i++){
-					if(components[i].name == obj.name){
-						components[i] = obj;
-						flag = true;
+				while(1){
+					for(var i = 0,n = components.length; i < n; i++){
+						if(components[i].id == id){
+							flag = true;
+						}
+					}
+					if(flag === false){
 						break;
 					}
 				}
-				if(!flag){
-					this.data.components.push(obj);
-					this.applyMethod("showAlert","コンポーネントを追加しました!!");
-				}else{
-					this.applyMethod("showAlert","コンポーネントを保存しました!!");
+				return id;
+			},
+			saveComponent:function(e){
+				var data = this.data;
+				var components = this.data.components;
+				var flag = false;
+				for(var i = 0,n = components.length; i < n; i++){
+					var comp = components[i];
+					if(comp.id == data.id){
+						comp.html = data.html;
+						comp.css = data.css;
+						comp.name = data.name;
+						comp.id = data.id;
+						comp.category = data.category;
+					}
 				}
+				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
 				this.saveData("css_lab");
+			},
+			addComponent:function(){
+				var data = this.data;
+				var id = this.applyMethod("getUniqueId");
+				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
+				var components = this.data.components;
+				var flag = false;
+				var dialog = document.querySelector("dialog");
+				this.data.components.push(obj);
+				this.data.newName = "";
+				this.applyMethod("showAlert","コンポーネントを追加しました。");
+				this.update("html","css_search_result");
+				componentHandler.upgradeDom();
+				this.saveData("css_lab");
+				dialog.close();
 			},
 			readSetting:function(){
 				var evt = this.e;
@@ -157,7 +191,7 @@ jQuery(function($){
 				}
 			},
 			changeMode:function(mode){
-				if(this.data.editMode != "preview"){
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					editor.destroy();
 				}
 			  	this.data.editMode = mode;
@@ -167,9 +201,13 @@ jQuery(function($){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 			},
-			addNewComponent:function(){
-				this.applyMethod("clearEditor");
-				$("#component").focus();
+			openDialog:function(){
+				var dialog = document.querySelector("dialog");
+				dialog.showModal();
+			},
+			closeDialog:function(){
+				var dialog = document.querySelector("dialog");
+				dialog.close();
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
@@ -202,9 +240,9 @@ jQuery(function($){
 					bindKey:{win:"Ctrl+S",mac:"Command-S"},
 					exec: function(){
 						that.data[name] = editor.getSession().getValue();
-						that.applyMethod("addComponent");
+						that.applyMethod("saveComponent");
 					}
-				})
+				});
 				editor.commands.on("exec",function(e){
 					if(e.command && (e.command.name == "reload" || e.command.name == "save")){
 						e.preventDefault();
@@ -216,7 +254,6 @@ jQuery(function($){
 		convert:{
 			applyShortCord:function(data){
 				var that = this;
-				console.log(that.data)
 				while(data.match(/\<\$(\w+)\>/)){
 					data = data.replace(/\<\$(\w+)\>/g,function(i,word){
 						if(that.data.name === word){
@@ -225,7 +262,11 @@ jQuery(function($){
 						return that.applyMethod("convertCompToHtml",word);
 					});
 				}
-				return data;
+				//todo delete
+				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
+			},
+			deleteScriptTag:function(data){
+				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
 			}
 		}
 	});
