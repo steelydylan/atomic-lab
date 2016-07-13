@@ -1,11 +1,4 @@
 jQuery(function($){
-	$(document).on("click",function(){
-		if($(".cssLabHeaderSearchArea:hover").length == 0){
-			cssLab.data.searchStatus = "inactive";
-			cssLab.update("html","css_search_result");
-			cssLab.saveData("css_lab");
-		}
-	});
 	var editor = {};
 	var cssLab = new aTemplate.View({
 		templates:[
@@ -27,6 +20,7 @@ jQuery(function($){
 			newCategory:"",
 			category:"",
 			search:"",
+			about:"",
 			editMode:"css",
 			searchStatus:"inactive",
 			searchResults:function(){
@@ -76,6 +70,7 @@ jQuery(function($){
 				this.data.name = comp.name;
 				this.data.html = comp.html;
 				this.data.category = comp.category;
+				this.data.about = comp.about;
 				this.data.id = comp.id;
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					editor.destroy();
@@ -157,6 +152,7 @@ jQuery(function($){
 						comp.name = data.name;
 						comp.id = data.id;
 						comp.category = data.category;
+						comp.about = data.about;
 					}
 				}
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
@@ -285,6 +281,9 @@ jQuery(function($){
 			},
 			deleteScriptTag:function(data){
 				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
+			},
+			markdown:function(data){
+				return marked(data);
 			}
 		}
 	});
