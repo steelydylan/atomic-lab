@@ -32,6 +32,14 @@ jQuery(function($){
 			}
 		},
 		method:{
+			initialize:function(){
+				this.setData(defs);
+				this.loadData("css_lab");
+				this.update();
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
+					this.applyMethod("runEditor",this.data.editMode);
+				}
+			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
 				$("body").append($alert);
@@ -157,7 +165,6 @@ jQuery(function($){
 				}
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
-				this.update("html","css_edit");
 				componentHandler.upgradeDom();
 				this.saveData("css_lab");
 			},
@@ -222,6 +229,7 @@ jQuery(function($){
 			doneEditDialog:function(){
 				this.applyMethod("closeEditDialog");
 				this.applyMethod("saveComponent");
+				this.update("html","css_edit");
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
@@ -286,11 +294,5 @@ jQuery(function($){
 				return marked(data);
 			}
 		}
-	});
-	cssLab.setData(defs);
-	cssLab.loadData("css_lab");
-	cssLab.update();
-	if(cssLab.data.editMode != "preview" && cssLab.data.editMode != "about"){
-		cssLab.applyMethod("runEditor",cssLab.data.editMode);
-	}
+	}).applyMethod("initialize");
 });

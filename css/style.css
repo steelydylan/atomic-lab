@@ -60,6 +60,10 @@ html {
 	float: right;
 }
 
+.mdl-textfield--large {
+	width: 100%;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
@@ -121,5 +125,31 @@ html {
 	padding: 10px;
 	border-radius: 5px;
 	background-color: #fff;
+}
+
+.cssLabExpArea h1 {
+	font-size: 2em;
+	margin-top: 0;
+}
+
+.cssLabExpArea h2 {
+	font-size: 1.5em;
+	margin-top: 0;
+}
+
+.cssLabExpArea h3 {
+	font-size: 1.3em;
+	margin-top: 0;
+}
+
+.cssLabExpArea h4,
+.cssLabExpArea h5 {
+	font-size: 1.2em;
+	margin-top: 0;
+}
+
+.cssLabExpArea p {
+	font-size: 1.2em;
+	margin-top: 0;
 }
 
