@@ -52,6 +52,10 @@ html {
 	text-align: left;
 }
 
+.mdl-data-table .selected {
+	background-color: #eee;
+}
+
 .mdl-data-table tr {
 	cursor: pointer;
 }

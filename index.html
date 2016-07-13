@@ -127,7 +127,7 @@
 				<script id="css_search_result" type="text/template">
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
-						<tr data-action="editComp({i})">
+						<tr data-action="editComp({i})"<!-- BEGIN id:touch#{id} --> class="selected"<!-- END id:touch#{id} -->>
 							<td><span class="cssLabLabel">{category}</span>{name}</td>
 							<td><button data-action="deleteComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button></td>
 						</tr>
