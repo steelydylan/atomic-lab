@@ -105,16 +105,17 @@
 		</div>
 		<main class="mdl-layout__content">
 			<script id="css_edit" type="text/template">
-				<div class="mdl-textfield mdl-js-textfield">
-					<input class="mdl-textfield__input" type="text" data-bind="name" data-action="changeStyle(name)" id="component">
-					<label class="mdl-textfield__label" for="component">Component...</label>
-				</div>
+			<header class="mdl-layout__header">
+			<div class="mdl-layout__header-row">
+				<span class="mdl-layout-title">{name}</span>
+			</div>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</li>
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#about --> is-active<!-- END editMode:touch#about -->" data-action="changeMode(about)">About</li>
 			</ul>
+			</header>
 			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
 				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea" id="js-css"></textarea>
@@ -136,6 +137,7 @@
 			<!-- BEGIN editMode:touch#about -->
 			<div class="cssLabAbout">
 				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog">Edit</button>
+				<p><span class="cssLabLabel">名前</span>{name}</p>
 				<p><span class="cssLabLabel">カテゴリー</span>{category}</p>
 				<p><span class="cssLabLabel">About</span></p>
 			</div>
