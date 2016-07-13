@@ -128,9 +128,7 @@
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr data-action="editComp({i})">
-							<td>{name}</td>
-							<td><span class="cssLabLabel">{category}</span></td>
-
+							<td><span class="cssLabLabel">{category}</span>{name}</td>
 							<td><button data-action="deleteComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button></td>
 						</tr>
 						<!-- END searchResults:loop -->
@@ -141,7 +139,7 @@
 			<script id="css_edit" type="text/template">
 			<header class="mdl-layout__header">
 			<div class="mdl-layout__header-row">
-				<span class="mdl-layout-title">{name}</span>
+				<span class="mdl-layout-title"><span class="cssLabLabel">{category}</span>{name}</span>
 			</div>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
