@@ -23,7 +23,7 @@ html {
 }
 
 .mdl-layout {
-	height: 100vh;
+	height: calc(100vh - 64px);
 }
 
 .mdl-layout__drawer {
@@ -62,6 +62,10 @@ html {
 
 .mdl-textfield--large {
 	width: 100%;
+}
+
+.mdl-layout__container {
+	height: auto;
 }
 
 .ace_editor {
@@ -118,6 +122,10 @@ html {
 	color: #fff;
 	border-radius: 3px;
 	background: #ff4081;
+}
+
+.cssLabRead {
+	display: none;
 }
 
 .cssLabExpArea {

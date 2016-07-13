@@ -10,6 +10,23 @@
 	<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 <body>
+	<header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">Atomic Lab</span>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation -->
+      <script id="css_io" type="text/template">
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
+        <a class="mdl-navigation__link" href="#">Upload</a>
+        <a class="mdl-navigation__link" href="#">Share</a>
+      </nav>
+      <input type="file" data-action="readSetting" class="cssLabRead">
+      </script>
+    </div>
+  </header>
 	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
 		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
 		<script id="css_new" type="text/template">
@@ -86,8 +103,6 @@
 							<label class="mdl-textfield__label" for="search">Search...</label>
 						</div>
 					</div>
-					<button data-action="outputComp">Zipで保存</button>
-					<input type="file" data-action="readSetting" size="100px">
 				</script>
 				<script id="css_search_result" type="text/template">
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">

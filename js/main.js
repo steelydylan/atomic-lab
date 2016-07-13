@@ -8,7 +8,8 @@ jQuery(function($){
 			"css_search",
 			"css_setting",
 			"css_new",
-			"css_about"
+			"css_about",
+			"css_io"
 		],
 		data:{
 			index:0,
