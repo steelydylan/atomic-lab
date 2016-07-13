@@ -10,9 +10,9 @@
 	<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 <body>
-	<dialog class="mdl-dialog mdl-dialog--wide">
+	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
 		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
-		<script id="css_new">
+		<script id="css_new" type="text/template">
 			<div class="mdl-dialog__content">
 					<p>カテゴリー</p>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
@@ -32,13 +32,44 @@
 					  <span class="mdl-radio__label">Template</span>
 					</label>
 				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
-					<input type="text" data-action="searchComponents" data-bind="newName" class="mdl-textfield__input" id="search">
+					<input type="text" data-bind="newName" class="mdl-textfield__input" id="search">
 					<label class="mdl-textfield__label" for="search">Component Name...</label>
 				</div>
 			</div>
 			<div class="mdl-dialog__actions">
 				<button class="mdl-button" data-action="addComponent">追加</button>
 				<button class="mdl-button close" data-action="closeDialog">キャンセル</button>
+			</div>
+		</script>
+	</dialog>
+	<dialog class="mdl-dialog mdl-dialog--wide js-edit-dialog">
+		<h4 class="mdl-dialog__title">コンポーネント編集</h4>
+		<script id="css_about" type="text/template">
+			<div class="mdl-dialog__content">
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
+					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" checked data-bind="category">
+					  <span class="mdl-radio__label">Atom</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molucule">
+					  <input type="radio" id="to-molucule" class="mdl-radio__button" name="category" value="molucule" data-bind="category">
+					  <span class="mdl-radio__label">Molucule</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
+					  <input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
+					  <span class="mdl-radio__label">Organism</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-template">
+					  <input type="radio" id="to-template" class="mdl-radio__button" name="category" value="template" data-bind="category">
+					  <span class="mdl-radio__label">Template</span>
+					</label>
+				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					<input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
+					<label class="mdl-textfield__label" for="update-name">Component Name...</label>
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="doneEditDialog">変更</button>
+				<button class="mdl-button close" data-action="closeEditDialog">キャンセル</button>
 			</div>
 		</script>
 	</dialog>
@@ -104,9 +135,9 @@
 			<!-- END editMode:touch#preview -->
 			<!-- BEGIN editMode:touch#about -->
 			<div class="cssLabAbout">
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog">Edit</button>
 				<p><span class="cssLabLabel">カテゴリー</span>{category}</p>
-				<p><span class="cssLabLabel">使い方</span></p>
-				<input type="text" data-bind="category">
+				<p><span class="cssLabLabel">About</span></p>
 			</div>
 			<!-- END editMode:touch#about -->
 			</script>

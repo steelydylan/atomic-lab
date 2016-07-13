@@ -14,7 +14,8 @@ jQuery(function($){
 			"css_search_result",
 			"css_search",
 			"css_setting",
-			"css_new"
+			"css_new",
+			"css_about"
 		],
 		data:{
 			index:0,
@@ -76,12 +77,16 @@ jQuery(function($){
 				this.data.html = comp.html;
 				this.data.category = comp.category;
 				this.data.id = comp.id;
-				editor.destroy();
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
+					editor.destroy();
+				}
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
 				componentHandler.upgradeDom();
-				this.applyMethod("runEditor",this.data.editMode);
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
+					this.applyMethod("runEditor",this.data.editMode);
+				}
 			},
 			deleteComp:function(i){
 				var data = this.data;
@@ -98,7 +103,7 @@ jQuery(function($){
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
-				if(this.data.editMode != "preview"){
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 				componentHandler.upgradeDom();
@@ -156,6 +161,7 @@ jQuery(function($){
 				}
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
+				this.update("html","css_edit");
 				componentHandler.upgradeDom();
 				this.saveData("css_lab");
 			},
@@ -165,7 +171,7 @@ jQuery(function($){
 				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
 				var components = this.data.components;
 				var flag = false;
-				var dialog = document.querySelector("dialog");
+				var dialog = document.querySelector(".js-new-dialog");
 				this.data.components.push(obj);
 				this.data.newName = "";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
@@ -197,17 +203,29 @@ jQuery(function($){
 			  	this.data.editMode = mode;
 				this.update();
 				componentHandler.upgradeDom();
-				if(mode != "preview"){
+				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 			},
 			openDialog:function(){
-				var dialog = document.querySelector("dialog");
+				var dialog = document.querySelector(".js-new-dialog");
 				dialog.showModal();
 			},
 			closeDialog:function(){
-				var dialog = document.querySelector("dialog");
+				var dialog = document.querySelector(".js-new-dialog");
 				dialog.close();
+			},
+			openEditDialog:function(){
+				var dialog = document.querySelector(".js-edit-dialog");
+				dialog.showModal();
+			},
+			closeEditDialog:function(){
+				var dialog = document.querySelector(".js-edit-dialog");
+				dialog.close();
+			},
+			doneEditDialog:function(){
+				this.applyMethod("closeEditDialog");
+				this.applyMethod("saveComponent");
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
@@ -273,7 +291,7 @@ jQuery(function($){
 	cssLab.setData(defs);
 	cssLab.loadData("css_lab");
 	cssLab.update();
-	if(cssLab.data.mode != "preview"){
+	if(cssLab.data.editMode != "preview" && cssLab.data.editMode != "about"){
 		cssLab.applyMethod("runEditor",cssLab.data.editMode);
 	}
 });

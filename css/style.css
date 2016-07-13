@@ -56,6 +56,10 @@ html {
 	padding: 10px;
 }
 
+.mdl-button--pull-right {
+	float: right;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
