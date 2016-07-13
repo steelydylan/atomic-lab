@@ -27,6 +27,18 @@
       </script>
     </div>
   </header>
+  <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
+  	<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
+  	<script id="css_new" type="text/template">
+  		<div class="mdl-dialog__content">
+  			<p>{name}を削除してもよろしいですか？</p>
+  			<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="removeComponent">追加</button>
+				<button class="mdl-button close" data-action="closeRemoveDialog">キャンセル</button>
+			</div>
+  		</div>
+  	</script>
+  </dialog>
 	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
 		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
 		<script id="css_new" type="text/template">
