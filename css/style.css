@@ -48,6 +48,10 @@ html {
 	width: 100%;
 }
 
+.mdl-data-table td {
+	text-align: left;
+}
+
 .mdl-data-table__name {
 	width: 200px;
 }

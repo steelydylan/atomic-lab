@@ -108,14 +108,14 @@
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
 							<td colspan="4">
-								<button data-action="openDialog" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button>
+								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog">新規コンポーネント</button>
 							</td>
 						</tr>
 						<!-- BEGIN searchResults:loop -->
 						<tr>
+							<td><span class="cssLabLabel">{category}</span></td>
 							<td>{name}</td>
 							<td><button data-action="deleteComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button></td>
-							<td><button data-action="insertCompToHtml({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">add</i></button></td>
 							<td><button data-action="editComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">edit</i></button></td>
 						</tr>
 						<!-- END searchResults:loop -->

@@ -59,18 +59,6 @@ jQuery(function($){
 				this.update("html","css_preview");
 				this.saveData("css_lab");
 			},
-			insertCompToHtml:function(i){
-				var data = this.data;
-				var components = this.getComputedProp("searchResults");
-				var html = this.data.html;
-				this.data.html = html +"<$" +components[i].name+">";
-				editor.destroy();
-				this.update("html","css_preview");
-				this.update("html","css_edit");
-				this.saveData("css_lab");
-				componentHandler.upgradeDom();
-				this.applyMethod("runEditor",this.data.editMode);
-			},
 			editComp:function(i){
 				var data = this.data;
 				var components = this.getComputedProp("searchResults");
