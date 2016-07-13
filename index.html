@@ -97,20 +97,23 @@
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
   	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
-					<div class="mdl-textfield-wrap">
-						<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
-							<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
-							<label class="mdl-textfield__label" for="search">Search...</label>
-						</div>
-					</div>
-				</script>
-				<script id="css_search_result" type="text/template">
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
 							<td colspan="4">
 								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog">新規コンポーネント</button>
 							</td>
 						</tr>
+					</table>
+					<div class="mdl-textfield-wrap">
+						<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+							<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
+							<label class="mdl-textfield__label" for="search">Search...</label>
+						</div>
+						<!-- ここにカテゴリーの選択欄 -->
+					</div>
+				</script>
+				<script id="css_search_result" type="text/template">
+						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr>
 							<td><span class="cssLabLabel">{category}</span></td>
