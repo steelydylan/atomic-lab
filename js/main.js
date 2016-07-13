@@ -98,6 +98,7 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+				this.saveData("css_lab");
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){

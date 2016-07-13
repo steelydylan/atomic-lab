@@ -29,7 +29,7 @@
   </header>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
   	<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
-  	<script id="css_new" type="text/template">
+  	<script id="css_remove" type="text/template">
   		<div class="mdl-dialog__content">
   			<p>{name}を削除してもよろしいですか？</p>
   			<div class="mdl-dialog__actions">
@@ -111,7 +111,7 @@
 				<script id="css_search" type="text/template">
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
-							<td colspan="4">
+							<td colspan="3">
 								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog">新規コンポーネント</button>
 							</td>
 						</tr>
@@ -127,11 +127,11 @@
 				<script id="css_search_result" type="text/template">
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
-						<tr>
-							<td><span class="cssLabLabel">{category}</span></td>
+						<tr data-action="editComp({i})">
 							<td>{name}</td>
+							<td><span class="cssLabLabel">{category}</span></td>
+
 							<td><button data-action="deleteComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button></td>
-							<td><button data-action="editComp({i})" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">edit</i></button></td>
 						</tr>
 						<!-- END searchResults:loop -->
 					</table>
