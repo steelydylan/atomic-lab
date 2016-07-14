@@ -1,7 +1,7 @@
 (function(global){
 
 	var parseTemplate = function(text){
-
+		return text;
 	};
 
 	global.parseTemplate = parseTemplate;
