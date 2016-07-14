@@ -266,7 +266,6 @@ jQuery(function($){
 		convert:{
 			applyShortCord:function(data){
 				data = parseTemplate(data,this.data.name);
-				console.log(data);
 				//todo delete
 				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
 			},
