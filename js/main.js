@@ -265,15 +265,8 @@ jQuery(function($){
 		},
 		convert:{
 			applyShortCord:function(data){
-				var that = this;
-				while(data.match(/\<\$(\w+)\>/)){
-					data = data.replace(/\<\$(\w+)\>/g,function(i,word){
-						if(that.data.name === word){
-							return "";
-						}
-						return that.applyMethod("convertCompToHtml",word);
-					});
-				}
+				data = parseTemplate(data,this.data.name);
+				console.log(data);
 				//todo delete
 				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
 			},
