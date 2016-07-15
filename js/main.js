@@ -230,6 +230,20 @@ jQuery(function($){
 				}
 				componentHandler.upgradeDom();
 			},
+			isGreaterThan:function(text){
+				var cat = this.data.category;
+				var category = {
+					atom:0,
+					molucule:1,
+					organism:2,
+					template:3
+				}
+				if(category[cat] > category[text]){
+					return true;
+				}else{
+					return false;
+				}
+			},
 			runEditor:function(name){
 				var that = this;
 				editor = ace.edit("js-"+name);
@@ -280,6 +294,10 @@ jQuery(function($){
 					for(var i = 0,n = components.length; i < n; i++){
 						var comp = components[i];
 						if(name == comp.name){
+							//例えば、atomはmoluculeをincludeできない
+							if(this.data.id != comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+								break;
+							}
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
 							var defs = parser.getVarsFromTemplate(template);
