@@ -1,6 +1,7 @@
 (function(global){
 
-	var getVarsFromText = function(text){
+	var getVars = function(text){
+		console.log(text);
 		var vars = text.match(/(\w+)="(.*?)"/g);
 		var defs = {};
 		if(!vars){
@@ -14,35 +15,71 @@
 		return defs;
 	}
 
-
-	var parseTemplate = function(text,name){
+	var getPreview = function(text){
 		var preview = text.match(/<!-- preview -->(([\n\r\t]|.)*?)<!-- \/preview -->/g);
 		if(!preview){
 			return "";
 		}
 		preview = preview[0];
-		preview = preview.replace(/<!-- (\/)?preview -->/g,"");
+		return preview.replace(/<!-- (\/)?preview -->/g,"");
+	}
 
+
+	var getComment = function(text){
+		var ret = text.match(/<!--(.*?)-->/g);
+		if(ret){
+			return ret[0];
+		}else{
+			return "";
+		}
+	}
+
+	var getComponentName = function(text){
+		return text.replace(/<!-- (\w+) (.*?)-->/g,function(comment,name){
+			return name;
+		});
+	}
+
+	var getTemplate = function(text){
 		var template = text.match(/<!-- template(.*?)-->(([\n\r\t]|.)*?)<!-- \/template -->/g);
 		if(!template){
 			return "";
 		}
 		template = template[0];
+		return template;
+	}
 
-		//template inside
-		var templateInside = template.replace(/<!-- (\/)?template(.*?) -->/g,"");
+	var getInnerHtmlFromTemplate = function(template){
+		return template.replace(/<!-- (\/)?template(.*?) -->/g,"");
+	}
+
+	var getVarsFromTemplate = function(template){
+		var templateInside = getInnerHtmlFromTemplate(template);
 		var templateFirst = template.replace(templateInside,"").replace("<!-- /template -->","");
-		//default vars
-		var defs = getVarsFromText(templateFirst);
-		var reg = new RegExp("<!-- "+name+"(.*?)-->","g");
-		preview = preview.replace(reg,function(a,b,c){
-			var vars = $.extend({},defs,getVarsFromText(a));
-			return templateInside.replace(/{(.*?)}/g,function(a,b){
-				return vars[b] || "";
-			});
-		});
-		return preview;
-	};
+		return getVars(templateFirst);
+	}
 
-	global.parseTemplate = parseTemplate;
+	var getRendered = function(template,defs,overrides){
+		var vars = $.extend({},defs,overrides);
+		return template.replace(/{(.*?)}/g,function(a,b){
+			return vars[b] || "";
+		});
+	}
+
+	var removeScript = function(text){
+		return text.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
+	}
+
+
+	global.parser = {
+		getComment:getComment,
+		getPreview:getPreview,
+		getComponentName:getComponentName,
+		getVars:getVars,
+		getTemplate:getTemplate,
+		getInnerHtmlFromTemplate:getInnerHtmlFromTemplate,
+		getVarsFromTemplate:getVarsFromTemplate,
+		getRendered:getRendered,
+		removeScript:removeScript
+	}
 })(window);

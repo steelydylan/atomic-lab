@@ -264,13 +264,39 @@ jQuery(function($){
 			}
 		},
 		convert:{
-			applyShortCord:function(data){
-				data = parseTemplate(data,this.data.name);
+			preview:function(text){
+				//textからpreview取得
+				var preview = parser.getPreview(text);
+				//previewからコメント文取得
+				while(1){
+					var comment = parser.getComment(preview);
+					if(!comment){
+						break;
+					}
+					//commentからコンポーネント名取得
+					var name = parser.getComponentName(comment);
+					var components = this.data.components;
+					var flag = false;
+					for(var i = 0,n = components.length; i < n; i++){
+						var comp = components[i];
+						if(name == comp.name){
+							var template = parser.getTemplate(comp.html);
+							var html = parser.getInnerHtmlFromTemplate(template);
+							var defs = parser.getVarsFromTemplate(template);
+							var overrides = parser.getVars(comment);
+							html = parser.getRendered(html,defs,overrides);
+							preview = preview.replace(comment,html);
+							preview += "<style>"+comp.css+"</style>"
+							break;
+						}
+					}
+					preview = preview.replace(comment,"");
+				}
 				//todo delete
-				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
+				return parser.removeScript(preview);
 			},
 			deleteScriptTag:function(data){
-				return data.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
+				return parser.removeScript(data);
 			},
 			markdown:function(data){
 				return marked(data);
