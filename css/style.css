@@ -80,6 +80,10 @@ html {
 	height: auto;
 }
 
+.mdl-layout__header-row .mdl-button--fab {
+	margin: 0 0 0 20px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;

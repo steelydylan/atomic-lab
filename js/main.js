@@ -80,14 +80,11 @@ jQuery(function($){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 			},
-			deleteComp:function(i){
-				var data = this.data;
-				var components = this.getComputedProp("searchResults");
-				var comp = components[i];
-				var name = comp.name;
+			deleteComp:function(){
+				var id = this.data.id;
 				var comps = this.data.components;
 				for(var i = 0,n = comps.length; i < n; i++){
-					if(comps[i].name == name){
+					if(comps[i].id == id){
 						comps.splice(i,1);
 						break;
 					}
