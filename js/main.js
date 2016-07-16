@@ -24,6 +24,9 @@ jQuery(function($){
 			about:"",
 			editMode:"css",
 			searchStatus:"inactive",
+			cheatCategory:"",
+			cheatAbout:"",
+			cheatName:"",
 			searchResults:function(){
 				var search = this.data.search;
 				var components = this.data.components;
@@ -196,6 +199,15 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+			},
+			openCheatDialog:function(i){
+				var components = this.getComputedProp("searchResults");
+				var comp = components[i];
+				this.data.cheatAbout = comp.about;
+				this.data.cheatCategory = comp.category;
+				this.data.cheatName = comp.name;
+				var dialog = document.querySelector(".js-cheat-dialog");
+				dialog.showModal();
 			},
 			openDialog:function(){
 				var dialog = document.querySelector(".js-new-dialog");

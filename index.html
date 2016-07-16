@@ -33,11 +33,27 @@
   		<div class="mdl-dialog__content">
   			<p>{name}を削除してもよろしいですか？</p>
   			<div class="mdl-dialog__actions">
-				<button class="mdl-button" data-action="removeComponent">追加</button>
-				<button class="mdl-button close" data-action="closeRemoveDialog">キャンセル</button>
-			</div>
+					<button class="mdl-button" data-action="removeComponent">追加</button>
+					<button class="mdl-button close" data-action="closeRemoveDialog">キャンセル</button>
+				</div>
   		</div>
   	</script>
+  </dialog>
+  <dialog class="mdl-dialog mdl-dialog--wide js-cheat-dialog">
+  	<h4 class="mdl-dialog__title">コンポーネント情報</h4>
+		<script id="css_cheat" type="text/template">
+			<div class="mdl-dialog__content">
+				<p><span class="cssLabLabel">名前</span>{cheatName}</p>
+				<p><span class="cssLabLabel">カテゴリー</span>{cheatCategory}</p>
+				<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+				<div class="cssLabExpArea">
+				{cheatAbout}[markdown]
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button close" data-action="closeCheatDialog">キャンセル</button>
+			</div>
+		</script>
   </dialog>
 	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
 		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
@@ -128,7 +144,7 @@
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr data-action="editComp({i})"<!-- BEGIN id:touch#{id} --> class="selected"<!-- END id:touch#{id} -->>
-							<td><span class="cssLabLabel">{category}</span>{name}</td>
+							<td><span class="cssLabLabel">{category}</span>{name}<button data-action="openCheatDialog({i})">info</button></td>
 						</tr>
 						<!-- END searchResults:loop -->
 					</table>
