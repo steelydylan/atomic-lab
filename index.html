@@ -43,11 +43,13 @@
   	<h4 class="mdl-dialog__title">コンポーネント情報</h4>
 		<script id="css_cheat" type="text/template">
 			<div class="mdl-dialog__content">
-				<p><span class="cssLabLabel">名前</span>{cheatName}</p>
-				<p><span class="cssLabLabel">カテゴリー</span>{cheatCategory}</p>
-				<p><span class="cssLabLabel">このコンポーネントについて</span></p>
-				<div class="cssLabExpArea">
-				{cheatAbout}[markdown]
+				<div class="cssLabAbout">
+					<p><span class="cssLabLabel">名前</span>{cheatName}</p>
+					<p><span class="cssLabLabel">カテゴリー</span>{cheatCategory}</p>
+					<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+					<div class="cssLabExpArea">
+					{cheatAbout}[markdown]
+					</div>
 				</div>
 			</div>
 			<div class="mdl-dialog__actions">
@@ -144,7 +146,11 @@
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr data-action="editComp({i})"<!-- BEGIN id:touch#{id} --> class="selected"<!-- END id:touch#{id} -->>
-							<td><span class="cssLabLabel">{category}</span>{name}<button data-action="openCheatDialog({i})">info</button></td>
+							<td><span class="cssLabLabel">{category}</span>{name}
+								<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="openCheatDialog({i})">
+	  							<i class="material-icons">info</i>
+								</button>
+							</td>
 						</tr>
 						<!-- END searchResults:loop -->
 					</table>

@@ -9,7 +9,8 @@ jQuery(function($){
 			"css_setting",
 			"css_new",
 			"css_about",
-			"css_io"
+			"css_io",
+			"css_cheat"
 		],
 		data:{
 			index:0,
@@ -201,13 +202,19 @@ jQuery(function($){
 				}
 			},
 			openCheatDialog:function(i){
+				this.e.stopPropagation();
 				var components = this.getComputedProp("searchResults");
 				var comp = components[i];
 				this.data.cheatAbout = comp.about;
 				this.data.cheatCategory = comp.category;
 				this.data.cheatName = comp.name;
+				this.update("html","css_cheat");
 				var dialog = document.querySelector(".js-cheat-dialog");
 				dialog.showModal();
+			},
+			closeCheatDialog:function(){
+				var dialog = document.querySelector(".js-cheat-dialog");
+				dialog.close();
 			},
 			openDialog:function(){
 				var dialog = document.querySelector(".js-new-dialog");
