@@ -1,5 +1,11 @@
 jQuery(function($){
 	var editor = {};
+	var material = {
+		atom:0,
+		molucule:1,
+		organism:2,
+		template:3
+	}
 	var cssLab = new aTemplate.View({
 		templates:[
 			"css_preview",
@@ -21,9 +27,10 @@ jQuery(function($){
 			html:"",
 			newCategory:"",
 			category:"",
-			search:"",
 			about:"",
 			editMode:"css",
+			search:"",
+			searchCategory:["true","true","true","true"],
 			searchStatus:"inactive",
 			cheatCategory:"",
 			cheatAbout:"",
@@ -31,7 +38,11 @@ jQuery(function($){
 			searchResults:function(){
 				var search = this.data.search;
 				var components = this.data.components;
+				var searchCategory = this.data.searchCategory;
 				return components.filter(function(comp){
+					if(searchCategory[material[comp.category]] != "true"){
+						return false;
+					}
 					return comp.name.indexOf(search) >= 0;
 				});
 			}
@@ -248,13 +259,7 @@ jQuery(function($){
 			},
 			isGreaterThan:function(text){
 				var cat = this.data.category;
-				var category = {
-					atom:0,
-					molucule:1,
-					organism:2,
-					template:3
-				}
-				if(category[cat] > category[text]){
+				if(material[cat] > material[text]){
 					return true;
 				}else{
 					return false;

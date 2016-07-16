@@ -140,6 +140,22 @@
 							<label class="mdl-textfield__label" for="search">Search...</label>
 						</div>
 						<!-- ここにカテゴリーの選択欄 -->
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-atom">
+						  <input type="checkbox" id="check-atom" class="mdl-checkbox__input" data-bind="searchCategory.0" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Atom</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-molucule">
+						  <input type="checkbox" id="check-molucule" class="mdl-checkbox__input" data-bind="searchCategory.1" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Molucule</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-organism">
+						  <input type="checkbox" id="check-organism" class="mdl-checkbox__input" data-bind="searchCategory.2" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Organism</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-template">
+						  <input type="checkbox" id="check-template" class="mdl-checkbox__input" data-bind="searchCategory.3" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Template</span>
+						</label>
 					</div>
 				</script>
 				<script id="css_search_result" type="text/template">

@@ -64,8 +64,18 @@ html {
 	width: 200px;
 }
 
+.mdl-data-table td:first-of-type,
+.mdl-data-table th:first-of-type {
+	padding-left: 10px;
+}
+
 .mdl-textfield-wrap {
 	padding: 10px;
+}
+
+.mdl-textfield-wrap .mdl-checkbox {
+	width: auto;
+	margin-right: 20px;
 }
 
 .mdl-button--pull-right {
