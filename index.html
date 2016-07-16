@@ -4,63 +4,188 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
 	<link rel="stylesheet" href="css/style.css">
+	<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 <body>
-	<header class="cssLabHeader">
-		<div class="cssLabWrap">
-			<div class="cssLabHeaderSearchArea">
+	<header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">Atomic Lab</span>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation -->
+      <script id="css_io" type="text/template">
+      <nav class="mdl-navigation">
+        <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
+        <a class="mdl-navigation__link" href="#">Upload</a>
+        <a class="mdl-navigation__link" href="#">Share</a>
+      </nav>
+      <input type="file" data-action="readSetting" class="cssLabRead">
+      </script>
+    </div>
+  </header>
+  <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
+  	<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
+  	<script id="css_remove" type="text/template">
+  		<div class="mdl-dialog__content">
+  			<p>{name}を削除してもよろしいですか？</p>
+  			<div class="mdl-dialog__actions">
+					<button class="mdl-button" data-action="removeComponent">追加</button>
+					<button class="mdl-button close" data-action="closeRemoveDialog">キャンセル</button>
+				</div>
+  		</div>
+  	</script>
+  </dialog>
+  <dialog class="mdl-dialog mdl-dialog--wide js-cheat-dialog">
+  	<h4 class="mdl-dialog__title">コンポーネント情報</h4>
+		<script id="css_cheat" type="text/template">
+			<div class="mdl-dialog__content">
+				<div class="cssLabAbout">
+					<p><span class="cssLabLabel">名前</span>{cheatName}</p>
+					<p><span class="cssLabLabel">カテゴリー</span>{cheatCategory}</p>
+					<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+					<div class="cssLabExpArea">
+					{cheatAbout}[markdown]
+					</div>
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button close" data-action="closeCheatDialog">キャンセル</button>
+			</div>
+		</script>
+  </dialog>
+	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
+		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
+		<script id="css_new" type="text/template">
+			<div class="mdl-dialog__content">
+					<p>カテゴリー</p>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
+					  <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" checked data-bind="newCategory">
+					  <span class="mdl-radio__label">Atom</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molucule">
+					  <input type="radio" id="molucule" class="mdl-radio__button" name="newCategory" value="molucule" data-bind="newCategory">
+					  <span class="mdl-radio__label">Molucule</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
+					  <input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
+					  <span class="mdl-radio__label">Organism</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="template">
+					  <input type="radio" id="template" class="mdl-radio__button" name="newCategory" value="template" data-bind="newCategory">
+					  <span class="mdl-radio__label">Template</span>
+					</label>
+				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					<input type="text" data-bind="newName" class="mdl-textfield__input" id="search">
+					<label class="mdl-textfield__label" for="search">Component Name...</label>
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="addComponent">追加</button>
+				<button class="mdl-button close" data-action="closeDialog">キャンセル</button>
+			</div>
+		</script>
+	</dialog>
+	<dialog class="mdl-dialog mdl-dialog--wide js-edit-dialog">
+		<h4 class="mdl-dialog__title">コンポーネント編集</h4>
+		<script id="css_about" type="text/template">
+			<div class="mdl-dialog__content">
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
+					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" checked data-bind="category">
+					  <span class="mdl-radio__label">Atom</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molucule">
+					  <input type="radio" id="to-molucule" class="mdl-radio__button" name="category" value="molucule" data-bind="category">
+					  <span class="mdl-radio__label">Molucule</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
+					  <input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
+					  <span class="mdl-radio__label">Organism</span>
+					</label>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-template">
+					  <input type="radio" id="to-template" class="mdl-radio__button" name="category" value="template" data-bind="category">
+					  <span class="mdl-radio__label">Template</span>
+					</label>
+				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					<input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
+					<label class="mdl-textfield__label" for="update-name">Component Name...</label>
+				</div>
+				<div class="mdl-textfield mdl-textfield--large mdl-js-textfield">
+					<textarea class="mdl-textfield__input" type="text" rows= "8" id="about-textarea" data-bind="about"></textarea>
+					<label class="mdl-textfield__label" for="about-textarea">About...</label>
+				</div>
+			</div>
+			<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="doneEditDialog">変更</button>
+				<button class="mdl-button close" data-action="closeEditDialog">キャンセル</button>
+			</div>
+		</script>
+	</dialog>
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
+  	<div class="mdl-layout__drawer">
 				<script id="css_search" type="text/template">
-					<input type="text" data-action="searchComponents" data-bind="search">
+					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
+						<tr>
+							<td colspan="3">
+								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog">新規コンポーネント</button>
+							</td>
+						</tr>
+					</table>
+					<div class="mdl-textfield-wrap">
+						<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+							<input type="text" data-action="searchComponents" data-bind="search" class="mdl-textfield__input" id="search">
+							<label class="mdl-textfield__label" for="search">Search...</label>
+						</div>
+						<!-- ここにカテゴリーの選択欄 -->
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-atom">
+						  <input type="checkbox" id="check-atom" class="mdl-checkbox__input" data-bind="searchCategory.0" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Atom</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-molucule">
+						  <input type="checkbox" id="check-molucule" class="mdl-checkbox__input" data-bind="searchCategory.1" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Molucule</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-organism">
+						  <input type="checkbox" id="check-organism" class="mdl-checkbox__input" data-bind="searchCategory.2" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Organism</span>
+						</label>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="check-template">
+						  <input type="checkbox" id="check-template" class="mdl-checkbox__input" data-bind="searchCategory.3" value="true" data-action="searchComponents">
+						  <span class="mdl-checkbox__label">Template</span>
+						</label>
+					</div>
 				</script>
 				<script id="css_search_result" type="text/template">
-				<ul class="cssLabHeaderSearchList {searchStatus}">
-					<!-- BEGIN searchResults:loop -->
-					<li>{name}
-						<span class="cssLabBtnGroup">
-							<button data-action="deleteComp({i})">削除</button>
-							<button data-action="insertCompToHtml({i})">追加</button>
-							<button data-action="editComp({i})">編集</button>
-						</span>
-					</li>
-					<!-- END searchResults:loop -->
-				</ul>
+						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
+						<!-- BEGIN searchResults:loop -->
+						<tr data-action="editComp({i})"<!-- BEGIN id:touch#{id} --> class="selected"<!-- END id:touch#{id} -->>
+							<td><span class="cssLabLabel">{category}</span>{name}
+								<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="openCheatDialog({i})">
+	  							<i class="material-icons">info</i>
+								</button>
+							</td>
+						</tr>
+						<!-- END searchResults:loop -->
+					</table>
 				</script>
-			</div>
-			<h1 class="cssLabLogo">CSS Lab</h1>
 		</div>
-	</header>
-	<div class="cssLabWrap">
-		<div class="cssLabGrid6">
-			<div class="cssSettingArea">
-				<p>データの入出力</p>
-				<script id="css_setting" type="text/template">
-					<button data-action="outputComp">Zipで保存</button>
-					<input type="file" data-action="readSetting" size="100px">
-				</script>
-			</div>
-			<script id="css_preview" type="text/template">
-			<p>プレビュー</p>
-			<div class="cssLabRendered">
-				<style>
-				{css}
-				</style>
-				{html}[applyShortCord]
-			</div>
-			</script>
-		</div>
-		<div class="cssLabGrid6">
+		<main class="mdl-layout__content">
 			<script id="css_edit" type="text/template">
-			<p class="cssLabText">コンポーネント名</p>
-			<div class="cssLabEditInputWrap">
-				<input type="text" data-bind="name" data-action="changeStyle(name)">
-				<button data-action="addComponent">保存</button>
-				<button data-action="clearEditor">クリア</button>
+			<header class="mdl-layout__header">
+			<div class="mdl-layout__header-row">
+				<span class="mdl-layout-title"><span class="cssLabLabel">{category}</span>{name}</span>
+				<button data-action="deleteComp()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button>
 			</div>
-			<ul class="cssLabTab">
-				<li<!-- BEGIN editMode:touch#css --> class="active"<!-- END editMode:touch#css --> data-action="changeMode(css)">CSS</li>
-				<li<!-- BEGIN editMode:touch#html --> class="active"<!-- END editMode:touch#html --> data-action="changeMode(html)">HTML</li>
+			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</li>
+				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#about --> is-active<!-- END editMode:touch#about -->" data-action="changeMode(about)">About</li>
 			</ul>
+			</header>
 			<!-- BEGIN editMode:touch#css -->
 			<div class="cssLabEditAreaWrap">
 				<textarea data-bind="css" data-action="changeStyle(css)" class="cssLabEditArea" id="js-css"></textarea>
@@ -71,14 +196,32 @@
 				<textarea data-bind="html" data-action="changeStyle(html)" class="cssLabEditArea" id="js-html"></textarea>
 			</div>
 			<!-- END editMode:touch#html -->
+			<!-- BEGIN editMode:touch#preview -->
+			<div class="cssLabRendered">
+				{html}[preview]
+			</div>
+			<!-- END editMode:touch#preview -->
+			<!-- BEGIN editMode:touch#about -->
+			<div class="cssLabAbout">
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog">Edit</button>
+				<p><span class="cssLabLabel">名前</span>{name}</p>
+				<p><span class="cssLabLabel">カテゴリー</span>{category}</p>
+				<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+				<div class="cssLabExpArea">
+				{about}[markdown]
+				</div>
+			</div>
+			<!-- END editMode:touch#about -->
 			</script>
-		</div>
+		</main>
 	</div>
 	<script src="js/jszip.min.js"></script>
 	<script src="js/FileSaver.min.js"></script>
 	<script src="ace/ace.js"></script>
 	<script src="js/jquery.js"></script>
+	<script src="js/marked.js"></script>
 	<script src="js/aTemplate.js"></script>
+	<script src="js/templateParser.js"></script>
 	<script src="js/defaultStyle.js"></script>
 	<script src="js/main.js"></script>
 </body>
