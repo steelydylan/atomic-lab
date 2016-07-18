@@ -19,6 +19,7 @@
       <!-- Navigation -->
       <script id="css_io" type="text/template">
       <nav class="mdl-navigation">
+      	<a class="mdl-navigation__link" href="#" data-action="openSettingDialog">Settings</a>
         <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
         <a class="mdl-navigation__link" href="#">Upload</a>
         <a class="mdl-navigation__link" href="#">Share</a>
@@ -27,6 +28,52 @@
       </script>
     </div>
   </header>
+  <dialog class="mdl-dialog mdl-dialog--wide js-setting-dialog">
+  	<h4 class="mdl-dialog__title">設定</h4>
+  	<script id="css_setting" type="text/template">
+  		<div class="mdl-dialog__content">
+				<p>Markup</p>
+				<p>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="html">
+					  <input type="radio" id="html" class="mdl-radio__button" name="markup" value="markup" data-bind="markup">
+					  <span class="mdl-radio__label">HTML</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="haml">
+					  <input type="radio" id="haml" class="mdl-radio__button" name="markup" value="haml" data-bind="markup">
+					  <span class="mdl-radio__label">Haml</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="jade">
+					  <input type="radio" id="jade" class="mdl-radio__button" name="markup" value="jade" data-bind="markup">
+					  <span class="mdl-radio__label">Jade</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="ejs">
+					  <input type="radio" id="ejs" class="mdl-radio__button" name="markup" value="ejs" data-bind="markup">
+					  <span class="mdl-radio__label">EJS</span>
+				</label>
+				</p>
+				<p>Styling</p>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="css">
+					  <input type="radio" id="css" class="mdl-radio__button" name="styling" value="css" data-bind="styling">
+					  <span class="mdl-radio__label">CSS</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="scss">
+					  <input type="radio" id="scss" class="mdl-radio__button" name="styling" value="scss" data-bind="styling">
+					  <span class="mdl-radio__label">SASS(SCSS)</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="less">
+					  <input type="radio" id="less" class="mdl-radio__button" name="styling" value="less" data-bind="styling">
+					  <span class="mdl-radio__label">LESS</span>
+				</label>
+				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="stylus">
+					  <input type="radio" id="stylus" class="mdl-radio__button" name="styling" value="stylus" data-bind="styling">
+					  <span class="mdl-radio__label">Stylus</span>
+				</label>
+  		</div>
+  		<div class="mdl-dialog__actions">
+					<button class="mdl-button close" data-action="closeSettingDialog">閉じる</button>
+			</div>
+  	</script>
+  </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
   	<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
   	<script id="css_remove" type="text/template">
@@ -177,7 +224,7 @@
 			<header class="mdl-layout__header">
 			<div class="mdl-layout__header-row">
 				<span class="mdl-layout-title"><span class="cssLabLabel">{category}</span>{name}</span>
-				<button data-action="deleteComp()" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab"><i class="material-icons">delete</i></button>
+				<button class="mdl-button mdl-js-button mdl-button--icon" data-action="deleteComp()"><i class="material-icons">delete</i></button>
 			</div>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
 				<li class="mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</li>

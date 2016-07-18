@@ -29,6 +29,8 @@ jQuery(function($){
 			category:"",
 			about:"",
 			editMode:"css",
+			markup:"html",
+			styling:"css",
 			search:"",
 			searchCategory:["true","true","true","true"],
 			searchStatus:"inactive",
@@ -55,6 +57,10 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+			},
+			//after updated
+			onUpdated:function(){
+				this.saveData("css_lab");
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
@@ -257,6 +263,14 @@ jQuery(function($){
 				}
 				componentHandler.upgradeDom();
 			},
+			openSettingDialog:function(){
+				var dialog = document.querySelector(".js-setting-dialog");
+				dialog.showModal();
+			},
+			closeSettingDialog:function(){
+				var dialog = document.querySelector(".js-setting-dialog");
+				dialog.close();
+			},
 			isGreaterThan:function(text){
 				var cat = this.data.category;
 				if(material[cat] > material[text]){
@@ -276,13 +290,6 @@ jQuery(function($){
 					enableLiveAutocompletion: true
 				});
 				editor.commands.addCommand({
-					name:"reload",
-					bindKey:{win:"Ctrl+R",mac:"Command-R"},
-					exec: function(){
-
-					},
-				});
-				editor.commands.addCommand({
 					name:"save",
 					bindKey:{win:"Ctrl+S",mac:"Command-S"},
 					exec: function(){
@@ -295,6 +302,9 @@ jQuery(function($){
 						e.preventDefault();
 						e.command.exec();
 					}
+				});
+				editor.getSession().on('change',function(e){
+					that.data[name] = editor.getSession().getValue();
 				});
 			}
 		},

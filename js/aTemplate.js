@@ -412,6 +412,9 @@
 				}
 			}
 			this.updateBindingData(part);
+			if(this.method.onUpdated){
+				this.applyMethod("onUpdated");
+			}
 			return this;
 		},
 		updateBindingData:function(part){
