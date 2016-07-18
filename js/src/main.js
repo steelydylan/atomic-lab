@@ -30,7 +30,8 @@ jQuery(function($){
 			"css_new",
 			"css_about",
 			"css_io",
-			"css_cheat"
+			"css_cheat",
+			"css_share"
 		],
 		data:{
 			lang:lang,
@@ -79,12 +80,52 @@ jQuery(function($){
 		},
 		method:{
 			initialize:function(){
-				this.setData(defaultStyle);
-				this.loadData("css_lab");
+				if(location.hash){
+					var zip = new JSZip();
+			    var files = zip.load(location.hash, {
+			      base64: true
+			    });
+			    var strings = files.file('data').asText();
+			    var data = JSON.parse(strings);
+			    for(var key in data){
+		      	form.data[key] = data[key];
+		      }
+		      location.hash = "";
+				}else{
+					this.setData(defaultStyle);
+					this.loadData("css_lab");
+				}
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+			},
+			openShareDialog:function(){
+				var that = this;
+				var zip = new JSZip();
+				var data = this.data;
+				var strings = JSON.stringify(data);
+				zip.file('data', strings);
+				var hash = zip.generate({ type: "base64" });
+				var key = "AIzaSyCdcm5ff2CuJFOFv3pipcK0yZ77zHHcLGM";
+				location.hash = hash;
+				var url = location.href;
+				location.hash = "";
+				$.ajax({
+					url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
+	        type: "POST",
+	        contentType: "application/json; charset=utf-8",
+	        data: JSON.stringify({
+	          longUrl: url,
+	        }),
+	        dataType: "json",
+	        success: function(res) {
+	        	that.data.shortenedUrl = res;
+	        	that.update("text","css_share");
+	        	var dialog = document.querySelector(".js-share-dialog");
+						dialog.showModal();
+	        },
+				})
 			},
 			//after updated
 			onUpdated:function(){
