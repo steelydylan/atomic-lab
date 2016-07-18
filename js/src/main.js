@@ -7,12 +7,19 @@ jQuery(function($){
 	var parser = require("./templateParser.js");
 	var compiler = require("./compiler.js");
 	var editor = {};
+	var i18n = jQuery.i18n.browserLang();
+	var lang;
+	if(i18n == 'ja'){
+		lang = "ja";
+	}else{
+		lang = "en";
+	}
 	var material = {
 		atom:0,
 		molucule:1,
 		organism:2,
 		template:3
-	}
+	};
 	var cssLab = new aTemplate.View({
 		templates:[
 			"css_preview",
@@ -26,7 +33,7 @@ jQuery(function($){
 			"css_cheat"
 		],
 		data:{
-			index:0,
+			lang:lang,
 			components:[],
 			name:"",
 			newName:"",
