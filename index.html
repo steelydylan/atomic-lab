@@ -35,8 +35,8 @@
     </div>
   </header>
   <dialog class="mdl-dialog mdl-dialog--wide js-setting-dialog">
-  	<h4 class="mdl-dialog__title">設定</h4>
   	<script id="css_setting" type="text/template">
+  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
 				<p>Markup</p>
 				<p>
@@ -76,45 +76,45 @@
 				</label>
   		</div>
   		<div class="mdl-dialog__actions">
-					<button class="mdl-button close" data-action="closeSettingDialog">閉じる</button>
+					<button class="mdl-button close" data-action="closeSettingDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
   	</script>
   </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
-  	<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
   	<script id="css_remove" type="text/template">
+  		<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
   		<div class="mdl-dialog__content">
   			<p>{name}を削除してもよろしいですか？</p>
   			<div class="mdl-dialog__actions">
 					<button class="mdl-button" data-action="removeComponent">追加</button>
-					<button class="mdl-button close" data-action="closeRemoveDialog">キャンセル</button>
+					<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 				</div>
   		</div>
   	</script>
   </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-cheat-dialog">
-  	<h4 class="mdl-dialog__title">コンポーネント情報</h4>
-		<script id="css_cheat" type="text/template">
+  	<script id="css_cheat" type="text/template">
+  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
 				<div class="cssLabAbout">
-					<p><span class="cssLabLabel">名前</span>{cheatName}</p>
-					<p><span class="cssLabLabel">カテゴリー</span>{cheatCategory}</p>
-					<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+					<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{cheatName}</p>
+					<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{cheatCategory}</p>
+					<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About this component<!-- END lang:touch#en --></span></p>
 					<div class="cssLabExpArea">
 					{cheatAbout}[markdown]
 					</div>
 				</div>
 			</div>
 			<div class="mdl-dialog__actions">
-				<button class="mdl-button close" data-action="closeCheatDialog">キャンセル</button>
+				<button class="mdl-button close" data-action="closeCheatDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
 		</script>
   </dialog>
 	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
-		<h4 class="mdl-dialog__title">新規コンポーネント追加</h4>
 		<script id="css_new" type="text/template">
+			<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
-					<p>カテゴリー</p>
+					<p><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></p>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
 					  <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" checked data-bind="newCategory">
 					  <span class="mdl-radio__label">Atom</span>
@@ -137,14 +137,14 @@
 				</div>
 			</div>
 			<div class="mdl-dialog__actions">
-				<button class="mdl-button" data-action="addComponent">追加</button>
-				<button class="mdl-button close" data-action="closeDialog">キャンセル</button>
+				<button class="mdl-button" data-action="addComponent"><!-- BEGIN lang:touch#ja -->追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add<!-- END lang:touch#en --></button>
+				<button class="mdl-button close" data-action="closeDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
 		</script>
 	</dialog>
 	<dialog class="mdl-dialog mdl-dialog--wide js-edit-dialog">
-		<h4 class="mdl-dialog__title">コンポーネント編集</h4>
 		<script id="css_about" type="text/template">
+		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
 					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" checked data-bind="category">
@@ -172,8 +172,8 @@
 				</div>
 			</div>
 			<div class="mdl-dialog__actions">
-				<button class="mdl-button" data-action="doneEditDialog">変更</button>
-				<button class="mdl-button close" data-action="closeEditDialog">キャンセル</button>
+				<button class="mdl-button" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
+				<button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
 		</script>
 	</dialog>
@@ -183,7 +183,7 @@
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
 							<td colspan="3">
-								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog">新規コンポーネント</button>
+								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog"><!-- BEGIN lang:touch#ja -->新規コンポーネント<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->New Component<!-- END lang:touch#en --></button>
 							</td>
 						</tr>
 					</table>
@@ -256,10 +256,10 @@
 			<!-- END editMode:touch#preview -->
 			<!-- BEGIN editMode:touch#about -->
 			<div class="cssLabAbout">
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog">Edit</button>
-				<p><span class="cssLabLabel">名前</span>{name}</p>
-				<p><span class="cssLabLabel">カテゴリー</span>{category}</p>
-				<p><span class="cssLabLabel">このコンポーネントについて</span></p>
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog"><!-- BEGIN lang:touch#ja -->編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit<!-- END lang:touch#en --></button>
+				<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{name}</p>
+				<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{category}</p>
+				<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About This Component<!-- END lang:touch#en --></span></p>
 				<div class="cssLabExpArea">
 				{about}[markdown]
 				</div>
@@ -275,6 +275,7 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/stylus/0.32.1/stylus.js"></script>
 	<script src="ace/ace.js"></script>
 	<script src="js/jquery.js"></script>
+	<script src="js/jquery.i18n.properties.js"></script>
 	<script src="js/dist/main.min.js"></script>
 </body>
 </html>
