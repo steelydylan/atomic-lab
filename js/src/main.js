@@ -88,7 +88,7 @@ jQuery(function($){
 			    var strings = files.file('data').asText();
 			    var data = JSON.parse(strings);
 			    for(var key in data){
-		      	form.data[key] = data[key];
+		      	this.data[key] = data[key];
 		      }
 		      location.hash = "";
 				}else{
