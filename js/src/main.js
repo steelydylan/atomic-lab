@@ -5,6 +5,7 @@ jQuery(function($){
 	var defaultStyle = require("./defaultStyle.js");
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
+	var compiler = require("./compiler.js");
 	var editor = {};
 	var material = {
 		atom:0,
@@ -287,6 +288,12 @@ jQuery(function($){
 			},
 			runEditor:function(name){
 				var that = this;
+				var mode = "";
+				if(name == "html"){
+					mode = this.data.markup;
+				}else if(name == "css"){
+					mode = this.data.styling;
+				}
 				editor = ace.edit("js-"+name);
 				editor.setTheme("ace/theme/monokai");
 				editor.getSession().setMode("ace/mode/"+name);
@@ -340,8 +347,8 @@ jQuery(function($){
 							var defs = parser.getVarsFromTemplate(template);
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);
-							preview = preview.replace(comment,html);
-							preview += "<style>"+comp.css+"</style>"
+							preview = preview.replace(comment,compiler.markup[this.data.markup](html));
+							preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>"
 							break;
 						}
 					}
