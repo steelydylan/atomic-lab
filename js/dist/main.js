@@ -642,7 +642,8 @@ jQuery(function($){
 				var hash = zip.generate({ type: "base64" });
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
-				var url = location.href;
+				// var url = location.href;
+				var url = "http://localhost:3000";
 				location.hash = "";
 				$.ajax({
 					url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
@@ -653,12 +654,16 @@ jQuery(function($){
 	        }),
 	        dataType: "json",
 	        success: function(res) {
-	        	that.data.shortenedUrl = res;
-	        	that.update("text","css_share");
+	        	that.data.shortenedUrl = res.id;
+	        	that.update("html","css_share");
 	        	var dialog = document.querySelector(".js-share-dialog");
 						dialog.showModal();
 	        },
 				})
+			},
+			closeShareDialog:function(){
+				var dialog = document.querySelector(".js-share-dialog");
+				dialog.close();
 			},
 			//after updated
 			onUpdated:function(){
