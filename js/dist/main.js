@@ -885,7 +885,6 @@ jQuery(function($){
 							break;
 						}
 					}
-					preview = preview.replace(comment,"");
 				}
 				//todo delete
 				return parser.removeScript(preview);
