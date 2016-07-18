@@ -94,6 +94,10 @@ html {
 	margin: 0 0 0 20px;
 }
 
+.mdl-layout-title {
+	margin-right: 15px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
@@ -115,6 +119,10 @@ html {
 
 .sourceCopied.active {
 	background-color: rgba(0, 0, 0, .9);
+}
+
+.cssLabGithubButton {
+	margin-right: 10px;
 }
 
 .cssLabEditArea {
