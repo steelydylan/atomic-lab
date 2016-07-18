@@ -29,7 +29,7 @@
       	<a class="mdl-navigation__link" href="#" data-action="openSettingDialog">Settings</a>
         <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
         <a class="mdl-navigation__link" href="#"><label for="upload">Upload<input type="file" data-action="readSetting" class="cssLabRead" id="upload"></label></a>
-        <a class="mdl-navigation__link" href="#">Share</a>
+        <a class="mdl-navigation__link" href="#" data-action="openShareDialog">Share</a>
       </nav>
       </script>
     </div>
@@ -78,6 +78,17 @@
   		<div class="mdl-dialog__actions">
 					<button class="mdl-button close" data-action="closeSettingDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
+  	</script>
+  </dialog>
+  <dialog class="mdl-dialog mdl-dialog--wide js-share-dialog">
+  	<script id="css_share" type="text/template">
+  		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの共有<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Share Component<!-- END lang:touch#en --></h4>
+  		<div class="mdl-dialog__content">
+  			<p>{shortenedUrl}</p>
+  			<div class="mdl-dialog__actions">
+					<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+				</div>
+  		</div>
   	</script>
   </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
