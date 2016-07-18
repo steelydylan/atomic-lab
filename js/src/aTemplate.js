@@ -473,10 +473,12 @@
 			return this;
 		}
 	});
-	//for browserify
-	if (typeof module !== 'undefined' && module.exports) {
+	//for browserify amd and browser
+	if (typeof module !== 'undefined' && typeof exports === 'object') {
 		module.exports = aTemplate;
-	}else{
-		window.aTemplate = aTemplate;
+	} else if (typeof define === 'function' && define.amd) {
+		define(function() { return aTemplate; });
+	} else {
+		this.aTemplate = aTemplate;
 	}
 })();

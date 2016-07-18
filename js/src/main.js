@@ -1,4 +1,10 @@
 jQuery(function($){
+	var aTemplate = require("./aTemplate.js");
+	var saveAs = require("./fileSaver.min.js").saveAs;
+	var JSZip = require("./jszip.min.js");
+	var defaultStyle = require("./defaultStyle.js");
+	var marked = require("./marked.js");
+	var parser = require("./templateParser.js");
 	var editor = {};
 	var material = {
 		atom:0,
@@ -51,7 +57,7 @@ jQuery(function($){
 		},
 		method:{
 			initialize:function(){
-				this.setData(defs);
+				this.setData(defaultStyle);
 				this.loadData("css_lab");
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
@@ -123,7 +129,7 @@ jQuery(function($){
 				var zip = new JSZip();
 				zip.file("setting.json", JSON.stringify(this.data));
 				var content = zip.generate({type:"blob"});
-		  		saveAs(content, "css-lab.zip");
+		  	saveAs(content, "css-lab.zip");
 			},
 			searchComponents:function(){
 				this.data.searchStatus = "active";
