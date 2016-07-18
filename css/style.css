@@ -94,7 +94,7 @@ html {
 	margin: 0 0 0 20px;
 }
 
-.mdl-layout-title {
+.mdl-layout__header .mdl-layout-title {
 	margin-right: 15px;
 }
 
