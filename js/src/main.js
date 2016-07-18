@@ -107,7 +107,7 @@ jQuery(function($){
 				var strings = JSON.stringify(data);
 				zip.file('data', strings);
 				var hash = zip.generate({ type: "base64" });
-				var key = "AIzaSyCdcm5ff2CuJFOFv3pipcK0yZ77zHHcLGM";
+				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
 				var url = location.href;
 				location.hash = "";
