@@ -354,6 +354,7 @@ jQuery(function($){
 						if(name == comp.name){
 							//例えば、atomはmoluculeをincludeできない
 							if(this.data.id != comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+								//todo preview = preview.replace(comment,"");
 								break;
 							}
 							var template = parser.getTemplate(comp.html);

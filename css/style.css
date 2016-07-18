@@ -98,6 +98,10 @@ html {
 	margin-right: 15px;
 }
 
+.mdl-navigation__link label {
+	cursor: pointer;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
