@@ -581,7 +581,21 @@ jQuery(function($){
 				var search = this.data.search;
 				var components = this.data.components;
 				var searchCategory = this.data.searchCategory;
-				return components.filter(function(comp){
+				return components
+				.sort(function(a,b){
+					if(material[a.category] > material[b.category]){
+						return 1;
+					}else if(material[a.category] === material[b.category]){
+						if(a.name > b.name){
+							return 1;
+						}else{
+							return -1;
+						}
+					}else{
+						return -1;
+					}
+				})
+				.filter(function(comp){
 					if(searchCategory[material[comp.category]] != "true"){
 						return false;
 					}
