@@ -2,6 +2,8 @@ jQuery(function($){
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
+	require("./jszip-deflate.js")(JSZip);
+	require("./jszip-inflate.js")(JSZip);
 	var defaultStyle = require("./defaultStyle.js");
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
@@ -82,13 +84,14 @@ jQuery(function($){
 			initialize:function(){
 				if(location.hash){
 					var zip = new JSZip();
-			    var files = zip.load(location.hash, {
-			      base64: true
-			    });
-			    var strings = files.file('data').asText();
+					var hash = location.hash
+			    var strings = JSZip.base64.decode(hash);
+    			strings = JSZip.compressions.DEFLATE.uncompress(strings);
+    			strings = decodeURI(strings);
+    			console.log(strings);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
-		      	form.data[key] = data[key];
+		      	this.data[key] = data[key];
 		      }
 		      location.hash = "";
 				}else{
@@ -105,8 +108,14 @@ jQuery(function($){
 				var zip = new JSZip();
 				var data = this.data;
 				var strings = JSON.stringify(data);
+<<<<<<< HEAD
 				zip.file('data', strings);
 				var hash = zip.generate({ type: "base64" });
+=======
+				var hash = encodeURI(strings);
+				hash = JSZip.compressions.DEFLATE.compress(hash);
+    		hash = JSZip.base64.encode(hash);
+>>>>>>> master
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
 				var url = location.href;
@@ -120,12 +129,16 @@ jQuery(function($){
 	        }),
 	        dataType: "json",
 	        success: function(res) {
-	        	that.data.shortenedUrl = res;
-	        	that.update("text","css_share");
+	        	that.data.shortenedUrl = res.id;
+	        	that.update("html","css_share");
 	        	var dialog = document.querySelector(".js-share-dialog");
 						dialog.showModal();
 	        },
 				})
+			},
+			closeShareDialog:function(){
+				var dialog = document.querySelector(".js-share-dialog");
+				dialog.close();
 			},
 			//after updated
 			onUpdated:function(){
