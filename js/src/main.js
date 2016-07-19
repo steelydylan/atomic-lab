@@ -2,6 +2,8 @@ jQuery(function($){
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
+	var defrate = require("./jszip-deflate.js");
+	defrate(JSZip);
 	var defaultStyle = require("./defaultStyle.js");
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
@@ -82,10 +84,10 @@ jQuery(function($){
 			initialize:function(){
 				if(location.hash){
 					var zip = new JSZip();
-			    var files = zip.load(location.hash, {
-			      base64: true
-			    });
-			    var strings = files.file('data').asText();
+					var hash = location.hash
+			    var data = JSZip.base64.decode(hash);
+    			data = JSZip.compressions.DEFLATE.uncompress(data,{level:9});
+    			data = decodeURI(data);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -105,11 +107,11 @@ jQuery(function($){
 				var zip = new JSZip();
 				var data = this.data;
 				var strings = JSON.stringify(data);
-				zip.file('data', strings);
-				var hash = zip.generate({ type: "base64" });
+				var hash = encodeURI(strings);
+				hash = JSZip.compressions.DEFLATE.compress(hash);
+    		hash = JSZip.base64.encode(hash);
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
-				// var url = location.href;
 				var url = "http://localhost:3000";
 				location.hash = "";
 				$.ajax({

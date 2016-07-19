@@ -527,7 +527,7 @@ module.exports = {
 	}
 }
 
-},{"ejs":22,"jade":29}],3:[function(require,module,exports){
+},{"ejs":15,"jade":28}],3:[function(require,module,exports){
 module.exports = {"index":0,"components":[{"html":"<!-- template text=\"テスト\" -->\n<div class=\"hoverImgWrap\">\t\n\t<img src=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\">\n\t<div class=\"hoverImgCap\">\n\t\t<div class=\"hoverImgTable\">\n\t\t<h2 class=\"hoverImgTableTitle\">\n\t\t{text}</h2>\n\t\t<!-- Button modifier=\"button--red\" text=\"hoge\" -->\n\t\t</div>\n\t</div>\n</div>\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual -->\n<!-- /preview -->","css":".hoverImgWrap{\n\tposition:relative;\n}\n.hoverImgWrap img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.hoverImgCap{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTable{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTableTitle{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","name":"mainVisual","id":"EkaiahgUUnvbzXc","category":"organism","about":"## Snippet\n\n```html\n<!-- mainVisual -->\n```"},{"html":"<!-- template modifier=\"\" text=\"button\" -->\n<button class=\"button {modifier}\">{text}</button>\n<!-- /template -->\n\n<!-- preview -->\n<div class=\"container\">\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n<!-- Button -->\n</div>\n<!-- /preview -->","css":".button{\n    background: rgb(255,64,129);\n    color:#FFFFFF;\n    padding:5px;\n    border:none;\n    border-radius:3px;\n}\n\n.button--red{\n    background:red;\n}\n\n.container{\n    padding:10px;\n    background-color:#EEEEEE;\n}","name":"Button","id":"qYBWumVTL65hXV","category":"atom","about":"## Snippet\n\n```html\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n```"}],"name":"mainVisual","newName":"","css":".hoverImgWrap{\n\tposition:relative;\n}\n.hoverImgWrap img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.hoverImgCap{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTable{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTableTitle{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","html":"<!-- template text=\"テスト\" -->\n<div class=\"hoverImgWrap\">\t\n\t<img src=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\">\n\t<div class=\"hoverImgCap\">\n\t\t<div class=\"hoverImgTable\">\n\t\t<h2 class=\"hoverImgTableTitle\">\n\t\t{text}</h2>\n\t\t<!-- Button modifier=\"button--red\" text=\"hoge\" -->\n\t\t</div>\n\t</div>\n</div>\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual -->\n<!-- /preview -->","newCategory":"organism","category":"organism","about":"## Snippet\n\n```html\n<!-- mainVisual -->\n```","editMode":"css","search":"","searchCategory":["true","true","true","true"],"searchStatus":"active","cheatCategory":"organism","cheatAbout":"## Snippet\n\n```html\n<!-- mainVisual -->\n```","cheatName":"mainVisual","aTemplate_id":"oyhuxkgpIy","id":"EkaiahgUUnvbzXc","conc":""};
 
 },{}],4:[function(require,module,exports){
@@ -535,6 +535,8 @@ jQuery(function($){
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
+	var defrate = require("./jszip-deflate.js");
+	defrate(JSZip);
 	var defaultStyle = require("./defaultStyle.js");
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
@@ -615,10 +617,10 @@ jQuery(function($){
 			initialize:function(){
 				if(location.hash){
 					var zip = new JSZip();
-			    var files = zip.load(location.hash, {
-			      base64: true
-			    });
-			    var strings = files.file('data').asText();
+					var hash = location.hash
+			    var data = JSZip.base64.decode(hash);
+    			data = JSZip.compressions.DEFLATE.uncompress(data,{level:9});
+    			data = decodeURI(data);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -638,11 +640,11 @@ jQuery(function($){
 				var zip = new JSZip();
 				var data = this.data;
 				var strings = JSON.stringify(data);
-				zip.file('data', strings);
-				var hash = zip.generate({ type: "base64" });
+				var hash = encodeURI(strings);
+				hash = JSZip.compressions.DEFLATE.compress(hash);
+    		hash = JSZip.base64.encode(hash);
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
-				// var url = location.href;
 				var url = "http://localhost:3000";
 				location.hash = "";
 				$.ajax({
@@ -967,11 +969,1713 @@ jQuery(function($){
 	}).applyMethod("initialize");
 });
 
-},{"./aTemplate.js":1,"./compiler.js":2,"./defaultStyle.js":3,"./fileSaver.min.js":5,"./jszip.min.js":6,"./marked.js":7,"./templateParser.js":8}],5:[function(require,module,exports){
+},{"./aTemplate.js":1,"./compiler.js":2,"./defaultStyle.js":3,"./fileSaver.min.js":5,"./jszip-deflate.js":6,"./jszip.min.js":7,"./marked.js":8,"./templateParser.js":9}],5:[function(require,module,exports){
 /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
 var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/MSIE [1-9]\./.test(navigator.userAgent)){var t=e.document,n=function(){return e.URL||e.webkitURL||e},o=t.createElementNS("http://www.w3.org/1999/xhtml","a"),r="download"in o,i=function(n){var o=t.createEvent("MouseEvents");o.initMouseEvent("click",!0,!1,e,0,0,0,0,0,!1,!1,!1,!1,0,null),n.dispatchEvent(o)},a=e.webkitRequestFileSystem,c=e.requestFileSystem||a||e.mozRequestFileSystem,u=function(t){(e.setImmediate||e.setTimeout)(function(){throw t},0)},f="application/octet-stream",s=0,d=500,l=function(t){var o=function(){"string"==typeof t?n().revokeObjectURL(t):t.remove()};e.chrome?o():setTimeout(o,d)},v=function(e,t,n){t=[].concat(t);for(var o=t.length;o--;){var r=e["on"+t[o]];if("function"==typeof r)try{r.call(e,n||e)}catch(i){u(i)}}},p=function(e){return/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type)?new Blob(["\ufeff",e],{type:e.type}):e},w=function(t,u){t=p(t);var d,w,y,m=this,S=t.type,h=!1,O=function(){v(m,"writestart progress write writeend".split(" "))},E=function(){if((h||!d)&&(d=n().createObjectURL(t)),w)w.location.href=d;else{var o=e.open(d,"_blank");void 0==o&&"undefined"!=typeof safari&&(e.location.href=d)}m.readyState=m.DONE,O(),l(d)},R=function(e){return function(){return m.readyState!==m.DONE?e.apply(this,arguments):void 0}},b={create:!0,exclusive:!1};return m.readyState=m.INIT,u||(u="download"),r?(d=n().createObjectURL(t),o.href=d,o.download=u,i(o),m.readyState=m.DONE,O(),void l(d)):(e.chrome&&S&&S!==f&&(y=t.slice||t.webkitSlice,t=y.call(t,0,t.size,f),h=!0),a&&"download"!==u&&(u+=".download"),(S===f||a)&&(w=e),c?(s+=t.size,void c(e.TEMPORARY,s,R(function(e){e.root.getDirectory("saved",b,R(function(e){var n=function(){e.getFile(u,b,R(function(e){e.createWriter(R(function(n){n.onwriteend=function(t){w.location.href=e.toURL(),m.readyState=m.DONE,v(m,"writeend",t),l(e)},n.onerror=function(){var e=n.error;e.code!==e.ABORT_ERR&&E()},"writestart progress write abort".split(" ").forEach(function(e){n["on"+e]=m["on"+e]}),n.write(t),m.abort=function(){n.abort(),m.readyState=m.DONE},m.readyState=m.WRITING}),E)}),E)};e.getFile(u,{create:!1},R(function(e){e.remove(),n()}),R(function(e){e.code===e.NOT_FOUND_ERR?n():E()}))}),E)}),E)):void E())},y=w.prototype,m=function(e,t){return new w(e,t)};return"undefined"!=typeof navigator&&navigator.msSaveOrOpenBlob?function(e,t){return navigator.msSaveOrOpenBlob(p(e),t)}:(y.abort=function(){var e=this;e.readyState=e.DONE,v(e,"abort")},y.readyState=y.INIT=0,y.WRITING=1,y.DONE=2,y.error=y.onwritestart=y.onprogress=y.onwrite=y.onabort=y.onerror=y.onwriteend=null,m)}}("undefined"!=typeof self&&self||"undefined"!=typeof window&&window||this.content);"undefined"!=typeof module&&module.exports?module.exports.saveAs=saveAs:"undefined"!=typeof define&&null!==define&&null!=define.amd&&define([],function(){return saveAs});
 
 },{}],6:[function(require,module,exports){
+(function (factory) {
+	if (typeof module === 'object' && module.exports){
+		module.exports = factory;
+	}else{
+		factory(JSZip);
+	}
+}(function(JSZip){
+/*
+ * Port of a script by Masanao Izumo.
+ *
+ * Only changes : wrap all the variables in a function and add the
+ * main function to JSZip (DEFLATE compression method).
+ * Everything else was written by M. Izumo.
+ *
+ * Original code can be found here: http://www.onicos.com/staff/iz/amuse/javascript/expert/deflate.txt
+ */
+
+if(!JSZip)
+{
+   throw "JSZip not defined";
+}
+
+/*
+ * Original:
+ *   http://www.onicos.com/staff/iz/amuse/javascript/expert/deflate.txt
+ */
+
+/* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
+ * Version: 1.0.1
+ * LastModified: Dec 25 1999
+ */
+
+/* Interface:
+ * data = zip_deflate(src);
+ */
+
+/* constant parameters */
+var zip_WSIZE = 32768;		// Sliding Window size
+var zip_STORED_BLOCK = 0;
+var zip_STATIC_TREES = 1;
+var zip_DYN_TREES    = 2;
+
+/* for deflate */
+var zip_DEFAULT_LEVEL = 6;
+var zip_FULL_SEARCH = true;
+var zip_INBUFSIZ = 32768;	// Input buffer size
+var zip_INBUF_EXTRA = 64;	// Extra buffer
+var zip_OUTBUFSIZ = 1024 * 8;
+var zip_window_size = 2 * zip_WSIZE;
+var zip_MIN_MATCH = 3;
+var zip_MAX_MATCH = 258;
+var zip_BITS = 16;
+// for SMALL_MEM
+var zip_LIT_BUFSIZE = 0x2000;
+var zip_HASH_BITS = 13;
+// for MEDIUM_MEM
+// var zip_LIT_BUFSIZE = 0x4000;
+// var zip_HASH_BITS = 14;
+// for BIG_MEM
+// var zip_LIT_BUFSIZE = 0x8000;
+// var zip_HASH_BITS = 15;
+if(zip_LIT_BUFSIZE > zip_INBUFSIZ)
+	alert("error: zip_INBUFSIZ is too small");
+if((zip_WSIZE<<1) > (1<<zip_BITS))
+	alert("error: zip_WSIZE is too large");
+if(zip_HASH_BITS > zip_BITS-1)
+	alert("error: zip_HASH_BITS is too large");
+if(zip_HASH_BITS < 8 || zip_MAX_MATCH != 258)
+	alert("error: Code too clever");
+var zip_DIST_BUFSIZE = zip_LIT_BUFSIZE;
+var zip_HASH_SIZE = 1 << zip_HASH_BITS;
+var zip_HASH_MASK = zip_HASH_SIZE - 1;
+var zip_WMASK = zip_WSIZE - 1;
+var zip_NIL = 0; // Tail of hash chains
+var zip_TOO_FAR = 4096;
+var zip_MIN_LOOKAHEAD = zip_MAX_MATCH + zip_MIN_MATCH + 1;
+var zip_MAX_DIST = zip_WSIZE - zip_MIN_LOOKAHEAD;
+var zip_SMALLEST = 1;
+var zip_MAX_BITS = 15;
+var zip_MAX_BL_BITS = 7;
+var zip_LENGTH_CODES = 29;
+var zip_LITERALS =256;
+var zip_END_BLOCK = 256;
+var zip_L_CODES = zip_LITERALS + 1 + zip_LENGTH_CODES;
+var zip_D_CODES = 30;
+var zip_BL_CODES = 19;
+var zip_REP_3_6 = 16;
+var zip_REPZ_3_10 = 17;
+var zip_REPZ_11_138 = 18;
+var zip_HEAP_SIZE = 2 * zip_L_CODES + 1;
+var zip_H_SHIFT = parseInt((zip_HASH_BITS + zip_MIN_MATCH - 1) /
+			   zip_MIN_MATCH);
+
+/* variables */
+var zip_free_queue;
+var zip_qhead, zip_qtail;
+var zip_initflag;
+var zip_outbuf = null;
+var zip_outcnt, zip_outoff;
+var zip_complete;
+var zip_window;
+var zip_d_buf;
+var zip_l_buf;
+var zip_prev;
+var zip_bi_buf;
+var zip_bi_valid;
+var zip_block_start;
+var zip_ins_h;
+var zip_hash_head;
+var zip_prev_match;
+var zip_match_available;
+var zip_match_length;
+var zip_prev_length;
+var zip_strstart;
+var zip_match_start;
+var zip_eofile;
+var zip_lookahead;
+var zip_max_chain_length;
+var zip_max_lazy_match;
+var zip_compr_level;
+var zip_good_match;
+var zip_nice_match;
+var zip_dyn_ltree;
+var zip_dyn_dtree;
+var zip_static_ltree;
+var zip_static_dtree;
+var zip_bl_tree;
+var zip_l_desc;
+var zip_d_desc;
+var zip_bl_desc;
+var zip_bl_count;
+var zip_heap;
+var zip_heap_len;
+var zip_heap_max;
+var zip_depth;
+var zip_length_code;
+var zip_dist_code;
+var zip_base_length;
+var zip_base_dist;
+var zip_flag_buf;
+var zip_last_lit;
+var zip_last_dist;
+var zip_last_flags;
+var zip_flags;
+var zip_flag_bit;
+var zip_opt_len;
+var zip_static_len;
+var zip_deflate_data;
+var zip_deflate_pos;
+
+/* objects (deflate) */
+
+var zip_DeflateCT = function() {
+	this.fc = 0; // frequency count or bit string
+	this.dl = 0; // father node in Huffman tree or length of bit string
+}
+
+var zip_DeflateTreeDesc = function() {
+	this.dyn_tree = null;	// the dynamic tree
+	this.static_tree = null;	// corresponding static tree or NULL
+	this.extra_bits = null;	// extra bits for each code or NULL
+	this.extra_base = 0;	// base index for extra_bits
+	this.elems = 0;		// max number of elements in the tree
+	this.max_length = 0;	// max bit length for the codes
+	this.max_code = 0;		// largest code with non zero frequency
+}
+
+/* Values for max_lazy_match, good_match and max_chain_length, depending on
+ * the desired pack level (0..9). The values given below have been tuned to
+ * exclude worst case performance for pathological files. Better values may be
+ * found for specific files.
+ */
+var zip_DeflateConfiguration = function(a, b, c, d) {
+	this.good_length = a; // reduce lazy search above this match length
+	this.max_lazy = b;    // do not perform lazy search above this match length
+	this.nice_length = c; // quit search above this match length
+	this.max_chain = d;
+}
+
+var zip_DeflateBuffer = function() {
+	this.next = null;
+	this.len = 0;
+	this.ptr = new Array(zip_OUTBUFSIZ);
+	this.off = 0;
+}
+
+/* constant tables */
+var zip_extra_lbits = new Array(
+	0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0);
+var zip_extra_dbits = new Array(
+	0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13);
+var zip_extra_blbits = new Array(
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7);
+var zip_bl_order = new Array(
+	16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15);
+var zip_configuration_table = new Array(
+	new zip_DeflateConfiguration(0,    0,   0,    0),
+	new zip_DeflateConfiguration(4,    4,   8,    4),
+	new zip_DeflateConfiguration(4,    5,  16,    8),
+	new zip_DeflateConfiguration(4,    6,  32,   32),
+	new zip_DeflateConfiguration(4,    4,  16,   16),
+	new zip_DeflateConfiguration(8,   16,  32,   32),
+	new zip_DeflateConfiguration(8,   16, 128,  128),
+	new zip_DeflateConfiguration(8,   32, 128,  256),
+	new zip_DeflateConfiguration(32, 128, 258, 1024),
+	new zip_DeflateConfiguration(32, 258, 258, 4096));
+
+
+/* routines (deflate) */
+
+var zip_deflate_start = function(level) {
+	var i;
+
+	if(!level)
+	level = zip_DEFAULT_LEVEL;
+	else if(level < 1)
+	level = 1;
+	else if(level > 9)
+	level = 9;
+
+	zip_compr_level = level;
+	zip_initflag = false;
+	zip_eofile = false;
+	if(zip_outbuf != null)
+	return;
+
+	zip_free_queue = zip_qhead = zip_qtail = null;
+	zip_outbuf = new Array(zip_OUTBUFSIZ);
+	zip_window = new Array(zip_window_size);
+	zip_d_buf = new Array(zip_DIST_BUFSIZE);
+	zip_l_buf = new Array(zip_INBUFSIZ + zip_INBUF_EXTRA);
+	zip_prev = new Array(1 << zip_BITS);
+	zip_dyn_ltree = new Array(zip_HEAP_SIZE);
+	for(i = 0; i < zip_HEAP_SIZE; i++)
+	zip_dyn_ltree[i] = new zip_DeflateCT();
+	zip_dyn_dtree = new Array(2*zip_D_CODES+1);
+	for(i = 0; i < 2*zip_D_CODES+1; i++)
+	zip_dyn_dtree[i] = new zip_DeflateCT();
+	zip_static_ltree = new Array(zip_L_CODES+2);
+	for(i = 0; i < zip_L_CODES+2; i++)
+	zip_static_ltree[i] = new zip_DeflateCT();
+	zip_static_dtree = new Array(zip_D_CODES);
+	for(i = 0; i < zip_D_CODES; i++)
+	zip_static_dtree[i] = new zip_DeflateCT();
+	zip_bl_tree = new Array(2*zip_BL_CODES+1);
+	for(i = 0; i < 2*zip_BL_CODES+1; i++)
+	zip_bl_tree[i] = new zip_DeflateCT();
+	zip_l_desc = new zip_DeflateTreeDesc();
+	zip_d_desc = new zip_DeflateTreeDesc();
+	zip_bl_desc = new zip_DeflateTreeDesc();
+	zip_bl_count = new Array(zip_MAX_BITS+1);
+	zip_heap = new Array(2*zip_L_CODES+1);
+	zip_depth = new Array(2*zip_L_CODES+1);
+	zip_length_code = new Array(zip_MAX_MATCH-zip_MIN_MATCH+1);
+	zip_dist_code = new Array(512);
+	zip_base_length = new Array(zip_LENGTH_CODES);
+	zip_base_dist = new Array(zip_D_CODES);
+	zip_flag_buf = new Array(parseInt(zip_LIT_BUFSIZE / 8));
+}
+
+var zip_deflate_end = function() {
+	zip_free_queue = zip_qhead = zip_qtail = null;
+	zip_outbuf = null;
+	zip_window = null;
+	zip_d_buf = null;
+	zip_l_buf = null;
+	zip_prev = null;
+	zip_dyn_ltree = null;
+	zip_dyn_dtree = null;
+	zip_static_ltree = null;
+	zip_static_dtree = null;
+	zip_bl_tree = null;
+	zip_l_desc = null;
+	zip_d_desc = null;
+	zip_bl_desc = null;
+	zip_bl_count = null;
+	zip_heap = null;
+	zip_depth = null;
+	zip_length_code = null;
+	zip_dist_code = null;
+	zip_base_length = null;
+	zip_base_dist = null;
+	zip_flag_buf = null;
+}
+
+var zip_reuse_queue = function(p) {
+	p.next = zip_free_queue;
+	zip_free_queue = p;
+}
+
+var zip_new_queue = function() {
+	var p;
+
+	if(zip_free_queue != null)
+	{
+	p = zip_free_queue;
+	zip_free_queue = zip_free_queue.next;
+	}
+	else
+	p = new zip_DeflateBuffer();
+	p.next = null;
+	p.len = p.off = 0;
+
+	return p;
+}
+
+var zip_head1 = function(i) {
+	return zip_prev[zip_WSIZE + i];
+}
+
+var zip_head2 = function(i, val) {
+	return zip_prev[zip_WSIZE + i] = val;
+}
+
+/* put_byte is used for the compressed output, put_ubyte for the
+ * uncompressed output. However unlzw() uses window for its
+ * suffix table instead of its output buffer, so it does not use put_ubyte
+ * (to be cleaned up).
+ */
+var zip_put_byte = function(c) {
+	zip_outbuf[zip_outoff + zip_outcnt++] = c;
+	if(zip_outoff + zip_outcnt == zip_OUTBUFSIZ)
+	zip_qoutbuf();
+}
+
+/* Output a 16 bit value, lsb first */
+var zip_put_short = function(w) {
+	w &= 0xffff;
+	if(zip_outoff + zip_outcnt < zip_OUTBUFSIZ - 2) {
+	zip_outbuf[zip_outoff + zip_outcnt++] = (w & 0xff);
+	zip_outbuf[zip_outoff + zip_outcnt++] = (w >>> 8);
+	} else {
+	zip_put_byte(w & 0xff);
+	zip_put_byte(w >>> 8);
+	}
+}
+
+/* ==========================================================================
+ * Insert string s in the dictionary and set match_head to the previous head
+ * of the hash chain (the most recent string with same hash key). Return
+ * the previous length of the hash chain.
+ * IN  assertion: all calls to to INSERT_STRING are made with consecutive
+ *    input characters and the first MIN_MATCH bytes of s are valid
+ *    (except for the last MIN_MATCH-1 bytes of the input file).
+ */
+var zip_INSERT_STRING = function() {
+	zip_ins_h = ((zip_ins_h << zip_H_SHIFT)
+		 ^ (zip_window[zip_strstart + zip_MIN_MATCH - 1] & 0xff))
+	& zip_HASH_MASK;
+	zip_hash_head = zip_head1(zip_ins_h);
+	zip_prev[zip_strstart & zip_WMASK] = zip_hash_head;
+	zip_head2(zip_ins_h, zip_strstart);
+}
+
+/* Send a code of the given tree. c and tree must not have side effects */
+var zip_SEND_CODE = function(c, tree) {
+	zip_send_bits(tree[c].fc, tree[c].dl);
+}
+
+/* Mapping from a distance to a distance code. dist is the distance - 1 and
+ * must not have side effects. dist_code[256] and dist_code[257] are never
+ * used.
+ */
+var zip_D_CODE = function(dist) {
+	return (dist < 256 ? zip_dist_code[dist]
+		: zip_dist_code[256 + (dist>>7)]) & 0xff;
+}
+
+/* ==========================================================================
+ * Compares to subtrees, using the tree depth as tie breaker when
+ * the subtrees have equal frequency. This minimizes the worst case length.
+ */
+var zip_SMALLER = function(tree, n, m) {
+	return tree[n].fc < tree[m].fc ||
+	  (tree[n].fc == tree[m].fc && zip_depth[n] <= zip_depth[m]);
+}
+
+/* ==========================================================================
+ * read string data
+ */
+var zip_read_buff = function(buff, offset, n) {
+	var i;
+	for(i = 0; i < n && zip_deflate_pos < zip_deflate_data.length; i++)
+	buff[offset + i] =
+		zip_deflate_data.charCodeAt(zip_deflate_pos++) & 0xff;
+	return i;
+}
+
+/* ==========================================================================
+ * Initialize the "longest match" routines for a new file
+ */
+var zip_lm_init = function() {
+	var j;
+
+	/* Initialize the hash table. */
+	for(j = 0; j < zip_HASH_SIZE; j++)
+//	zip_head2(j, zip_NIL);
+	zip_prev[zip_WSIZE + j] = 0;
+	/* prev will be initialized on the fly */
+
+	/* Set the default configuration parameters:
+	 */
+	zip_max_lazy_match = zip_configuration_table[zip_compr_level].max_lazy;
+	zip_good_match     = zip_configuration_table[zip_compr_level].good_length;
+	if(!zip_FULL_SEARCH)
+	zip_nice_match = zip_configuration_table[zip_compr_level].nice_length;
+	zip_max_chain_length = zip_configuration_table[zip_compr_level].max_chain;
+
+	zip_strstart = 0;
+	zip_block_start = 0;
+
+	zip_lookahead = zip_read_buff(zip_window, 0, 2 * zip_WSIZE);
+	if(zip_lookahead <= 0) {
+	zip_eofile = true;
+	zip_lookahead = 0;
+	return;
+	}
+	zip_eofile = false;
+	/* Make sure that we always have enough lookahead. This is important
+	 * if input comes from a device such as a tty.
+	 */
+	while(zip_lookahead < zip_MIN_LOOKAHEAD && !zip_eofile)
+	zip_fill_window();
+
+	/* If lookahead < MIN_MATCH, ins_h is garbage, but this is
+	 * not important since only literal bytes will be emitted.
+	 */
+	zip_ins_h = 0;
+	for(j = 0; j < zip_MIN_MATCH - 1; j++) {
+//      UPDATE_HASH(ins_h, window[j]);
+	zip_ins_h = ((zip_ins_h << zip_H_SHIFT) ^ (zip_window[j] & 0xff)) & zip_HASH_MASK;
+	}
+}
+
+/* ==========================================================================
+ * Set match_start to the longest match starting at the given string and
+ * return its length. Matches shorter or equal to prev_length are discarded,
+ * in which case the result is equal to prev_length and match_start is
+ * garbage.
+ * IN assertions: cur_match is the head of the hash chain for the current
+ *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
+ */
+var zip_longest_match = function(cur_match) {
+	var chain_length = zip_max_chain_length; // max hash chain length
+	var scanp = zip_strstart; // current string
+	var matchp;		// matched string
+	var len;		// length of current match
+	var best_len = zip_prev_length;	// best match length so far
+
+	/* Stop when cur_match becomes <= limit. To simplify the code,
+	 * we prevent matches with the string of window index 0.
+	 */
+	var limit = (zip_strstart > zip_MAX_DIST ? zip_strstart - zip_MAX_DIST : zip_NIL);
+
+	var strendp = zip_strstart + zip_MAX_MATCH;
+	var scan_end1 = zip_window[scanp + best_len - 1];
+	var scan_end  = zip_window[scanp + best_len];
+
+	/* Do not waste too much time if we already have a good match: */
+	if(zip_prev_length >= zip_good_match)
+	chain_length >>= 2;
+
+//  Assert(encoder->strstart <= window_size-MIN_LOOKAHEAD, "insufficient lookahead");
+
+	do {
+//    Assert(cur_match < encoder->strstart, "no future");
+	matchp = cur_match;
+
+	/* Skip to next match if the match length cannot increase
+		* or if the match length is less than 2:
+	*/
+	if(zip_window[matchp + best_len]	!= scan_end  ||
+	   zip_window[matchp + best_len - 1]	!= scan_end1 ||
+	   zip_window[matchp]			!= zip_window[scanp] ||
+	   zip_window[++matchp]			!= zip_window[scanp + 1]) {
+		continue;
+	}
+
+	/* The check at best_len-1 can be removed because it will be made
+		 * again later. (This heuristic is not always a win.)
+		 * It is not necessary to compare scan[2] and match[2] since they
+		 * are always equal when the other bytes match, given that
+		 * the hash keys are equal and that HASH_BITS >= 8.
+		 */
+	scanp += 2;
+	matchp++;
+
+	/* We check for insufficient lookahead only every 8th comparison;
+		 * the 256th check will be made at strstart+258.
+		 */
+	do {
+	} while(zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		zip_window[++scanp] == zip_window[++matchp] &&
+		scanp < strendp);
+
+	  len = zip_MAX_MATCH - (strendp - scanp);
+	  scanp = strendp - zip_MAX_MATCH;
+
+	  if(len > best_len) {
+	  zip_match_start = cur_match;
+	  best_len = len;
+	  if(zip_FULL_SEARCH) {
+		  if(len >= zip_MAX_MATCH) break;
+	  } else {
+		  if(len >= zip_nice_match) break;
+	  }
+
+	  scan_end1  = zip_window[scanp + best_len-1];
+	  scan_end   = zip_window[scanp + best_len];
+	  }
+	} while((cur_match = zip_prev[cur_match & zip_WMASK]) > limit
+		&& --chain_length != 0);
+
+	return best_len;
+}
+
+/* ==========================================================================
+ * Fill the window when the lookahead becomes insufficient.
+ * Updates strstart and lookahead, and sets eofile if end of input file.
+ * IN assertion: lookahead < MIN_LOOKAHEAD && strstart + lookahead > 0
+ * OUT assertions: at least one byte has been read, or eofile is set;
+ *    file reads are performed for at least two bytes (required for the
+ *    translate_eol option).
+ */
+var zip_fill_window = function() {
+	var n, m;
+
+	// Amount of free space at the end of the window.
+	var more = zip_window_size - zip_lookahead - zip_strstart;
+
+	/* If the window is almost full and there is insufficient lookahead,
+	 * move the upper half to the lower one to make room in the upper half.
+	 */
+	if(more == -1) {
+	/* Very unlikely, but possible on 16 bit machine if strstart == 0
+		 * and lookahead == 1 (input done one byte at time)
+		 */
+	more--;
+	} else if(zip_strstart >= zip_WSIZE + zip_MAX_DIST) {
+	/* By the IN assertion, the window is not empty so we can't confuse
+		 * more == 0 with more == 64K on a 16 bit machine.
+		 */
+//	Assert(window_size == (ulg)2*WSIZE, "no sliding with BIG_MEM");
+
+//	System.arraycopy(window, WSIZE, window, 0, WSIZE);
+	for(n = 0; n < zip_WSIZE; n++)
+		zip_window[n] = zip_window[n + zip_WSIZE];
+
+	zip_match_start -= zip_WSIZE;
+	zip_strstart    -= zip_WSIZE; /* we now have strstart >= MAX_DIST: */
+	zip_block_start -= zip_WSIZE;
+
+	for(n = 0; n < zip_HASH_SIZE; n++) {
+		m = zip_head1(n);
+		zip_head2(n, m >= zip_WSIZE ? m - zip_WSIZE : zip_NIL);
+	}
+	for(n = 0; n < zip_WSIZE; n++) {
+		/* If n is not on any hash chain, prev[n] is garbage but
+		 * its value will never be used.
+		 */
+		m = zip_prev[n];
+		zip_prev[n] = (m >= zip_WSIZE ? m - zip_WSIZE : zip_NIL);
+	}
+	more += zip_WSIZE;
+	}
+	// At this point, more >= 2
+	if(!zip_eofile) {
+	n = zip_read_buff(zip_window, zip_strstart + zip_lookahead, more);
+	if(n <= 0)
+		zip_eofile = true;
+	else
+		zip_lookahead += n;
+	}
+}
+
+/* ==========================================================================
+ * Processes a new input file and return its compressed length. This
+ * function does not perform lazy evaluationof matches and inserts
+ * new strings in the dictionary only for unmatched strings or for short
+ * matches. It is used only for the fast compression options.
+ */
+var zip_deflate_fast = function() {
+	while(zip_lookahead != 0 && zip_qhead == null) {
+	var flush; // set if current block must be flushed
+
+	/* Insert the string window[strstart .. strstart+2] in the
+	 * dictionary, and set hash_head to the head of the hash chain:
+	 */
+	zip_INSERT_STRING();
+
+	/* Find the longest match, discarding those <= prev_length.
+	 * At this point we have always match_length < MIN_MATCH
+	 */
+	if(zip_hash_head != zip_NIL &&
+	   zip_strstart - zip_hash_head <= zip_MAX_DIST) {
+		/* To simplify the code, we prevent matches with the string
+		 * of window index 0 (in particular we have to avoid a match
+		 * of the string with itself at the start of the input file).
+		 */
+		zip_match_length = zip_longest_match(zip_hash_head);
+		/* longest_match() sets match_start */
+		if(zip_match_length > zip_lookahead)
+		zip_match_length = zip_lookahead;
+	}
+	if(zip_match_length >= zip_MIN_MATCH) {
+//	    check_match(strstart, match_start, match_length);
+
+		flush = zip_ct_tally(zip_strstart - zip_match_start,
+				 zip_match_length - zip_MIN_MATCH);
+		zip_lookahead -= zip_match_length;
+
+		/* Insert new strings in the hash table only if the match length
+		 * is not too large. This saves time but degrades compression.
+		 */
+		if(zip_match_length <= zip_max_lazy_match) {
+		zip_match_length--; // string at strstart already in hash table
+		do {
+			zip_strstart++;
+			zip_INSERT_STRING();
+			/* strstart never exceeds WSIZE-MAX_MATCH, so there are
+			 * always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH
+			 * these bytes are garbage, but it does not matter since
+			 * the next lookahead bytes will be emitted as literals.
+			 */
+		} while(--zip_match_length != 0);
+		zip_strstart++;
+		} else {
+		zip_strstart += zip_match_length;
+		zip_match_length = 0;
+		zip_ins_h = zip_window[zip_strstart] & 0xff;
+//		UPDATE_HASH(ins_h, window[strstart + 1]);
+		zip_ins_h = ((zip_ins_h<<zip_H_SHIFT) ^ (zip_window[zip_strstart + 1] & 0xff)) & zip_HASH_MASK;
+
+//#if MIN_MATCH != 3
+//		Call UPDATE_HASH() MIN_MATCH-3 more times
+//#endif
+
+		}
+	} else {
+		/* No match, output a literal byte */
+		flush = zip_ct_tally(0, zip_window[zip_strstart] & 0xff);
+		zip_lookahead--;
+		zip_strstart++;
+	}
+	if(flush) {
+		zip_flush_block(0);
+		zip_block_start = zip_strstart;
+	}
+
+	/* Make sure that we always have enough lookahead, except
+	 * at the end of the input file. We need MAX_MATCH bytes
+	 * for the next match, plus MIN_MATCH bytes to insert the
+	 * string following the next match.
+	 */
+	while(zip_lookahead < zip_MIN_LOOKAHEAD && !zip_eofile)
+		zip_fill_window();
+	}
+}
+
+var zip_deflate_better = function() {
+	/* Process the input block. */
+	while(zip_lookahead != 0 && zip_qhead == null) {
+	/* Insert the string window[strstart .. strstart+2] in the
+	 * dictionary, and set hash_head to the head of the hash chain:
+	 */
+	zip_INSERT_STRING();
+
+	/* Find the longest match, discarding those <= prev_length.
+	 */
+	zip_prev_length = zip_match_length;
+	zip_prev_match = zip_match_start;
+	zip_match_length = zip_MIN_MATCH - 1;
+
+	if(zip_hash_head != zip_NIL &&
+	   zip_prev_length < zip_max_lazy_match &&
+	   zip_strstart - zip_hash_head <= zip_MAX_DIST) {
+		/* To simplify the code, we prevent matches with the string
+		 * of window index 0 (in particular we have to avoid a match
+		 * of the string with itself at the start of the input file).
+		 */
+		zip_match_length = zip_longest_match(zip_hash_head);
+		/* longest_match() sets match_start */
+		if(zip_match_length > zip_lookahead)
+		zip_match_length = zip_lookahead;
+
+		/* Ignore a length 3 match if it is too distant: */
+		if(zip_match_length == zip_MIN_MATCH &&
+		   zip_strstart - zip_match_start > zip_TOO_FAR) {
+		/* If prev_match is also MIN_MATCH, match_start is garbage
+		 * but we will ignore the current match anyway.
+		 */
+		zip_match_length--;
+		}
+	}
+	/* If there was a match at the previous step and the current
+	 * match is not better, output the previous match:
+	 */
+	if(zip_prev_length >= zip_MIN_MATCH &&
+	   zip_match_length <= zip_prev_length) {
+		var flush; // set if current block must be flushed
+
+//	    check_match(strstart - 1, prev_match, prev_length);
+		flush = zip_ct_tally(zip_strstart - 1 - zip_prev_match,
+				 zip_prev_length - zip_MIN_MATCH);
+
+		/* Insert in hash table all strings up to the end of the match.
+		 * strstart-1 and strstart are already inserted.
+		 */
+		zip_lookahead -= zip_prev_length - 1;
+		zip_prev_length -= 2;
+		do {
+		zip_strstart++;
+		zip_INSERT_STRING();
+		/* strstart never exceeds WSIZE-MAX_MATCH, so there are
+		 * always MIN_MATCH bytes ahead. If lookahead < MIN_MATCH
+		 * these bytes are garbage, but it does not matter since the
+		 * next lookahead bytes will always be emitted as literals.
+		 */
+		} while(--zip_prev_length != 0);
+		zip_match_available = 0;
+		zip_match_length = zip_MIN_MATCH - 1;
+		zip_strstart++;
+		if(flush) {
+		zip_flush_block(0);
+		zip_block_start = zip_strstart;
+		}
+	} else if(zip_match_available != 0) {
+		/* If there was no match at the previous position, output a
+		 * single literal. If there was a match but the current match
+		 * is longer, truncate the previous match to a single literal.
+		 */
+		if(zip_ct_tally(0, zip_window[zip_strstart - 1] & 0xff)) {
+		zip_flush_block(0);
+		zip_block_start = zip_strstart;
+		}
+		zip_strstart++;
+		zip_lookahead--;
+	} else {
+		/* There is no previous match to compare with, wait for
+		 * the next step to decide.
+		 */
+		zip_match_available = 1;
+		zip_strstart++;
+		zip_lookahead--;
+	}
+
+	/* Make sure that we always have enough lookahead, except
+	 * at the end of the input file. We need MAX_MATCH bytes
+	 * for the next match, plus MIN_MATCH bytes to insert the
+	 * string following the next match.
+	 */
+	while(zip_lookahead < zip_MIN_LOOKAHEAD && !zip_eofile)
+		zip_fill_window();
+	}
+}
+
+var zip_init_deflate = function() {
+	if(zip_eofile)
+	return;
+	zip_bi_buf = 0;
+	zip_bi_valid = 0;
+	zip_ct_init();
+	zip_lm_init();
+
+	zip_qhead = null;
+	zip_outcnt = 0;
+	zip_outoff = 0;
+
+	if(zip_compr_level <= 3)
+	{
+	zip_prev_length = zip_MIN_MATCH - 1;
+	zip_match_length = 0;
+	}
+	else
+	{
+	zip_match_length = zip_MIN_MATCH - 1;
+	zip_match_available = 0;
+	}
+
+	zip_complete = false;
+}
+
+/* ==========================================================================
+ * Same as above, but achieves better compression. We use a lazy
+ * evaluation for matches: a match is finally adopted only if there is
+ * no better match at the next window position.
+ */
+var zip_deflate_internal = function(buff, off, buff_size) {
+	var n;
+
+	if(!zip_initflag)
+	{
+	zip_init_deflate();
+	zip_initflag = true;
+	if(zip_lookahead == 0) { // empty
+		zip_complete = true;
+		return 0;
+	}
+	}
+
+	if((n = zip_qcopy(buff, off, buff_size)) == buff_size)
+	return buff_size;
+
+	if(zip_complete)
+	return n;
+
+	if(zip_compr_level <= 3) // optimized for speed
+	zip_deflate_fast();
+	else
+	zip_deflate_better();
+	if(zip_lookahead == 0) {
+	if(zip_match_available != 0)
+		zip_ct_tally(0, zip_window[zip_strstart - 1] & 0xff);
+	zip_flush_block(1);
+	zip_complete = true;
+	}
+	return n + zip_qcopy(buff, n + off, buff_size - n);
+}
+
+var zip_qcopy = function(buff, off, buff_size) {
+	var n, i, j;
+
+	n = 0;
+	while(zip_qhead != null && n < buff_size)
+	{
+	i = buff_size - n;
+	if(i > zip_qhead.len)
+		i = zip_qhead.len;
+//      System.arraycopy(qhead.ptr, qhead.off, buff, off + n, i);
+	for(j = 0; j < i; j++)
+		buff[off + n + j] = zip_qhead.ptr[zip_qhead.off + j];
+
+	zip_qhead.off += i;
+	zip_qhead.len -= i;
+	n += i;
+	if(zip_qhead.len == 0) {
+		var p;
+		p = zip_qhead;
+		zip_qhead = zip_qhead.next;
+		zip_reuse_queue(p);
+	}
+	}
+
+	if(n == buff_size)
+	return n;
+
+	if(zip_outoff < zip_outcnt) {
+	i = buff_size - n;
+	if(i > zip_outcnt - zip_outoff)
+		i = zip_outcnt - zip_outoff;
+	// System.arraycopy(outbuf, outoff, buff, off + n, i);
+	for(j = 0; j < i; j++)
+		buff[off + n + j] = zip_outbuf[zip_outoff + j];
+	zip_outoff += i;
+	n += i;
+	if(zip_outcnt == zip_outoff)
+		zip_outcnt = zip_outoff = 0;
+	}
+	return n;
+}
+
+/* ==========================================================================
+ * Allocate the match buffer, initialize the various tables and save the
+ * location of the internal file attribute (ascii/binary) and method
+ * (DEFLATE/STORE).
+ */
+var zip_ct_init = function() {
+	var n;	// iterates over tree elements
+	var bits;	// bit counter
+	var length;	// length value
+	var code;	// code value
+	var dist;	// distance index
+
+	if(zip_static_dtree[0].dl != 0) return; // ct_init already called
+
+	zip_l_desc.dyn_tree		= zip_dyn_ltree;
+	zip_l_desc.static_tree	= zip_static_ltree;
+	zip_l_desc.extra_bits	= zip_extra_lbits;
+	zip_l_desc.extra_base	= zip_LITERALS + 1;
+	zip_l_desc.elems		= zip_L_CODES;
+	zip_l_desc.max_length	= zip_MAX_BITS;
+	zip_l_desc.max_code		= 0;
+
+	zip_d_desc.dyn_tree		= zip_dyn_dtree;
+	zip_d_desc.static_tree	= zip_static_dtree;
+	zip_d_desc.extra_bits	= zip_extra_dbits;
+	zip_d_desc.extra_base	= 0;
+	zip_d_desc.elems		= zip_D_CODES;
+	zip_d_desc.max_length	= zip_MAX_BITS;
+	zip_d_desc.max_code		= 0;
+
+	zip_bl_desc.dyn_tree	= zip_bl_tree;
+	zip_bl_desc.static_tree	= null;
+	zip_bl_desc.extra_bits	= zip_extra_blbits;
+	zip_bl_desc.extra_base	= 0;
+	zip_bl_desc.elems		= zip_BL_CODES;
+	zip_bl_desc.max_length	= zip_MAX_BL_BITS;
+	zip_bl_desc.max_code	= 0;
+
+	// Initialize the mapping length (0..255) -> length code (0..28)
+	length = 0;
+	for(code = 0; code < zip_LENGTH_CODES-1; code++) {
+	zip_base_length[code] = length;
+	for(n = 0; n < (1<<zip_extra_lbits[code]); n++)
+		zip_length_code[length++] = code;
+	}
+	// Assert (length == 256, "ct_init: length != 256");
+
+	/* Note that the length 255 (match length 258) can be represented
+	 * in two different ways: code 284 + 5 bits or code 285, so we
+	 * overwrite length_code[255] to use the best encoding:
+	 */
+	zip_length_code[length-1] = code;
+
+	/* Initialize the mapping dist (0..32K) -> dist code (0..29) */
+	dist = 0;
+	for(code = 0 ; code < 16; code++) {
+	zip_base_dist[code] = dist;
+	for(n = 0; n < (1<<zip_extra_dbits[code]); n++) {
+		zip_dist_code[dist++] = code;
+	}
+	}
+	// Assert (dist == 256, "ct_init: dist != 256");
+	dist >>= 7; // from now on, all distances are divided by 128
+	for( ; code < zip_D_CODES; code++) {
+	zip_base_dist[code] = dist << 7;
+	for(n = 0; n < (1<<(zip_extra_dbits[code]-7)); n++)
+		zip_dist_code[256 + dist++] = code;
+	}
+	// Assert (dist == 256, "ct_init: 256+dist != 512");
+
+	// Construct the codes of the static literal tree
+	for(bits = 0; bits <= zip_MAX_BITS; bits++)
+	zip_bl_count[bits] = 0;
+	n = 0;
+	while(n <= 143) { zip_static_ltree[n++].dl = 8; zip_bl_count[8]++; }
+	while(n <= 255) { zip_static_ltree[n++].dl = 9; zip_bl_count[9]++; }
+	while(n <= 279) { zip_static_ltree[n++].dl = 7; zip_bl_count[7]++; }
+	while(n <= 287) { zip_static_ltree[n++].dl = 8; zip_bl_count[8]++; }
+	/* Codes 286 and 287 do not exist, but we must include them in the
+	 * tree construction to get a canonical Huffman tree (longest code
+	 * all ones)
+	 */
+	zip_gen_codes(zip_static_ltree, zip_L_CODES + 1);
+
+	/* The static distance tree is trivial: */
+	for(n = 0; n < zip_D_CODES; n++) {
+	zip_static_dtree[n].dl = 5;
+	zip_static_dtree[n].fc = zip_bi_reverse(n, 5);
+	}
+
+	// Initialize the first block of the first file:
+	zip_init_block();
+}
+
+/* ==========================================================================
+ * Initialize a new block.
+ */
+var zip_init_block = function() {
+	var n; // iterates over tree elements
+
+	// Initialize the trees.
+	for(n = 0; n < zip_L_CODES;  n++) zip_dyn_ltree[n].fc = 0;
+	for(n = 0; n < zip_D_CODES;  n++) zip_dyn_dtree[n].fc = 0;
+	for(n = 0; n < zip_BL_CODES; n++) zip_bl_tree[n].fc = 0;
+
+	zip_dyn_ltree[zip_END_BLOCK].fc = 1;
+	zip_opt_len = zip_static_len = 0;
+	zip_last_lit = zip_last_dist = zip_last_flags = 0;
+	zip_flags = 0;
+	zip_flag_bit = 1;
+}
+
+/* ==========================================================================
+ * Restore the heap property by moving down the tree starting at node k,
+ * exchanging a node with the smallest of its two sons if necessary, stopping
+ * when the heap property is re-established (each father smaller than its
+ * two sons).
+ */
+var zip_pqdownheap = function(
+	tree,	// the tree to restore
+	k) {	// node to move down
+	var v = zip_heap[k];
+	var j = k << 1;	// left son of k
+
+	while(j <= zip_heap_len) {
+	// Set j to the smallest of the two sons:
+	if(j < zip_heap_len &&
+	   zip_SMALLER(tree, zip_heap[j + 1], zip_heap[j]))
+		j++;
+
+	// Exit if v is smaller than both sons
+	if(zip_SMALLER(tree, v, zip_heap[j]))
+		break;
+
+	// Exchange v with the smallest son
+	zip_heap[k] = zip_heap[j];
+	k = j;
+
+	// And continue down the tree, setting j to the left son of k
+	j <<= 1;
+	}
+	zip_heap[k] = v;
+}
+
+/* ==========================================================================
+ * Compute the optimal bit lengths for a tree and update the total bit length
+ * for the current block.
+ * IN assertion: the fields freq and dad are set, heap[heap_max] and
+ *    above are the tree nodes sorted by increasing frequency.
+ * OUT assertions: the field len is set to the optimal bit length, the
+ *     array bl_count contains the frequencies for each bit length.
+ *     The length opt_len is updated; static_len is also updated if stree is
+ *     not null.
+ */
+var zip_gen_bitlen = function(desc) { // the tree descriptor
+	var tree		= desc.dyn_tree;
+	var extra		= desc.extra_bits;
+	var base		= desc.extra_base;
+	var max_code	= desc.max_code;
+	var max_length	= desc.max_length;
+	var stree		= desc.static_tree;
+	var h;		// heap index
+	var n, m;		// iterate over the tree elements
+	var bits;		// bit length
+	var xbits;		// extra bits
+	var f;		// frequency
+	var overflow = 0;	// number of elements with bit length too large
+
+	for(bits = 0; bits <= zip_MAX_BITS; bits++)
+	zip_bl_count[bits] = 0;
+
+	/* In a first pass, compute the optimal bit lengths (which may
+	 * overflow in the case of the bit length tree).
+	 */
+	tree[zip_heap[zip_heap_max]].dl = 0; // root of the heap
+
+	for(h = zip_heap_max + 1; h < zip_HEAP_SIZE; h++) {
+	n = zip_heap[h];
+	bits = tree[tree[n].dl].dl + 1;
+	if(bits > max_length) {
+		bits = max_length;
+		overflow++;
+	}
+	tree[n].dl = bits;
+	// We overwrite tree[n].dl which is no longer needed
+
+	if(n > max_code)
+		continue; // not a leaf node
+
+	zip_bl_count[bits]++;
+	xbits = 0;
+	if(n >= base)
+		xbits = extra[n - base];
+	f = tree[n].fc;
+	zip_opt_len += f * (bits + xbits);
+	if(stree != null)
+		zip_static_len += f * (stree[n].dl + xbits);
+	}
+	if(overflow == 0)
+	return;
+
+	// This happens for example on obj2 and pic of the Calgary corpus
+
+	// Find the first bit length which could increase:
+	do {
+	bits = max_length - 1;
+	while(zip_bl_count[bits] == 0)
+		bits--;
+	zip_bl_count[bits]--;		// move one leaf down the tree
+	zip_bl_count[bits + 1] += 2;	// move one overflow item as its brother
+	zip_bl_count[max_length]--;
+	/* The brother of the overflow item also moves one step up,
+	 * but this does not affect bl_count[max_length]
+	 */
+	overflow -= 2;
+	} while(overflow > 0);
+
+	/* Now recompute all bit lengths, scanning in increasing frequency.
+	 * h is still equal to HEAP_SIZE. (It is simpler to reconstruct all
+	 * lengths instead of fixing only the wrong ones. This idea is taken
+	 * from 'ar' written by Haruhiko Okumura.)
+	 */
+	for(bits = max_length; bits != 0; bits--) {
+	n = zip_bl_count[bits];
+	while(n != 0) {
+		m = zip_heap[--h];
+		if(m > max_code)
+		continue;
+		if(tree[m].dl != bits) {
+		zip_opt_len += (bits - tree[m].dl) * tree[m].fc;
+		tree[m].fc = bits;
+		}
+		n--;
+	}
+	}
+}
+
+  /* ==========================================================================
+   * Generate the codes for a given tree and bit counts (which need not be
+   * optimal).
+   * IN assertion: the array bl_count contains the bit length statistics for
+   * the given tree and the field len is set for all tree elements.
+   * OUT assertion: the field code is set for all tree elements of non
+   *     zero code length.
+   */
+var zip_gen_codes = function(tree,	// the tree to decorate
+		   max_code) {	// largest code with non zero frequency
+	var next_code = new Array(zip_MAX_BITS+1); // next code value for each bit length
+	var code = 0;		// running code value
+	var bits;			// bit index
+	var n;			// code index
+
+	/* The distribution counts are first used to generate the code values
+	 * without bit reversal.
+	 */
+	for(bits = 1; bits <= zip_MAX_BITS; bits++) {
+	code = ((code + zip_bl_count[bits-1]) << 1);
+	next_code[bits] = code;
+	}
+
+	/* Check that the bit counts in bl_count are consistent. The last code
+	 * must be all ones.
+	 */
+//    Assert (code + encoder->bl_count[MAX_BITS]-1 == (1<<MAX_BITS)-1,
+//	    "inconsistent bit counts");
+//    Tracev((stderr,"\ngen_codes: max_code %d ", max_code));
+
+	for(n = 0; n <= max_code; n++) {
+	var len = tree[n].dl;
+	if(len == 0)
+		continue;
+	// Now reverse the bits
+	tree[n].fc = zip_bi_reverse(next_code[len]++, len);
+
+//      Tracec(tree != static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ",
+//	  n, (isgraph(n) ? n : ' '), len, tree[n].fc, next_code[len]-1));
+	}
+}
+
+/* ==========================================================================
+ * Construct one Huffman tree and assigns the code bit strings and lengths.
+ * Update the total bit length for the current block.
+ * IN assertion: the field freq is set for all tree elements.
+ * OUT assertions: the fields len and code are set to the optimal bit length
+ *     and corresponding code. The length opt_len is updated; static_len is
+ *     also updated if stree is not null. The field max_code is set.
+ */
+var zip_build_tree = function(desc) { // the tree descriptor
+	var tree	= desc.dyn_tree;
+	var stree	= desc.static_tree;
+	var elems	= desc.elems;
+	var n, m;		// iterate over heap elements
+	var max_code = -1;	// largest code with non zero frequency
+	var node = elems;	// next internal node of the tree
+
+	/* Construct the initial heap, with least frequent element in
+	 * heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n+1].
+	 * heap[0] is not used.
+	 */
+	zip_heap_len = 0;
+	zip_heap_max = zip_HEAP_SIZE;
+
+	for(n = 0; n < elems; n++) {
+	if(tree[n].fc != 0) {
+		zip_heap[++zip_heap_len] = max_code = n;
+		zip_depth[n] = 0;
+	} else
+		tree[n].dl = 0;
+	}
+
+	/* The pkzip format requires that at least one distance code exists,
+	 * and that at least one bit should be sent even if there is only one
+	 * possible code. So to avoid special checks later on we force at least
+	 * two codes of non zero frequency.
+	 */
+	while(zip_heap_len < 2) {
+	var xnew = zip_heap[++zip_heap_len] = (max_code < 2 ? ++max_code : 0);
+	tree[xnew].fc = 1;
+	zip_depth[xnew] = 0;
+	zip_opt_len--;
+	if(stree != null)
+		zip_static_len -= stree[xnew].dl;
+	// new is 0 or 1 so it does not have extra bits
+	}
+	desc.max_code = max_code;
+
+	/* The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,
+	 * establish sub-heaps of increasing lengths:
+	 */
+	for(n = zip_heap_len >> 1; n >= 1; n--)
+	zip_pqdownheap(tree, n);
+
+	/* Construct the Huffman tree by repeatedly combining the least two
+	 * frequent nodes.
+	 */
+	do {
+	n = zip_heap[zip_SMALLEST];
+	zip_heap[zip_SMALLEST] = zip_heap[zip_heap_len--];
+	zip_pqdownheap(tree, zip_SMALLEST);
+
+	m = zip_heap[zip_SMALLEST];  // m = node of next least frequency
+
+	// keep the nodes sorted by frequency
+	zip_heap[--zip_heap_max] = n;
+	zip_heap[--zip_heap_max] = m;
+
+	// Create a new node father of n and m
+	tree[node].fc = tree[n].fc + tree[m].fc;
+//	depth[node] = (char)(MAX(depth[n], depth[m]) + 1);
+	if(zip_depth[n] > zip_depth[m] + 1)
+		zip_depth[node] = zip_depth[n];
+	else
+		zip_depth[node] = zip_depth[m] + 1;
+	tree[n].dl = tree[m].dl = node;
+
+	// and insert the new node in the heap
+	zip_heap[zip_SMALLEST] = node++;
+	zip_pqdownheap(tree, zip_SMALLEST);
+
+	} while(zip_heap_len >= 2);
+
+	zip_heap[--zip_heap_max] = zip_heap[zip_SMALLEST];
+
+	/* At this point, the fields freq and dad are set. We can now
+	 * generate the bit lengths.
+	 */
+	zip_gen_bitlen(desc);
+
+	// The field len is now set, we can generate the bit codes
+	zip_gen_codes(tree, max_code);
+}
+
+/* ==========================================================================
+ * Scan a literal or distance tree to determine the frequencies of the codes
+ * in the bit length tree. Updates opt_len to take into account the repeat
+ * counts. (The contribution of the bit length codes will be added later
+ * during the construction of bl_tree.)
+ */
+var zip_scan_tree = function(tree,// the tree to be scanned
+			   max_code) {  // and its largest code of non zero frequency
+	var n;			// iterates over all tree elements
+	var prevlen = -1;		// last emitted length
+	var curlen;			// length of current code
+	var nextlen = tree[0].dl;	// length of next code
+	var count = 0;		// repeat count of the current code
+	var max_count = 7;		// max repeat count
+	var min_count = 4;		// min repeat count
+
+	if(nextlen == 0) {
+	max_count = 138;
+	min_count = 3;
+	}
+	tree[max_code + 1].dl = 0xffff; // guard
+
+	for(n = 0; n <= max_code; n++) {
+	curlen = nextlen;
+	nextlen = tree[n + 1].dl;
+	if(++count < max_count && curlen == nextlen)
+		continue;
+	else if(count < min_count)
+		zip_bl_tree[curlen].fc += count;
+	else if(curlen != 0) {
+		if(curlen != prevlen)
+		zip_bl_tree[curlen].fc++;
+		zip_bl_tree[zip_REP_3_6].fc++;
+	} else if(count <= 10)
+		zip_bl_tree[zip_REPZ_3_10].fc++;
+	else
+		zip_bl_tree[zip_REPZ_11_138].fc++;
+	count = 0; prevlen = curlen;
+	if(nextlen == 0) {
+		max_count = 138;
+		min_count = 3;
+	} else if(curlen == nextlen) {
+		max_count = 6;
+		min_count = 3;
+	} else {
+		max_count = 7;
+		min_count = 4;
+	}
+	}
+}
+
+  /* ==========================================================================
+   * Send a literal or distance tree in compressed form, using the codes in
+   * bl_tree.
+   */
+var zip_send_tree = function(tree, // the tree to be scanned
+		   max_code) { // and its largest code of non zero frequency
+	var n;			// iterates over all tree elements
+	var prevlen = -1;		// last emitted length
+	var curlen;			// length of current code
+	var nextlen = tree[0].dl;	// length of next code
+	var count = 0;		// repeat count of the current code
+	var max_count = 7;		// max repeat count
+	var min_count = 4;		// min repeat count
+
+	/* tree[max_code+1].dl = -1; */  /* guard already set */
+	if(nextlen == 0) {
+	  max_count = 138;
+	  min_count = 3;
+	}
+
+	for(n = 0; n <= max_code; n++) {
+	curlen = nextlen;
+	nextlen = tree[n+1].dl;
+	if(++count < max_count && curlen == nextlen) {
+		continue;
+	} else if(count < min_count) {
+		do { zip_SEND_CODE(curlen, zip_bl_tree); } while(--count != 0);
+	} else if(curlen != 0) {
+		if(curlen != prevlen) {
+		zip_SEND_CODE(curlen, zip_bl_tree);
+		count--;
+		}
+		// Assert(count >= 3 && count <= 6, " 3_6?");
+		zip_SEND_CODE(zip_REP_3_6, zip_bl_tree);
+		zip_send_bits(count - 3, 2);
+	} else if(count <= 10) {
+		zip_SEND_CODE(zip_REPZ_3_10, zip_bl_tree);
+		zip_send_bits(count-3, 3);
+	} else {
+		zip_SEND_CODE(zip_REPZ_11_138, zip_bl_tree);
+		zip_send_bits(count-11, 7);
+	}
+	count = 0;
+	prevlen = curlen;
+	if(nextlen == 0) {
+		max_count = 138;
+		min_count = 3;
+	} else if(curlen == nextlen) {
+		max_count = 6;
+		min_count = 3;
+	} else {
+		max_count = 7;
+		min_count = 4;
+	}
+	}
+}
+
+/* ==========================================================================
+ * Construct the Huffman tree for the bit lengths and return the index in
+ * bl_order of the last bit length code to send.
+ */
+var zip_build_bl_tree = function() {
+	var max_blindex;  // index of last bit length code of non zero freq
+
+	// Determine the bit length frequencies for literal and distance trees
+	zip_scan_tree(zip_dyn_ltree, zip_l_desc.max_code);
+	zip_scan_tree(zip_dyn_dtree, zip_d_desc.max_code);
+
+	// Build the bit length tree:
+	zip_build_tree(zip_bl_desc);
+	/* opt_len now includes the length of the tree representations, except
+	 * the lengths of the bit lengths codes and the 5+5+4 bits for the counts.
+	 */
+
+	/* Determine the number of bit length codes to send. The pkzip format
+	 * requires that at least 4 bit length codes be sent. (appnote.txt says
+	 * 3 but the actual value used is 4.)
+	 */
+	for(max_blindex = zip_BL_CODES-1; max_blindex >= 3; max_blindex--) {
+	if(zip_bl_tree[zip_bl_order[max_blindex]].dl != 0) break;
+	}
+	/* Update opt_len to include the bit length tree and counts */
+	zip_opt_len += 3*(max_blindex+1) + 5+5+4;
+//    Tracev((stderr, "\ndyn trees: dyn %ld, stat %ld",
+//	    encoder->opt_len, encoder->static_len));
+
+	return max_blindex;
+}
+
+/* ==========================================================================
+ * Send the header for a block using dynamic Huffman trees: the counts, the
+ * lengths of the bit length codes, the literal tree and the distance tree.
+ * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
+ */
+var zip_send_all_trees = function(lcodes, dcodes, blcodes) { // number of codes for each tree
+	var rank; // index in bl_order
+
+//    Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
+//    Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES,
+//	    "too many codes");
+//    Tracev((stderr, "\nbl counts: "));
+	zip_send_bits(lcodes-257, 5); // not +255 as stated in appnote.txt
+	zip_send_bits(dcodes-1,   5);
+	zip_send_bits(blcodes-4,  4); // not -3 as stated in appnote.txt
+	for(rank = 0; rank < blcodes; rank++) {
+//      Tracev((stderr, "\nbl code %2d ", bl_order[rank]));
+	zip_send_bits(zip_bl_tree[zip_bl_order[rank]].dl, 3);
+	}
+
+	// send the literal tree
+	zip_send_tree(zip_dyn_ltree,lcodes-1);
+
+	// send the distance tree
+	zip_send_tree(zip_dyn_dtree,dcodes-1);
+}
+
+/* ==========================================================================
+ * Determine the best encoding for the current block: dynamic trees, static
+ * trees or store, and output the encoded block to the zip file.
+ */
+var zip_flush_block = function(eof) { // true if this is the last block for a file
+	var opt_lenb, static_lenb; // opt_len and static_len in bytes
+	var max_blindex;	// index of last bit length code of non zero freq
+	var stored_len;	// length of input block
+
+	stored_len = zip_strstart - zip_block_start;
+	zip_flag_buf[zip_last_flags] = zip_flags; // Save the flags for the last 8 items
+
+	// Construct the literal and distance trees
+	zip_build_tree(zip_l_desc);
+//    Tracev((stderr, "\nlit data: dyn %ld, stat %ld",
+//	    encoder->opt_len, encoder->static_len));
+
+	zip_build_tree(zip_d_desc);
+//    Tracev((stderr, "\ndist data: dyn %ld, stat %ld",
+//	    encoder->opt_len, encoder->static_len));
+	/* At this point, opt_len and static_len are the total bit lengths of
+	 * the compressed block data, excluding the tree representations.
+	 */
+
+	/* Build the bit length tree for the above two trees, and get the index
+	 * in bl_order of the last bit length code to send.
+	 */
+	max_blindex = zip_build_bl_tree();
+
+	// Determine the best encoding. Compute first the block length in bytes
+	opt_lenb	= (zip_opt_len   +3+7)>>3;
+	static_lenb = (zip_static_len+3+7)>>3;
+
+//    Trace((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u dist %u ",
+//	   opt_lenb, encoder->opt_len,
+//	   static_lenb, encoder->static_len, stored_len,
+//	   encoder->last_lit, encoder->last_dist));
+
+	if(static_lenb <= opt_lenb)
+	opt_lenb = static_lenb;
+	if(stored_len + 4 <= opt_lenb // 4: two words for the lengths
+	   && zip_block_start >= 0) {
+	var i;
+
+	/* The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
+	 * Otherwise we can't have processed more than WSIZE input bytes since
+	 * the last block flush, because compression would have been
+	 * successful. If LIT_BUFSIZE <= WSIZE, it is never too late to
+	 * transform a block into a stored block.
+	 */
+	zip_send_bits((zip_STORED_BLOCK<<1)+eof, 3);  /* send block type */
+	zip_bi_windup();		 /* align on byte boundary */
+	zip_put_short(stored_len);
+	zip_put_short(~stored_len);
+
+	  // copy block
+/*
+	  p = &window[block_start];
+	  for(i = 0; i < stored_len; i++)
+	put_byte(p[i]);
+*/
+	for(i = 0; i < stored_len; i++)
+		zip_put_byte(zip_window[zip_block_start + i]);
+
+	} else if(static_lenb == opt_lenb) {
+	zip_send_bits((zip_STATIC_TREES<<1)+eof, 3);
+	zip_compress_block(zip_static_ltree, zip_static_dtree);
+	} else {
+	zip_send_bits((zip_DYN_TREES<<1)+eof, 3);
+	zip_send_all_trees(zip_l_desc.max_code+1,
+			   zip_d_desc.max_code+1,
+			   max_blindex+1);
+	zip_compress_block(zip_dyn_ltree, zip_dyn_dtree);
+	}
+
+	zip_init_block();
+
+	if(eof != 0)
+	zip_bi_windup();
+}
+
+/* ==========================================================================
+ * Save the match info and tally the frequency counts. Return true if
+ * the current block must be flushed.
+ */
+var zip_ct_tally = function(
+	dist, // distance of matched string
+	lc) { // match length-MIN_MATCH or unmatched char (if dist==0)
+	zip_l_buf[zip_last_lit++] = lc;
+	if(dist == 0) {
+	// lc is the unmatched char
+	zip_dyn_ltree[lc].fc++;
+	} else {
+	// Here, lc is the match length - MIN_MATCH
+	dist--;		    // dist = match distance - 1
+//      Assert((ush)dist < (ush)MAX_DIST &&
+//	     (ush)lc <= (ush)(MAX_MATCH-MIN_MATCH) &&
+//	     (ush)D_CODE(dist) < (ush)D_CODES,  "ct_tally: bad match");
+
+	zip_dyn_ltree[zip_length_code[lc]+zip_LITERALS+1].fc++;
+	zip_dyn_dtree[zip_D_CODE(dist)].fc++;
+
+	zip_d_buf[zip_last_dist++] = dist;
+	zip_flags |= zip_flag_bit;
+	}
+	zip_flag_bit <<= 1;
+
+	// Output the flags if they fill a byte
+	if((zip_last_lit & 7) == 0) {
+	zip_flag_buf[zip_last_flags++] = zip_flags;
+	zip_flags = 0;
+	zip_flag_bit = 1;
+	}
+	// Try to guess if it is profitable to stop the current block here
+	if(zip_compr_level > 2 && (zip_last_lit & 0xfff) == 0) {
+	// Compute an upper bound for the compressed length
+	var out_length = zip_last_lit * 8;
+	var in_length = zip_strstart - zip_block_start;
+	var dcode;
+
+	for(dcode = 0; dcode < zip_D_CODES; dcode++) {
+		out_length += zip_dyn_dtree[dcode].fc * (5 + zip_extra_dbits[dcode]);
+	}
+	out_length >>= 3;
+//      Trace((stderr,"\nlast_lit %u, last_dist %u, in %ld, out ~%ld(%ld%%) ",
+//	     encoder->last_lit, encoder->last_dist, in_length, out_length,
+//	     100L - out_length*100L/in_length));
+	if(zip_last_dist < parseInt(zip_last_lit/2) &&
+	   out_length < parseInt(in_length/2))
+		return true;
+	}
+	return (zip_last_lit == zip_LIT_BUFSIZE-1 ||
+		zip_last_dist == zip_DIST_BUFSIZE);
+	/* We avoid equality with LIT_BUFSIZE because of wraparound at 64K
+	 * on 16 bit machines and because stored blocks are restricted to
+	 * 64K-1 bytes.
+	 */
+}
+
+  /* ==========================================================================
+   * Send the block data compressed using the given Huffman trees
+   */
+var zip_compress_block = function(
+	ltree,	// literal tree
+	dtree) {	// distance tree
+	var dist;		// distance of matched string
+	var lc;		// match length or unmatched char (if dist == 0)
+	var lx = 0;		// running index in l_buf
+	var dx = 0;		// running index in d_buf
+	var fx = 0;		// running index in flag_buf
+	var flag = 0;	// current flags
+	var code;		// the code to send
+	var extra;		// number of extra bits to send
+
+	if(zip_last_lit != 0) do {
+	if((lx & 7) == 0)
+		flag = zip_flag_buf[fx++];
+	lc = zip_l_buf[lx++] & 0xff;
+	if((flag & 1) == 0) {
+		zip_SEND_CODE(lc, ltree); /* send a literal byte */
+//	Tracecv(isgraph(lc), (stderr," '%c' ", lc));
+	} else {
+		// Here, lc is the match length - MIN_MATCH
+		code = zip_length_code[lc];
+		zip_SEND_CODE(code+zip_LITERALS+1, ltree); // send the length code
+		extra = zip_extra_lbits[code];
+		if(extra != 0) {
+		lc -= zip_base_length[code];
+		zip_send_bits(lc, extra); // send the extra length bits
+		}
+		dist = zip_d_buf[dx++];
+		// Here, dist is the match distance - 1
+		code = zip_D_CODE(dist);
+//	Assert (code < D_CODES, "bad d_code");
+
+		zip_SEND_CODE(code, dtree);	  // send the distance code
+		extra = zip_extra_dbits[code];
+		if(extra != 0) {
+		dist -= zip_base_dist[code];
+		zip_send_bits(dist, extra);   // send the extra distance bits
+		}
+	} // literal or match pair ?
+	flag >>= 1;
+	} while(lx < zip_last_lit);
+
+	zip_SEND_CODE(zip_END_BLOCK, ltree);
+}
+
+/* ==========================================================================
+ * Send a value on a given number of bits.
+ * IN assertion: length <= 16 and value fits in length bits.
+ */
+var zip_Buf_size = 16; // bit size of bi_buf
+var zip_send_bits = function(
+	value,	// value to send
+	length) {	// number of bits
+	/* If not enough room in bi_buf, use (valid) bits from bi_buf and
+	 * (16 - bi_valid) bits from value, leaving (width - (16-bi_valid))
+	 * unused bits in value.
+	 */
+	if(zip_bi_valid > zip_Buf_size - length) {
+	zip_bi_buf |= (value << zip_bi_valid);
+	zip_put_short(zip_bi_buf);
+	zip_bi_buf = (value >> (zip_Buf_size - zip_bi_valid));
+	zip_bi_valid += length - zip_Buf_size;
+	} else {
+	zip_bi_buf |= value << zip_bi_valid;
+	zip_bi_valid += length;
+	}
+}
+
+/* ==========================================================================
+ * Reverse the first len bits of a code, using straightforward code (a faster
+ * method would use a table)
+ * IN assertion: 1 <= len <= 15
+ */
+var zip_bi_reverse = function(
+	code,	// the value to invert
+	len) {	// its bit length
+	var res = 0;
+	do {
+	res |= code & 1;
+	code >>= 1;
+	res <<= 1;
+	} while(--len > 0);
+	return res >> 1;
+}
+
+/* ==========================================================================
+ * Write out any remaining bits in an incomplete byte.
+ */
+var zip_bi_windup = function() {
+	if(zip_bi_valid > 8) {
+	zip_put_short(zip_bi_buf);
+	} else if(zip_bi_valid > 0) {
+	zip_put_byte(zip_bi_buf);
+	}
+	zip_bi_buf = 0;
+	zip_bi_valid = 0;
+}
+
+var zip_qoutbuf = function() {
+	if(zip_outcnt != 0) {
+	var q, i;
+	q = zip_new_queue();
+	if(zip_qhead == null)
+		zip_qhead = zip_qtail = q;
+	else
+		zip_qtail = zip_qtail.next = q;
+	q.len = zip_outcnt - zip_outoff;
+//      System.arraycopy(zip_outbuf, zip_outoff, q.ptr, 0, q.len);
+	for(i = 0; i < q.len; i++)
+		q.ptr[i] = zip_outbuf[zip_outoff + i];
+	zip_outcnt = zip_outoff = 0;
+	}
+}
+
+var zip_deflate = function(str, level) {
+	var i, j;
+
+	zip_deflate_data = str;
+	zip_deflate_pos = 0;
+	if(typeof level == "undefined")
+	level = zip_DEFAULT_LEVEL;
+	zip_deflate_start(level);
+
+	var buff = new Array(1024);
+	var aout = [];
+	while((i = zip_deflate_internal(buff, 0, buff.length)) > 0) {
+	var cbuf = new Array(i);
+	for(j = 0; j < i; j++){
+		cbuf[j] = String.fromCharCode(buff[j]);
+	}
+	aout[aout.length] = cbuf.join("");
+	}
+	zip_deflate_data = null; // G.C.
+	return aout.join("");
+}
+
+//
+// end of the script of Masanao Izumo.
+//
+
+// we add the compression method for JSZip
+if(!JSZip.compressions["DEFLATE"]) {
+  JSZip.compressions["DEFLATE"] = {
+	magic : "\x08\x00",
+	compress : zip_deflate
+  }
+} else {
+  JSZip.compressions["DEFLATE"].compress = zip_deflate;
+}
+
+}));
+
+},{}],7:[function(require,module,exports){
 (function (global,Buffer){
 /*!
 
@@ -989,7 +2693,7 @@ https://github.com/nodeca/pako/blob/master/LICENSE
 break}for(c.back=0;Ab=c.lencode[m&(1<<c.lenbits)-1],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(rb&&0===(240&rb)){for(tb=qb,ub=rb,vb=sb;Ab=c.lencode[vb+((m&(1<<tb+ub)-1)>>tb)],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=tb+qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}m>>>=tb,n-=tb,c.back+=tb}if(m>>>=qb,n-=qb,c.back+=qb,c.length=sb,0===rb){c.mode=hb;break}if(32&rb){c.back=-1,c.mode=V;break}if(64&rb){a.msg="invalid literal/length code",c.mode=lb;break}c.extra=15&rb,c.mode=db;case db:if(c.extra){for(zb=c.extra;zb>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}c.length+=m&(1<<c.extra)-1,m>>>=c.extra,n-=c.extra,c.back+=c.extra}c.was=c.length,c.mode=eb;case eb:for(;Ab=c.distcode[m&(1<<c.distbits)-1],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(0===(240&rb)){for(tb=qb,ub=rb,vb=sb;Ab=c.distcode[vb+((m&(1<<tb+ub)-1)>>tb)],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=tb+qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}m>>>=tb,n-=tb,c.back+=tb}if(m>>>=qb,n-=qb,c.back+=qb,64&rb){a.msg="invalid distance code",c.mode=lb;break}c.offset=sb,c.extra=15&rb,c.mode=fb;case fb:if(c.extra){for(zb=c.extra;zb>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}c.offset+=m&(1<<c.extra)-1,m>>>=c.extra,n-=c.extra,c.back+=c.extra}if(c.offset>c.dmax){a.msg="invalid distance too far back",c.mode=lb;break}c.mode=gb;case gb:if(0===j)break a;if(q=p-j,c.offset>q){if(q=c.offset-q,q>c.whave&&c.sane){a.msg="invalid distance too far back",c.mode=lb;break}q>c.wnext?(q-=c.wnext,ob=c.wsize-q):ob=c.wnext-q,q>c.length&&(q=c.length),pb=c.window}else pb=f,ob=h-c.offset,q=c.length;q>j&&(q=j),j-=q,c.length-=q;do f[h++]=pb[ob++];while(--q);0===c.length&&(c.mode=cb);break;case hb:if(0===j)break a;f[h++]=c.length,j--,c.mode=cb;break;case ib:if(c.wrap){for(;32>n;){if(0===i)break a;i--,m|=e[g++]<<n,n+=8}if(p-=j,a.total_out+=p,c.total+=p,p&&(a.adler=c.check=c.flags?t(c.check,f,p,h-p):s(c.check,f,p,h-p)),p=j,(c.flags?m:d(m))!==c.check){a.msg="incorrect data check",c.mode=lb;break}m=0,n=0}c.mode=jb;case jb:if(c.wrap&&c.flags){for(;32>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(m!==(4294967295&c.total)){a.msg="incorrect length check",c.mode=lb;break}m=0,n=0}c.mode=kb;case kb:xb=D;break a;case lb:xb=G;break a;case mb:return H;case nb:default:return F}return a.next_out=h,a.avail_out=j,a.next_in=g,a.avail_in=i,c.hold=m,c.bits=n,(c.wsize||p!==a.avail_out&&c.mode<lb&&(c.mode<ib||b!==z))&&l(a,a.output,a.next_out,p-a.avail_out)?(c.mode=mb,H):(o-=a.avail_in,p-=a.avail_out,a.total_in+=o,a.total_out+=p,c.total+=p,c.wrap&&p&&(a.adler=c.check=c.flags?t(c.check,f,p,a.next_out-p):s(c.check,f,p,a.next_out-p)),a.data_type=c.bits+(c.last?64:0)+(c.mode===V?128:0)+(c.mode===bb||c.mode===Y?256:0),(0===o&&0===p||b===z)&&xb===C&&(xb=I),xb)}function n(a){if(!a||!a.state)return F;var b=a.state;return b.window&&(b.window=null),a.state=null,C}function o(a,b){var c;return a&&a.state?(c=a.state,0===(2&c.wrap)?F:(c.head=b,b.done=!1,C)):F}var p,q,r=a("../utils/common"),s=a("./adler32"),t=a("./crc32"),u=a("./inffast"),v=a("./inftrees"),w=0,x=1,y=2,z=4,A=5,B=6,C=0,D=1,E=2,F=-2,G=-3,H=-4,I=-5,J=8,K=1,L=2,M=3,N=4,O=5,P=6,Q=7,R=8,S=9,T=10,U=11,V=12,W=13,X=14,Y=15,Z=16,$=17,_=18,ab=19,bb=20,cb=21,db=22,eb=23,fb=24,gb=25,hb=26,ib=27,jb=28,kb=29,lb=30,mb=31,nb=32,ob=852,pb=592,qb=15,rb=qb,sb=!0;c.inflateReset=g,c.inflateReset2=h,c.inflateResetKeep=f,c.inflateInit=j,c.inflateInit2=i,c.inflate=m,c.inflateEnd=n,c.inflateGetHeader=o,c.inflateInfo="pako inflate (from Nodeca project)"},{"../utils/common":27,"./adler32":29,"./crc32":31,"./inffast":34,"./inftrees":36}],36:[function(a,b){"use strict";var c=a("../utils/common"),d=15,e=852,f=592,g=0,h=1,i=2,j=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],k=[16,16,16,16,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,16,72,78],l=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0],m=[16,16,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,64,64];b.exports=function(a,b,n,o,p,q,r,s){var t,u,v,w,x,y,z,A,B,C=s.bits,D=0,E=0,F=0,G=0,H=0,I=0,J=0,K=0,L=0,M=0,N=null,O=0,P=new c.Buf16(d+1),Q=new c.Buf16(d+1),R=null,S=0;for(D=0;d>=D;D++)P[D]=0;for(E=0;o>E;E++)P[b[n+E]]++;for(H=C,G=d;G>=1&&0===P[G];G--);if(H>G&&(H=G),0===G)return p[q++]=20971520,p[q++]=20971520,s.bits=1,0;for(F=1;G>F&&0===P[F];F++);for(F>H&&(H=F),K=1,D=1;d>=D;D++)if(K<<=1,K-=P[D],0>K)return-1;if(K>0&&(a===g||1!==G))return-1;for(Q[1]=0,D=1;d>D;D++)Q[D+1]=Q[D]+P[D];for(E=0;o>E;E++)0!==b[n+E]&&(r[Q[b[n+E]]++]=E);if(a===g?(N=R=r,y=19):a===h?(N=j,O-=257,R=k,S-=257,y=256):(N=l,R=m,y=-1),M=0,E=0,D=F,x=q,I=H,J=0,v=-1,L=1<<H,w=L-1,a===h&&L>e||a===i&&L>f)return 1;for(var T=0;;){T++,z=D-J,r[E]<y?(A=0,B=r[E]):r[E]>y?(A=R[S+r[E]],B=N[O+r[E]]):(A=96,B=0),t=1<<D-J,u=1<<I,F=u;do u-=t,p[x+(M>>J)+u]=z<<24|A<<16|B|0;while(0!==u);for(t=1<<D-1;M&t;)t>>=1;if(0!==t?(M&=t-1,M+=t):M=0,E++,0===--P[D]){if(D===G)break;D=b[n+r[E]]}if(D>H&&(M&w)!==v){for(0===J&&(J=H),x+=F,I=D-J,K=1<<I;G>I+J&&(K-=P[I+J],!(0>=K));)I++,K<<=1;if(L+=1<<I,a===h&&L>e||a===i&&L>f)return 1;v=M&w,p[v]=H<<24|I<<16|x-q|0}}return 0!==M&&(p[x+M]=D-J<<24|64<<16|0),s.bits=H,0}},{"../utils/common":27}],37:[function(a,b){"use strict";b.exports={2:"need dictionary",1:"stream end",0:"","-1":"file error","-2":"stream error","-3":"data error","-4":"insufficient memory","-5":"buffer error","-6":"incompatible version"}},{}],38:[function(a,b,c){"use strict";function d(a){for(var b=a.length;--b>=0;)a[b]=0}function e(a){return 256>a?gb[a]:gb[256+(a>>>7)]}function f(a,b){a.pending_buf[a.pending++]=255&b,a.pending_buf[a.pending++]=b>>>8&255}function g(a,b,c){a.bi_valid>V-c?(a.bi_buf|=b<<a.bi_valid&65535,f(a,a.bi_buf),a.bi_buf=b>>V-a.bi_valid,a.bi_valid+=c-V):(a.bi_buf|=b<<a.bi_valid&65535,a.bi_valid+=c)}function h(a,b,c){g(a,c[2*b],c[2*b+1])}function i(a,b){var c=0;do c|=1&a,a>>>=1,c<<=1;while(--b>0);return c>>>1}function j(a){16===a.bi_valid?(f(a,a.bi_buf),a.bi_buf=0,a.bi_valid=0):a.bi_valid>=8&&(a.pending_buf[a.pending++]=255&a.bi_buf,a.bi_buf>>=8,a.bi_valid-=8)}function k(a,b){var c,d,e,f,g,h,i=b.dyn_tree,j=b.max_code,k=b.stat_desc.static_tree,l=b.stat_desc.has_stree,m=b.stat_desc.extra_bits,n=b.stat_desc.extra_base,o=b.stat_desc.max_length,p=0;for(f=0;U>=f;f++)a.bl_count[f]=0;for(i[2*a.heap[a.heap_max]+1]=0,c=a.heap_max+1;T>c;c++)d=a.heap[c],f=i[2*i[2*d+1]+1]+1,f>o&&(f=o,p++),i[2*d+1]=f,d>j||(a.bl_count[f]++,g=0,d>=n&&(g=m[d-n]),h=i[2*d],a.opt_len+=h*(f+g),l&&(a.static_len+=h*(k[2*d+1]+g)));if(0!==p){do{for(f=o-1;0===a.bl_count[f];)f--;a.bl_count[f]--,a.bl_count[f+1]+=2,a.bl_count[o]--,p-=2}while(p>0);for(f=o;0!==f;f--)for(d=a.bl_count[f];0!==d;)e=a.heap[--c],e>j||(i[2*e+1]!==f&&(a.opt_len+=(f-i[2*e+1])*i[2*e],i[2*e+1]=f),d--)}}function l(a,b,c){var d,e,f=new Array(U+1),g=0;for(d=1;U>=d;d++)f[d]=g=g+c[d-1]<<1;for(e=0;b>=e;e++){var h=a[2*e+1];0!==h&&(a[2*e]=i(f[h]++,h))}}function m(){var a,b,c,d,e,f=new Array(U+1);for(c=0,d=0;O-1>d;d++)for(ib[d]=c,a=0;a<1<<_[d];a++)hb[c++]=d;for(hb[c-1]=d,e=0,d=0;16>d;d++)for(jb[d]=e,a=0;a<1<<ab[d];a++)gb[e++]=d;for(e>>=7;R>d;d++)for(jb[d]=e<<7,a=0;a<1<<ab[d]-7;a++)gb[256+e++]=d;for(b=0;U>=b;b++)f[b]=0;for(a=0;143>=a;)eb[2*a+1]=8,a++,f[8]++;for(;255>=a;)eb[2*a+1]=9,a++,f[9]++;for(;279>=a;)eb[2*a+1]=7,a++,f[7]++;for(;287>=a;)eb[2*a+1]=8,a++,f[8]++;for(l(eb,Q+1,f),a=0;R>a;a++)fb[2*a+1]=5,fb[2*a]=i(a,5);kb=new nb(eb,_,P+1,Q,U),lb=new nb(fb,ab,0,R,U),mb=new nb(new Array(0),bb,0,S,W)}function n(a){var b;for(b=0;Q>b;b++)a.dyn_ltree[2*b]=0;for(b=0;R>b;b++)a.dyn_dtree[2*b]=0;for(b=0;S>b;b++)a.bl_tree[2*b]=0;a.dyn_ltree[2*X]=1,a.opt_len=a.static_len=0,a.last_lit=a.matches=0}function o(a){a.bi_valid>8?f(a,a.bi_buf):a.bi_valid>0&&(a.pending_buf[a.pending++]=a.bi_buf),a.bi_buf=0,a.bi_valid=0}function p(a,b,c,d){o(a),d&&(f(a,c),f(a,~c)),E.arraySet(a.pending_buf,a.window,b,c,a.pending),a.pending+=c}function q(a,b,c,d){var e=2*b,f=2*c;return a[e]<a[f]||a[e]===a[f]&&d[b]<=d[c]}function r(a,b,c){for(var d=a.heap[c],e=c<<1;e<=a.heap_len&&(e<a.heap_len&&q(b,a.heap[e+1],a.heap[e],a.depth)&&e++,!q(b,d,a.heap[e],a.depth));)a.heap[c]=a.heap[e],c=e,e<<=1;a.heap[c]=d}function s(a,b,c){var d,f,i,j,k=0;if(0!==a.last_lit)do d=a.pending_buf[a.d_buf+2*k]<<8|a.pending_buf[a.d_buf+2*k+1],f=a.pending_buf[a.l_buf+k],k++,0===d?h(a,f,b):(i=hb[f],h(a,i+P+1,b),j=_[i],0!==j&&(f-=ib[i],g(a,f,j)),d--,i=e(d),h(a,i,c),j=ab[i],0!==j&&(d-=jb[i],g(a,d,j)));while(k<a.last_lit);h(a,X,b)}function t(a,b){var c,d,e,f=b.dyn_tree,g=b.stat_desc.static_tree,h=b.stat_desc.has_stree,i=b.stat_desc.elems,j=-1;for(a.heap_len=0,a.heap_max=T,c=0;i>c;c++)0!==f[2*c]?(a.heap[++a.heap_len]=j=c,a.depth[c]=0):f[2*c+1]=0;for(;a.heap_len<2;)e=a.heap[++a.heap_len]=2>j?++j:0,f[2*e]=1,a.depth[e]=0,a.opt_len--,h&&(a.static_len-=g[2*e+1]);for(b.max_code=j,c=a.heap_len>>1;c>=1;c--)r(a,f,c);e=i;do c=a.heap[1],a.heap[1]=a.heap[a.heap_len--],r(a,f,1),d=a.heap[1],a.heap[--a.heap_max]=c,a.heap[--a.heap_max]=d,f[2*e]=f[2*c]+f[2*d],a.depth[e]=(a.depth[c]>=a.depth[d]?a.depth[c]:a.depth[d])+1,f[2*c+1]=f[2*d+1]=e,a.heap[1]=e++,r(a,f,1);while(a.heap_len>=2);a.heap[--a.heap_max]=a.heap[1],k(a,b),l(f,j,a.bl_count)}function u(a,b,c){var d,e,f=-1,g=b[1],h=0,i=7,j=4;for(0===g&&(i=138,j=3),b[2*(c+1)+1]=65535,d=0;c>=d;d++)e=g,g=b[2*(d+1)+1],++h<i&&e===g||(j>h?a.bl_tree[2*e]+=h:0!==e?(e!==f&&a.bl_tree[2*e]++,a.bl_tree[2*Y]++):10>=h?a.bl_tree[2*Z]++:a.bl_tree[2*$]++,h=0,f=e,0===g?(i=138,j=3):e===g?(i=6,j=3):(i=7,j=4))}function v(a,b,c){var d,e,f=-1,i=b[1],j=0,k=7,l=4;for(0===i&&(k=138,l=3),d=0;c>=d;d++)if(e=i,i=b[2*(d+1)+1],!(++j<k&&e===i)){if(l>j){do h(a,e,a.bl_tree);while(0!==--j)}else 0!==e?(e!==f&&(h(a,e,a.bl_tree),j--),h(a,Y,a.bl_tree),g(a,j-3,2)):10>=j?(h(a,Z,a.bl_tree),g(a,j-3,3)):(h(a,$,a.bl_tree),g(a,j-11,7));j=0,f=e,0===i?(k=138,l=3):e===i?(k=6,l=3):(k=7,l=4)}}function w(a){var b;for(u(a,a.dyn_ltree,a.l_desc.max_code),u(a,a.dyn_dtree,a.d_desc.max_code),t(a,a.bl_desc),b=S-1;b>=3&&0===a.bl_tree[2*cb[b]+1];b--);return a.opt_len+=3*(b+1)+5+5+4,b}function x(a,b,c,d){var e;for(g(a,b-257,5),g(a,c-1,5),g(a,d-4,4),e=0;d>e;e++)g(a,a.bl_tree[2*cb[e]+1],3);v(a,a.dyn_ltree,b-1),v(a,a.dyn_dtree,c-1)}function y(a){var b,c=4093624447;for(b=0;31>=b;b++,c>>>=1)if(1&c&&0!==a.dyn_ltree[2*b])return G;if(0!==a.dyn_ltree[18]||0!==a.dyn_ltree[20]||0!==a.dyn_ltree[26])return H;for(b=32;P>b;b++)if(0!==a.dyn_ltree[2*b])return H;return G}function z(a){pb||(m(),pb=!0),a.l_desc=new ob(a.dyn_ltree,kb),a.d_desc=new ob(a.dyn_dtree,lb),a.bl_desc=new ob(a.bl_tree,mb),a.bi_buf=0,a.bi_valid=0,n(a)}function A(a,b,c,d){g(a,(J<<1)+(d?1:0),3),p(a,b,c,!0)}function B(a){g(a,K<<1,3),h(a,X,eb),j(a)}function C(a,b,c,d){var e,f,h=0;a.level>0?(a.strm.data_type===I&&(a.strm.data_type=y(a)),t(a,a.l_desc),t(a,a.d_desc),h=w(a),e=a.opt_len+3+7>>>3,f=a.static_len+3+7>>>3,e>=f&&(e=f)):e=f=c+5,e>=c+4&&-1!==b?A(a,b,c,d):a.strategy===F||f===e?(g(a,(K<<1)+(d?1:0),3),s(a,eb,fb)):(g(a,(L<<1)+(d?1:0),3),x(a,a.l_desc.max_code+1,a.d_desc.max_code+1,h+1),s(a,a.dyn_ltree,a.dyn_dtree)),n(a),d&&o(a)}function D(a,b,c){return a.pending_buf[a.d_buf+2*a.last_lit]=b>>>8&255,a.pending_buf[a.d_buf+2*a.last_lit+1]=255&b,a.pending_buf[a.l_buf+a.last_lit]=255&c,a.last_lit++,0===b?a.dyn_ltree[2*c]++:(a.matches++,b--,a.dyn_ltree[2*(hb[c]+P+1)]++,a.dyn_dtree[2*e(b)]++),a.last_lit===a.lit_bufsize-1}var E=a("../utils/common"),F=4,G=0,H=1,I=2,J=0,K=1,L=2,M=3,N=258,O=29,P=256,Q=P+1+O,R=30,S=19,T=2*Q+1,U=15,V=16,W=7,X=256,Y=16,Z=17,$=18,_=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0],ab=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],bb=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7],cb=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],db=512,eb=new Array(2*(Q+2));d(eb);var fb=new Array(2*R);d(fb);var gb=new Array(db);d(gb);var hb=new Array(N-M+1);d(hb);var ib=new Array(O);d(ib);var jb=new Array(R);d(jb);var kb,lb,mb,nb=function(a,b,c,d,e){this.static_tree=a,this.extra_bits=b,this.extra_base=c,this.elems=d,this.max_length=e,this.has_stree=a&&a.length},ob=function(a,b){this.dyn_tree=a,this.max_code=0,this.stat_desc=b},pb=!1;c._tr_init=z,c._tr_stored_block=A,c._tr_flush_block=C,c._tr_tally=D,c._tr_align=B},{"../utils/common":27}],39:[function(a,b){"use strict";function c(){this.input=null,this.next_in=0,this.avail_in=0,this.total_in=0,this.output=null,this.next_out=0,this.avail_out=0,this.total_out=0,this.msg="",this.state=null,this.data_type=2,this.adler=0}b.exports=c},{}]},{},[9])(9)});
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"buffer":17}],7:[function(require,module,exports){
+},{"buffer":20}],8:[function(require,module,exports){
 (function (global){
 /**
  * marked - a markdown parser
@@ -2278,7 +3982,7 @@ if (typeof module !== 'undefined' && typeof exports === 'object') {
 }());
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var getVars = function(text){
 	console.log(text);
 	var vars = text.match(/(\w+)="(.*?)"/g);
@@ -2362,7 +4066,7 @@ module.exports = {
 	removeScript:removeScript
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var acorn = require('acorn');
@@ -2544,7 +4248,7 @@ function findGlobals(source) {
   });
 }
 
-},{"acorn":10,"acorn/dist/walk":11}],10:[function(require,module,exports){
+},{"acorn":11,"acorn/dist/walk":12}],11:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.acorn = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 // A recursive descent parser operates by defining functions for all
@@ -5887,7 +7591,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 },{}]},{},[3])(3)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.acorn || (g.acorn = {})).walk = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 // AST walker module for Mozilla Parser API compatible trees
@@ -6267,7 +7971,7046 @@ base.ComprehensionExpression = function (node, st, c) {
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+exports = (module.exports = parse);
+exports.parse = parse;
+function parse(src, state, options) {
+  options = options || {};
+  state = state || exports.defaultState();
+  var start = options.start || 0;
+  var end = options.end || src.length;
+  var index = start;
+  while (index < end) {
+    if (state.roundDepth < 0 || state.curlyDepth < 0 || state.squareDepth < 0) {
+      throw new SyntaxError('Mismatched Bracket: ' + src[index - 1]);
+    }
+    exports.parseChar(src[index++], state);
+  }
+  return state;
+}
+
+exports.parseMax = parseMax;
+function parseMax(src, options) {
+  options = options || {};
+  var start = options.start || 0;
+  var index = start;
+  var state = exports.defaultState();
+  while (state.roundDepth >= 0 && state.curlyDepth >= 0 && state.squareDepth >= 0) {
+    if (index >= src.length) {
+      throw new Error('The end of the string was reached with no closing bracket found.');
+    }
+    exports.parseChar(src[index++], state);
+  }
+  var end = index - 1;
+  return {
+    start: start,
+    end: end,
+    src: src.substring(start, end)
+  };
+}
+
+exports.parseUntil = parseUntil;
+function parseUntil(src, delimiter, options) {
+  options = options || {};
+  var includeLineComment = options.includeLineComment || false;
+  var start = options.start || 0;
+  var index = start;
+  var state = exports.defaultState();
+  while (state.isString() || state.regexp || state.blockComment ||
+         (!includeLineComment && state.lineComment) || !startsWith(src, delimiter, index)) {
+    exports.parseChar(src[index++], state);
+  }
+  var end = index;
+  return {
+    start: start,
+    end: end,
+    src: src.substring(start, end)
+  };
+}
+
+
+exports.parseChar = parseChar;
+function parseChar(character, state) {
+  if (character.length !== 1) throw new Error('Character must be a string of length 1');
+  state = state || exports.defaultState();
+  state.src = state.src || '';
+  state.src += character;
+  var wasComment = state.blockComment || state.lineComment;
+  var lastChar = state.history ? state.history[0] : '';
+
+  if (state.regexpStart) {
+    if (character === '/' || character == '*') {
+      state.regexp = false;
+    }
+    state.regexpStart = false;
+  }
+  if (state.lineComment) {
+    if (character === '\n') {
+      state.lineComment = false;
+    }
+  } else if (state.blockComment) {
+    if (state.lastChar === '*' && character === '/') {
+      state.blockComment = false;
+    }
+  } else if (state.singleQuote) {
+    if (character === '\'' && !state.escaped) {
+      state.singleQuote = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (state.doubleQuote) {
+    if (character === '"' && !state.escaped) {
+      state.doubleQuote = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (state.regexp) {
+    if (character === '/' && !state.escaped) {
+      state.regexp = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (lastChar === '/' && character === '/') {
+    state.history = state.history.substr(1);
+    state.lineComment = true;
+  } else if (lastChar === '/' && character === '*') {
+    state.history = state.history.substr(1);
+    state.blockComment = true;
+  } else if (character === '/' && isRegexp(state.history)) {
+    state.regexp = true;
+    state.regexpStart = true;
+  } else if (character === '\'') {
+    state.singleQuote = true;
+  } else if (character === '"') {
+    state.doubleQuote = true;
+  } else if (character === '(') {
+    state.roundDepth++;
+  } else if (character === ')') {
+    state.roundDepth--;
+  } else if (character === '{') {
+    state.curlyDepth++;
+  } else if (character === '}') {
+    state.curlyDepth--;
+  } else if (character === '[') {
+    state.squareDepth++;
+  } else if (character === ']') {
+    state.squareDepth--;
+  }
+  if (!state.blockComment && !state.lineComment && !wasComment) state.history = character + state.history;
+  state.lastChar = character; // store last character for ending block comments
+  return state;
+}
+
+exports.defaultState = function () { return new State() };
+function State() {
+  this.lineComment = false;
+  this.blockComment = false;
+
+  this.singleQuote = false;
+  this.doubleQuote = false;
+  this.regexp = false;
+
+  this.escaped = false;
+
+  this.roundDepth = 0;
+  this.curlyDepth = 0;
+  this.squareDepth = 0;
+
+  this.history = ''
+  this.lastChar = ''
+}
+State.prototype.isString = function () {
+  return this.singleQuote || this.doubleQuote;
+}
+State.prototype.isComment = function () {
+  return this.lineComment || this.blockComment;
+}
+State.prototype.isNesting = function () {
+  return this.isString() || this.isComment() || this.regexp || this.roundDepth > 0 || this.curlyDepth > 0 || this.squareDepth > 0
+}
+
+function startsWith(str, start, i) {
+  return str.substr(i || 0, start.length) === start;
+}
+
+exports.isPunctuator = isPunctuator
+function isPunctuator(c) {
+  if (!c) return true; // the start of a string is a punctuator
+  var code = c.charCodeAt(0)
+
+  switch (code) {
+    case 46:   // . dot
+    case 40:   // ( open bracket
+    case 41:   // ) close bracket
+    case 59:   // ; semicolon
+    case 44:   // , comma
+    case 123:  // { open curly brace
+    case 125:  // } close curly brace
+    case 91:   // [
+    case 93:   // ]
+    case 58:   // :
+    case 63:   // ?
+    case 126:  // ~
+    case 37:   // %
+    case 38:   // &
+    case 42:   // *:
+    case 43:   // +
+    case 45:   // -
+    case 47:   // /
+    case 60:   // <
+    case 62:   // >
+    case 94:   // ^
+    case 124:  // |
+    case 33:   // !
+    case 61:   // =
+      return true;
+    default:
+      return false;
+  }
+}
+exports.isKeyword = isKeyword
+function isKeyword(id) {
+  return (id === 'if') || (id === 'in') || (id === 'do') || (id === 'var') || (id === 'for') || (id === 'new') ||
+         (id === 'try') || (id === 'let') || (id === 'this') || (id === 'else') || (id === 'case') ||
+         (id === 'void') || (id === 'with') || (id === 'enum') || (id === 'while') || (id === 'break') || (id === 'catch') ||
+         (id === 'throw') || (id === 'const') || (id === 'yield') || (id === 'class') || (id === 'super') ||
+         (id === 'return') || (id === 'typeof') || (id === 'delete') || (id === 'switch') || (id === 'export') ||
+         (id === 'import') || (id === 'default') || (id === 'finally') || (id === 'extends') || (id === 'function') ||
+         (id === 'continue') || (id === 'debugger') || (id === 'package') || (id === 'private') || (id === 'interface') ||
+         (id === 'instanceof') || (id === 'implements') || (id === 'protected') || (id === 'public') || (id === 'static') ||
+         (id === 'yield') || (id === 'let');
+}
+
+function isRegexp(history) {
+  //could be start of regexp or divide sign
+
+  history = history.replace(/^\s*/, '');
+
+  //unless its an `if`, `while`, `for` or `with` it's a divide, so we assume it's a divide
+  if (history[0] === ')') return false;
+  //unless it's a function expression, it's a regexp, so we assume it's a regexp
+  if (history[0] === '}') return true;
+  //any punctuation means it's a regexp
+  if (isPunctuator(history[0])) return true;
+  //if the last thing was a keyword then it must be a regexp (e.g. `typeof /foo/`)
+  if (/^\w+\b/.test(history) && isKeyword(/^\w+\b/.exec(history)[0].split('').reverse().join(''))) return true;
+
+  return false;
+}
+
+},{}],14:[function(require,module,exports){
+'use strict'
+
+var acorn = require('acorn');
+var walk = require('acorn/dist/walk');
+
+var lastSRC = '(null)';
+var lastRes = true;
+var lastConstants = undefined;
+
+var STATEMENT_WHITE_LIST = {
+  'EmptyStatement': true,
+  'ExpressionStatement': true,
+};
+var EXPRESSION_WHITE_LIST = {
+  'ParenthesizedExpression': true,
+  'ArrayExpression': true,
+  'ObjectExpression': true,
+  'SequenceExpression': true,
+  'TemplateLiteral': true,
+  'UnaryExpression': true,
+  'BinaryExpression': true,
+  'LogicalExpression': true,
+  'ConditionalExpression': true,
+  'Identifier': true,
+  'Literal': true,
+  'ComprehensionExpression': true,
+  'TaggedTemplateExpression': true,
+  'MemberExpression': true,
+  'CallExpression': true,
+  'NewExpression': true,
+};
+module.exports = isConstant;
+function isConstant(src, constants) {
+  src = '(' + src + ')';
+  if (lastSRC === src && lastConstants === constants) return lastRes;
+  lastSRC = src;
+  lastConstants = constants;
+  if (!isExpression(src)) return lastRes = false;
+  var ast;
+  try {
+    ast = acorn.parse(src, {
+      ecmaVersion: 6,
+      allowReturnOutsideFunction: true,
+      allowImportExportEverywhere: true,
+      allowHashBang: true
+    });
+  } catch (ex) {
+    return lastRes = false;
+  }
+  var isConstant = true;
+  walk.simple(ast, {
+    Statement: function (node) {
+      if (isConstant) {
+        if (STATEMENT_WHITE_LIST[node.type] !== true) {
+          isConstant = false;
+        }
+      }
+    },
+    Expression: function (node) {
+      if (isConstant) {
+        if (EXPRESSION_WHITE_LIST[node.type] !== true) {
+          isConstant = false;
+        }
+      }
+    },
+    MemberExpression: function (node) {
+      if (isConstant) {
+        if (node.computed) isConstant = false;
+        else if (node.property.name[0] === '_') isConstant = false;
+      }
+    },
+    Identifier: function (node) {
+      if (isConstant) {
+        if (!constants || !(node.name in constants)) {
+          isConstant = false;
+        }
+      }
+    },
+  });
+  return lastRes = isConstant;
+}
+isConstant.isConstant = isConstant;
+
+isConstant.toConstant = toConstant;
+function toConstant(src, constants) {
+  if (!isConstant(src, constants)) throw new Error(JSON.stringify(src) + ' is not constant.');
+  return Function(Object.keys(constants || {}).join(','), 'return (' + src + ')').apply(null, Object.keys(constants || {}).map(function (key) {
+    return constants[key];
+  }));
+}
+
+function isExpression(src) {
+  try {
+    eval('throw "STOP"; (function () { return (' + src + '); })()');
+    return false;
+  }
+  catch (err) {
+    return err === 'STOP';
+  }
+}
+
+},{"acorn":11,"acorn/dist/walk":12}],15:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+'use strict';
+
+/**
+ * @file Embedded JavaScript templating engine.
+ * @author Matthew Eernisse <mde@fleegix.org>
+ * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
+ * @project EJS
+ * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
+ */
+
+/**
+ * EJS internal functions.
+ *
+ * Technically this "module" lies in the same file as {@link module:ejs}, for
+ * the sake of organization all the private functions re grouped into this
+ * module.
+ *
+ * @module ejs-internal
+ * @private
+ */
+
+/**
+ * Embedded JavaScript templating engine.
+ *
+ * @module ejs
+ * @public
+ */
+
+var fs = require('fs')
+  , utils = require('./utils')
+  , scopeOptionWarned = false
+  , _VERSION_STRING = require('../package.json').version
+  , _DEFAULT_DELIMITER = '%'
+  , _DEFAULT_LOCALS_NAME = 'locals'
+  , _REGEX_STRING = '(<%%|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)'
+  , _OPTS = [ 'cache', 'filename', 'delimiter', 'scope', 'context'
+            , 'debug', 'compileDebug', 'client', '_with', 'rmWhitespace'
+            , 'strict', 'localsName'
+            ]
+  , _TRAILING_SEMCOL = /;\s*$/
+  , _BOM = /^\uFEFF/;
+
+/**
+ * EJS template function cache. This can be a LRU object from lru-cache NPM
+ * module. By default, it is {@link module:utils.cache}, a simple in-process
+ * cache that grows continuously.
+ *
+ * @type {Cache}
+ */
+
+exports.cache = utils.cache;
+
+/**
+ * Name of the object containing the locals.
+ *
+ * This variable is overriden by {@link Options}`.localsName` if it is not
+ * `undefined`.
+ *
+ * @type {String}
+ * @public
+ */
+
+exports.localsName = _DEFAULT_LOCALS_NAME;
+
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String} name     specified path
+ * @param {String} filename parent file path
+ * @return {String}
+ */
+
+exports.resolveInclude = function(name, filename) {
+  var path = require('path')
+    , dirname = path.dirname
+    , extname = path.extname
+    , resolve = path.resolve
+    , includePath = resolve(dirname(filename), name)
+    , ext = extname(name);
+  if (!ext) {
+    includePath += '.ejs';
+  }
+  return includePath;
+};
+
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `template` is not set, the file specified in `options.filename` will be
+ * read.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @memberof module:ejs-internal
+ * @param {Options} options   compilation options
+ * @param {String} [template] template source
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned.
+ * @static
+ */
+
+function handleCache(options, template) {
+  var fn
+    , path = options.filename
+    , hasTemplate = arguments.length > 1;
+
+  if (options.cache) {
+    if (!path) {
+      throw new Error('cache option requires a filename');
+    }
+    fn = exports.cache.get(path);
+    if (fn) {
+      return fn;
+    }
+    if (!hasTemplate) {
+      template = fs.readFileSync(path).toString().replace(_BOM, '');
+    }
+  }
+  else if (!hasTemplate) {
+    // istanbul ignore if: should not happen at all
+    if (!path) {
+      throw new Error('Internal EJS error: no file name or template '
+                    + 'provided');
+    }
+    template = fs.readFileSync(path).toString().replace(_BOM, '');
+  }
+  fn = exports.compile(template, options);
+  if (options.cache) {
+    exports.cache.set(path, fn);
+  }
+  return fn;
+}
+
+/**
+ * Get the template function.
+ *
+ * If `options.cache` is `true`, then the template is cached.
+ *
+ * @memberof module:ejs-internal
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned
+ * @static
+ */
+
+function includeFile(path, options) {
+  var opts = utils.shallowCopy({}, options);
+  if (!opts.filename) {
+    throw new Error('`include` requires the \'filename\' option.');
+  }
+  opts.filename = exports.resolveInclude(path, opts.filename);
+  return handleCache(opts);
+}
+
+/**
+ * Get the JavaScript source of an included file.
+ *
+ * @memberof module:ejs-internal
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {String}
+ * @static
+ */
+
+function includeSource(path, options) {
+  var opts = utils.shallowCopy({}, options)
+    , includePath
+    , template;
+  if (!opts.filename) {
+    throw new Error('`include` requires the \'filename\' option.');
+  }
+  includePath = exports.resolveInclude(path, opts.filename);
+  template = fs.readFileSync(includePath).toString().replace(_BOM, '');
+
+  opts.filename = includePath;
+  var templ = new Template(template, opts);
+  templ.generateSource();
+  return templ.source;
+}
+
+/**
+ * Re-throw the given `err` in context to the `str` of ejs, `filename`, and
+ * `lineno`.
+ *
+ * @implements RethrowCallback
+ * @memberof module:ejs-internal
+ * @param {Error}  err      Error object
+ * @param {String} str      EJS source
+ * @param {String} filename file name of the EJS file
+ * @param {String} lineno   line number of the error
+ * @static
+ */
+
+function rethrow(err, str, filename, lineno){
+  var lines = str.split('\n')
+    , start = Math.max(lineno - 3, 0)
+    , end = Math.min(lines.length, lineno + 3);
+
+  // Error context
+  var context = lines.slice(start, end).map(function (line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? ' >> ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'ejs') + ':'
+    + lineno + '\n'
+    + context + '\n\n'
+    + err.message;
+
+  throw err;
+}
+
+/**
+ * Copy properties in data object that are recognized as options to an
+ * options object.
+ *
+ * This is used for compatibility with earlier versions of EJS and Express.js.
+ *
+ * @memberof module:ejs-internal
+ * @param {Object}  data data object
+ * @param {Options} opts options object
+ * @static
+ */
+
+function cpOptsInData(data, opts) {
+  _OPTS.forEach(function (p) {
+    if (typeof data[p] != 'undefined') {
+      opts[p] = data[p];
+    }
+  });
+}
+
+/**
+ * Compile the given `str` of ejs into a template function.
+ *
+ * @param {String}  template EJS template
+ *
+ * @param {Options} opts     compilation options
+ *
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `opts.client`, either type might be returned.
+ * @public
+ */
+
+exports.compile = function compile(template, opts) {
+  var templ;
+
+  // v1 compat
+  // 'scope' is 'context'
+  // FIXME: Remove this in a future version
+  if (opts && opts.scope) {
+    if (!scopeOptionWarned){
+      console.warn('`scope` option is deprecated and will be removed in EJS 3');
+      scopeOptionWarned = true;
+    }
+    if (!opts.context) {
+      opts.context = opts.scope;
+    }
+    delete opts.scope;
+  }
+  templ = new Template(template, opts);
+  return templ.compile();
+};
+
+/**
+ * Render the given `template` of ejs.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}   template EJS template
+ * @param {Object}  [data={}] template data
+ * @param {Options} [opts={}] compilation and rendering options
+ * @return {String}
+ * @public
+ */
+
+exports.render = function (template, data, opts) {
+  data = data || {};
+  opts = opts || {};
+  var fn;
+
+  // No options object -- if there are optiony names
+  // in the data, copy them to options
+  if (arguments.length == 2) {
+    cpOptsInData(data, opts);
+  }
+
+  return handleCache(opts, template)(data);
+};
+
+/**
+ * Render an EJS file at the given `path` and callback `cb(err, str)`.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}             path     path to the EJS file
+ * @param {Object}            [data={}] template data
+ * @param {Options}           [opts={}] compilation and rendering options
+ * @param {RenderFileCallback} cb callback
+ * @public
+ */
+
+exports.renderFile = function () {
+  var args = Array.prototype.slice.call(arguments)
+    , path = args.shift()
+    , cb = args.pop()
+    , data = args.shift() || {}
+    , opts = args.pop() || {}
+    , result;
+
+  // Don't pollute passed in opts obj with new vals
+  opts = utils.shallowCopy({}, opts);
+
+  // No options object -- if there are optiony names
+  // in the data, copy them to options
+  if (arguments.length == 3) {
+    // Express 4
+    if (data.settings && data.settings['view options']) {
+      cpOptsInData(data.settings['view options'], opts);
+    }
+    // Express 3 and lower
+    else {
+      cpOptsInData(data, opts);
+    }
+  }
+  opts.filename = path;
+
+  try {
+    result = handleCache(opts)(data);
+  }
+  catch(err) {
+    return cb(err);
+  }
+  return cb(null, result);
+};
+
+/**
+ * Clear intermediate JavaScript cache. Calls {@link Cache#reset}.
+ * @public
+ */
+
+exports.clearCache = function () {
+  exports.cache.reset();
+};
+
+function Template(text, opts) {
+  opts = opts || {};
+  var options = {};
+  this.templateText = text;
+  this.mode = null;
+  this.truncate = false;
+  this.currentLine = 1;
+  this.source = '';
+  this.dependencies = [];
+  options.client = opts.client || false;
+  options.escapeFunction = opts.escape || utils.escapeXML;
+  options.compileDebug = opts.compileDebug !== false;
+  options.debug = !!opts.debug;
+  options.filename = opts.filename;
+  options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
+  options.strict = opts.strict || false;
+  options.context = opts.context;
+  options.cache = opts.cache || false;
+  options.rmWhitespace = opts.rmWhitespace;
+  options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
+
+  if (options.strict) {
+    options._with = false;
+  }
+  else {
+    options._with = typeof opts._with != 'undefined' ? opts._with : true;
+  }
+
+  this.opts = options;
+
+  this.regex = this.createRegex();
+}
+
+Template.modes = {
+  EVAL: 'eval'
+, ESCAPED: 'escaped'
+, RAW: 'raw'
+, COMMENT: 'comment'
+, LITERAL: 'literal'
+};
+
+Template.prototype = {
+  createRegex: function () {
+    var str = _REGEX_STRING
+      , delim = utils.escapeRegExpChars(this.opts.delimiter);
+    str = str.replace(/%/g, delim);
+    return new RegExp(str);
+  }
+
+, compile: function () {
+    var src
+      , fn
+      , opts = this.opts
+      , prepended = ''
+      , appended = ''
+      , escape = opts.escapeFunction;
+
+    if (opts.rmWhitespace) {
+      // Have to use two separate replace here as `^` and `$` operators don't
+      // work well with `\r`.
+      this.templateText =
+        this.templateText.replace(/\r/g, '').replace(/^\s+|\s+$/gm, '');
+    }
+
+    // Slurp spaces and tabs before <%_ and after _%>
+    this.templateText =
+      this.templateText.replace(/[ \t]*<%_/gm, '<%_').replace(/_%>[ \t]*/gm, '_%>');
+
+    if (!this.source) {
+      this.generateSource();
+      prepended += '  var __output = [], __append = __output.push.bind(__output);' + '\n';
+      if (opts._with !== false) {
+        prepended +=  '  with (' + opts.localsName + ' || {}) {' + '\n';
+        appended += '  }' + '\n';
+      }
+      appended += '  return __output.join("");' + '\n';
+      this.source = prepended + this.source + appended;
+    }
+
+    if (opts.compileDebug) {
+      src = 'var __line = 1' + '\n'
+          + '  , __lines = ' + JSON.stringify(this.templateText) + '\n'
+          + '  , __filename = ' + (opts.filename ?
+                JSON.stringify(opts.filename) : 'undefined') + ';' + '\n'
+          + 'try {' + '\n'
+          + this.source
+          + '} catch (e) {' + '\n'
+          + '  rethrow(e, __lines, __filename, __line);' + '\n'
+          + '}' + '\n';
+    }
+    else {
+      src = this.source;
+    }
+
+    if (opts.debug) {
+      console.log(src);
+    }
+
+    if (opts.client) {
+      src = 'escape = escape || ' + escape.toString() + ';' + '\n' + src;
+      if (opts.compileDebug) {
+        src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
+      }
+    }
+
+    if (opts.strict) {
+      src = '"use strict";\n' + src;
+    }
+
+    try {
+      fn = new Function(opts.localsName + ', escape, include, rethrow', src);
+    }
+    catch(e) {
+      // istanbul ignore else
+      if (e instanceof SyntaxError) {
+        if (opts.filename) {
+          e.message += ' in ' + opts.filename;
+        }
+        e.message += ' while compiling ejs';
+      }
+      throw e;
+    }
+
+    if (opts.client) {
+      fn.dependencies = this.dependencies;
+      return fn;
+    }
+
+    // Return a callable function which will execute the function
+    // created by the source-code, with the passed data as locals
+    // Adds a local `include` function which allows full recursive include
+    var returnedFn = function (data) {
+      var include = function (path, includeData) {
+        var d = utils.shallowCopy({}, data);
+        if (includeData) {
+          d = utils.shallowCopy(d, includeData);
+        }
+        return includeFile(path, opts)(d);
+      };
+      return fn.apply(opts.context, [data || {}, escape, include, rethrow]);
+    };
+    returnedFn.dependencies = this.dependencies;
+    return returnedFn;
+  }
+
+, generateSource: function () {
+    var self = this
+      , matches = this.parseTemplateText()
+      , d = this.opts.delimiter;
+
+    if (matches && matches.length) {
+      if (this.opts.compileDebug && this.opts.filename) {
+        this.source =  '    ; __lines = ' + JSON.stringify(this.templateText) + '\n';
+        this.source += '    ; __filename = "' + this.opts.filename.replace(/\\/g,  '/') + '"\n';
+      }
+      matches.forEach(function (line, index) {
+        var opening
+          , closing
+          , include
+          , includeOpts
+          , includeSrc;
+        // If this is an opening tag, check for closing tags
+        // FIXME: May end up with some false positives here
+        // Better to store modes as k/v with '<' + delimiter as key
+        // Then this can simply check against the map
+        if ( line.indexOf('<' + d) === 0        // If it is a tag
+          && line.indexOf('<' + d + d) !== 0) { // and is not escaped
+          closing = matches[index + 2];
+          if (!(closing == d + '>' || closing == '-' + d + '>' || closing == '_' + d + '>')) {
+            throw new Error('Could not find matching close tag for "' + line + '".');
+          }
+        }
+        // HACK: backward-compat `include` preprocessor directives
+        if ((include = line.match(/^\s*include\s+(\S+)/))) {
+          opening = matches[index - 1];
+          // Must be in EVAL or RAW mode
+          if (opening && (opening == '<' + d || opening == '<' + d + '-' || opening == '<' + d + '_')) {
+            includeOpts = utils.shallowCopy({}, self.opts);
+            includeSrc = includeSource(include[1], includeOpts);
+            includeSrc = '    ; (function(){' + '\n' + includeSrc +
+                '    ; })()' + '\n';
+            self.source += includeSrc;
+            self.dependencies.push(exports.resolveInclude(include[1],
+                includeOpts.filename));
+            return;
+          }
+        }
+        self.scanLine(line);
+      });
+    }
+
+  }
+
+, parseTemplateText: function () {
+    var str = this.templateText
+      , pat = this.regex
+      , result = pat.exec(str)
+      , arr = []
+      , firstPos
+      , lastPos;
+
+    while (result) {
+      firstPos = result.index;
+      lastPos = pat.lastIndex;
+
+      if (firstPos !== 0) {
+        arr.push(str.substring(0, firstPos));
+        str = str.slice(firstPos);
+      }
+
+      arr.push(result[0]);
+      str = str.slice(result[0].length);
+      result = pat.exec(str);
+    }
+
+    if (str) {
+      arr.push(str);
+    }
+
+    return arr;
+  }
+
+, scanLine: function (line) {
+    var self = this
+      , d = this.opts.delimiter
+      , newLineCount = 0;
+
+    function _addOutput() {
+      if (self.truncate) {
+        // Only replace single leading linebreak in the line after
+        // -%> tag -- this is the single, trailing linebreak
+        // after the tag that the truncation mode replaces
+        // Handle Win / Unix / old Mac linebreaks -- do the \r\n
+        // combo first in the regex-or
+        line = line.replace(/^(?:\r\n|\r|\n)/, '')
+        self.truncate = false;
+      }
+      else if (self.opts.rmWhitespace) {
+        // Gotta be more careful here.
+        // .replace(/^(\s*)\n/, '$1') might be more appropriate here but as
+        // rmWhitespace already removes trailing spaces anyway so meh.
+        line = line.replace(/^\n/, '');
+      }
+      if (!line) {
+        return;
+      }
+
+      // Preserve literal slashes
+      line = line.replace(/\\/g, '\\\\');
+
+      // Convert linebreaks
+      line = line.replace(/\n/g, '\\n');
+      line = line.replace(/\r/g, '\\r');
+
+      // Escape double-quotes
+      // - this will be the delimiter during execution
+      line = line.replace(/"/g, '\\"');
+      self.source += '    ; __append("' + line + '")' + '\n';
+    }
+
+    newLineCount = (line.split('\n').length - 1);
+
+    switch (line) {
+      case '<' + d:
+      case '<' + d + '_':
+        this.mode = Template.modes.EVAL;
+        break;
+      case '<' + d + '=':
+        this.mode = Template.modes.ESCAPED;
+        break;
+      case '<' + d + '-':
+        this.mode = Template.modes.RAW;
+        break;
+      case '<' + d + '#':
+        this.mode = Template.modes.COMMENT;
+        break;
+      case '<' + d + d:
+        this.mode = Template.modes.LITERAL;
+        this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
+        break;
+      case d + '>':
+      case '-' + d + '>':
+      case '_' + d + '>':
+        if (this.mode == Template.modes.LITERAL) {
+          _addOutput();
+        }
+
+        this.mode = null;
+        this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
+        break;
+      default:
+        // In script mode, depends on type of tag
+        if (this.mode) {
+          // If '//' is found without a line break, add a line break.
+          switch (this.mode) {
+            case Template.modes.EVAL:
+            case Template.modes.ESCAPED:
+            case Template.modes.RAW:
+              if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
+                line += '\n';
+              }
+          }
+          switch (this.mode) {
+            // Just executing code
+            case Template.modes.EVAL:
+              this.source += '    ; ' + line + '\n';
+              break;
+            // Exec, esc, and output
+            case Template.modes.ESCAPED:
+              this.source += '    ; __append(escape(' +
+                line.replace(_TRAILING_SEMCOL, '').trim() + '))' + '\n';
+              break;
+            // Exec and output
+            case Template.modes.RAW:
+              this.source += '    ; __append(' +
+                line.replace(_TRAILING_SEMCOL, '').trim() + ')' + '\n';
+              break;
+            case Template.modes.COMMENT:
+              // Do nothing
+              break;
+            // Literal <%% mode, append as raw output
+            case Template.modes.LITERAL:
+              _addOutput();
+              break;
+          }
+        }
+        // In string mode, just add the output
+        else {
+          _addOutput();
+        }
+    }
+
+    if (self.opts.compileDebug && newLineCount) {
+      this.currentLine += newLineCount;
+      this.source += '    ; __line = ' + this.currentLine + '\n';
+    }
+  }
+};
+
+/*
+ * Export the internal function for escaping XML so people
+ * can use for manual escaping if needed
+ * */
+exports.escapeXML = utils.escapeXML;
+
+/**
+ * Express.js support.
+ *
+ * This is an alias for {@link module:ejs.renderFile}, in order to support
+ * Express.js out-of-the-box.
+ *
+ * @func
+ */
+
+exports.__express = exports.renderFile;
+
+// Add require support
+/* istanbul ignore else */
+if (require.extensions) {
+  require.extensions['.ejs'] = function (module, filename) {
+    filename = filename || /* istanbul ignore next */ module.filename;
+    var options = {
+          filename: filename
+        , client: true
+        }
+      , template = fs.readFileSync(filename).toString()
+      , fn = exports.compile(template, options);
+    module._compile('module.exports = ' + fn.toString() + ';', filename);
+  };
+}
+
+/**
+ * Version of EJS.
+ *
+ * @readonly
+ * @type {String}
+ * @public
+ */
+
+exports.VERSION = _VERSION_STRING;
+
+/* istanbul ignore if */
+if (typeof window != 'undefined') {
+  window.ejs = exports;
+}
+
+},{"../package.json":17,"./utils":16,"fs":18,"path":23}],16:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+/**
+ * Private utility functions
+ * @module utils
+ * @private
+ */
+
+'use strict';
+
+var regExpChars = /[|\\{}()[\]^$+*?.]/g;
+
+/**
+ * Escape characters reserved in regular expressions.
+ *
+ * If `string` is `undefined` or `null`, the empty string is returned.
+ *
+ * @param {String} string Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+exports.escapeRegExpChars = function (string) {
+  // istanbul ignore if
+  if (!string) {
+    return '';
+  }
+  return String(string).replace(regExpChars, '\\$&');
+};
+
+var _ENCODE_HTML_RULES = {
+      '&': '&amp;'
+    , '<': '&lt;'
+    , '>': '&gt;'
+    , '"': '&#34;'
+    , "'": '&#39;'
+    }
+  , _MATCH_HTML = /[&<>\'"]/g;
+
+function encode_char(c) {
+  return _ENCODE_HTML_RULES[c] || c;
+};
+
+/**
+ * Stringified version of constants used by {@link module:utils.escapeXML}.
+ *
+ * It is used in the process of generating {@link ClientFunction}s.
+ *
+ * @readonly
+ * @type {String}
+ */
+
+var escapeFuncStr =
+  'var _ENCODE_HTML_RULES = {\n'
++ '      "&": "&amp;"\n'
++ '    , "<": "&lt;"\n'
++ '    , ">": "&gt;"\n'
++ '    , \'"\': "&#34;"\n'
++ '    , "\'": "&#39;"\n'
++ '    }\n'
++ '  , _MATCH_HTML = /[&<>\'"]/g;\n'
++ 'function encode_char(c) {\n'
++ '  return _ENCODE_HTML_RULES[c] || c;\n'
++ '};\n';
+
+/**
+ * Escape characters reserved in XML.
+ *
+ * If `markup` is `undefined` or `null`, the empty string is returned.
+ *
+ * @implements {EscapeCallback}
+ * @param {String} markup Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+
+exports.escapeXML = function (markup) {
+  return markup == undefined
+    ? ''
+    : String(markup)
+        .replace(_MATCH_HTML, encode_char);
+};
+exports.escapeXML.toString = function () {
+  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr
+};
+
+/**
+ * Copy all properties from one object to another, in a shallow fashion.
+ *
+ * @param  {Object} to   Destination object
+ * @param  {Object} from Source object
+ * @return {Object}      Destination object
+ * @static
+ * @private
+ */
+exports.shallowCopy = function (to, from) {
+  from = from || {};
+  for (var p in from) {
+    to[p] = from[p];
+  }
+  return to;
+};
+
+/**
+ * Simple in-process cache implementation. Does not implement limits of any
+ * sort.
+ *
+ * @implements Cache
+ * @static
+ * @private
+ */
+exports.cache = {
+  _data: {},
+  set: function (key, val) {
+    this._data[key] = val;
+  },
+  get: function (key) {
+    return this._data[key];
+  },
+  reset: function () {
+    this._data = {};
+  }
+};
+
+
+},{}],17:[function(require,module,exports){
+module.exports={
+  "_args": [
+    [
+      "ejs",
+      "/Users/daigo/Documents/atomic-lab/atomic-lab"
+    ]
+  ],
+  "_from": "ejs@latest",
+  "_id": "ejs@2.4.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/ejs",
+  "_nodeVersion": "4.4.4",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/ejs-2.4.2.tgz_1464117640663_0.8193834638223052"
+  },
+  "_npmUser": {
+    "email": "mde@fleegix.org",
+    "name": "mde"
+  },
+  "_npmVersion": "2.15.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "ejs",
+    "raw": "ejs",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz",
+  "_shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
+  "_shrinkwrap": null,
+  "_spec": "ejs",
+  "_where": "/Users/daigo/Documents/atomic-lab/atomic-lab",
+  "author": {
+    "email": "mde@fleegix.org",
+    "name": "Matthew Eernisse",
+    "url": "http://fleegix.org"
+  },
+  "bugs": {
+    "url": "https://github.com/mde/ejs/issues"
+  },
+  "contributors": [
+    {
+      "email": "timothygu99@gmail.com",
+      "name": "Timothy Gu",
+      "url": "https://timothygu.github.io"
+    }
+  ],
+  "dependencies": {},
+  "description": "Embedded JavaScript templates",
+  "devDependencies": {
+    "browserify": "^8.0.3",
+    "istanbul": "~0.3.5",
+    "jake": "^8.0.0",
+    "jsdoc": "^3.3.0-beta1",
+    "lru-cache": "^2.5.0",
+    "mocha": "^2.1.0",
+    "rimraf": "^2.2.8",
+    "uglify-js": "^2.4.16"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
+    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "homepage": "https://github.com/mde/ejs",
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
+  "license": "Apache-2.0",
+  "main": "./lib/ejs.js",
+  "maintainers": [
+    {
+      "email": "tj@vision-media.ca",
+      "name": "tjholowaychuk"
+    },
+    {
+      "email": "mde@fleegix.org",
+      "name": "mde"
+    }
+  ],
+  "name": "ejs",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mde/ejs.git"
+  },
+  "scripts": {
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
+    "devdoc": "rimraf out && jsdoc -p -c jsdoc.json lib/* docs/jsdoc/*",
+    "doc": "rimraf out && jsdoc -c jsdoc.json lib/* docs/jsdoc/*",
+    "sample": "npm install express && node sample/index.js",
+    "test": "mocha"
+  },
+  "version": "2.4.2"
+}
+
+},{}],18:[function(require,module,exports){
+
+},{}],19:[function(require,module,exports){
+module.exports=require(18)
+},{}],20:[function(require,module,exports){
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+
+var base64 = require('base64-js')
+var ieee754 = require('ieee754')
+
+exports.Buffer = Buffer
+exports.SlowBuffer = Buffer
+exports.INSPECT_MAX_BYTES = 50
+Buffer.poolSize = 8192
+
+/**
+ * If `Buffer._useTypedArrays`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (compatible down to IE6)
+ */
+Buffer._useTypedArrays = (function () {
+  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
+  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
+  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
+  // because we need to be able to add all the node Buffer API methods. This is an issue
+  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
+  try {
+    var buf = new ArrayBuffer(0)
+    var arr = new Uint8Array(buf)
+    arr.foo = function () { return 42 }
+    return 42 === arr.foo() &&
+        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
+  } catch (e) {
+    return false
+  }
+})()
+
+/**
+ * Class: Buffer
+ * =============
+ *
+ * The Buffer constructor returns instances of `Uint8Array` that are augmented
+ * with function properties for all the node `Buffer` API functions. We use
+ * `Uint8Array` so that square bracket notation works as expected -- it returns
+ * a single octet.
+ *
+ * By augmenting the instances, we can avoid modifying the `Uint8Array`
+ * prototype.
+ */
+function Buffer (subject, encoding, noZero) {
+  if (!(this instanceof Buffer))
+    return new Buffer(subject, encoding, noZero)
+
+  var type = typeof subject
+
+  // Workaround: node's base64 implementation allows for non-padded strings
+  // while base64-js does not.
+  if (encoding === 'base64' && type === 'string') {
+    subject = stringtrim(subject)
+    while (subject.length % 4 !== 0) {
+      subject = subject + '='
+    }
+  }
+
+  // Find the length
+  var length
+  if (type === 'number')
+    length = coerce(subject)
+  else if (type === 'string')
+    length = Buffer.byteLength(subject, encoding)
+  else if (type === 'object')
+    length = coerce(subject.length) // assume that object is array-like
+  else
+    throw new Error('First argument needs to be a number, array or string.')
+
+  var buf
+  if (Buffer._useTypedArrays) {
+    // Preferred: Return an augmented `Uint8Array` instance for best performance
+    buf = Buffer._augment(new Uint8Array(length))
+  } else {
+    // Fallback: Return THIS instance of Buffer (created by `new`)
+    buf = this
+    buf.length = length
+    buf._isBuffer = true
+  }
+
+  var i
+  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
+    buf._set(subject)
+  } else if (isArrayish(subject)) {
+    // Treat array-ish objects as a byte array
+    for (i = 0; i < length; i++) {
+      if (Buffer.isBuffer(subject))
+        buf[i] = subject.readUInt8(i)
+      else
+        buf[i] = subject[i]
+    }
+  } else if (type === 'string') {
+    buf.write(subject, 0, encoding)
+  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
+    for (i = 0; i < length; i++) {
+      buf[i] = 0
+    }
+  }
+
+  return buf
+}
+
+// STATIC METHODS
+// ==============
+
+Buffer.isEncoding = function (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'binary':
+    case 'base64':
+    case 'raw':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.isBuffer = function (b) {
+  return !!(b !== null && b !== undefined && b._isBuffer)
+}
+
+Buffer.byteLength = function (str, encoding) {
+  var ret
+  str = str + ''
+  switch (encoding || 'utf8') {
+    case 'hex':
+      ret = str.length / 2
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8ToBytes(str).length
+      break
+    case 'ascii':
+    case 'binary':
+    case 'raw':
+      ret = str.length
+      break
+    case 'base64':
+      ret = base64ToBytes(str).length
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = str.length * 2
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.concat = function (list, totalLength) {
+  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
+      'list should be an Array.')
+
+  if (list.length === 0) {
+    return new Buffer(0)
+  } else if (list.length === 1) {
+    return list[0]
+  }
+
+  var i
+  if (typeof totalLength !== 'number') {
+    totalLength = 0
+    for (i = 0; i < list.length; i++) {
+      totalLength += list[i].length
+    }
+  }
+
+  var buf = new Buffer(totalLength)
+  var pos = 0
+  for (i = 0; i < list.length; i++) {
+    var item = list[i]
+    item.copy(buf, pos)
+    pos += item.length
+  }
+  return buf
+}
+
+// BUFFER INSTANCE METHODS
+// =======================
+
+function _hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  assert(strLen % 2 === 0, 'Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; i++) {
+    var byte = parseInt(string.substr(i * 2, 2), 16)
+    assert(!isNaN(byte), 'Invalid hex string')
+    buf[offset + i] = byte
+  }
+  Buffer._charsWritten = i * 2
+  return i
+}
+
+function _utf8Write (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(utf8ToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _asciiWrite (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(asciiToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _binaryWrite (buf, string, offset, length) {
+  return _asciiWrite(buf, string, offset, length)
+}
+
+function _base64Write (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(base64ToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _utf16leWrite (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(utf16leToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+Buffer.prototype.write = function (string, offset, length, encoding) {
+  // Support both (string, offset, length, encoding)
+  // and the legacy (string, encoding, offset, length)
+  if (isFinite(offset)) {
+    if (!isFinite(length)) {
+      encoding = length
+      length = undefined
+    }
+  } else {  // legacy
+    var swap = encoding
+    encoding = offset
+    offset = length
+    length = swap
+  }
+
+  offset = Number(offset) || 0
+  var remaining = this.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+  encoding = String(encoding || 'utf8').toLowerCase()
+
+  var ret
+  switch (encoding) {
+    case 'hex':
+      ret = _hexWrite(this, string, offset, length)
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = _utf8Write(this, string, offset, length)
+      break
+    case 'ascii':
+      ret = _asciiWrite(this, string, offset, length)
+      break
+    case 'binary':
+      ret = _binaryWrite(this, string, offset, length)
+      break
+    case 'base64':
+      ret = _base64Write(this, string, offset, length)
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = _utf16leWrite(this, string, offset, length)
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.prototype.toString = function (encoding, start, end) {
+  var self = this
+
+  encoding = String(encoding || 'utf8').toLowerCase()
+  start = Number(start) || 0
+  end = (end !== undefined)
+    ? Number(end)
+    : end = self.length
+
+  // Fastpath empty strings
+  if (end === start)
+    return ''
+
+  var ret
+  switch (encoding) {
+    case 'hex':
+      ret = _hexSlice(self, start, end)
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = _utf8Slice(self, start, end)
+      break
+    case 'ascii':
+      ret = _asciiSlice(self, start, end)
+      break
+    case 'binary':
+      ret = _binarySlice(self, start, end)
+      break
+    case 'base64':
+      ret = _base64Slice(self, start, end)
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = _utf16leSlice(self, start, end)
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.prototype.toJSON = function () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function (target, target_start, start, end) {
+  var source = this
+
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (!target_start) target_start = 0
+
+  // Copy 0 bytes; we're done
+  if (end === start) return
+  if (target.length === 0 || source.length === 0) return
+
+  // Fatal error conditions
+  assert(end >= start, 'sourceEnd < sourceStart')
+  assert(target_start >= 0 && target_start < target.length,
+      'targetStart out of bounds')
+  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
+  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length)
+    end = this.length
+  if (target.length - target_start < end - start)
+    end = target.length - target_start + start
+
+  var len = end - start
+
+  if (len < 100 || !Buffer._useTypedArrays) {
+    for (var i = 0; i < len; i++)
+      target[i + target_start] = this[i + start]
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
+}
+
+function _base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function _utf8Slice (buf, start, end) {
+  var res = ''
+  var tmp = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    if (buf[i] <= 0x7F) {
+      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
+      tmp = ''
+    } else {
+      tmp += '%' + buf[i].toString(16)
+    }
+  }
+
+  return res + decodeUtf8Char(tmp)
+}
+
+function _asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++)
+    ret += String.fromCharCode(buf[i])
+  return ret
+}
+
+function _binarySlice (buf, start, end) {
+  return _asciiSlice(buf, start, end)
+}
+
+function _hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; i++) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function _utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function (start, end) {
+  var len = this.length
+  start = clamp(start, len, 0)
+  end = clamp(end, len, len)
+
+  if (Buffer._useTypedArrays) {
+    return Buffer._augment(this.subarray(start, end))
+  } else {
+    var sliceLen = end - start
+    var newBuf = new Buffer(sliceLen, undefined, true)
+    for (var i = 0; i < sliceLen; i++) {
+      newBuf[i] = this[i + start]
+    }
+    return newBuf
+  }
+}
+
+// `get` will be removed in Node 0.13+
+Buffer.prototype.get = function (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` will be removed in Node 0.13+
+Buffer.prototype.set = function (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
+
+Buffer.prototype.readUInt8 = function (offset, noAssert) {
+  if (!noAssert) {
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'Trying to read beyond buffer length')
+  }
+
+  if (offset >= this.length)
+    return
+
+  return this[offset]
+}
+
+function _readUInt16 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val
+  if (littleEndian) {
+    val = buf[offset]
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
+  } else {
+    val = buf[offset] << 8
+    if (offset + 1 < len)
+      val |= buf[offset + 1]
+  }
+  return val
+}
+
+Buffer.prototype.readUInt16LE = function (offset, noAssert) {
+  return _readUInt16(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readUInt16BE = function (offset, noAssert) {
+  return _readUInt16(this, offset, false, noAssert)
+}
+
+function _readUInt32 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val
+  if (littleEndian) {
+    if (offset + 2 < len)
+      val = buf[offset + 2] << 16
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
+    val |= buf[offset]
+    if (offset + 3 < len)
+      val = val + (buf[offset + 3] << 24 >>> 0)
+  } else {
+    if (offset + 1 < len)
+      val = buf[offset + 1] << 16
+    if (offset + 2 < len)
+      val |= buf[offset + 2] << 8
+    if (offset + 3 < len)
+      val |= buf[offset + 3]
+    val = val + (buf[offset] << 24 >>> 0)
+  }
+  return val
+}
+
+Buffer.prototype.readUInt32LE = function (offset, noAssert) {
+  return _readUInt32(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readUInt32BE = function (offset, noAssert) {
+  return _readUInt32(this, offset, false, noAssert)
+}
+
+Buffer.prototype.readInt8 = function (offset, noAssert) {
+  if (!noAssert) {
+    assert(offset !== undefined && offset !== null,
+        'missing offset')
+    assert(offset < this.length, 'Trying to read beyond buffer length')
+  }
+
+  if (offset >= this.length)
+    return
+
+  var neg = this[offset] & 0x80
+  if (neg)
+    return (0xff - this[offset] + 1) * -1
+  else
+    return this[offset]
+}
+
+function _readInt16 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val = _readUInt16(buf, offset, littleEndian, true)
+  var neg = val & 0x8000
+  if (neg)
+    return (0xffff - val + 1) * -1
+  else
+    return val
+}
+
+Buffer.prototype.readInt16LE = function (offset, noAssert) {
+  return _readInt16(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readInt16BE = function (offset, noAssert) {
+  return _readInt16(this, offset, false, noAssert)
+}
+
+function _readInt32 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val = _readUInt32(buf, offset, littleEndian, true)
+  var neg = val & 0x80000000
+  if (neg)
+    return (0xffffffff - val + 1) * -1
+  else
+    return val
+}
+
+Buffer.prototype.readInt32LE = function (offset, noAssert) {
+  return _readInt32(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readInt32BE = function (offset, noAssert) {
+  return _readInt32(this, offset, false, noAssert)
+}
+
+function _readFloat (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  return ieee754.read(buf, offset, littleEndian, 23, 4)
+}
+
+Buffer.prototype.readFloatLE = function (offset, noAssert) {
+  return _readFloat(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readFloatBE = function (offset, noAssert) {
+  return _readFloat(this, offset, false, noAssert)
+}
+
+function _readDouble (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  return ieee754.read(buf, offset, littleEndian, 52, 8)
+}
+
+Buffer.prototype.readDoubleLE = function (offset, noAssert) {
+  return _readDouble(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readDoubleBE = function (offset, noAssert) {
+  return _readDouble(this, offset, false, noAssert)
+}
+
+Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xff)
+  }
+
+  if (offset >= this.length) return
+
+  this[offset] = value
+}
+
+function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xffff)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
+    buf[offset + i] =
+        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+            (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
+  _writeUInt16(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+  _writeUInt16(this, value, offset, false, noAssert)
+}
+
+function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xffffffff)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
+    buf[offset + i] =
+        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+  _writeUInt32(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+  _writeUInt32(this, value, offset, false, noAssert)
+}
+
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7f, -0x80)
+  }
+
+  if (offset >= this.length)
+    return
+
+  if (value >= 0)
+    this.writeUInt8(value, offset, noAssert)
+  else
+    this.writeUInt8(0xff + value + 1, offset, noAssert)
+}
+
+function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7fff, -0x8000)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  if (value >= 0)
+    _writeUInt16(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
+}
+
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+  _writeInt16(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+  _writeInt16(this, value, offset, false, noAssert)
+}
+
+function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7fffffff, -0x80000000)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  if (value >= 0)
+    _writeUInt32(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
+}
+
+Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
+  _writeInt32(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
+  _writeInt32(this, value, offset, false, noAssert)
+}
+
+function _writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
+    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+}
+
+Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
+  _writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
+  _writeFloat(this, value, offset, false, noAssert)
+}
+
+function _writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 7 < buf.length,
+        'Trying to write beyond buffer length')
+    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+}
+
+Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
+  _writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
+  _writeDouble(this, value, offset, false, noAssert)
+}
+
+// fill(value, start=0, end=buffer.length)
+Buffer.prototype.fill = function (value, start, end) {
+  if (!value) value = 0
+  if (!start) start = 0
+  if (!end) end = this.length
+
+  if (typeof value === 'string') {
+    value = value.charCodeAt(0)
+  }
+
+  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
+  assert(end >= start, 'end < start')
+
+  // Fill 0 bytes; we're done
+  if (end === start) return
+  if (this.length === 0) return
+
+  assert(start >= 0 && start < this.length, 'start out of bounds')
+  assert(end >= 0 && end <= this.length, 'end out of bounds')
+
+  for (var i = start; i < end; i++) {
+    this[i] = value
+  }
+}
+
+Buffer.prototype.inspect = function () {
+  var out = []
+  var len = this.length
+  for (var i = 0; i < len; i++) {
+    out[i] = toHex(this[i])
+    if (i === exports.INSPECT_MAX_BYTES) {
+      out[i + 1] = '...'
+      break
+    }
+  }
+  return '<Buffer ' + out.join(' ') + '>'
+}
+
+/**
+ * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+ * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
+ */
+Buffer.prototype.toArrayBuffer = function () {
+  if (typeof Uint8Array !== 'undefined') {
+    if (Buffer._useTypedArrays) {
+      return (new Buffer(this)).buffer
+    } else {
+      var buf = new Uint8Array(this.length)
+      for (var i = 0, len = buf.length; i < len; i += 1)
+        buf[i] = this[i]
+      return buf.buffer
+    }
+  } else {
+    throw new Error('Buffer.toArrayBuffer not supported in this browser')
+  }
+}
+
+// HELPER FUNCTIONS
+// ================
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+var BP = Buffer.prototype
+
+/**
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
+ */
+Buffer._augment = function (arr) {
+  arr._isBuffer = true
+
+  // save reference to original Uint8Array get/set methods before overwriting
+  arr._get = arr.get
+  arr._set = arr.set
+
+  // deprecated, will be removed in node 0.13+
+  arr.get = BP.get
+  arr.set = BP.set
+
+  arr.write = BP.write
+  arr.toString = BP.toString
+  arr.toLocaleString = BP.toString
+  arr.toJSON = BP.toJSON
+  arr.copy = BP.copy
+  arr.slice = BP.slice
+  arr.readUInt8 = BP.readUInt8
+  arr.readUInt16LE = BP.readUInt16LE
+  arr.readUInt16BE = BP.readUInt16BE
+  arr.readUInt32LE = BP.readUInt32LE
+  arr.readUInt32BE = BP.readUInt32BE
+  arr.readInt8 = BP.readInt8
+  arr.readInt16LE = BP.readInt16LE
+  arr.readInt16BE = BP.readInt16BE
+  arr.readInt32LE = BP.readInt32LE
+  arr.readInt32BE = BP.readInt32BE
+  arr.readFloatLE = BP.readFloatLE
+  arr.readFloatBE = BP.readFloatBE
+  arr.readDoubleLE = BP.readDoubleLE
+  arr.readDoubleBE = BP.readDoubleBE
+  arr.writeUInt8 = BP.writeUInt8
+  arr.writeUInt16LE = BP.writeUInt16LE
+  arr.writeUInt16BE = BP.writeUInt16BE
+  arr.writeUInt32LE = BP.writeUInt32LE
+  arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeInt8 = BP.writeInt8
+  arr.writeInt16LE = BP.writeInt16LE
+  arr.writeInt16BE = BP.writeInt16BE
+  arr.writeInt32LE = BP.writeInt32LE
+  arr.writeInt32BE = BP.writeInt32BE
+  arr.writeFloatLE = BP.writeFloatLE
+  arr.writeFloatBE = BP.writeFloatBE
+  arr.writeDoubleLE = BP.writeDoubleLE
+  arr.writeDoubleBE = BP.writeDoubleBE
+  arr.fill = BP.fill
+  arr.inspect = BP.inspect
+  arr.toArrayBuffer = BP.toArrayBuffer
+
+  return arr
+}
+
+// slice(start, end)
+function clamp (index, len, defaultValue) {
+  if (typeof index !== 'number') return defaultValue
+  index = ~~index;  // Coerce to integer.
+  if (index >= len) return len
+  if (index >= 0) return index
+  index += len
+  if (index >= 0) return index
+  return 0
+}
+
+function coerce (length) {
+  // Coerce length to a number (possibly NaN), round up
+  // in case it's fractional (e.g. 123.456) then do a
+  // double negate to coerce a NaN to 0. Easy, right?
+  length = ~~Math.ceil(+length)
+  return length < 0 ? 0 : length
+}
+
+function isArray (subject) {
+  return (Array.isArray || function (subject) {
+    return Object.prototype.toString.call(subject) === '[object Array]'
+  })(subject)
+}
+
+function isArrayish (subject) {
+  return isArray(subject) || Buffer.isBuffer(subject) ||
+      subject && typeof subject === 'object' &&
+      typeof subject.length === 'number'
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    var b = str.charCodeAt(i)
+    if (b <= 0x7F)
+      byteArray.push(str.charCodeAt(i))
+    else {
+      var start = i
+      if (b >= 0xD800 && b <= 0xDFFF) i++
+      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
+      for (var j = 0; j < h.length; j++)
+        byteArray.push(parseInt(h[j], 16))
+    }
+  }
+  return byteArray
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(str)
+}
+
+function blitBuffer (src, dst, offset, length) {
+  var pos
+  for (var i = 0; i < length; i++) {
+    if ((i + offset >= dst.length) || (i >= src.length))
+      break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function decodeUtf8Char (str) {
+  try {
+    return decodeURIComponent(str)
+  } catch (err) {
+    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
+  }
+}
+
+/*
+ * We have to make sure that the value is a valid integer. This means that it
+ * is non-negative. It has no fractional component and that it does not
+ * exceed the maximum allowed value.
+ */
+function verifuint (value, max) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value >= 0, 'specified a negative value for writing an unsigned value')
+  assert(value <= max, 'value is larger than maximum value for type')
+  assert(Math.floor(value) === value, 'value has a fractional component')
+}
+
+function verifsint (value, max, min) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value <= max, 'value larger than maximum allowed value')
+  assert(value >= min, 'value smaller than minimum allowed value')
+  assert(Math.floor(value) === value, 'value has a fractional component')
+}
+
+function verifIEEE754 (value, max, min) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value <= max, 'value larger than maximum allowed value')
+  assert(value >= min, 'value smaller than minimum allowed value')
+}
+
+function assert (test, message) {
+  if (!test) throw new Error(message || 'Failed assertion')
+}
+
+},{"base64-js":21,"ieee754":22}],21:[function(require,module,exports){
+var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+;(function (exports) {
+	'use strict';
+
+  var Arr = (typeof Uint8Array !== 'undefined')
+    ? Uint8Array
+    : Array
+
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
+
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
+			return 62 // '+'
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
+			return 63 // '/'
+		if (code < NUMBER)
+			return -1 //no match
+		if (code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if (code < UPPER + 26)
+			return code - UPPER
+		if (code < LOWER + 26)
+			return code - LOWER + 26
+	}
+
+	function b64ToByteArray (b64) {
+		var i, j, l, tmp, placeHolders, arr
+
+		if (b64.length % 4 > 0) {
+			throw new Error('Invalid string. Length must be a multiple of 4')
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length
+
+		var L = 0
+
+		function push (v) {
+			arr[L++] = v
+		}
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+			push((tmp & 0xFF0000) >> 16)
+			push((tmp & 0xFF00) >> 8)
+			push(tmp & 0xFF)
+		}
+
+		if (placeHolders === 2) {
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+			push(tmp & 0xFF)
+		} else if (placeHolders === 1) {
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+			push((tmp >> 8) & 0xFF)
+			push(tmp & 0xFF)
+		}
+
+		return arr
+	}
+
+	function uint8ToBase64 (uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length
+
+		function encode (num) {
+			return lookup.charAt(num)
+		}
+
+		function tripletToBase64 (num) {
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+		}
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+			output += tripletToBase64(temp)
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1]
+				output += encode(temp >> 2)
+				output += encode((temp << 4) & 0x3F)
+				output += '=='
+				break
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+				output += encode(temp >> 10)
+				output += encode((temp >> 4) & 0x3F)
+				output += encode((temp << 2) & 0x3F)
+				output += '='
+				break
+		}
+
+		return output
+	}
+
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
+}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
+
+},{}],22:[function(require,module,exports){
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],23:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require("oMfpAn"))
+},{"oMfpAn":24}],24:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],25:[function(require,module,exports){
+'use strict';
+
+var nodes = require('./nodes');
+var filters = require('./filters');
+var doctypes = require('./doctypes');
+var runtime = require('./runtime');
+var utils = require('./utils');
+var selfClosing = require('void-elements');
+var parseJSExpression = require('character-parser').parseMax;
+var constantinople = require('constantinople');
+
+function isConstant(src) {
+  return constantinople(src, {jade: runtime, 'jade_interp': undefined});
+}
+function toConstant(src) {
+  return constantinople.toConstant(src, {jade: runtime, 'jade_interp': undefined});
+}
+function errorAtNode(node, error) {
+  error.line = node.line;
+  error.filename = node.filename;
+  return error;
+}
+
+/**
+ * Initialize `Compiler` with the given `node`.
+ *
+ * @param {Node} node
+ * @param {Object} options
+ * @api public
+ */
+
+var Compiler = module.exports = function Compiler(node, options) {
+  this.options = options = options || {};
+  this.node = node;
+  this.hasCompiledDoctype = false;
+  this.hasCompiledTag = false;
+  this.pp = options.pretty || false;
+  if (this.pp && typeof this.pp !== 'string') {
+    this.pp = '  ';
+  }
+  this.debug = false !== options.compileDebug;
+  this.indents = 0;
+  this.parentIndents = 0;
+  this.terse = false;
+  this.mixins = {};
+  this.dynamicMixins = false;
+  if (options.doctype) this.setDoctype(options.doctype);
+};
+
+/**
+ * Compiler prototype.
+ */
+
+Compiler.prototype = {
+
+  /**
+   * Compile parse tree to JavaScript.
+   *
+   * @api public
+   */
+
+  compile: function(){
+    this.buf = [];
+    if (this.pp) this.buf.push("var jade_indent = [];");
+    this.lastBufferedIdx = -1;
+    this.visit(this.node);
+    if (!this.dynamicMixins) {
+      // if there are no dynamic mixins we can remove any un-used mixins
+      var mixinNames = Object.keys(this.mixins);
+      for (var i = 0; i < mixinNames.length; i++) {
+        var mixin = this.mixins[mixinNames[i]];
+        if (!mixin.used) {
+          for (var x = 0; x < mixin.instances.length; x++) {
+            for (var y = mixin.instances[x].start; y < mixin.instances[x].end; y++) {
+              this.buf[y] = '';
+            }
+          }
+        }
+      }
+    }
+    return this.buf.join('\n');
+  },
+
+  /**
+   * Sets the default doctype `name`. Sets terse mode to `true` when
+   * html 5 is used, causing self-closing tags to end with ">" vs "/>",
+   * and boolean attributes are not mirrored.
+   *
+   * @param {string} name
+   * @api public
+   */
+
+  setDoctype: function(name){
+    this.doctype = doctypes[name.toLowerCase()] || '<!DOCTYPE ' + name + '>';
+    this.terse = this.doctype.toLowerCase() == '<!doctype html>';
+    this.xml = 0 == this.doctype.indexOf('<?xml');
+  },
+
+  /**
+   * Buffer the given `str` exactly as is or with interpolation
+   *
+   * @param {String} str
+   * @param {Boolean} interpolate
+   * @api public
+   */
+
+  buffer: function (str, interpolate) {
+    var self = this;
+    if (interpolate) {
+      var match = /(\\)?([#!]){((?:.|\n)*)$/.exec(str);
+      if (match) {
+        this.buffer(str.substr(0, match.index), false);
+        if (match[1]) { // escape
+          this.buffer(match[2] + '{', false);
+          this.buffer(match[3], true);
+          return;
+        } else {
+          var rest = match[3];
+          var range = parseJSExpression(rest);
+          var code = ('!' == match[2] ? '' : 'jade.escape') + "((jade_interp = " + range.src + ") == null ? '' : jade_interp)";
+          this.bufferExpression(code);
+          this.buffer(rest.substr(range.end + 1), true);
+          return;
+        }
+      }
+    }
+
+    str = utils.stringify(str);
+    str = str.substr(1, str.length - 2);
+
+    if (this.lastBufferedIdx == this.buf.length) {
+      if (this.lastBufferedType === 'code') this.lastBuffered += ' + "';
+      this.lastBufferedType = 'text';
+      this.lastBuffered += str;
+      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + '");'
+    } else {
+      this.buf.push('buf.push("' + str + '");');
+      this.lastBufferedType = 'text';
+      this.bufferStartChar = '"';
+      this.lastBuffered = str;
+      this.lastBufferedIdx = this.buf.length;
+    }
+  },
+
+  /**
+   * Buffer the given `src` so it is evaluated at run time
+   *
+   * @param {String} src
+   * @api public
+   */
+
+  bufferExpression: function (src) {
+    if (isConstant(src)) {
+      return this.buffer(toConstant(src) + '', false)
+    }
+    if (this.lastBufferedIdx == this.buf.length) {
+      if (this.lastBufferedType === 'text') this.lastBuffered += '"';
+      this.lastBufferedType = 'code';
+      this.lastBuffered += ' + (' + src + ')';
+      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + ');'
+    } else {
+      this.buf.push('buf.push(' + src + ');');
+      this.lastBufferedType = 'code';
+      this.bufferStartChar = '';
+      this.lastBuffered = '(' + src + ')';
+      this.lastBufferedIdx = this.buf.length;
+    }
+  },
+
+  /**
+   * Buffer an indent based on the current `indent`
+   * property and an additional `offset`.
+   *
+   * @param {Number} offset
+   * @param {Boolean} newline
+   * @api public
+   */
+
+  prettyIndent: function(offset, newline){
+    offset = offset || 0;
+    newline = newline ? '\n' : '';
+    this.buffer(newline + Array(this.indents + offset).join(this.pp));
+    if (this.parentIndents)
+      this.buf.push("buf.push.apply(buf, jade_indent);");
+  },
+
+  /**
+   * Visit `node`.
+   *
+   * @param {Node} node
+   * @api public
+   */
+
+  visit: function(node){
+    var debug = this.debug;
+
+    if (debug) {
+      this.buf.push('jade_debug.unshift(new jade.DebugItem( ' + node.line
+        + ', ' + (node.filename
+          ? utils.stringify(node.filename)
+          : 'jade_debug[0].filename')
+        + ' ));');
+    }
+
+    // Massive hack to fix our context
+    // stack for - else[ if] etc
+    if (false === node.debug && this.debug) {
+      this.buf.pop();
+      this.buf.pop();
+    }
+
+    this.visitNode(node);
+
+    if (debug) this.buf.push('jade_debug.shift();');
+  },
+
+  /**
+   * Visit `node`.
+   *
+   * @param {Node} node
+   * @api public
+   */
+
+  visitNode: function(node){
+    return this['visit' + node.type](node);
+  },
+
+  /**
+   * Visit case `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitCase: function(node){
+    var _ = this.withinCase;
+    this.withinCase = true;
+    this.buf.push('switch (' + node.expr + '){');
+    this.visit(node.block);
+    this.buf.push('}');
+    this.withinCase = _;
+  },
+
+  /**
+   * Visit when `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitWhen: function(node){
+    if ('default' == node.expr) {
+      this.buf.push('default:');
+    } else {
+      this.buf.push('case ' + node.expr + ':');
+    }
+    if (node.block) {
+      this.visit(node.block);
+      this.buf.push('  break;');
+    }
+  },
+
+  /**
+   * Visit literal `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitLiteral: function(node){
+    this.buffer(node.str);
+  },
+
+  /**
+   * Visit all nodes in `block`.
+   *
+   * @param {Block} block
+   * @api public
+   */
+
+  visitBlock: function(block){
+    var len = block.nodes.length
+      , escape = this.escape
+      , pp = this.pp
+
+    // Pretty print multi-line text
+    if (pp && len > 1 && !escape && block.nodes[0].isText && block.nodes[1].isText)
+      this.prettyIndent(1, true);
+
+    for (var i = 0; i < len; ++i) {
+      // Pretty print text
+      if (pp && i > 0 && !escape && block.nodes[i].isText && block.nodes[i-1].isText)
+        this.prettyIndent(1, false);
+
+      this.visit(block.nodes[i]);
+      // Multiple text nodes are separated by newlines
+      if (block.nodes[i+1] && block.nodes[i].isText && block.nodes[i+1].isText)
+        this.buffer('\n');
+    }
+  },
+
+  /**
+   * Visit a mixin's `block` keyword.
+   *
+   * @param {MixinBlock} block
+   * @api public
+   */
+
+  visitMixinBlock: function(block){
+    if (this.pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(this.pp) + "');");
+    this.buf.push('block && block();');
+    if (this.pp) this.buf.push("jade_indent.pop();");
+  },
+
+  /**
+   * Visit `doctype`. Sets terse mode to `true` when html 5
+   * is used, causing self-closing tags to end with ">" vs "/>",
+   * and boolean attributes are not mirrored.
+   *
+   * @param {Doctype} doctype
+   * @api public
+   */
+
+  visitDoctype: function(doctype){
+    if (doctype && (doctype.val || !this.doctype)) {
+      this.setDoctype(doctype.val || 'default');
+    }
+
+    if (this.doctype) this.buffer(this.doctype);
+    this.hasCompiledDoctype = true;
+  },
+
+  /**
+   * Visit `mixin`, generating a function that
+   * may be called within the template.
+   *
+   * @param {Mixin} mixin
+   * @api public
+   */
+
+  visitMixin: function(mixin){
+    var name = 'jade_mixins[';
+    var args = mixin.args || '';
+    var block = mixin.block;
+    var attrs = mixin.attrs;
+    var attrsBlocks = mixin.attributeBlocks.slice();
+    var pp = this.pp;
+    var dynamic = mixin.name[0]==='#';
+    var key = mixin.name;
+    if (dynamic) this.dynamicMixins = true;
+    name += (dynamic ? mixin.name.substr(2,mixin.name.length-3):'"'+mixin.name+'"')+']';
+
+    this.mixins[key] = this.mixins[key] || {used: false, instances: []};
+    if (mixin.call) {
+      this.mixins[key].used = true;
+      if (pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(pp) + "');")
+      if (block || attrs.length || attrsBlocks.length) {
+
+        this.buf.push(name + '.call({');
+
+        if (block) {
+          this.buf.push('block: function(){');
+
+          // Render block with no indents, dynamically added when rendered
+          this.parentIndents++;
+          var _indents = this.indents;
+          this.indents = 0;
+          this.visit(mixin.block);
+          this.indents = _indents;
+          this.parentIndents--;
+
+          if (attrs.length || attrsBlocks.length) {
+            this.buf.push('},');
+          } else {
+            this.buf.push('}');
+          }
+        }
+
+        if (attrsBlocks.length) {
+          if (attrs.length) {
+            var val = this.attrs(attrs);
+            attrsBlocks.unshift(val);
+          }
+          this.buf.push('attributes: jade.merge([' + attrsBlocks.join(',') + '])');
+        } else if (attrs.length) {
+          var val = this.attrs(attrs);
+          this.buf.push('attributes: ' + val);
+        }
+
+        if (args) {
+          this.buf.push('}, ' + args + ');');
+        } else {
+          this.buf.push('});');
+        }
+
+      } else {
+        this.buf.push(name + '(' + args + ');');
+      }
+      if (pp) this.buf.push("jade_indent.pop();")
+    } else {
+      var mixin_start = this.buf.length;
+      args = args ? args.split(',') : [];
+      var rest;
+      if (args.length && /^\.\.\./.test(args[args.length - 1].trim())) {
+        rest = args.pop().trim().replace(/^\.\.\./, '');
+      }
+      // we need use jade_interp here for v8: https://code.google.com/p/v8/issues/detail?id=4165
+      // once fixed, use this: this.buf.push(name + ' = function(' + args.join(',') + '){');
+      this.buf.push(name + ' = jade_interp = function(' + args.join(',') + '){');
+      this.buf.push('var block = (this && this.block), attributes = (this && this.attributes) || {};');
+      if (rest) {
+        this.buf.push('var ' + rest + ' = [];');
+        this.buf.push('for (jade_interp = ' + args.length + '; jade_interp < arguments.length; jade_interp++) {');
+        this.buf.push('  ' + rest + '.push(arguments[jade_interp]);');
+        this.buf.push('}');
+      }
+      this.parentIndents++;
+      this.visit(block);
+      this.parentIndents--;
+      this.buf.push('};');
+      var mixin_end = this.buf.length;
+      this.mixins[key].instances.push({start: mixin_start, end: mixin_end});
+    }
+  },
+
+  /**
+   * Visit `tag` buffering tag markup, generating
+   * attributes, visiting the `tag`'s code and block.
+   *
+   * @param {Tag} tag
+   * @api public
+   */
+
+  visitTag: function(tag){
+    this.indents++;
+    var name = tag.name
+      , pp = this.pp
+      , self = this;
+
+    function bufferName() {
+      if (tag.buffer) self.bufferExpression(name);
+      else self.buffer(name);
+    }
+
+    if ('pre' == tag.name) this.escape = true;
+
+    if (!this.hasCompiledTag) {
+      if (!this.hasCompiledDoctype && 'html' == name) {
+        this.visitDoctype();
+      }
+      this.hasCompiledTag = true;
+    }
+
+    // pretty print
+    if (pp && !tag.isInline())
+      this.prettyIndent(0, true);
+
+    if (tag.selfClosing || (!this.xml && selfClosing[tag.name])) {
+      this.buffer('<');
+      bufferName();
+      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
+      this.terse
+        ? this.buffer('>')
+        : this.buffer('/>');
+      // if it is non-empty throw an error
+      if (tag.block &&
+          !(tag.block.type === 'Block' && tag.block.nodes.length === 0) &&
+          tag.block.nodes.some(function (tag) {
+            return tag.type !== 'Text' || !/^\s*$/.test(tag.val)
+          })) {
+        throw errorAtNode(tag, new Error(name + ' is self closing and should not have content.'));
+      }
+    } else {
+      // Optimize attributes buffering
+      this.buffer('<');
+      bufferName();
+      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
+      this.buffer('>');
+      if (tag.code) this.visitCode(tag.code);
+      this.visit(tag.block);
+
+      // pretty print
+      if (pp && !tag.isInline() && 'pre' != tag.name && !tag.canInline())
+        this.prettyIndent(0, true);
+
+      this.buffer('</');
+      bufferName();
+      this.buffer('>');
+    }
+
+    if ('pre' == tag.name) this.escape = false;
+
+    this.indents--;
+  },
+
+  /**
+   * Visit `filter`, throwing when the filter does not exist.
+   *
+   * @param {Filter} filter
+   * @api public
+   */
+
+  visitFilter: function(filter){
+    var text = filter.block.nodes.map(
+      function(node){ return node.val; }
+    ).join('\n');
+    filter.attrs.filename = this.options.filename;
+    try {
+      this.buffer(filters(filter.name, text, filter.attrs), true);
+    } catch (err) {
+      throw errorAtNode(filter, err);
+    }
+  },
+
+  /**
+   * Visit `text` node.
+   *
+   * @param {Text} text
+   * @api public
+   */
+
+  visitText: function(text){
+    this.buffer(text.val, true);
+  },
+
+  /**
+   * Visit a `comment`, only buffering when the buffer flag is set.
+   *
+   * @param {Comment} comment
+   * @api public
+   */
+
+  visitComment: function(comment){
+    if (!comment.buffer) return;
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('<!--' + comment.val + '-->');
+  },
+
+  /**
+   * Visit a `BlockComment`.
+   *
+   * @param {Comment} comment
+   * @api public
+   */
+
+  visitBlockComment: function(comment){
+    if (!comment.buffer) return;
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('<!--' + comment.val);
+    this.visit(comment.block);
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('-->');
+  },
+
+  /**
+   * Visit `code`, respecting buffer / escape flags.
+   * If the code is followed by a block, wrap it in
+   * a self-calling function.
+   *
+   * @param {Code} code
+   * @api public
+   */
+
+  visitCode: function(code){
+    // Wrap code blocks with {}.
+    // we only wrap unbuffered code blocks ATM
+    // since they are usually flow control
+
+    // Buffer code
+    if (code.buffer) {
+      var val = code.val.trim();
+      val = 'null == (jade_interp = '+val+') ? "" : jade_interp';
+      if (code.escape) val = 'jade.escape(' + val + ')';
+      this.bufferExpression(val);
+    } else {
+      this.buf.push(code.val);
+    }
+
+    // Block support
+    if (code.block) {
+      if (!code.buffer) this.buf.push('{');
+      this.visit(code.block);
+      if (!code.buffer) this.buf.push('}');
+    }
+  },
+
+  /**
+   * Visit `each` block.
+   *
+   * @param {Each} each
+   * @api public
+   */
+
+  visitEach: function(each){
+    this.buf.push(''
+      + '// iterate ' + each.obj + '\n'
+      + ';(function(){\n'
+      + '  var $$obj = ' + each.obj + ';\n'
+      + '  if (\'number\' == typeof $$obj.length) {\n');
+
+    if (each.alternative) {
+      this.buf.push('  if ($$obj.length) {');
+    }
+
+    this.buf.push(''
+      + '    for (var ' + each.key + ' = 0, $$l = $$obj.length; ' + each.key + ' < $$l; ' + each.key + '++) {\n'
+      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
+
+    this.visit(each.block);
+
+    this.buf.push('    }\n');
+
+    if (each.alternative) {
+      this.buf.push('  } else {');
+      this.visit(each.alternative);
+      this.buf.push('  }');
+    }
+
+    this.buf.push(''
+      + '  } else {\n'
+      + '    var $$l = 0;\n'
+      + '    for (var ' + each.key + ' in $$obj) {\n'
+      + '      $$l++;'
+      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
+
+    this.visit(each.block);
+
+    this.buf.push('    }\n');
+    if (each.alternative) {
+      this.buf.push('    if ($$l === 0) {');
+      this.visit(each.alternative);
+      this.buf.push('    }');
+    }
+    this.buf.push('  }\n}).call(this);\n');
+  },
+
+  /**
+   * Visit `attrs`.
+   *
+   * @param {Array} attrs
+   * @api public
+   */
+
+  visitAttributes: function(attrs, attributeBlocks){
+    if (attributeBlocks.length) {
+      if (attrs.length) {
+        var val = this.attrs(attrs);
+        attributeBlocks.unshift(val);
+      }
+      this.bufferExpression('jade.attrs(jade.merge([' + attributeBlocks.join(',') + ']), ' + utils.stringify(this.terse) + ')');
+    } else if (attrs.length) {
+      this.attrs(attrs, true);
+    }
+  },
+
+  /**
+   * Compile attributes.
+   */
+
+  attrs: function(attrs, buffer){
+    var buf = [];
+    var classes = [];
+    var classEscaping = [];
+
+    attrs.forEach(function(attr){
+      var key = attr.name;
+      var escaped = attr.escaped;
+
+      if (key === 'class') {
+        classes.push(attr.val);
+        classEscaping.push(attr.escaped);
+      } else if (isConstant(attr.val)) {
+        if (buffer) {
+          this.buffer(runtime.attr(key, toConstant(attr.val), escaped, this.terse));
+        } else {
+          var val = toConstant(attr.val);
+          if (key === 'style') val = runtime.style(val);
+          if (escaped && !(key.indexOf('data') === 0 && typeof val !== 'string')) {
+            val = runtime.escape(val);
+          }
+          buf.push(utils.stringify(key) + ': ' + utils.stringify(val));
+        }
+      } else {
+        if (buffer) {
+          this.bufferExpression('jade.attr("' + key + '", ' + attr.val + ', ' + utils.stringify(escaped) + ', ' + utils.stringify(this.terse) + ')');
+        } else {
+          var val = attr.val;
+          if (key === 'style') {
+            val = 'jade.style(' + val + ')';
+          }
+          if (escaped && !(key.indexOf('data') === 0)) {
+            val = 'jade.escape(' + val + ')';
+          } else if (escaped) {
+            val = '(typeof (jade_interp = ' + val + ') == "string" ? jade.escape(jade_interp) : jade_interp)';
+          }
+          buf.push(utils.stringify(key) + ': ' + val);
+        }
+      }
+    }.bind(this));
+    if (buffer) {
+      if (classes.every(isConstant)) {
+        this.buffer(runtime.cls(classes.map(toConstant), classEscaping));
+      } else {
+        this.bufferExpression('jade.cls([' + classes.join(',') + '], ' + utils.stringify(classEscaping) + ')');
+      }
+    } else if (classes.length) {
+      if (classes.every(isConstant)) {
+        classes = utils.stringify(runtime.joinClasses(classes.map(toConstant).map(runtime.joinClasses).map(function (cls, i) {
+          return classEscaping[i] ? runtime.escape(cls) : cls;
+        })));
+      } else {
+        classes = '(jade_interp = ' + utils.stringify(classEscaping) + ',' +
+          ' jade.joinClasses([' + classes.join(',') + '].map(jade.joinClasses).map(function (cls, i) {' +
+          '   return jade_interp[i] ? jade.escape(cls) : cls' +
+          ' }))' +
+          ')';
+      }
+      if (classes.length)
+        buf.push('"class": ' + classes);
+    }
+    return '{' + buf.join(',') + '}';
+  }
+};
+
+},{"./doctypes":26,"./filters":27,"./nodes":40,"./runtime":48,"./utils":49,"character-parser":13,"constantinople":14,"void-elements":50}],26:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+    'default': '<!DOCTYPE html>'
+  , 'xml': '<?xml version="1.0" encoding="utf-8" ?>'
+  , 'transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+  , 'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+  , 'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
+  , '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+  , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
+  , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
+};
+},{}],27:[function(require,module,exports){
+'use strict';
+
+module.exports = filter;
+function filter(name, str, options) {
+  if (typeof filter[name] === 'function') {
+    return filter[name](str, options);
+  } else {
+    throw new Error('unknown filter ":' + name + '"');
+  }
+}
+
+},{}],28:[function(require,module,exports){
+(function (process){
+'use strict';
+
+/*!
+ * Jade
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Parser = require('./parser')
+  , Lexer = require('./lexer')
+  , Compiler = require('./compiler')
+  , runtime = require('./runtime')
+  , addWith = require('with')
+  , fs = require('fs')
+  , utils = require('./utils');
+
+/**
+ * Expose self closing tags.
+ */
+
+// FIXME: either stop exporting selfClosing in v2 or export the new object
+// form
+exports.selfClosing = Object.keys(require('void-elements'));
+
+/**
+ * Default supported doctypes.
+ */
+
+exports.doctypes = require('./doctypes');
+
+/**
+ * Text filters.
+ */
+
+exports.filters = require('./filters');
+
+/**
+ * Utilities.
+ */
+
+exports.utils = utils;
+
+/**
+ * Expose `Compiler`.
+ */
+
+exports.Compiler = Compiler;
+
+/**
+ * Expose `Parser`.
+ */
+
+exports.Parser = Parser;
+
+/**
+ * Expose `Lexer`.
+ */
+
+exports.Lexer = Lexer;
+
+/**
+ * Nodes.
+ */
+
+exports.nodes = require('./nodes');
+
+/**
+ * Jade runtime helpers.
+ */
+
+exports.runtime = runtime;
+
+/**
+ * Template function cache.
+ */
+
+exports.cache = {};
+
+/**
+ * Parse the given `str` of jade and return a function body.
+ *
+ * @param {String} str
+ * @param {Object} options
+ * @return {Object}
+ * @api private
+ */
+
+function parse(str, options){
+
+  if (options.lexer) {
+    console.warn('Using `lexer` as a local in render() is deprecated and '
+               + 'will be interpreted as an option in Jade 2.0.0');
+  }
+
+  // Parse
+  var parser = new (options.parser || Parser)(str, options.filename, options);
+  var tokens;
+  try {
+    // Parse
+    tokens = parser.parse();
+  } catch (err) {
+    parser = parser.context();
+    runtime.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
+  }
+
+  // Compile
+  var compiler = new (options.compiler || Compiler)(tokens, options);
+  var js;
+  try {
+    js = compiler.compile();
+  } catch (err) {
+    if (err.line && (err.filename || !options.filename)) {
+      runtime.rethrow(err, err.filename, err.line, parser.input);
+    } else {
+      if (err instanceof Error) {
+        err.message += '\n\nPlease report this entire error and stack trace to https://github.com/jadejs/jade/issues';
+      }
+      throw err;
+    }
+  }
+
+  // Debug compiler
+  if (options.debug) {
+    console.error('\nCompiled Function:\n\n\u001b[90m%s\u001b[0m', js.replace(/^/gm, '  '));
+  }
+
+  var globals = [];
+
+  if (options.globals) {
+    globals = options.globals.slice();
+  }
+
+  globals.push('jade');
+  globals.push('jade_mixins');
+  globals.push('jade_interp');
+  globals.push('jade_debug');
+  globals.push('buf');
+
+  var body = ''
+    + 'var buf = [];\n'
+    + 'var jade_mixins = {};\n'
+    + 'var jade_interp;\n'
+    + (options.self
+      ? 'var self = locals || {};\n' + js
+      : addWith('locals || {}', '\n' + js, globals)) + ';'
+    + 'return buf.join("");';
+  return {body: body, dependencies: parser.dependencies};
+}
+
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `str` is not set, the file specified in `options.filename` will be read.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @param {Object} options
+ * @param {String=} str
+ * @return {Function}
+ * @api private
+ */
+function handleTemplateCache (options, str) {
+  var key = options.filename;
+  if (options.cache && exports.cache[key]) {
+    return exports.cache[key];
+  } else {
+    if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
+    var templ = exports.compile(str, options);
+    if (options.cache) exports.cache[key] = templ;
+    return templ;
+  }
+}
+
+/**
+ * Compile a `Function` representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` when `false` debugging code is stripped from the compiled
+       template, when it is explicitly `true`, the source code is included in
+       the compiled template for better accuracy.
+ *   - `filename` used to improve errors when `compileDebug` is not `false` and to resolve imports/extends
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {Function}
+ * @api public
+ */
+
+exports.compile = function(str, options){
+  var options = options || {}
+    , filename = options.filename
+      ? utils.stringify(options.filename)
+      : 'undefined'
+    , fn;
+
+  str = String(str);
+
+  var parsed = parse(str, options);
+  if (options.compileDebug !== false) {
+    fn = [
+        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
+      , 'try {'
+      , parsed.body
+      , '} catch (err) {'
+      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno' + (options.compileDebug === true ? ',' + utils.stringify(str) : '') + ');'
+      , '}'
+    ].join('\n');
+  } else {
+    fn = parsed.body;
+  }
+  fn = new Function('locals, jade', fn)
+  var res = function(locals){ return fn(locals, Object.create(runtime)) };
+  if (options.client) {
+    res.toString = function () {
+      var err = new Error('The `client` option is deprecated, use the `jade.compileClient` method instead');
+      err.name = 'Warning';
+      console.error(err.stack || /* istanbul ignore next */ err.message);
+      return exports.compileClient(str, options);
+    };
+  }
+  res.dependencies = parsed.dependencies;
+  return res;
+};
+
+/**
+ * Compile a JavaScript source representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` When it is `true`, the source code is included in
+ *     the compiled template for better error messages.
+ *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
+ *   - `name` the name of the resulting function (defaults to "template")
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {Object}
+ * @api public
+ */
+
+exports.compileClientWithDependenciesTracked = function(str, options){
+  var options = options || {};
+  var name = options.name || 'template';
+  var filename = options.filename ? utils.stringify(options.filename) : 'undefined';
+  var fn;
+
+  str = String(str);
+  options.compileDebug = options.compileDebug ? true : false;
+  var parsed = parse(str, options);
+  if (options.compileDebug) {
+    fn = [
+        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
+      , 'try {'
+      , parsed.body
+      , '} catch (err) {'
+      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno, ' + utils.stringify(str) + ');'
+      , '}'
+    ].join('\n');
+  } else {
+    fn = parsed.body;
+  }
+
+  return {body: 'function ' + name + '(locals) {\n' + fn + '\n}', dependencies: parsed.dependencies};
+};
+
+/**
+ * Compile a JavaScript source representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` When it is `true`, the source code is included in
+ *     the compiled template for better error messages.
+ *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
+ *   - `name` the name of the resulting function (defaults to "template")
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {String}
+ * @api public
+ */
+exports.compileClient = function (str, options) {
+  return exports.compileClientWithDependenciesTracked(str, options).body;
+};
+
+/**
+ * Compile a `Function` representation of the given jade file.
+ *
+ * Options:
+ *
+ *   - `compileDebug` when `false` debugging code is stripped from the compiled
+       template, when it is explicitly `true`, the source code is included in
+       the compiled template for better accuracy.
+ *
+ * @param {String} path
+ * @param {Options} options
+ * @return {Function}
+ * @api public
+ */
+exports.compileFile = function (path, options) {
+  options = options || {};
+  options.filename = path;
+  return handleTemplateCache(options);
+};
+
+/**
+ * Render the given `str` of jade.
+ *
+ * Options:
+ *
+ *   - `cache` enable template caching
+ *   - `filename` filename required for `include` / `extends` and caching
+ *
+ * @param {String} str
+ * @param {Object|Function} options or fn
+ * @param {Function|undefined} fn
+ * @returns {String}
+ * @api public
+ */
+
+exports.render = function(str, options, fn){
+  // support callback API
+  if ('function' == typeof options) {
+    fn = options, options = undefined;
+  }
+  if (typeof fn === 'function') {
+    var res
+    try {
+      res = exports.render(str, options);
+    } catch (ex) {
+      return fn(ex);
+    }
+    return fn(null, res);
+  }
+
+  options = options || {};
+
+  // cache requires .filename
+  if (options.cache && !options.filename) {
+    throw new Error('the "filename" option is required for caching');
+  }
+
+  return handleTemplateCache(options, str)(options);
+};
+
+/**
+ * Render a Jade file at the given `path`.
+ *
+ * @param {String} path
+ * @param {Object|Function} options or callback
+ * @param {Function|undefined} fn
+ * @returns {String}
+ * @api public
+ */
+
+exports.renderFile = function(path, options, fn){
+  // support callback API
+  if ('function' == typeof options) {
+    fn = options, options = undefined;
+  }
+  if (typeof fn === 'function') {
+    var res
+    try {
+      res = exports.renderFile(path, options);
+    } catch (ex) {
+      return fn(ex);
+    }
+    return fn(null, res);
+  }
+
+  options = options || {};
+
+  options.filename = path;
+  return handleTemplateCache(options)(options);
+};
+
+
+/**
+ * Compile a Jade file at the given `path` for use on the client.
+ *
+ * @param {String} path
+ * @param {Object} options
+ * @returns {String}
+ * @api public
+ */
+
+exports.compileFileClient = function(path, options){
+  var key = path + ':client';
+  options = options || {};
+
+  options.filename = path;
+
+  if (options.cache && exports.cache[key]) {
+    return exports.cache[key];
+  }
+
+  var str = fs.readFileSync(options.filename, 'utf8');
+  var out = exports.compileClient(str, options);
+  if (options.cache) exports.cache[key] = out;
+  return out;
+};
+
+/**
+ * Express support.
+ */
+
+exports.__express = function(path, options, fn) {
+  if(options.compileDebug == undefined && process.env.NODE_ENV === 'production') {
+    options.compileDebug = false;
+  }
+  exports.renderFile(path, options, fn);
+}
+
+}).call(this,require("oMfpAn"))
+},{"./compiler":25,"./doctypes":26,"./filters":27,"./lexer":30,"./nodes":40,"./parser":47,"./runtime":48,"./utils":49,"fs":19,"oMfpAn":24,"void-elements":50,"with":51}],29:[function(require,module,exports){
+'use strict';
+
+module.exports = [
+    'a'
+  , 'abbr'
+  , 'acronym'
+  , 'b'
+  , 'br'
+  , 'code'
+  , 'em'
+  , 'font'
+  , 'i'
+  , 'img'
+  , 'ins'
+  , 'kbd'
+  , 'map'
+  , 'samp'
+  , 'small'
+  , 'span'
+  , 'strong'
+  , 'sub'
+  , 'sup'
+];
+},{}],30:[function(require,module,exports){
+'use strict';
+
+var utils = require('./utils');
+var characterParser = require('character-parser');
+
+
+/**
+ * Initialize `Lexer` with the given `str`.
+ *
+ * @param {String} str
+ * @param {String} filename
+ * @api private
+ */
+
+var Lexer = module.exports = function Lexer(str, filename) {
+  this.input = str.replace(/\r\n|\r/g, '\n');
+  this.filename = filename;
+  this.deferredTokens = [];
+  this.lastIndents = 0;
+  this.lineno = 1;
+  this.stash = [];
+  this.indentStack = [];
+  this.indentRe = null;
+  this.pipeless = false;
+};
+
+
+function assertExpression(exp) {
+  //this verifies that a JavaScript expression is valid
+  Function('', 'return (' + exp + ')');
+}
+function assertNestingCorrect(exp) {
+  //this verifies that code is properly nested, but allows
+  //invalid JavaScript such as the contents of `attributes`
+  var res = characterParser(exp)
+  if (res.isNesting()) {
+    throw new Error('Nesting must match on expression `' + exp + '`')
+  }
+}
+
+/**
+ * Lexer prototype.
+ */
+
+Lexer.prototype = {
+
+  /**
+   * Construct a token with the given `type` and `val`.
+   *
+   * @param {String} type
+   * @param {String} val
+   * @return {Object}
+   * @api private
+   */
+
+  tok: function(type, val){
+    return {
+        type: type
+      , line: this.lineno
+      , val: val
+    }
+  },
+
+  /**
+   * Consume the given `len` of input.
+   *
+   * @param {Number} len
+   * @api private
+   */
+
+  consume: function(len){
+    this.input = this.input.substr(len);
+  },
+
+  /**
+   * Scan for `type` with the given `regexp`.
+   *
+   * @param {String} type
+   * @param {RegExp} regexp
+   * @return {Object}
+   * @api private
+   */
+
+  scan: function(regexp, type){
+    var captures;
+    if (captures = regexp.exec(this.input)) {
+      this.consume(captures[0].length);
+      return this.tok(type, captures[1]);
+    }
+  },
+
+  /**
+   * Defer the given `tok`.
+   *
+   * @param {Object} tok
+   * @api private
+   */
+
+  defer: function(tok){
+    this.deferredTokens.push(tok);
+  },
+
+  /**
+   * Lookahead `n` tokens.
+   *
+   * @param {Number} n
+   * @return {Object}
+   * @api private
+   */
+
+  lookahead: function(n){
+    var fetch = n - this.stash.length;
+    while (fetch-- > 0) this.stash.push(this.next());
+    return this.stash[--n];
+  },
+
+  /**
+   * Return the indexOf `(` or `{` or `[` / `)` or `}` or `]` delimiters.
+   *
+   * @return {Number}
+   * @api private
+   */
+
+  bracketExpression: function(skip){
+    skip = skip || 0;
+    var start = this.input[skip];
+    if (start != '(' && start != '{' && start != '[') throw new Error('unrecognized start character');
+    var end = ({'(': ')', '{': '}', '[': ']'})[start];
+    var range = characterParser.parseMax(this.input, {start: skip + 1});
+    if (this.input[range.end] !== end) throw new Error('start character ' + start + ' does not match end character ' + this.input[range.end]);
+    return range;
+  },
+
+  /**
+   * Stashed token.
+   */
+
+  stashed: function() {
+    return this.stash.length
+      && this.stash.shift();
+  },
+
+  /**
+   * Deferred token.
+   */
+
+  deferred: function() {
+    return this.deferredTokens.length
+      && this.deferredTokens.shift();
+  },
+
+  /**
+   * end-of-source.
+   */
+
+  eos: function() {
+    if (this.input.length) return;
+    if (this.indentStack.length) {
+      this.indentStack.shift();
+      return this.tok('outdent');
+    } else {
+      return this.tok('eos');
+    }
+  },
+
+  /**
+   * Blank line.
+   */
+
+  blank: function() {
+    var captures;
+    if (captures = /^\n *\n/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      ++this.lineno;
+      if (this.pipeless) return this.tok('text', '');
+      return this.next();
+    }
+  },
+
+  /**
+   * Comment.
+   */
+
+  comment: function() {
+    var captures;
+    if (captures = /^\/\/(-)?([^\n]*)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('comment', captures[2]);
+      tok.buffer = '-' != captures[1];
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Interpolated tag.
+   */
+
+  interpolation: function() {
+    if (/^#\{/.test(this.input)) {
+      var match = this.bracketExpression(1);
+
+      this.consume(match.end + 1);
+      return this.tok('interpolation', match.src);
+    }
+  },
+
+  /**
+   * Tag.
+   */
+
+  tag: function() {
+    var captures;
+    if (captures = /^(\w[-:\w]*)(\/?)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok, name = captures[1];
+      if (':' == name[name.length - 1]) {
+        name = name.slice(0, -1);
+        tok = this.tok('tag', name);
+        this.defer(this.tok(':'));
+        if (this.input[0] !== ' ') {
+          console.warn('Warning: space required after `:` on line ' + this.lineno +
+              ' of jade file "' + this.filename + '"');
+        }
+        while (' ' == this.input[0]) this.input = this.input.substr(1);
+      } else {
+        tok = this.tok('tag', name);
+      }
+      tok.selfClosing = !!captures[2];
+      return tok;
+    }
+  },
+
+  /**
+   * Filter.
+   */
+
+  filter: function() {
+    var tok = this.scan(/^:([\w\-]+)/, 'filter');
+    if (tok) {
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Doctype.
+   */
+
+  doctype: function() {
+    if (this.scan(/^!!! *([^\n]+)?/, 'doctype')) {
+      throw new Error('`!!!` is deprecated, you must now use `doctype`');
+    }
+    var node = this.scan(/^(?:doctype) *([^\n]+)?/, 'doctype');
+    if (node && node.val && node.val.trim() === '5') {
+      throw new Error('`doctype 5` is deprecated, you must now use `doctype html`');
+    }
+    return node;
+  },
+
+  /**
+   * Id.
+   */
+
+  id: function() {
+    return this.scan(/^#([\w-]+)/, 'id');
+  },
+
+  /**
+   * Class.
+   */
+
+  className: function() {
+    return this.scan(/^\.([\w-]+)/, 'class');
+  },
+
+  /**
+   * Text.
+   */
+
+  text: function() {
+    return this.scan(/^(?:\| ?| )([^\n]+)/, 'text') ||
+      this.scan(/^\|?( )/, 'text') ||
+      this.scan(/^(<[^\n]*)/, 'text');
+  },
+
+  textFail: function () {
+    var tok;
+    if (tok = this.scan(/^([^\.\n][^\n]+)/, 'text')) {
+      console.warn('Warning: missing space before text for line ' + this.lineno +
+          ' of jade file "' + this.filename + '"');
+      return tok;
+    }
+  },
+
+  /**
+   * Dot.
+   */
+
+  dot: function() {
+    var match;
+    if (match = this.scan(/^\./, 'dot')) {
+      this.pipeless = true;
+      return match;
+    }
+  },
+
+  /**
+   * Extends.
+   */
+
+  "extends": function() {
+    return this.scan(/^extends? +([^\n]+)/, 'extends');
+  },
+
+  /**
+   * Block prepend.
+   */
+
+  prepend: function() {
+    var captures;
+    if (captures = /^prepend +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = 'prepend'
+        , name = captures[1]
+        , tok = this.tok('block', name);
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Block append.
+   */
+
+  append: function() {
+    var captures;
+    if (captures = /^append +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = 'append'
+        , name = captures[1]
+        , tok = this.tok('block', name);
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Block.
+   */
+
+  block: function() {
+    var captures;
+    if (captures = /^block\b *(?:(prepend|append) +)?([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = captures[1] || 'replace'
+        , name = captures[2]
+        , tok = this.tok('block', name);
+
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Mixin Block.
+   */
+
+  mixinBlock: function() {
+    var captures;
+    if (captures = /^block[ \t]*(\n|$)/.exec(this.input)) {
+      this.consume(captures[0].length - captures[1].length);
+      return this.tok('mixin-block');
+    }
+  },
+
+  /**
+   * Yield.
+   */
+
+  'yield': function() {
+    return this.scan(/^yield */, 'yield');
+  },
+
+  /**
+   * Include.
+   */
+
+  include: function() {
+    return this.scan(/^include +([^\n]+)/, 'include');
+  },
+
+  /**
+   * Include with filter
+   */
+
+  includeFiltered: function() {
+    var captures;
+    if (captures = /^include:([\w\-]+)([\( ])/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      var filter = captures[1];
+      var attrs = captures[2] === '(' ? this.attrs() : null;
+      if (!(captures[2] === ' ' || this.input[0] === ' ')) {
+        throw new Error('expected space after include:filter but got ' + utils.stringify(this.input[0]));
+      }
+      captures = /^ *([^\n]+)/.exec(this.input);
+      if (!captures || captures[1].trim() === '') {
+        throw new Error('missing path for include:filter');
+      }
+      this.consume(captures[0].length);
+      var path = captures[1];
+      var tok = this.tok('include', path);
+      tok.filter = filter;
+      tok.attrs = attrs;
+      return tok;
+    }
+  },
+
+  /**
+   * Case.
+   */
+
+  "case": function() {
+    return this.scan(/^case +([^\n]+)/, 'case');
+  },
+
+  /**
+   * When.
+   */
+
+  when: function() {
+    return this.scan(/^when +([^:\n]+)/, 'when');
+  },
+
+  /**
+   * Default.
+   */
+
+  "default": function() {
+    return this.scan(/^default */, 'default');
+  },
+
+  /**
+   * Call mixin.
+   */
+
+  call: function(){
+
+    var tok, captures;
+    if (captures = /^\+(\s*)(([-\w]+)|(#\{))/.exec(this.input)) {
+      // try to consume simple or interpolated call
+      if (captures[3]) {
+        // simple call
+        this.consume(captures[0].length);
+        tok = this.tok('call', captures[3]);
+      } else {
+        // interpolated call
+        var match = this.bracketExpression(2 + captures[1].length);
+        this.consume(match.end + 1);
+        assertExpression(match.src);
+        tok = this.tok('call', '#{'+match.src+'}');
+      }
+
+      // Check for args (not attributes)
+      if (captures = /^ *\(/.exec(this.input)) {
+        var range = this.bracketExpression(captures[0].length - 1);
+        if (!/^\s*[-\w]+ *=/.test(range.src)) { // not attributes
+          this.consume(range.end + 1);
+          tok.args = range.src;
+        }
+        if (tok.args) {
+          assertExpression('[' + tok.args + ']');
+        }
+      }
+
+      return tok;
+    }
+  },
+
+  /**
+   * Mixin.
+   */
+
+  mixin: function(){
+    var captures;
+    if (captures = /^mixin +([-\w]+)(?: *\((.*)\))? */.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('mixin', captures[1]);
+      tok.args = captures[2];
+      return tok;
+    }
+  },
+
+  /**
+   * Conditional.
+   */
+
+  conditional: function() {
+    var captures;
+    if (captures = /^(if|unless|else if|else)\b([^\n]*)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var type = captures[1]
+      var js = captures[2];
+      var isIf = false;
+      var isElse = false;
+
+      switch (type) {
+        case 'if':
+          assertExpression(js)
+          js = 'if (' + js + ')';
+          isIf = true;
+          break;
+        case 'unless':
+          assertExpression(js)
+          js = 'if (!(' + js + '))';
+          isIf = true;
+          break;
+        case 'else if':
+          assertExpression(js)
+          js = 'else if (' + js + ')';
+          isIf = true;
+          isElse = true;
+          break;
+        case 'else':
+          if (js && js.trim()) {
+            throw new Error('`else` cannot have a condition, perhaps you meant `else if`');
+          }
+          js = 'else';
+          isElse = true;
+          break;
+      }
+      var tok = this.tok('code', js);
+      tok.isElse = isElse;
+      tok.isIf = isIf;
+      tok.requiresBlock = true;
+      return tok;
+    }
+  },
+
+  /**
+   * While.
+   */
+
+  "while": function() {
+    var captures;
+    if (captures = /^while +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      assertExpression(captures[1])
+      var tok = this.tok('code', 'while (' + captures[1] + ')');
+      tok.requiresBlock = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Each.
+   */
+
+  each: function() {
+    var captures;
+    if (captures = /^(?:- *)?(?:each|for) +([a-zA-Z_$][\w$]*)(?: *, *([a-zA-Z_$][\w$]*))? * in *([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('each', captures[1]);
+      tok.key = captures[2] || '$index';
+      assertExpression(captures[3])
+      tok.code = captures[3];
+      return tok;
+    }
+  },
+
+  /**
+   * Code.
+   */
+
+  code: function() {
+    var captures;
+    if (captures = /^(!?=|-)[ \t]*([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var flags = captures[1];
+      captures[1] = captures[2];
+      var tok = this.tok('code', captures[1]);
+      tok.escape = flags.charAt(0) === '=';
+      tok.buffer = flags.charAt(0) === '=' || flags.charAt(1) === '=';
+      if (tok.buffer) assertExpression(captures[1])
+      return tok;
+    }
+  },
+
+
+  /**
+   * Block code.
+   */
+
+  blockCode: function() {
+    var captures;
+    if (captures = /^-\n/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      var tok = this.tok('blockCode');
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Attributes.
+   */
+
+  attrs: function() {
+    if ('(' == this.input.charAt(0)) {
+      var index = this.bracketExpression().end
+        , str = this.input.substr(1, index-1)
+        , tok = this.tok('attrs');
+
+      assertNestingCorrect(str);
+
+      var quote = '';
+      var interpolate = function (attr) {
+        return attr.replace(/(\\)?#\{(.+)/g, function(_, escape, expr){
+          if (escape) return _;
+          try {
+            var range = characterParser.parseMax(expr);
+            if (expr[range.end] !== '}') return _.substr(0, 2) + interpolate(_.substr(2));
+            assertExpression(range.src)
+            return quote + " + (" + range.src + ") + " + quote + interpolate(expr.substr(range.end + 1));
+          } catch (ex) {
+            return _.substr(0, 2) + interpolate(_.substr(2));
+          }
+        });
+      }
+
+      this.consume(index + 1);
+      tok.attrs = [];
+
+      var escapedAttr = true
+      var key = '';
+      var val = '';
+      var interpolatable = '';
+      var state = characterParser.defaultState();
+      var loc = 'key';
+      var isEndOfAttribute = function (i) {
+        if (key.trim() === '') return false;
+        if (i === str.length) return true;
+        if (loc === 'key') {
+          if (str[i] === ' ' || str[i] === '\n') {
+            for (var x = i; x < str.length; x++) {
+              if (str[x] != ' ' && str[x] != '\n') {
+                if (str[x] === '=' || str[x] === '!' || str[x] === ',') return false;
+                else return true;
+              }
+            }
+          }
+          return str[i] === ','
+        } else if (loc === 'value' && !state.isNesting()) {
+          try {
+            assertExpression(val);
+            if (str[i] === ' ' || str[i] === '\n') {
+              for (var x = i; x < str.length; x++) {
+                if (str[x] != ' ' && str[x] != '\n') {
+                  if (characterParser.isPunctuator(str[x]) && str[x] != '"' && str[x] != "'") return false;
+                  else return true;
+                }
+              }
+            }
+            return str[i] === ',';
+          } catch (ex) {
+            return false;
+          }
+        }
+      }
+
+      this.lineno += str.split("\n").length - 1;
+
+      for (var i = 0; i <= str.length; i++) {
+        if (isEndOfAttribute(i)) {
+          val = val.trim();
+          if (val) assertExpression(val)
+          key = key.trim();
+          key = key.replace(/^['"]|['"]$/g, '');
+          tok.attrs.push({
+            name: key,
+            val: '' == val ? true : val,
+            escaped: escapedAttr
+          });
+          key = val = '';
+          loc = 'key';
+          escapedAttr = false;
+        } else {
+          switch (loc) {
+            case 'key-char':
+              if (str[i] === quote) {
+                loc = 'key';
+                if (i + 1 < str.length && [' ', ',', '!', '=', '\n'].indexOf(str[i + 1]) === -1)
+                  throw new Error('Unexpected character ' + str[i + 1] + ' expected ` `, `\\n`, `,`, `!` or `=`');
+              } else {
+                key += str[i];
+              }
+              break;
+            case 'key':
+              if (key === '' && (str[i] === '"' || str[i] === "'")) {
+                loc = 'key-char';
+                quote = str[i];
+              } else if (str[i] === '!' || str[i] === '=') {
+                escapedAttr = str[i] !== '!';
+                if (str[i] === '!') i++;
+                if (str[i] !== '=') throw new Error('Unexpected character ' + str[i] + ' expected `=`');
+                loc = 'value';
+                state = characterParser.defaultState();
+              } else {
+                key += str[i]
+              }
+              break;
+            case 'value':
+              state = characterParser.parseChar(str[i], state);
+              if (state.isString()) {
+                loc = 'string';
+                quote = str[i];
+                interpolatable = str[i];
+              } else {
+                val += str[i];
+              }
+              break;
+            case 'string':
+              state = characterParser.parseChar(str[i], state);
+              interpolatable += str[i];
+              if (!state.isString()) {
+                loc = 'value';
+                val += interpolate(interpolatable);
+              }
+              break;
+          }
+        }
+      }
+
+      if ('/' == this.input.charAt(0)) {
+        this.consume(1);
+        tok.selfClosing = true;
+      }
+
+      return tok;
+    }
+  },
+
+  /**
+   * &attributes block
+   */
+  attributesBlock: function () {
+    var captures;
+    if (/^&attributes\b/.test(this.input)) {
+      this.consume(11);
+      var args = this.bracketExpression();
+      this.consume(args.end + 1);
+      return this.tok('&attributes', args.src);
+    }
+  },
+
+  /**
+   * Indent | Outdent | Newline.
+   */
+
+  indent: function() {
+    var captures, re;
+
+    // established regexp
+    if (this.indentRe) {
+      captures = this.indentRe.exec(this.input);
+    // determine regexp
+    } else {
+      // tabs
+      re = /^\n(\t*) */;
+      captures = re.exec(this.input);
+
+      // spaces
+      if (captures && !captures[1].length) {
+        re = /^\n( *)/;
+        captures = re.exec(this.input);
+      }
+
+      // established
+      if (captures && captures[1].length) this.indentRe = re;
+    }
+
+    if (captures) {
+      var tok
+        , indents = captures[1].length;
+
+      ++this.lineno;
+      this.consume(indents + 1);
+
+      if (' ' == this.input[0] || '\t' == this.input[0]) {
+        throw new Error('Invalid indentation, you can use tabs or spaces but not both');
+      }
+
+      // blank line
+      if ('\n' == this.input[0]) {
+        this.pipeless = false;
+        return this.tok('newline');
+      }
+
+      // outdent
+      if (this.indentStack.length && indents < this.indentStack[0]) {
+        while (this.indentStack.length && this.indentStack[0] > indents) {
+          this.stash.push(this.tok('outdent'));
+          this.indentStack.shift();
+        }
+        tok = this.stash.pop();
+      // indent
+      } else if (indents && indents != this.indentStack[0]) {
+        this.indentStack.unshift(indents);
+        tok = this.tok('indent', indents);
+      // newline
+      } else {
+        tok = this.tok('newline');
+      }
+
+      this.pipeless = false;
+      return tok;
+    }
+  },
+
+  /**
+   * Pipe-less text consumed only when
+   * pipeless is true;
+   */
+
+  pipelessText: function() {
+    if (!this.pipeless) return;
+    var captures, re;
+
+    // established regexp
+    if (this.indentRe) {
+      captures = this.indentRe.exec(this.input);
+    // determine regexp
+    } else {
+      // tabs
+      re = /^\n(\t*) */;
+      captures = re.exec(this.input);
+
+      // spaces
+      if (captures && !captures[1].length) {
+        re = /^\n( *)/;
+        captures = re.exec(this.input);
+      }
+
+      // established
+      if (captures && captures[1].length) this.indentRe = re;
+    }
+
+    var indents = captures && captures[1].length;
+    if (indents && (this.indentStack.length === 0 || indents > this.indentStack[0])) {
+      var indent = captures[1];
+      var line;
+      var tokens = [];
+      var isMatch;
+      do {
+        // text has `\n` as a prefix
+        var i = this.input.substr(1).indexOf('\n');
+        if (-1 == i) i = this.input.length - 1;
+        var str = this.input.substr(1, i);
+        isMatch = str.substr(0, indent.length) === indent || !str.trim();
+        if (isMatch) {
+          // consume test along with `\n` prefix if match
+          this.consume(str.length + 1);
+          ++this.lineno;
+          tokens.push(str.substr(indent.length));
+        }
+      } while(this.input.length && isMatch);
+      while (this.input.length === 0 && tokens[tokens.length - 1] === '') tokens.pop();
+      return this.tok('pipeless-text', tokens);
+    }
+  },
+
+  /**
+   * ':'
+   */
+
+  colon: function() {
+    var good = /^: +/.test(this.input);
+    var res = this.scan(/^: */, ':');
+    if (res && !good) {
+      console.warn('Warning: space required after `:` on line ' + this.lineno +
+          ' of jade file "' + this.filename + '"');
+    }
+    return res;
+  },
+
+  fail: function () {
+    throw new Error('unexpected text ' + this.input.substr(0, 5));
+  },
+
+  /**
+   * Return the next token object, or those
+   * previously stashed by lookahead.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  advance: function(){
+    return this.stashed()
+      || this.next();
+  },
+
+  /**
+   * Return the next token object.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  next: function() {
+    return this.deferred()
+      || this.blank()
+      || this.eos()
+      || this.pipelessText()
+      || this.yield()
+      || this.doctype()
+      || this.interpolation()
+      || this["case"]()
+      || this.when()
+      || this["default"]()
+      || this["extends"]()
+      || this.append()
+      || this.prepend()
+      || this.block()
+      || this.mixinBlock()
+      || this.include()
+      || this.includeFiltered()
+      || this.mixin()
+      || this.call()
+      || this.conditional()
+      || this.each()
+      || this["while"]()
+      || this.tag()
+      || this.filter()
+      || this.blockCode()
+      || this.code()
+      || this.id()
+      || this.className()
+      || this.attrs()
+      || this.attributesBlock()
+      || this.indent()
+      || this.text()
+      || this.comment()
+      || this.colon()
+      || this.dot()
+      || this.textFail()
+      || this.fail();
+  }
+};
+
+},{"./utils":49,"character-parser":13}],31:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Attrs` node.
+ *
+ * @api public
+ */
+
+var Attrs = module.exports = function Attrs() {
+  this.attributeNames = [];
+  this.attrs = [];
+  this.attributeBlocks = [];
+};
+
+// Inherit from `Node`.
+Attrs.prototype = Object.create(Node.prototype);
+Attrs.prototype.constructor = Attrs;
+
+Attrs.prototype.type = 'Attrs';
+
+/**
+ * Set attribute `name` to `val`, keep in mind these become
+ * part of a raw js object literal, so to quote a value you must
+ * '"quote me"', otherwise or example 'user.name' is literal JavaScript.
+ *
+ * @param {String} name
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @return {Tag} for chaining
+ * @api public
+ */
+
+Attrs.prototype.setAttribute = function(name, val, escaped){
+  if (name !== 'class' && this.attributeNames.indexOf(name) !== -1) {
+    throw new Error('Duplicate attribute "' + name + '" is not allowed.');
+  }
+  this.attributeNames.push(name);
+  this.attrs.push({ name: name, val: val, escaped: escaped });
+  return this;
+};
+
+/**
+ * Remove attribute `name` when present.
+ *
+ * @param {String} name
+ * @api public
+ */
+
+Attrs.prototype.removeAttribute = function(name){
+  var err = new Error('attrs.removeAttribute is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  for (var i = 0, len = this.attrs.length; i < len; ++i) {
+    if (this.attrs[i] && this.attrs[i].name == name) {
+      delete this.attrs[i];
+    }
+  }
+};
+
+/**
+ * Get attribute value by `name`.
+ *
+ * @param {String} name
+ * @return {String}
+ * @api public
+ */
+
+Attrs.prototype.getAttribute = function(name){
+  var err = new Error('attrs.getAttribute is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  for (var i = 0, len = this.attrs.length; i < len; ++i) {
+    if (this.attrs[i] && this.attrs[i].name == name) {
+      return this.attrs[i].val;
+    }
+  }
+};
+
+Attrs.prototype.addAttributes = function (src) {
+  this.attributeBlocks.push(src);
+};
+
+},{"./node":44}],32:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `BlockComment` with the given `block`.
+ *
+ * @param {String} val
+ * @param {Block} block
+ * @param {Boolean} buffer
+ * @api public
+ */
+
+var BlockComment = module.exports = function BlockComment(val, block, buffer) {
+  this.block = block;
+  this.val = val;
+  this.buffer = buffer;
+};
+
+// Inherit from `Node`.
+BlockComment.prototype = Object.create(Node.prototype);
+BlockComment.prototype.constructor = BlockComment;
+
+BlockComment.prototype.type = 'BlockComment';
+
+},{"./node":44}],33:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Block` with an optional `node`.
+ *
+ * @param {Node} node
+ * @api public
+ */
+
+var Block = module.exports = function Block(node){
+  this.nodes = [];
+  if (node) this.push(node);
+};
+
+// Inherit from `Node`.
+Block.prototype = Object.create(Node.prototype);
+Block.prototype.constructor = Block;
+
+Block.prototype.type = 'Block';
+
+/**
+ * Block flag.
+ */
+
+Block.prototype.isBlock = true;
+
+/**
+ * Replace the nodes in `other` with the nodes
+ * in `this` block.
+ *
+ * @param {Block} other
+ * @api private
+ */
+
+Block.prototype.replace = function(other){
+  var err = new Error('block.replace is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  other.nodes = this.nodes;
+};
+
+/**
+ * Push the given `node`.
+ *
+ * @param {Node} node
+ * @return {Number}
+ * @api public
+ */
+
+Block.prototype.push = function(node){
+  return this.nodes.push(node);
+};
+
+/**
+ * Check if this block is empty.
+ *
+ * @return {Boolean}
+ * @api public
+ */
+
+Block.prototype.isEmpty = function(){
+  return 0 == this.nodes.length;
+};
+
+/**
+ * Unshift the given `node`.
+ *
+ * @param {Node} node
+ * @return {Number}
+ * @api public
+ */
+
+Block.prototype.unshift = function(node){
+  return this.nodes.unshift(node);
+};
+
+/**
+ * Return the "last" block, or the first `yield` node.
+ *
+ * @return {Block}
+ * @api private
+ */
+
+Block.prototype.includeBlock = function(){
+  var ret = this
+    , node;
+
+  for (var i = 0, len = this.nodes.length; i < len; ++i) {
+    node = this.nodes[i];
+    if (node.yield) return node;
+    else if (node.textOnly) continue;
+    else if (node.includeBlock) ret = node.includeBlock();
+    else if (node.block && !node.block.isEmpty()) ret = node.block.includeBlock();
+    if (ret.yield) return ret;
+  }
+
+  return ret;
+};
+
+/**
+ * Return a clone of this block.
+ *
+ * @return {Block}
+ * @api private
+ */
+
+Block.prototype.clone = function(){
+  var err = new Error('block.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  var clone = new Block;
+  for (var i = 0, len = this.nodes.length; i < len; ++i) {
+    clone.push(this.nodes[i].clone());
+  }
+  return clone;
+};
+
+},{"./node":44}],34:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Case` with `expr`.
+ *
+ * @param {String} expr
+ * @api public
+ */
+
+var Case = exports = module.exports = function Case(expr, block){
+  this.expr = expr;
+  this.block = block;
+};
+
+// Inherit from `Node`.
+Case.prototype = Object.create(Node.prototype);
+Case.prototype.constructor = Case;
+
+Case.prototype.type = 'Case';
+
+var When = exports.When = function When(expr, block){
+  this.expr = expr;
+  this.block = block;
+  this.debug = false;
+};
+
+// Inherit from `Node`.
+When.prototype = Object.create(Node.prototype);
+When.prototype.constructor = When;
+
+When.prototype.type = 'When';
+
+},{"./node":44}],35:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Code` node with the given code `val`.
+ * Code may also be optionally buffered and escaped.
+ *
+ * @param {String} val
+ * @param {Boolean} buffer
+ * @param {Boolean} escape
+ * @api public
+ */
+
+var Code = module.exports = function Code(val, buffer, escape) {
+  this.val = val;
+  this.buffer = buffer;
+  this.escape = escape;
+  if (val.match(/^ *else/)) this.debug = false;
+};
+
+// Inherit from `Node`.
+Code.prototype = Object.create(Node.prototype);
+Code.prototype.constructor = Code;
+
+Code.prototype.type = 'Code'; // prevent the minifiers removing this
+},{"./node":44}],36:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Comment` with the given `val`, optionally `buffer`,
+ * otherwise the comment may render in the output.
+ *
+ * @param {String} val
+ * @param {Boolean} buffer
+ * @api public
+ */
+
+var Comment = module.exports = function Comment(val, buffer) {
+  this.val = val;
+  this.buffer = buffer;
+};
+
+// Inherit from `Node`.
+Comment.prototype = Object.create(Node.prototype);
+Comment.prototype.constructor = Comment;
+
+Comment.prototype.type = 'Comment';
+
+},{"./node":44}],37:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Doctype` with the given `val`. 
+ *
+ * @param {String} val
+ * @api public
+ */
+
+var Doctype = module.exports = function Doctype(val) {
+  this.val = val;
+};
+
+// Inherit from `Node`.
+Doctype.prototype = Object.create(Node.prototype);
+Doctype.prototype.constructor = Doctype;
+
+Doctype.prototype.type = 'Doctype';
+
+},{"./node":44}],38:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize an `Each` node, representing iteration
+ *
+ * @param {String} obj
+ * @param {String} val
+ * @param {String} key
+ * @param {Block} block
+ * @api public
+ */
+
+var Each = module.exports = function Each(obj, val, key, block) {
+  this.obj = obj;
+  this.val = val;
+  this.key = key;
+  this.block = block;
+};
+
+// Inherit from `Node`.
+Each.prototype = Object.create(Node.prototype);
+Each.prototype.constructor = Each;
+
+Each.prototype.type = 'Each';
+
+},{"./node":44}],39:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Filter` node with the given
+ * filter `name` and `block`.
+ *
+ * @param {String} name
+ * @param {Block|Node} block
+ * @api public
+ */
+
+var Filter = module.exports = function Filter(name, block, attrs) {
+  this.name = name;
+  this.block = block;
+  this.attrs = attrs;
+};
+
+// Inherit from `Node`.
+Filter.prototype = Object.create(Node.prototype);
+Filter.prototype.constructor = Filter;
+
+Filter.prototype.type = 'Filter';
+
+},{"./node":44}],40:[function(require,module,exports){
+'use strict';
+
+exports.Node = require('./node');
+exports.Tag = require('./tag');
+exports.Code = require('./code');
+exports.Each = require('./each');
+exports.Case = require('./case');
+exports.Text = require('./text');
+exports.Block = require('./block');
+exports.MixinBlock = require('./mixin-block');
+exports.Mixin = require('./mixin');
+exports.Filter = require('./filter');
+exports.Comment = require('./comment');
+exports.Literal = require('./literal');
+exports.BlockComment = require('./block-comment');
+exports.Doctype = require('./doctype');
+
+},{"./block":33,"./block-comment":32,"./case":34,"./code":35,"./comment":36,"./doctype":37,"./each":38,"./filter":39,"./literal":41,"./mixin":43,"./mixin-block":42,"./node":44,"./tag":45,"./text":46}],41:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Literal` node with the given `str.
+ *
+ * @param {String} str
+ * @api public
+ */
+
+var Literal = module.exports = function Literal(str) {
+  this.str = str;
+};
+
+// Inherit from `Node`.
+Literal.prototype = Object.create(Node.prototype);
+Literal.prototype.constructor = Literal;
+
+Literal.prototype.type = 'Literal';
+
+},{"./node":44}],42:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Block` with an optional `node`.
+ *
+ * @param {Node} node
+ * @api public
+ */
+
+var MixinBlock = module.exports = function MixinBlock(){};
+
+// Inherit from `Node`.
+MixinBlock.prototype = Object.create(Node.prototype);
+MixinBlock.prototype.constructor = MixinBlock;
+
+MixinBlock.prototype.type = 'MixinBlock';
+
+},{"./node":44}],43:[function(require,module,exports){
+'use strict';
+
+var Attrs = require('./attrs');
+
+/**
+ * Initialize a new `Mixin` with `name` and `block`.
+ *
+ * @param {String} name
+ * @param {String} args
+ * @param {Block} block
+ * @api public
+ */
+
+var Mixin = module.exports = function Mixin(name, args, block, call){
+  Attrs.call(this);
+  this.name = name;
+  this.args = args;
+  this.block = block;
+  this.call = call;
+};
+
+// Inherit from `Attrs`.
+Mixin.prototype = Object.create(Attrs.prototype);
+Mixin.prototype.constructor = Mixin;
+
+Mixin.prototype.type = 'Mixin';
+
+},{"./attrs":31}],44:[function(require,module,exports){
+'use strict';
+
+var Node = module.exports = function Node(){};
+
+/**
+ * Clone this node (return itself)
+ *
+ * @return {Node}
+ * @api private
+ */
+
+Node.prototype.clone = function(){
+  var err = new Error('node.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+  return this;
+};
+
+Node.prototype.type = '';
+
+},{}],45:[function(require,module,exports){
+'use strict';
+
+var Attrs = require('./attrs');
+var Block = require('./block');
+var inlineTags = require('../inline-tags');
+
+/**
+ * Initialize a `Tag` node with the given tag `name` and optional `block`.
+ *
+ * @param {String} name
+ * @param {Block} block
+ * @api public
+ */
+
+var Tag = module.exports = function Tag(name, block) {
+  Attrs.call(this);
+  this.name = name;
+  this.block = block || new Block;
+};
+
+// Inherit from `Attrs`.
+Tag.prototype = Object.create(Attrs.prototype);
+Tag.prototype.constructor = Tag;
+
+Tag.prototype.type = 'Tag';
+
+/**
+ * Clone this tag.
+ *
+ * @return {Tag}
+ * @api private
+ */
+
+Tag.prototype.clone = function(){
+  var err = new Error('tag.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  var clone = new Tag(this.name, this.block.clone());
+  clone.line = this.line;
+  clone.attrs = this.attrs;
+  clone.textOnly = this.textOnly;
+  return clone;
+};
+
+/**
+ * Check if this tag is an inline tag.
+ *
+ * @return {Boolean}
+ * @api private
+ */
+
+Tag.prototype.isInline = function(){
+  return ~inlineTags.indexOf(this.name);
+};
+
+/**
+ * Check if this tag's contents can be inlined.  Used for pretty printing.
+ *
+ * @return {Boolean}
+ * @api private
+ */
+
+Tag.prototype.canInline = function(){
+  var nodes = this.block.nodes;
+
+  function isInline(node){
+    // Recurse if the node is a block
+    if (node.isBlock) return node.nodes.every(isInline);
+    return node.isText || (node.isInline && node.isInline());
+  }
+
+  // Empty tag
+  if (!nodes.length) return true;
+
+  // Text-only or inline-only tag
+  if (1 == nodes.length) return isInline(nodes[0]);
+
+  // Multi-line inline-only tag
+  if (this.block.nodes.every(isInline)) {
+    for (var i = 1, len = nodes.length; i < len; ++i) {
+      if (nodes[i-1].isText && nodes[i].isText)
+        return false;
+    }
+    return true;
+  }
+
+  // Mixed tag
+  return false;
+};
+
+},{"../inline-tags":29,"./attrs":31,"./block":33}],46:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Text` node with optional `line`.
+ *
+ * @param {String} line
+ * @api public
+ */
+
+var Text = module.exports = function Text(line) {
+  this.val = line;
+};
+
+// Inherit from `Node`.
+Text.prototype = Object.create(Node.prototype);
+Text.prototype.constructor = Text;
+
+Text.prototype.type = 'Text';
+
+/**
+ * Flag as text.
+ */
+
+Text.prototype.isText = true;
+},{"./node":44}],47:[function(require,module,exports){
+'use strict';
+
+var Lexer = require('./lexer');
+var nodes = require('./nodes');
+var utils = require('./utils');
+var filters = require('./filters');
+var path = require('path');
+var constantinople = require('constantinople');
+var parseJSExpression = require('character-parser').parseMax;
+var extname = path.extname;
+
+/**
+ * Initialize `Parser` with the given input `str` and `filename`.
+ *
+ * @param {String} str
+ * @param {String} filename
+ * @param {Object} options
+ * @api public
+ */
+
+var Parser = exports = module.exports = function Parser(str, filename, options){
+  //Strip any UTF-8 BOM off of the start of `str`, if it exists.
+  this.input = str.replace(/^\uFEFF/, '');
+  this.lexer = new Lexer(this.input, filename);
+  this.filename = filename;
+  this.blocks = {};
+  this.mixins = {};
+  this.options = options;
+  this.contexts = [this];
+  this.inMixin = 0;
+  this.dependencies = [];
+  this.inBlock = 0;
+};
+
+/**
+ * Parser prototype.
+ */
+
+Parser.prototype = {
+
+  /**
+   * Save original constructor
+   */
+
+  constructor: Parser,
+
+  /**
+   * Push `parser` onto the context stack,
+   * or pop and return a `Parser`.
+   */
+
+  context: function(parser){
+    if (parser) {
+      this.contexts.push(parser);
+    } else {
+      return this.contexts.pop();
+    }
+  },
+
+  /**
+   * Return the next token object.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  advance: function(){
+    return this.lexer.advance();
+  },
+
+  /**
+   * Single token lookahead.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  peek: function() {
+    return this.lookahead(1);
+  },
+
+  /**
+   * Return lexer lineno.
+   *
+   * @return {Number}
+   * @api private
+   */
+
+  line: function() {
+    return this.lexer.lineno;
+  },
+
+  /**
+   * `n` token lookahead.
+   *
+   * @param {Number} n
+   * @return {Object}
+   * @api private
+   */
+
+  lookahead: function(n){
+    return this.lexer.lookahead(n);
+  },
+
+  /**
+   * Parse input returning a string of js for evaluation.
+   *
+   * @return {String}
+   * @api public
+   */
+
+  parse: function(){
+    var block = new nodes.Block, parser;
+    block.line = 0;
+    block.filename = this.filename;
+
+    while ('eos' != this.peek().type) {
+      if ('newline' == this.peek().type) {
+        this.advance();
+      } else {
+        var next = this.peek();
+        var expr = this.parseExpr();
+        expr.filename = expr.filename || this.filename;
+        expr.line = next.line;
+        block.push(expr);
+      }
+    }
+
+    if (parser = this.extending) {
+      this.context(parser);
+      var ast = parser.parse();
+      this.context();
+
+      // hoist mixins
+      for (var name in this.mixins)
+        ast.unshift(this.mixins[name]);
+      return ast;
+    }
+
+    if (!this.extending && !this.included && Object.keys(this.blocks).length){
+      var blocks = [];
+      utils.walkAST(block, function (node) {
+        if (node.type === 'Block' && node.name) {
+          blocks.push(node.name);
+        }
+      });
+      Object.keys(this.blocks).forEach(function (name) {
+        if (blocks.indexOf(name) === -1 && !this.blocks[name].isSubBlock) {
+          console.warn('Warning: Unexpected block "'
+                       + name
+                       + '" '
+                       + ' on line '
+                       + this.blocks[name].line
+                       + ' of '
+                       + (this.blocks[name].filename)
+                       + '. This block is never used. This warning will be an error in v2.0.0');
+        }
+      }.bind(this));
+    }
+
+    return block;
+  },
+
+  /**
+   * Expect the given type, or throw an exception.
+   *
+   * @param {String} type
+   * @api private
+   */
+
+  expect: function(type){
+    if (this.peek().type === type) {
+      return this.advance();
+    } else {
+      throw new Error('expected "' + type + '", but got "' + this.peek().type + '"');
+    }
+  },
+
+  /**
+   * Accept the given `type`.
+   *
+   * @param {String} type
+   * @api private
+   */
+
+  accept: function(type){
+    if (this.peek().type === type) {
+      return this.advance();
+    }
+  },
+
+  /**
+   *   tag
+   * | doctype
+   * | mixin
+   * | include
+   * | filter
+   * | comment
+   * | text
+   * | each
+   * | code
+   * | yield
+   * | id
+   * | class
+   * | interpolation
+   */
+
+  parseExpr: function(){
+    switch (this.peek().type) {
+      case 'tag':
+        return this.parseTag();
+      case 'mixin':
+        return this.parseMixin();
+      case 'block':
+        return this.parseBlock();
+      case 'mixin-block':
+        return this.parseMixinBlock();
+      case 'case':
+        return this.parseCase();
+      case 'extends':
+        return this.parseExtends();
+      case 'include':
+        return this.parseInclude();
+      case 'doctype':
+        return this.parseDoctype();
+      case 'filter':
+        return this.parseFilter();
+      case 'comment':
+        return this.parseComment();
+      case 'text':
+        return this.parseText();
+      case 'each':
+        return this.parseEach();
+      case 'code':
+        return this.parseCode();
+      case 'blockCode':
+        return this.parseBlockCode();
+      case 'call':
+        return this.parseCall();
+      case 'interpolation':
+        return this.parseInterpolation();
+      case 'yield':
+        this.advance();
+        var block = new nodes.Block;
+        block.yield = true;
+        return block;
+      case 'id':
+      case 'class':
+        var tok = this.advance();
+        this.lexer.defer(this.lexer.tok('tag', 'div'));
+        this.lexer.defer(tok);
+        return this.parseExpr();
+      default:
+        throw new Error('unexpected token "' + this.peek().type + '"');
+    }
+  },
+
+  /**
+   * Text
+   */
+
+  parseText: function(){
+    var tok = this.expect('text');
+    var tokens = this.parseInlineTagsInText(tok.val);
+    if (tokens.length === 1) return tokens[0];
+    var node = new nodes.Block;
+    for (var i = 0; i < tokens.length; i++) {
+      node.push(tokens[i]);
+    };
+    return node;
+  },
+
+  /**
+   *   ':' expr
+   * | block
+   */
+
+  parseBlockExpansion: function(){
+    if (':' == this.peek().type) {
+      this.advance();
+      return new nodes.Block(this.parseExpr());
+    } else {
+      return this.block();
+    }
+  },
+
+  /**
+   * case
+   */
+
+  parseCase: function(){
+    var val = this.expect('case').val;
+    var node = new nodes.Case(val);
+    node.line = this.line();
+
+    var block = new nodes.Block;
+    block.line = this.line();
+    block.filename = this.filename;
+    this.expect('indent');
+    while ('outdent' != this.peek().type) {
+      switch (this.peek().type) {
+        case 'comment':
+        case 'newline':
+          this.advance();
+          break;
+        case 'when':
+          block.push(this.parseWhen());
+          break;
+        case 'default':
+          block.push(this.parseDefault());
+          break;
+        default:
+          throw new Error('Unexpected token "' + this.peek().type
+                          + '", expected "when", "default" or "newline"');
+      }
+    }
+    this.expect('outdent');
+
+    node.block = block;
+
+    return node;
+  },
+
+  /**
+   * when
+   */
+
+  parseWhen: function(){
+    var val = this.expect('when').val;
+    if (this.peek().type !== 'newline')
+      return new nodes.Case.When(val, this.parseBlockExpansion());
+    else
+      return new nodes.Case.When(val);
+  },
+
+  /**
+   * default
+   */
+
+  parseDefault: function(){
+    this.expect('default');
+    return new nodes.Case.When('default', this.parseBlockExpansion());
+  },
+
+  /**
+   * code
+   */
+
+  parseCode: function(afterIf){
+    var tok = this.expect('code');
+    var node = new nodes.Code(tok.val, tok.buffer, tok.escape);
+    var block;
+    node.line = this.line();
+
+    // throw an error if an else does not have an if
+    if (tok.isElse && !tok.hasIf) {
+      throw new Error('Unexpected else without if');
+    }
+
+    // handle block
+    block = 'indent' == this.peek().type;
+    if (block) {
+      node.block = this.block();
+    }
+
+    // handle missing block
+    if (tok.requiresBlock && !block) {
+      node.block = new nodes.Block();
+    }
+
+    // mark presense of if for future elses
+    if (tok.isIf && this.peek().isElse) {
+      this.peek().hasIf = true;
+    } else if (tok.isIf && this.peek().type === 'newline' && this.lookahead(2).isElse) {
+      this.lookahead(2).hasIf = true;
+    }
+
+    return node;
+  },
+
+  /**
+   * block code
+   */
+
+  parseBlockCode: function(){
+    var tok = this.expect('blockCode');
+    var node;
+    var body = this.peek();
+    var text;
+    if (body.type === 'pipeless-text') {
+      this.advance();
+      text = body.val.join('\n');
+    } else {
+      text = '';
+    }
+      node = new nodes.Code(text, false, false);
+      return node;
+  },
+
+  /**
+   * comment
+   */
+
+  parseComment: function(){
+    var tok = this.expect('comment');
+    var node;
+
+    var block;
+    if (block = this.parseTextBlock()) {
+      node = new nodes.BlockComment(tok.val, block, tok.buffer);
+    } else {
+      node = new nodes.Comment(tok.val, tok.buffer);
+    }
+
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * doctype
+   */
+
+  parseDoctype: function(){
+    var tok = this.expect('doctype');
+    var node = new nodes.Doctype(tok.val);
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * filter attrs? text-block
+   */
+
+  parseFilter: function(){
+    var tok = this.expect('filter');
+    var attrs = this.accept('attrs');
+    var block;
+
+    block = this.parseTextBlock() || new nodes.Block();
+
+    var options = {};
+    if (attrs) {
+      attrs.attrs.forEach(function (attribute) {
+        options[attribute.name] = constantinople.toConstant(attribute.val);
+      });
+    }
+
+    var node = new nodes.Filter(tok.val, block, options);
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * each block
+   */
+
+  parseEach: function(){
+    var tok = this.expect('each');
+    var node = new nodes.Each(tok.code, tok.val, tok.key);
+    node.line = this.line();
+    node.block = this.block();
+    if (this.peek().type == 'code' && this.peek().val == 'else') {
+      this.advance();
+      node.alternative = this.block();
+    }
+    return node;
+  },
+
+  /**
+   * Resolves a path relative to the template for use in
+   * includes and extends
+   *
+   * @param {String}  path
+   * @param {String}  purpose  Used in error messages.
+   * @return {String}
+   * @api private
+   */
+
+  resolvePath: function (path, purpose) {
+    var p = require('path');
+    var dirname = p.dirname;
+    var basename = p.basename;
+    var join = p.join;
+
+    if (path[0] !== '/' && !this.filename)
+      throw new Error('the "filename" option is required to use "' + purpose + '" with "relative" paths');
+
+    if (path[0] === '/' && !this.options.basedir)
+      throw new Error('the "basedir" option is required to use "' + purpose + '" with "absolute" paths');
+
+    path = join(path[0] === '/' ? this.options.basedir : dirname(this.filename), path);
+
+    if (basename(path).indexOf('.') === -1) path += '.jade';
+
+    return path;
+  },
+
+  /**
+   * 'extends' name
+   */
+
+  parseExtends: function(){
+    var fs = require('fs');
+
+    var path = this.resolvePath(this.expect('extends').val.trim(), 'extends');
+    if ('.jade' != path.substr(-5)) path += '.jade';
+
+    this.dependencies.push(path);
+    var str = fs.readFileSync(path, 'utf8');
+    var parser = new this.constructor(str, path, this.options);
+    parser.dependencies = this.dependencies;
+
+    parser.blocks = this.blocks;
+    parser.included = this.included;
+    parser.contexts = this.contexts;
+    this.extending = parser;
+
+    // TODO: null node
+    return new nodes.Literal('');
+  },
+
+  /**
+   * 'block' name block
+   */
+
+  parseBlock: function(){
+    var block = this.expect('block');
+    var mode = block.mode;
+    var name = block.val.trim();
+
+    var line = block.line;
+
+    this.inBlock++;
+    block = 'indent' == this.peek().type
+      ? this.block()
+      : new nodes.Block(new nodes.Literal(''));
+    this.inBlock--;
+    block.name = name;
+    block.line = line;
+
+    var prev = this.blocks[name] || {prepended: [], appended: []}
+    if (prev.mode === 'replace') return this.blocks[name] = prev;
+
+    var allNodes = prev.prepended.concat(block.nodes).concat(prev.appended);
+
+    switch (mode) {
+      case 'append':
+        prev.appended = prev.parser === this ?
+                        prev.appended.concat(block.nodes) :
+                        block.nodes.concat(prev.appended);
+        break;
+      case 'prepend':
+        prev.prepended = prev.parser === this ?
+                         block.nodes.concat(prev.prepended) :
+                         prev.prepended.concat(block.nodes);
+        break;
+    }
+    block.nodes = allNodes;
+    block.appended = prev.appended;
+    block.prepended = prev.prepended;
+    block.mode = mode;
+    block.parser = this;
+
+    block.isSubBlock = this.inBlock > 0;
+
+    return this.blocks[name] = block;
+  },
+
+  parseMixinBlock: function () {
+    var block = this.expect('mixin-block');
+    if (!this.inMixin) {
+      throw new Error('Anonymous blocks are not allowed unless they are part of a mixin.');
+    }
+    return new nodes.MixinBlock();
+  },
+
+  /**
+   * include block?
+   */
+
+  parseInclude: function(){
+    var fs = require('fs');
+    var tok = this.expect('include');
+
+    var path = this.resolvePath(tok.val.trim(), 'include');
+    this.dependencies.push(path);
+    // has-filter
+    if (tok.filter) {
+      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
+      var options = {filename: path};
+      if (tok.attrs) {
+        tok.attrs.attrs.forEach(function (attribute) {
+          options[attribute.name] = constantinople.toConstant(attribute.val);
+        });
+      }
+      str = filters(tok.filter, str, options);
+      return new nodes.Literal(str);
+    }
+
+    // non-jade
+    if ('.jade' != path.substr(-5)) {
+      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
+      return new nodes.Literal(str);
+    }
+
+    var str = fs.readFileSync(path, 'utf8');
+    var parser = new this.constructor(str, path, this.options);
+    parser.dependencies = this.dependencies;
+
+    parser.blocks = utils.merge({}, this.blocks);
+    parser.included = true;
+
+    parser.mixins = this.mixins;
+
+    this.context(parser);
+    var ast = parser.parse();
+    this.context();
+    ast.filename = path;
+
+    if ('indent' == this.peek().type) {
+      ast.includeBlock().push(this.block());
+    }
+
+    return ast;
+  },
+
+  /**
+   * call ident block
+   */
+
+  parseCall: function(){
+    var tok = this.expect('call');
+    var name = tok.val;
+    var args = tok.args;
+    var mixin = new nodes.Mixin(name, args, new nodes.Block, true);
+
+    this.tag(mixin);
+    if (mixin.code) {
+      mixin.block.push(mixin.code);
+      mixin.code = null;
+    }
+    if (mixin.block.isEmpty()) mixin.block = null;
+    return mixin;
+  },
+
+  /**
+   * mixin block
+   */
+
+  parseMixin: function(){
+    var tok = this.expect('mixin');
+    var name = tok.val;
+    var args = tok.args;
+    var mixin;
+
+    // definition
+    if ('indent' == this.peek().type) {
+      this.inMixin++;
+      mixin = new nodes.Mixin(name, args, this.block(), false);
+      this.mixins[name] = mixin;
+      this.inMixin--;
+      return mixin;
+    // call
+    } else {
+      return new nodes.Mixin(name, args, null, true);
+    }
+  },
+
+  parseInlineTagsInText: function (str) {
+    var line = this.line();
+
+    var match = /(\\)?#\[((?:.|\n)*)$/.exec(str);
+    if (match) {
+      if (match[1]) { // escape
+        var text = new nodes.Text(str.substr(0, match.index) + '#[');
+        text.line = line;
+        var rest = this.parseInlineTagsInText(match[2]);
+        if (rest[0].type === 'Text') {
+          text.val += rest[0].val;
+          rest.shift();
+        }
+        return [text].concat(rest);
+      } else {
+        var text = new nodes.Text(str.substr(0, match.index));
+        text.line = line;
+        var buffer = [text];
+        var rest = match[2];
+        var range = parseJSExpression(rest);
+        var inner = new Parser(range.src, this.filename, this.options);
+        buffer.push(inner.parse());
+        return buffer.concat(this.parseInlineTagsInText(rest.substr(range.end + 1)));
+      }
+    } else {
+      var text = new nodes.Text(str);
+      text.line = line;
+      return [text];
+    }
+  },
+
+  /**
+   * indent (text | newline)* outdent
+   */
+
+  parseTextBlock: function(){
+    var block = new nodes.Block;
+    block.line = this.line();
+    var body = this.peek();
+    if (body.type !== 'pipeless-text') return;
+    this.advance();
+    block.nodes = body.val.reduce(function (accumulator, text) {
+      return accumulator.concat(this.parseInlineTagsInText(text));
+    }.bind(this), []);
+    return block;
+  },
+
+  /**
+   * indent expr* outdent
+   */
+
+  block: function(){
+    var block = new nodes.Block;
+    block.line = this.line();
+    block.filename = this.filename;
+    this.expect('indent');
+    while ('outdent' != this.peek().type) {
+      if ('newline' == this.peek().type) {
+        this.advance();
+      } else {
+        var expr = this.parseExpr();
+        expr.filename = this.filename;
+        block.push(expr);
+      }
+    }
+    this.expect('outdent');
+    return block;
+  },
+
+  /**
+   * interpolation (attrs | class | id)* (text | code | ':')? newline* block?
+   */
+
+  parseInterpolation: function(){
+    var tok = this.advance();
+    var tag = new nodes.Tag(tok.val);
+    tag.buffer = true;
+    return this.tag(tag);
+  },
+
+  /**
+   * tag (attrs | class | id)* (text | code | ':')? newline* block?
+   */
+
+  parseTag: function(){
+    var tok = this.advance();
+    var tag = new nodes.Tag(tok.val);
+
+    tag.selfClosing = tok.selfClosing;
+
+    return this.tag(tag);
+  },
+
+  /**
+   * Parse tag.
+   */
+
+  tag: function(tag){
+    tag.line = this.line();
+
+    var seenAttrs = false;
+    // (attrs | class | id)*
+    out:
+      while (true) {
+        switch (this.peek().type) {
+          case 'id':
+          case 'class':
+            var tok = this.advance();
+            tag.setAttribute(tok.type, "'" + tok.val + "'");
+            continue;
+          case 'attrs':
+            if (seenAttrs) {
+              console.warn(this.filename + ', line ' + this.peek().line + ':\nYou should not have jade tags with multiple attributes.');
+            }
+            seenAttrs = true;
+            var tok = this.advance();
+            var attrs = tok.attrs;
+
+            if (tok.selfClosing) tag.selfClosing = true;
+
+            for (var i = 0; i < attrs.length; i++) {
+              tag.setAttribute(attrs[i].name, attrs[i].val, attrs[i].escaped);
+            }
+            continue;
+          case '&attributes':
+            var tok = this.advance();
+            tag.addAttributes(tok.val);
+            break;
+          default:
+            break out;
+        }
+      }
+
+    // check immediate '.'
+    if ('dot' == this.peek().type) {
+      tag.textOnly = true;
+      this.advance();
+    }
+
+    // (text | code | ':')?
+    switch (this.peek().type) {
+      case 'text':
+        tag.block.push(this.parseText());
+        break;
+      case 'code':
+        tag.code = this.parseCode();
+        break;
+      case ':':
+        this.advance();
+        tag.block = new nodes.Block;
+        tag.block.push(this.parseExpr());
+        break;
+      case 'newline':
+      case 'indent':
+      case 'outdent':
+      case 'eos':
+      case 'pipeless-text':
+        break;
+      default:
+        throw new Error('Unexpected token `' + this.peek().type + '` expected `text`, `code`, `:`, `newline` or `eos`')
+    }
+
+    // newline*
+    while ('newline' == this.peek().type) this.advance();
+
+    // block?
+    if (tag.textOnly) {
+      tag.block = this.parseTextBlock() || new nodes.Block();
+    } else if ('indent' == this.peek().type) {
+      var block = this.block();
+      for (var i = 0, len = block.nodes.length; i < len; ++i) {
+        tag.block.push(block.nodes[i]);
+      }
+    }
+
+    return tag;
+  }
+};
+
+},{"./filters":27,"./lexer":30,"./nodes":40,"./utils":49,"character-parser":13,"constantinople":14,"fs":19,"path":23}],48:[function(require,module,exports){
+'use strict';
+
+/**
+ * Merge two attribute objects giving precedence
+ * to values in object `b`. Classes are special-cased
+ * allowing for arrays and merging/joining appropriately
+ * resulting in a string.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object} a
+ * @api private
+ */
+
+exports.merge = function merge(a, b) {
+  if (arguments.length === 1) {
+    var attrs = a[0];
+    for (var i = 1; i < a.length; i++) {
+      attrs = merge(attrs, a[i]);
+    }
+    return attrs;
+  }
+  var ac = a['class'];
+  var bc = b['class'];
+
+  if (ac || bc) {
+    ac = ac || [];
+    bc = bc || [];
+    if (!Array.isArray(ac)) ac = [ac];
+    if (!Array.isArray(bc)) bc = [bc];
+    a['class'] = ac.concat(bc).filter(nulls);
+  }
+
+  for (var key in b) {
+    if (key != 'class') {
+      a[key] = b[key];
+    }
+  }
+
+  return a;
+};
+
+/**
+ * Filter null `val`s.
+ *
+ * @param {*} val
+ * @return {Boolean}
+ * @api private
+ */
+
+function nulls(val) {
+  return val != null && val !== '';
+}
+
+/**
+ * join array as classes.
+ *
+ * @param {*} val
+ * @return {String}
+ */
+exports.joinClasses = joinClasses;
+function joinClasses(val) {
+  return (Array.isArray(val) ? val.map(joinClasses) :
+    (val && typeof val === 'object') ? Object.keys(val).filter(function (key) { return val[key]; }) :
+    [val]).filter(nulls).join(' ');
+}
+
+/**
+ * Render the given classes.
+ *
+ * @param {Array} classes
+ * @param {Array.<Boolean>} escaped
+ * @return {String}
+ */
+exports.cls = function cls(classes, escaped) {
+  var buf = [];
+  for (var i = 0; i < classes.length; i++) {
+    if (escaped && escaped[i]) {
+      buf.push(exports.escape(joinClasses([classes[i]])));
+    } else {
+      buf.push(joinClasses(classes[i]));
+    }
+  }
+  var text = joinClasses(buf);
+  if (text.length) {
+    return ' class="' + text + '"';
+  } else {
+    return '';
+  }
+};
+
+
+exports.style = function (val) {
+  if (val && typeof val === 'object') {
+    return Object.keys(val).map(function (style) {
+      return style + ':' + val[style];
+    }).join(';');
+  } else {
+    return val;
+  }
+};
+/**
+ * Render the given attribute.
+ *
+ * @param {String} key
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @param {Boolean} terse
+ * @return {String}
+ */
+exports.attr = function attr(key, val, escaped, terse) {
+  if (key === 'style') {
+    val = exports.style(val);
+  }
+  if ('boolean' == typeof val || null == val) {
+    if (val) {
+      return ' ' + (terse ? key : key + '="' + key + '"');
+    } else {
+      return '';
+    }
+  } else if (0 == key.indexOf('data') && 'string' != typeof val) {
+    if (JSON.stringify(val).indexOf('&') !== -1) {
+      console.warn('Since Jade 2.0.0, ampersands (`&`) in data attributes ' +
+                   'will be escaped to `&amp;`');
+    };
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will eliminate the double quotes around dates in ' +
+                   'ISO form after 2.0.0');
+    }
+    return ' ' + key + "='" + JSON.stringify(val).replace(/'/g, '&apos;') + "'";
+  } else if (escaped) {
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will stringify dates in ISO form after 2.0.0');
+    }
+    return ' ' + key + '="' + exports.escape(val) + '"';
+  } else {
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will stringify dates in ISO form after 2.0.0');
+    }
+    return ' ' + key + '="' + val + '"';
+  }
+};
+
+/**
+ * Render the given attributes object.
+ *
+ * @param {Object} obj
+ * @param {Object} escaped
+ * @return {String}
+ */
+exports.attrs = function attrs(obj, terse){
+  var buf = [];
+
+  var keys = Object.keys(obj);
+
+  if (keys.length) {
+    for (var i = 0; i < keys.length; ++i) {
+      var key = keys[i]
+        , val = obj[key];
+
+      if ('class' == key) {
+        if (val = joinClasses(val)) {
+          buf.push(' ' + key + '="' + val + '"');
+        }
+      } else {
+        buf.push(exports.attr(key, val, false, terse));
+      }
+    }
+  }
+
+  return buf.join('');
+};
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+var jade_encode_html_rules = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;'
+};
+var jade_match_html = /[&<>"]/g;
+
+function jade_encode_char(c) {
+  return jade_encode_html_rules[c] || c;
+}
+
+exports.escape = jade_escape;
+function jade_escape(html){
+  var result = String(html).replace(jade_match_html, jade_encode_char);
+  if (result === '' + html) return html;
+  else return result;
+};
+
+/**
+ * Re-throw the given `err` in context to the
+ * the jade in `filename` at the given `lineno`.
+ *
+ * @param {Error} err
+ * @param {String} filename
+ * @param {String} lineno
+ * @api private
+ */
+
+exports.rethrow = function rethrow(err, filename, lineno, str){
+  if (!(err instanceof Error)) throw err;
+  if ((typeof window != 'undefined' || !filename) && !str) {
+    err.message += ' on line ' + lineno;
+    throw err;
+  }
+  try {
+    str = str || require('fs').readFileSync(filename, 'utf8')
+  } catch (ex) {
+    rethrow(err, null, lineno)
+  }
+  var context = 3
+    , lines = str.split('\n')
+    , start = Math.max(lineno - context, 0)
+    , end = Math.min(lines.length, lineno + context);
+
+  // Error context
+  var context = lines.slice(start, end).map(function(line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? '  > ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'Jade') + ':' + lineno
+    + '\n' + context + '\n\n' + err.message;
+  throw err;
+};
+
+exports.DebugItem = function DebugItem(lineno, filename) {
+  this.lineno = lineno;
+  this.filename = filename;
+}
+
+},{"fs":19}],49:[function(require,module,exports){
+'use strict';
+
+/**
+ * Merge `b` into `a`.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object}
+ * @api public
+ */
+
+exports.merge = function(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+};
+
+exports.stringify = function(str) {
+  return JSON.stringify(str)
+             .replace(/\u2028/g, '\\u2028')
+             .replace(/\u2029/g, '\\u2029');
+};
+
+exports.walkAST = function walkAST(ast, before, after) {
+  before && before(ast);
+  switch (ast.type) {
+    case 'Block':
+      ast.nodes.forEach(function (node) {
+        walkAST(node, before, after);
+      });
+      break;
+    case 'Case':
+    case 'Each':
+    case 'Mixin':
+    case 'Tag':
+    case 'When':
+    case 'Code':
+      ast.block && walkAST(ast.block, before, after);
+      break;
+    case 'Attrs':
+    case 'BlockComment':
+    case 'Comment':
+    case 'Doctype':
+    case 'Filter':
+    case 'Literal':
+    case 'MixinBlock':
+    case 'Text':
+      break;
+    default:
+      throw new Error('Unexpected node type ' + ast.type);
+      break;
+  }
+  after && after(ast);
+};
+
+},{}],50:[function(require,module,exports){
+/**
+ * This file automatically generated from `pre-publish.js`.
+ * Do not manually edit.
+ */
+
+module.exports = {
+  "area": true,
+  "base": true,
+  "br": true,
+  "col": true,
+  "embed": true,
+  "hr": true,
+  "img": true,
+  "input": true,
+  "keygen": true,
+  "link": true,
+  "menuitem": true,
+  "meta": true,
+  "param": true,
+  "source": true,
+  "track": true,
+  "wbr": true
+};
+
+},{}],51:[function(require,module,exports){
+'use strict';
+
+var detect = require('acorn-globals');
+var acorn = require('acorn');
+var walk = require('acorn/dist/walk');
+
+// polyfill for https://github.com/marijnh/acorn/pull/231
+walk.base.ExportNamedDeclaration = walk.base.ExportDefaultDeclaration = function (node, st, c) {
+  return c(node.declaration, st);
+};
+walk.base.ImportDefaultSpecifier = walk.base.ImportNamespaceSpecifier = function () {};
+
+// hacky fix for https://github.com/marijnh/acorn/issues/227
+function reallyParse(source) {
+  try {
+    return acorn.parse(source, {
+      ecmaVersion: 5,
+      allowReturnOutsideFunction: true
+    });
+  } catch (ex) {
+    if (ex.name !== 'SyntaxError') {
+      throw ex;
+    }
+    return acorn.parse(source, {
+      ecmaVersion: 6,
+      allowReturnOutsideFunction: true
+    });
+  }
+}
+
+module.exports = addWith
+
+/**
+ * Mimic `with` as far as possible but at compile time
+ *
+ * @param {String} obj The object part of a with expression
+ * @param {String} src The body of the with expression
+ * @param {Array.<String>} exclude A list of variable names to explicitly exclude
+ */
+function addWith(obj, src, exclude) {
+  obj = obj + ''
+  src = src + ''
+  exclude = exclude || []
+  exclude = exclude.concat(detect(obj).map(function (global) { return global.name; }))
+  var vars = detect(src).map(function (global) { return global.name; })
+    .filter(function (v) {
+      return exclude.indexOf(v) === -1
+    })
+
+  if (vars.length === 0) return src
+
+  var declareLocal = ''
+  var local = 'locals_for_with'
+  var result = 'result_of_with'
+  if (/^[a-zA-Z0-9$_]+$/.test(obj)) {
+    local = obj
+  } else {
+    while (vars.indexOf(local) != -1 || exclude.indexOf(local) != -1) {
+      local += '_'
+    }
+    declareLocal = 'var ' + local + ' = (' + obj + ')'
+  }
+  while (vars.indexOf(result) != -1 || exclude.indexOf(result) != -1) {
+    result += '_'
+  }
+
+  var inputVars = vars.map(function (v) {
+    return JSON.stringify(v) + ' in ' + local + '?' +
+      local + '.' + v + ':' +
+      'typeof ' + v + '!=="undefined"?' + v + ':undefined'
+  })
+
+  src = '(function (' + vars.join(', ') + ') {' +
+    src +
+    '}.call(this' + inputVars.map(function (v) { return ',' + v; }).join('') + '))'
+
+  return ';' + declareLocal + ';' + unwrapReturns(src, result) + ';'
+}
+
+/**
+ * Take a self calling function, and unwrap it such that return inside the function
+ * results in return outside the function
+ *
+ * @param {String} src    Some JavaScript code representing a self-calling function
+ * @param {String} result A temporary variable to store the result in
+ */
+function unwrapReturns(src, result) {
+  var originalSource = src
+  var hasReturn = false
+  var ast = reallyParse(src)
+  var ref
+  src = src.split('')
+
+  // get a reference to the function that was inserted to add an inner context
+  if ((ref = ast.body).length !== 1
+   || (ref = ref[0]).type !== 'ExpressionStatement'
+   || (ref = ref.expression).type !== 'CallExpression'
+   || (ref = ref.callee).type !== 'MemberExpression' || ref.computed !== false || ref.property.name !== 'call'
+   || (ref = ref.object).type !== 'FunctionExpression')
+    throw new Error('AST does not seem to represent a self-calling function')
+  var fn = ref
+
+  walk.recursive(ast, null, {
+    Function: function (node, st, c) {
+      if (node === fn) {
+        c(node.body, st, "ScopeBody");
+      }
+    },
+    ReturnStatement: function (node) {
+      hasReturn = true
+      replace(node, 'return {value: ' + source(node.argument) + '};');
+    }
+  });
+  function source(node) {
+    return src.slice(node.start, node.end).join('')
+  }
+  function replace(node, str) {
+    for (var i = node.start; i < node.end; i++) {
+      src[i] = ''
+    }
+    src[node.start] = str
+  }
+  if (!hasReturn) return originalSource
+  else return 'var ' + result + '=' + src.join('') + ';if (' + result + ') return ' + result + '.value'
+}
+
+},{"acorn":52,"acorn-globals":10,"acorn/dist/walk":53}],52:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.acorn = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -10284,7 +19027,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],13:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.acorn || (g.acorn = {})).walk = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
@@ -10629,7048 +19372,4 @@ base.ComprehensionExpression = function (node, st, c) {
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],14:[function(require,module,exports){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-;(function (exports) {
-	'use strict';
-
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
-
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-	var PLUS_URL_SAFE = '-'.charCodeAt(0)
-	var SLASH_URL_SAFE = '_'.charCodeAt(0)
-
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS ||
-		    code === PLUS_URL_SAFE)
-			return 62 // '+'
-		if (code === SLASH ||
-		    code === SLASH_URL_SAFE)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
-
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
-
-		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-		var L = 0
-
-		function push (v) {
-			arr[L++] = v
-		}
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
-		}
-
-		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
-		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
-		}
-
-		return arr
-	}
-
-	function uint8ToBase64 (uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length
-
-		function encode (num) {
-			return lookup.charAt(num)
-		}
-
-		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
-		}
-
-		return output
-	}
-
-	exports.toByteArray = b64ToByteArray
-	exports.fromByteArray = uint8ToBase64
-}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
-
-},{}],15:[function(require,module,exports){
-
-},{}],16:[function(require,module,exports){
-module.exports=require(15)
-},{}],17:[function(require,module,exports){
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-
-exports.Buffer = Buffer
-exports.SlowBuffer = Buffer
-exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
-
-/**
- * If `Buffer._useTypedArrays`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (compatible down to IE6)
- */
-Buffer._useTypedArrays = (function () {
-  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
-  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
-  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
-  // because we need to be able to add all the node Buffer API methods. This is an issue
-  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
-  try {
-    var buf = new ArrayBuffer(0)
-    var arr = new Uint8Array(buf)
-    arr.foo = function () { return 42 }
-    return 42 === arr.foo() &&
-        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
-  } catch (e) {
-    return false
-  }
-})()
-
-/**
- * Class: Buffer
- * =============
- *
- * The Buffer constructor returns instances of `Uint8Array` that are augmented
- * with function properties for all the node `Buffer` API functions. We use
- * `Uint8Array` so that square bracket notation works as expected -- it returns
- * a single octet.
- *
- * By augmenting the instances, we can avoid modifying the `Uint8Array`
- * prototype.
- */
-function Buffer (subject, encoding, noZero) {
-  if (!(this instanceof Buffer))
-    return new Buffer(subject, encoding, noZero)
-
-  var type = typeof subject
-
-  // Workaround: node's base64 implementation allows for non-padded strings
-  // while base64-js does not.
-  if (encoding === 'base64' && type === 'string') {
-    subject = stringtrim(subject)
-    while (subject.length % 4 !== 0) {
-      subject = subject + '='
-    }
-  }
-
-  // Find the length
-  var length
-  if (type === 'number')
-    length = coerce(subject)
-  else if (type === 'string')
-    length = Buffer.byteLength(subject, encoding)
-  else if (type === 'object')
-    length = coerce(subject.length) // assume that object is array-like
-  else
-    throw new Error('First argument needs to be a number, array or string.')
-
-  var buf
-  if (Buffer._useTypedArrays) {
-    // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = Buffer._augment(new Uint8Array(length))
-  } else {
-    // Fallback: Return THIS instance of Buffer (created by `new`)
-    buf = this
-    buf.length = length
-    buf._isBuffer = true
-  }
-
-  var i
-  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
-    // Speed optimization -- use set if we're copying from a typed array
-    buf._set(subject)
-  } else if (isArrayish(subject)) {
-    // Treat array-ish objects as a byte array
-    for (i = 0; i < length; i++) {
-      if (Buffer.isBuffer(subject))
-        buf[i] = subject.readUInt8(i)
-      else
-        buf[i] = subject[i]
-    }
-  } else if (type === 'string') {
-    buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
-    for (i = 0; i < length; i++) {
-      buf[i] = 0
-    }
-  }
-
-  return buf
-}
-
-// STATIC METHODS
-// ==============
-
-Buffer.isEncoding = function (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'binary':
-    case 'base64':
-    case 'raw':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.isBuffer = function (b) {
-  return !!(b !== null && b !== undefined && b._isBuffer)
-}
-
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str + ''
-  switch (encoding || 'utf8') {
-    case 'hex':
-      ret = str.length / 2
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
-      'list should be an Array.')
-
-  if (list.length === 0) {
-    return new Buffer(0)
-  } else if (list.length === 1) {
-    return list[0]
-  }
-
-  var i
-  if (typeof totalLength !== 'number') {
-    totalLength = 0
-    for (i = 0; i < list.length; i++) {
-      totalLength += list[i].length
-    }
-  }
-
-  var buf = new Buffer(totalLength)
-  var pos = 0
-  for (i = 0; i < list.length; i++) {
-    var item = list[i]
-    item.copy(buf, pos)
-    pos += item.length
-  }
-  return buf
-}
-
-// BUFFER INSTANCE METHODS
-// =======================
-
-function _hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; i++) {
-    var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
-    buf[offset + i] = byte
-  }
-  Buffer._charsWritten = i * 2
-  return i
-}
-
-function _utf8Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf8ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _asciiWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(asciiToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _binaryWrite (buf, string, offset, length) {
-  return _asciiWrite(buf, string, offset, length)
-}
-
-function _base64Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(base64ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _utf16leWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf16leToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-Buffer.prototype.write = function (string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
-      encoding = length
-      length = undefined
-    }
-  } else {  // legacy
-    var swap = encoding
-    encoding = offset
-    offset = length
-    length = swap
-  }
-
-  offset = Number(offset) || 0
-  var remaining = this.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-  encoding = String(encoding || 'utf8').toLowerCase()
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexWrite(this, string, offset, length)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Write(this, string, offset, length)
-      break
-    case 'ascii':
-      ret = _asciiWrite(this, string, offset, length)
-      break
-    case 'binary':
-      ret = _binaryWrite(this, string, offset, length)
-      break
-    case 'base64':
-      ret = _base64Write(this, string, offset, length)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leWrite(this, string, offset, length)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
-
-  encoding = String(encoding || 'utf8').toLowerCase()
-  start = Number(start) || 0
-  end = (end !== undefined)
-    ? Number(end)
-    : end = self.length
-
-  // Fastpath empty strings
-  if (end === start)
-    return ''
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexSlice(self, start, end)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Slice(self, start, end)
-      break
-    case 'ascii':
-      ret = _asciiSlice(self, start, end)
-      break
-    case 'binary':
-      ret = _binarySlice(self, start, end)
-      break
-    case 'base64':
-      ret = _base64Slice(self, start, end)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leSlice(self, start, end)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toJSON = function () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
-
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
-
-  // Copy 0 bytes; we're done
-  if (end === start) return
-  if (target.length === 0 || source.length === 0) return
-
-  // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
-
-  var len = end - start
-
-  if (len < 100 || !Buffer._useTypedArrays) {
-    for (var i = 0; i < len; i++)
-      target[i + target_start] = this[i + start]
-  } else {
-    target._set(this.subarray(start, start + len), target_start)
-  }
-}
-
-function _base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function _utf8Slice (buf, start, end) {
-  var res = ''
-  var tmp = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
-      tmp = ''
-    } else {
-      tmp += '%' + buf[i].toString(16)
-    }
-  }
-
-  return res + decodeUtf8Char(tmp)
-}
-
-function _asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++)
-    ret += String.fromCharCode(buf[i])
-  return ret
-}
-
-function _binarySlice (buf, start, end) {
-  return _asciiSlice(buf, start, end)
-}
-
-function _hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; i++) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function _utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function (start, end) {
-  var len = this.length
-  start = clamp(start, len, 0)
-  end = clamp(end, len, len)
-
-  if (Buffer._useTypedArrays) {
-    return Buffer._augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
-    }
-    return newBuf
-  }
-}
-
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
-}
-
-Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  return this[offset]
-}
-
-function _readUInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-  } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
-  }
-  return val
-}
-
-Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  return _readUInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  return _readUInt16(this, offset, false, noAssert)
-}
-
-function _readUInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
-  } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
-  }
-  return val
-}
-
-Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  return _readUInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  return _readUInt32(this, offset, false, noAssert)
-}
-
-Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  var neg = this[offset] & 0x80
-  if (neg)
-    return (0xff - this[offset] + 1) * -1
-  else
-    return this[offset]
-}
-
-function _readInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  return _readInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  return _readInt16(this, offset, false, noAssert)
-}
-
-function _readInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  return _readInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  return _readInt32(this, offset, false, noAssert)
-}
-
-function _readFloat (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  return _readFloat(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  return _readFloat(this, offset, false, noAssert)
-}
-
-function _readDouble (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  return _readDouble(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  return _readDouble(this, offset, false, noAssert)
-}
-
-Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xff)
-  }
-
-  if (offset >= this.length) return
-
-  this[offset] = value
-}
-
-function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, false, noAssert)
-}
-
-function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffffffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, false, noAssert)
-}
-
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7f, -0x80)
-  }
-
-  if (offset >= this.length)
-    return
-
-  if (value >= 0)
-    this.writeUInt8(value, offset, noAssert)
-  else
-    this.writeUInt8(0xff + value + 1, offset, noAssert)
-}
-
-function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fff, -0x8000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, false, noAssert)
-}
-
-function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fffffff, -0x80000000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, false, noAssert)
-}
-
-function _writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, false, noAssert)
-}
-
-function _writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, false, noAssert)
-}
-
-// fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function (value, start, end) {
-  if (!value) value = 0
-  if (!start) start = 0
-  if (!end) end = this.length
-
-  if (typeof value === 'string') {
-    value = value.charCodeAt(0)
-  }
-
-  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
-  assert(end >= start, 'end < start')
-
-  // Fill 0 bytes; we're done
-  if (end === start) return
-  if (this.length === 0) return
-
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
-
-  for (var i = start; i < end; i++) {
-    this[i] = value
-  }
-}
-
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
-    }
-  }
-  return '<Buffer ' + out.join(' ') + '>'
-}
-
-/**
- * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
- * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
- */
-Buffer.prototype.toArrayBuffer = function () {
-  if (typeof Uint8Array !== 'undefined') {
-    if (Buffer._useTypedArrays) {
-      return (new Buffer(this)).buffer
-    } else {
-      var buf = new Uint8Array(this.length)
-      for (var i = 0, len = buf.length; i < len; i += 1)
-        buf[i] = this[i]
-      return buf.buffer
-    }
-  } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
-  }
-}
-
-// HELPER FUNCTIONS
-// ================
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-var BP = Buffer.prototype
-
-/**
- * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
- */
-Buffer._augment = function (arr) {
-  arr._isBuffer = true
-
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
-  arr._set = arr.set
-
-  // deprecated, will be removed in node 0.13+
-  arr.get = BP.get
-  arr.set = BP.set
-
-  arr.write = BP.write
-  arr.toString = BP.toString
-  arr.toLocaleString = BP.toString
-  arr.toJSON = BP.toJSON
-  arr.copy = BP.copy
-  arr.slice = BP.slice
-  arr.readUInt8 = BP.readUInt8
-  arr.readUInt16LE = BP.readUInt16LE
-  arr.readUInt16BE = BP.readUInt16BE
-  arr.readUInt32LE = BP.readUInt32LE
-  arr.readUInt32BE = BP.readUInt32BE
-  arr.readInt8 = BP.readInt8
-  arr.readInt16LE = BP.readInt16LE
-  arr.readInt16BE = BP.readInt16BE
-  arr.readInt32LE = BP.readInt32LE
-  arr.readInt32BE = BP.readInt32BE
-  arr.readFloatLE = BP.readFloatLE
-  arr.readFloatBE = BP.readFloatBE
-  arr.readDoubleLE = BP.readDoubleLE
-  arr.readDoubleBE = BP.readDoubleBE
-  arr.writeUInt8 = BP.writeUInt8
-  arr.writeUInt16LE = BP.writeUInt16LE
-  arr.writeUInt16BE = BP.writeUInt16BE
-  arr.writeUInt32LE = BP.writeUInt32LE
-  arr.writeUInt32BE = BP.writeUInt32BE
-  arr.writeInt8 = BP.writeInt8
-  arr.writeInt16LE = BP.writeInt16LE
-  arr.writeInt16BE = BP.writeInt16BE
-  arr.writeInt32LE = BP.writeInt32LE
-  arr.writeInt32BE = BP.writeInt32BE
-  arr.writeFloatLE = BP.writeFloatLE
-  arr.writeFloatBE = BP.writeFloatBE
-  arr.writeDoubleLE = BP.writeDoubleLE
-  arr.writeDoubleBE = BP.writeDoubleBE
-  arr.fill = BP.fill
-  arr.inspect = BP.inspect
-  arr.toArrayBuffer = BP.toArrayBuffer
-
-  return arr
-}
-
-// slice(start, end)
-function clamp (index, len, defaultValue) {
-  if (typeof index !== 'number') return defaultValue
-  index = ~~index;  // Coerce to integer.
-  if (index >= len) return len
-  if (index >= 0) return index
-  index += len
-  if (index >= 0) return index
-  return 0
-}
-
-function coerce (length) {
-  // Coerce length to a number (possibly NaN), round up
-  // in case it's fractional (e.g. 123.456) then do a
-  // double negate to coerce a NaN to 0. Easy, right?
-  length = ~~Math.ceil(+length)
-  return length < 0 ? 0 : length
-}
-
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
-}
-
-function isArrayish (subject) {
-  return isArray(subject) || Buffer.isBuffer(subject) ||
-      subject && typeof subject === 'object' &&
-      typeof subject.length === 'number'
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    var b = str.charCodeAt(i)
-    if (b <= 0x7F)
-      byteArray.push(str.charCodeAt(i))
-    else {
-      var start = i
-      if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
-      for (var j = 0; j < h.length; j++)
-        byteArray.push(parseInt(h[j], 16))
-    }
-  }
-  return byteArray
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(str)
-}
-
-function blitBuffer (src, dst, offset, length) {
-  var pos
-  for (var i = 0; i < length; i++) {
-    if ((i + offset >= dst.length) || (i >= src.length))
-      break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function decodeUtf8Char (str) {
-  try {
-    return decodeURIComponent(str)
-  } catch (err) {
-    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
-  }
-}
-
-/*
- * We have to make sure that the value is a valid integer. This means that it
- * is non-negative. It has no fractional component and that it does not
- * exceed the maximum allowed value.
- */
-function verifuint (value, max) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0, 'specified a negative value for writing an unsigned value')
-  assert(value <= max, 'value is larger than maximum value for type')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifsint (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifIEEE754 (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-}
-
-function assert (test, message) {
-  if (!test) throw new Error(message || 'Failed assertion')
-}
-
-},{"base64-js":14,"ieee754":25}],18:[function(require,module,exports){
-exports = (module.exports = parse);
-exports.parse = parse;
-function parse(src, state, options) {
-  options = options || {};
-  state = state || exports.defaultState();
-  var start = options.start || 0;
-  var end = options.end || src.length;
-  var index = start;
-  while (index < end) {
-    if (state.roundDepth < 0 || state.curlyDepth < 0 || state.squareDepth < 0) {
-      throw new SyntaxError('Mismatched Bracket: ' + src[index - 1]);
-    }
-    exports.parseChar(src[index++], state);
-  }
-  return state;
-}
-
-exports.parseMax = parseMax;
-function parseMax(src, options) {
-  options = options || {};
-  var start = options.start || 0;
-  var index = start;
-  var state = exports.defaultState();
-  while (state.roundDepth >= 0 && state.curlyDepth >= 0 && state.squareDepth >= 0) {
-    if (index >= src.length) {
-      throw new Error('The end of the string was reached with no closing bracket found.');
-    }
-    exports.parseChar(src[index++], state);
-  }
-  var end = index - 1;
-  return {
-    start: start,
-    end: end,
-    src: src.substring(start, end)
-  };
-}
-
-exports.parseUntil = parseUntil;
-function parseUntil(src, delimiter, options) {
-  options = options || {};
-  var includeLineComment = options.includeLineComment || false;
-  var start = options.start || 0;
-  var index = start;
-  var state = exports.defaultState();
-  while (state.isString() || state.regexp || state.blockComment ||
-         (!includeLineComment && state.lineComment) || !startsWith(src, delimiter, index)) {
-    exports.parseChar(src[index++], state);
-  }
-  var end = index;
-  return {
-    start: start,
-    end: end,
-    src: src.substring(start, end)
-  };
-}
-
-
-exports.parseChar = parseChar;
-function parseChar(character, state) {
-  if (character.length !== 1) throw new Error('Character must be a string of length 1');
-  state = state || exports.defaultState();
-  state.src = state.src || '';
-  state.src += character;
-  var wasComment = state.blockComment || state.lineComment;
-  var lastChar = state.history ? state.history[0] : '';
-
-  if (state.regexpStart) {
-    if (character === '/' || character == '*') {
-      state.regexp = false;
-    }
-    state.regexpStart = false;
-  }
-  if (state.lineComment) {
-    if (character === '\n') {
-      state.lineComment = false;
-    }
-  } else if (state.blockComment) {
-    if (state.lastChar === '*' && character === '/') {
-      state.blockComment = false;
-    }
-  } else if (state.singleQuote) {
-    if (character === '\'' && !state.escaped) {
-      state.singleQuote = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (state.doubleQuote) {
-    if (character === '"' && !state.escaped) {
-      state.doubleQuote = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (state.regexp) {
-    if (character === '/' && !state.escaped) {
-      state.regexp = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (lastChar === '/' && character === '/') {
-    state.history = state.history.substr(1);
-    state.lineComment = true;
-  } else if (lastChar === '/' && character === '*') {
-    state.history = state.history.substr(1);
-    state.blockComment = true;
-  } else if (character === '/' && isRegexp(state.history)) {
-    state.regexp = true;
-    state.regexpStart = true;
-  } else if (character === '\'') {
-    state.singleQuote = true;
-  } else if (character === '"') {
-    state.doubleQuote = true;
-  } else if (character === '(') {
-    state.roundDepth++;
-  } else if (character === ')') {
-    state.roundDepth--;
-  } else if (character === '{') {
-    state.curlyDepth++;
-  } else if (character === '}') {
-    state.curlyDepth--;
-  } else if (character === '[') {
-    state.squareDepth++;
-  } else if (character === ']') {
-    state.squareDepth--;
-  }
-  if (!state.blockComment && !state.lineComment && !wasComment) state.history = character + state.history;
-  state.lastChar = character; // store last character for ending block comments
-  return state;
-}
-
-exports.defaultState = function () { return new State() };
-function State() {
-  this.lineComment = false;
-  this.blockComment = false;
-
-  this.singleQuote = false;
-  this.doubleQuote = false;
-  this.regexp = false;
-
-  this.escaped = false;
-
-  this.roundDepth = 0;
-  this.curlyDepth = 0;
-  this.squareDepth = 0;
-
-  this.history = ''
-  this.lastChar = ''
-}
-State.prototype.isString = function () {
-  return this.singleQuote || this.doubleQuote;
-}
-State.prototype.isComment = function () {
-  return this.lineComment || this.blockComment;
-}
-State.prototype.isNesting = function () {
-  return this.isString() || this.isComment() || this.regexp || this.roundDepth > 0 || this.curlyDepth > 0 || this.squareDepth > 0
-}
-
-function startsWith(str, start, i) {
-  return str.substr(i || 0, start.length) === start;
-}
-
-exports.isPunctuator = isPunctuator
-function isPunctuator(c) {
-  if (!c) return true; // the start of a string is a punctuator
-  var code = c.charCodeAt(0)
-
-  switch (code) {
-    case 46:   // . dot
-    case 40:   // ( open bracket
-    case 41:   // ) close bracket
-    case 59:   // ; semicolon
-    case 44:   // , comma
-    case 123:  // { open curly brace
-    case 125:  // } close curly brace
-    case 91:   // [
-    case 93:   // ]
-    case 58:   // :
-    case 63:   // ?
-    case 126:  // ~
-    case 37:   // %
-    case 38:   // &
-    case 42:   // *:
-    case 43:   // +
-    case 45:   // -
-    case 47:   // /
-    case 60:   // <
-    case 62:   // >
-    case 94:   // ^
-    case 124:  // |
-    case 33:   // !
-    case 61:   // =
-      return true;
-    default:
-      return false;
-  }
-}
-exports.isKeyword = isKeyword
-function isKeyword(id) {
-  return (id === 'if') || (id === 'in') || (id === 'do') || (id === 'var') || (id === 'for') || (id === 'new') ||
-         (id === 'try') || (id === 'let') || (id === 'this') || (id === 'else') || (id === 'case') ||
-         (id === 'void') || (id === 'with') || (id === 'enum') || (id === 'while') || (id === 'break') || (id === 'catch') ||
-         (id === 'throw') || (id === 'const') || (id === 'yield') || (id === 'class') || (id === 'super') ||
-         (id === 'return') || (id === 'typeof') || (id === 'delete') || (id === 'switch') || (id === 'export') ||
-         (id === 'import') || (id === 'default') || (id === 'finally') || (id === 'extends') || (id === 'function') ||
-         (id === 'continue') || (id === 'debugger') || (id === 'package') || (id === 'private') || (id === 'interface') ||
-         (id === 'instanceof') || (id === 'implements') || (id === 'protected') || (id === 'public') || (id === 'static') ||
-         (id === 'yield') || (id === 'let');
-}
-
-function isRegexp(history) {
-  //could be start of regexp or divide sign
-
-  history = history.replace(/^\s*/, '');
-
-  //unless its an `if`, `while`, `for` or `with` it's a divide, so we assume it's a divide
-  if (history[0] === ')') return false;
-  //unless it's a function expression, it's a regexp, so we assume it's a regexp
-  if (history[0] === '}') return true;
-  //any punctuation means it's a regexp
-  if (isPunctuator(history[0])) return true;
-  //if the last thing was a keyword then it must be a regexp (e.g. `typeof /foo/`)
-  if (/^\w+\b/.test(history) && isKeyword(/^\w+\b/.exec(history)[0].split('').reverse().join(''))) return true;
-
-  return false;
-}
-
-},{}],19:[function(require,module,exports){
-'use strict'
-
-var acorn = require('acorn');
-var walk = require('acorn/dist/walk');
-
-var lastSRC = '(null)';
-var lastRes = true;
-var lastConstants = undefined;
-
-var STATEMENT_WHITE_LIST = {
-  'EmptyStatement': true,
-  'ExpressionStatement': true,
-};
-var EXPRESSION_WHITE_LIST = {
-  'ParenthesizedExpression': true,
-  'ArrayExpression': true,
-  'ObjectExpression': true,
-  'SequenceExpression': true,
-  'TemplateLiteral': true,
-  'UnaryExpression': true,
-  'BinaryExpression': true,
-  'LogicalExpression': true,
-  'ConditionalExpression': true,
-  'Identifier': true,
-  'Literal': true,
-  'ComprehensionExpression': true,
-  'TaggedTemplateExpression': true,
-  'MemberExpression': true,
-  'CallExpression': true,
-  'NewExpression': true,
-};
-module.exports = isConstant;
-function isConstant(src, constants) {
-  src = '(' + src + ')';
-  if (lastSRC === src && lastConstants === constants) return lastRes;
-  lastSRC = src;
-  lastConstants = constants;
-  if (!isExpression(src)) return lastRes = false;
-  var ast;
-  try {
-    ast = acorn.parse(src, {
-      ecmaVersion: 6,
-      allowReturnOutsideFunction: true,
-      allowImportExportEverywhere: true,
-      allowHashBang: true
-    });
-  } catch (ex) {
-    return lastRes = false;
-  }
-  var isConstant = true;
-  walk.simple(ast, {
-    Statement: function (node) {
-      if (isConstant) {
-        if (STATEMENT_WHITE_LIST[node.type] !== true) {
-          isConstant = false;
-        }
-      }
-    },
-    Expression: function (node) {
-      if (isConstant) {
-        if (EXPRESSION_WHITE_LIST[node.type] !== true) {
-          isConstant = false;
-        }
-      }
-    },
-    MemberExpression: function (node) {
-      if (isConstant) {
-        if (node.computed) isConstant = false;
-        else if (node.property.name[0] === '_') isConstant = false;
-      }
-    },
-    Identifier: function (node) {
-      if (isConstant) {
-        if (!constants || !(node.name in constants)) {
-          isConstant = false;
-        }
-      }
-    },
-  });
-  return lastRes = isConstant;
-}
-isConstant.isConstant = isConstant;
-
-isConstant.toConstant = toConstant;
-function toConstant(src, constants) {
-  if (!isConstant(src, constants)) throw new Error(JSON.stringify(src) + ' is not constant.');
-  return Function(Object.keys(constants || {}).join(','), 'return (' + src + ')').apply(null, Object.keys(constants || {}).map(function (key) {
-    return constants[key];
-  }));
-}
-
-function isExpression(src) {
-  try {
-    eval('throw "STOP"; (function () { return (' + src + '); })()');
-    return false;
-  }
-  catch (err) {
-    return err === 'STOP';
-  }
-}
-
-},{"acorn":20,"acorn/dist/walk":21}],20:[function(require,module,exports){
-module.exports=require(10)
-},{}],21:[function(require,module,exports){
-module.exports=require(11)
-},{}],22:[function(require,module,exports){
-/*
- * EJS Embedded JavaScript templates
- * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-
-'use strict';
-
-/**
- * @file Embedded JavaScript templating engine.
- * @author Matthew Eernisse <mde@fleegix.org>
- * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
- * @project EJS
- * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
- */
-
-/**
- * EJS internal functions.
- *
- * Technically this "module" lies in the same file as {@link module:ejs}, for
- * the sake of organization all the private functions re grouped into this
- * module.
- *
- * @module ejs-internal
- * @private
- */
-
-/**
- * Embedded JavaScript templating engine.
- *
- * @module ejs
- * @public
- */
-
-var fs = require('fs')
-  , utils = require('./utils')
-  , scopeOptionWarned = false
-  , _VERSION_STRING = require('../package.json').version
-  , _DEFAULT_DELIMITER = '%'
-  , _DEFAULT_LOCALS_NAME = 'locals'
-  , _REGEX_STRING = '(<%%|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)'
-  , _OPTS = [ 'cache', 'filename', 'delimiter', 'scope', 'context'
-            , 'debug', 'compileDebug', 'client', '_with', 'rmWhitespace'
-            , 'strict', 'localsName'
-            ]
-  , _TRAILING_SEMCOL = /;\s*$/
-  , _BOM = /^\uFEFF/;
-
-/**
- * EJS template function cache. This can be a LRU object from lru-cache NPM
- * module. By default, it is {@link module:utils.cache}, a simple in-process
- * cache that grows continuously.
- *
- * @type {Cache}
- */
-
-exports.cache = utils.cache;
-
-/**
- * Name of the object containing the locals.
- *
- * This variable is overriden by {@link Options}`.localsName` if it is not
- * `undefined`.
- *
- * @type {String}
- * @public
- */
-
-exports.localsName = _DEFAULT_LOCALS_NAME;
-
-/**
- * Get the path to the included file from the parent file path and the
- * specified path.
- *
- * @param {String} name     specified path
- * @param {String} filename parent file path
- * @return {String}
- */
-
-exports.resolveInclude = function(name, filename) {
-  var path = require('path')
-    , dirname = path.dirname
-    , extname = path.extname
-    , resolve = path.resolve
-    , includePath = resolve(dirname(filename), name)
-    , ext = extname(name);
-  if (!ext) {
-    includePath += '.ejs';
-  }
-  return includePath;
-};
-
-/**
- * Get the template from a string or a file, either compiled on-the-fly or
- * read from cache (if enabled), and cache the template if needed.
- *
- * If `template` is not set, the file specified in `options.filename` will be
- * read.
- *
- * If `options.cache` is true, this function reads the file from
- * `options.filename` so it must be set prior to calling this function.
- *
- * @memberof module:ejs-internal
- * @param {Options} options   compilation options
- * @param {String} [template] template source
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned.
- * @static
- */
-
-function handleCache(options, template) {
-  var fn
-    , path = options.filename
-    , hasTemplate = arguments.length > 1;
-
-  if (options.cache) {
-    if (!path) {
-      throw new Error('cache option requires a filename');
-    }
-    fn = exports.cache.get(path);
-    if (fn) {
-      return fn;
-    }
-    if (!hasTemplate) {
-      template = fs.readFileSync(path).toString().replace(_BOM, '');
-    }
-  }
-  else if (!hasTemplate) {
-    // istanbul ignore if: should not happen at all
-    if (!path) {
-      throw new Error('Internal EJS error: no file name or template '
-                    + 'provided');
-    }
-    template = fs.readFileSync(path).toString().replace(_BOM, '');
-  }
-  fn = exports.compile(template, options);
-  if (options.cache) {
-    exports.cache.set(path, fn);
-  }
-  return fn;
-}
-
-/**
- * Get the template function.
- *
- * If `options.cache` is `true`, then the template is cached.
- *
- * @memberof module:ejs-internal
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned
- * @static
- */
-
-function includeFile(path, options) {
-  var opts = utils.shallowCopy({}, options);
-  if (!opts.filename) {
-    throw new Error('`include` requires the \'filename\' option.');
-  }
-  opts.filename = exports.resolveInclude(path, opts.filename);
-  return handleCache(opts);
-}
-
-/**
- * Get the JavaScript source of an included file.
- *
- * @memberof module:ejs-internal
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {String}
- * @static
- */
-
-function includeSource(path, options) {
-  var opts = utils.shallowCopy({}, options)
-    , includePath
-    , template;
-  if (!opts.filename) {
-    throw new Error('`include` requires the \'filename\' option.');
-  }
-  includePath = exports.resolveInclude(path, opts.filename);
-  template = fs.readFileSync(includePath).toString().replace(_BOM, '');
-
-  opts.filename = includePath;
-  var templ = new Template(template, opts);
-  templ.generateSource();
-  return templ.source;
-}
-
-/**
- * Re-throw the given `err` in context to the `str` of ejs, `filename`, and
- * `lineno`.
- *
- * @implements RethrowCallback
- * @memberof module:ejs-internal
- * @param {Error}  err      Error object
- * @param {String} str      EJS source
- * @param {String} filename file name of the EJS file
- * @param {String} lineno   line number of the error
- * @static
- */
-
-function rethrow(err, str, filename, lineno){
-  var lines = str.split('\n')
-    , start = Math.max(lineno - 3, 0)
-    , end = Math.min(lines.length, lineno + 3);
-
-  // Error context
-  var context = lines.slice(start, end).map(function (line, i){
-    var curr = i + start + 1;
-    return (curr == lineno ? ' >> ' : '    ')
-      + curr
-      + '| '
-      + line;
-  }).join('\n');
-
-  // Alter exception message
-  err.path = filename;
-  err.message = (filename || 'ejs') + ':'
-    + lineno + '\n'
-    + context + '\n\n'
-    + err.message;
-
-  throw err;
-}
-
-/**
- * Copy properties in data object that are recognized as options to an
- * options object.
- *
- * This is used for compatibility with earlier versions of EJS and Express.js.
- *
- * @memberof module:ejs-internal
- * @param {Object}  data data object
- * @param {Options} opts options object
- * @static
- */
-
-function cpOptsInData(data, opts) {
-  _OPTS.forEach(function (p) {
-    if (typeof data[p] != 'undefined') {
-      opts[p] = data[p];
-    }
-  });
-}
-
-/**
- * Compile the given `str` of ejs into a template function.
- *
- * @param {String}  template EJS template
- *
- * @param {Options} opts     compilation options
- *
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `opts.client`, either type might be returned.
- * @public
- */
-
-exports.compile = function compile(template, opts) {
-  var templ;
-
-  // v1 compat
-  // 'scope' is 'context'
-  // FIXME: Remove this in a future version
-  if (opts && opts.scope) {
-    if (!scopeOptionWarned){
-      console.warn('`scope` option is deprecated and will be removed in EJS 3');
-      scopeOptionWarned = true;
-    }
-    if (!opts.context) {
-      opts.context = opts.scope;
-    }
-    delete opts.scope;
-  }
-  templ = new Template(template, opts);
-  return templ.compile();
-};
-
-/**
- * Render the given `template` of ejs.
- *
- * If you would like to include options but not data, you need to explicitly
- * call this function with `data` being an empty object or `null`.
- *
- * @param {String}   template EJS template
- * @param {Object}  [data={}] template data
- * @param {Options} [opts={}] compilation and rendering options
- * @return {String}
- * @public
- */
-
-exports.render = function (template, data, opts) {
-  data = data || {};
-  opts = opts || {};
-  var fn;
-
-  // No options object -- if there are optiony names
-  // in the data, copy them to options
-  if (arguments.length == 2) {
-    cpOptsInData(data, opts);
-  }
-
-  return handleCache(opts, template)(data);
-};
-
-/**
- * Render an EJS file at the given `path` and callback `cb(err, str)`.
- *
- * If you would like to include options but not data, you need to explicitly
- * call this function with `data` being an empty object or `null`.
- *
- * @param {String}             path     path to the EJS file
- * @param {Object}            [data={}] template data
- * @param {Options}           [opts={}] compilation and rendering options
- * @param {RenderFileCallback} cb callback
- * @public
- */
-
-exports.renderFile = function () {
-  var args = Array.prototype.slice.call(arguments)
-    , path = args.shift()
-    , cb = args.pop()
-    , data = args.shift() || {}
-    , opts = args.pop() || {}
-    , result;
-
-  // Don't pollute passed in opts obj with new vals
-  opts = utils.shallowCopy({}, opts);
-
-  // No options object -- if there are optiony names
-  // in the data, copy them to options
-  if (arguments.length == 3) {
-    // Express 4
-    if (data.settings && data.settings['view options']) {
-      cpOptsInData(data.settings['view options'], opts);
-    }
-    // Express 3 and lower
-    else {
-      cpOptsInData(data, opts);
-    }
-  }
-  opts.filename = path;
-
-  try {
-    result = handleCache(opts)(data);
-  }
-  catch(err) {
-    return cb(err);
-  }
-  return cb(null, result);
-};
-
-/**
- * Clear intermediate JavaScript cache. Calls {@link Cache#reset}.
- * @public
- */
-
-exports.clearCache = function () {
-  exports.cache.reset();
-};
-
-function Template(text, opts) {
-  opts = opts || {};
-  var options = {};
-  this.templateText = text;
-  this.mode = null;
-  this.truncate = false;
-  this.currentLine = 1;
-  this.source = '';
-  this.dependencies = [];
-  options.client = opts.client || false;
-  options.escapeFunction = opts.escape || utils.escapeXML;
-  options.compileDebug = opts.compileDebug !== false;
-  options.debug = !!opts.debug;
-  options.filename = opts.filename;
-  options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
-  options.strict = opts.strict || false;
-  options.context = opts.context;
-  options.cache = opts.cache || false;
-  options.rmWhitespace = opts.rmWhitespace;
-  options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
-
-  if (options.strict) {
-    options._with = false;
-  }
-  else {
-    options._with = typeof opts._with != 'undefined' ? opts._with : true;
-  }
-
-  this.opts = options;
-
-  this.regex = this.createRegex();
-}
-
-Template.modes = {
-  EVAL: 'eval'
-, ESCAPED: 'escaped'
-, RAW: 'raw'
-, COMMENT: 'comment'
-, LITERAL: 'literal'
-};
-
-Template.prototype = {
-  createRegex: function () {
-    var str = _REGEX_STRING
-      , delim = utils.escapeRegExpChars(this.opts.delimiter);
-    str = str.replace(/%/g, delim);
-    return new RegExp(str);
-  }
-
-, compile: function () {
-    var src
-      , fn
-      , opts = this.opts
-      , prepended = ''
-      , appended = ''
-      , escape = opts.escapeFunction;
-
-    if (opts.rmWhitespace) {
-      // Have to use two separate replace here as `^` and `$` operators don't
-      // work well with `\r`.
-      this.templateText =
-        this.templateText.replace(/\r/g, '').replace(/^\s+|\s+$/gm, '');
-    }
-
-    // Slurp spaces and tabs before <%_ and after _%>
-    this.templateText =
-      this.templateText.replace(/[ \t]*<%_/gm, '<%_').replace(/_%>[ \t]*/gm, '_%>');
-
-    if (!this.source) {
-      this.generateSource();
-      prepended += '  var __output = [], __append = __output.push.bind(__output);' + '\n';
-      if (opts._with !== false) {
-        prepended +=  '  with (' + opts.localsName + ' || {}) {' + '\n';
-        appended += '  }' + '\n';
-      }
-      appended += '  return __output.join("");' + '\n';
-      this.source = prepended + this.source + appended;
-    }
-
-    if (opts.compileDebug) {
-      src = 'var __line = 1' + '\n'
-          + '  , __lines = ' + JSON.stringify(this.templateText) + '\n'
-          + '  , __filename = ' + (opts.filename ?
-                JSON.stringify(opts.filename) : 'undefined') + ';' + '\n'
-          + 'try {' + '\n'
-          + this.source
-          + '} catch (e) {' + '\n'
-          + '  rethrow(e, __lines, __filename, __line);' + '\n'
-          + '}' + '\n';
-    }
-    else {
-      src = this.source;
-    }
-
-    if (opts.debug) {
-      console.log(src);
-    }
-
-    if (opts.client) {
-      src = 'escape = escape || ' + escape.toString() + ';' + '\n' + src;
-      if (opts.compileDebug) {
-        src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
-      }
-    }
-
-    if (opts.strict) {
-      src = '"use strict";\n' + src;
-    }
-
-    try {
-      fn = new Function(opts.localsName + ', escape, include, rethrow', src);
-    }
-    catch(e) {
-      // istanbul ignore else
-      if (e instanceof SyntaxError) {
-        if (opts.filename) {
-          e.message += ' in ' + opts.filename;
-        }
-        e.message += ' while compiling ejs';
-      }
-      throw e;
-    }
-
-    if (opts.client) {
-      fn.dependencies = this.dependencies;
-      return fn;
-    }
-
-    // Return a callable function which will execute the function
-    // created by the source-code, with the passed data as locals
-    // Adds a local `include` function which allows full recursive include
-    var returnedFn = function (data) {
-      var include = function (path, includeData) {
-        var d = utils.shallowCopy({}, data);
-        if (includeData) {
-          d = utils.shallowCopy(d, includeData);
-        }
-        return includeFile(path, opts)(d);
-      };
-      return fn.apply(opts.context, [data || {}, escape, include, rethrow]);
-    };
-    returnedFn.dependencies = this.dependencies;
-    return returnedFn;
-  }
-
-, generateSource: function () {
-    var self = this
-      , matches = this.parseTemplateText()
-      , d = this.opts.delimiter;
-
-    if (matches && matches.length) {
-      if (this.opts.compileDebug && this.opts.filename) {
-        this.source =  '    ; __lines = ' + JSON.stringify(this.templateText) + '\n';
-        this.source += '    ; __filename = "' + this.opts.filename.replace(/\\/g,  '/') + '"\n';
-      }
-      matches.forEach(function (line, index) {
-        var opening
-          , closing
-          , include
-          , includeOpts
-          , includeSrc;
-        // If this is an opening tag, check for closing tags
-        // FIXME: May end up with some false positives here
-        // Better to store modes as k/v with '<' + delimiter as key
-        // Then this can simply check against the map
-        if ( line.indexOf('<' + d) === 0        // If it is a tag
-          && line.indexOf('<' + d + d) !== 0) { // and is not escaped
-          closing = matches[index + 2];
-          if (!(closing == d + '>' || closing == '-' + d + '>' || closing == '_' + d + '>')) {
-            throw new Error('Could not find matching close tag for "' + line + '".');
-          }
-        }
-        // HACK: backward-compat `include` preprocessor directives
-        if ((include = line.match(/^\s*include\s+(\S+)/))) {
-          opening = matches[index - 1];
-          // Must be in EVAL or RAW mode
-          if (opening && (opening == '<' + d || opening == '<' + d + '-' || opening == '<' + d + '_')) {
-            includeOpts = utils.shallowCopy({}, self.opts);
-            includeSrc = includeSource(include[1], includeOpts);
-            includeSrc = '    ; (function(){' + '\n' + includeSrc +
-                '    ; })()' + '\n';
-            self.source += includeSrc;
-            self.dependencies.push(exports.resolveInclude(include[1],
-                includeOpts.filename));
-            return;
-          }
-        }
-        self.scanLine(line);
-      });
-    }
-
-  }
-
-, parseTemplateText: function () {
-    var str = this.templateText
-      , pat = this.regex
-      , result = pat.exec(str)
-      , arr = []
-      , firstPos
-      , lastPos;
-
-    while (result) {
-      firstPos = result.index;
-      lastPos = pat.lastIndex;
-
-      if (firstPos !== 0) {
-        arr.push(str.substring(0, firstPos));
-        str = str.slice(firstPos);
-      }
-
-      arr.push(result[0]);
-      str = str.slice(result[0].length);
-      result = pat.exec(str);
-    }
-
-    if (str) {
-      arr.push(str);
-    }
-
-    return arr;
-  }
-
-, scanLine: function (line) {
-    var self = this
-      , d = this.opts.delimiter
-      , newLineCount = 0;
-
-    function _addOutput() {
-      if (self.truncate) {
-        // Only replace single leading linebreak in the line after
-        // -%> tag -- this is the single, trailing linebreak
-        // after the tag that the truncation mode replaces
-        // Handle Win / Unix / old Mac linebreaks -- do the \r\n
-        // combo first in the regex-or
-        line = line.replace(/^(?:\r\n|\r|\n)/, '')
-        self.truncate = false;
-      }
-      else if (self.opts.rmWhitespace) {
-        // Gotta be more careful here.
-        // .replace(/^(\s*)\n/, '$1') might be more appropriate here but as
-        // rmWhitespace already removes trailing spaces anyway so meh.
-        line = line.replace(/^\n/, '');
-      }
-      if (!line) {
-        return;
-      }
-
-      // Preserve literal slashes
-      line = line.replace(/\\/g, '\\\\');
-
-      // Convert linebreaks
-      line = line.replace(/\n/g, '\\n');
-      line = line.replace(/\r/g, '\\r');
-
-      // Escape double-quotes
-      // - this will be the delimiter during execution
-      line = line.replace(/"/g, '\\"');
-      self.source += '    ; __append("' + line + '")' + '\n';
-    }
-
-    newLineCount = (line.split('\n').length - 1);
-
-    switch (line) {
-      case '<' + d:
-      case '<' + d + '_':
-        this.mode = Template.modes.EVAL;
-        break;
-      case '<' + d + '=':
-        this.mode = Template.modes.ESCAPED;
-        break;
-      case '<' + d + '-':
-        this.mode = Template.modes.RAW;
-        break;
-      case '<' + d + '#':
-        this.mode = Template.modes.COMMENT;
-        break;
-      case '<' + d + d:
-        this.mode = Template.modes.LITERAL;
-        this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
-        break;
-      case d + '>':
-      case '-' + d + '>':
-      case '_' + d + '>':
-        if (this.mode == Template.modes.LITERAL) {
-          _addOutput();
-        }
-
-        this.mode = null;
-        this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
-        break;
-      default:
-        // In script mode, depends on type of tag
-        if (this.mode) {
-          // If '//' is found without a line break, add a line break.
-          switch (this.mode) {
-            case Template.modes.EVAL:
-            case Template.modes.ESCAPED:
-            case Template.modes.RAW:
-              if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
-                line += '\n';
-              }
-          }
-          switch (this.mode) {
-            // Just executing code
-            case Template.modes.EVAL:
-              this.source += '    ; ' + line + '\n';
-              break;
-            // Exec, esc, and output
-            case Template.modes.ESCAPED:
-              this.source += '    ; __append(escape(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + '))' + '\n';
-              break;
-            // Exec and output
-            case Template.modes.RAW:
-              this.source += '    ; __append(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + ')' + '\n';
-              break;
-            case Template.modes.COMMENT:
-              // Do nothing
-              break;
-            // Literal <%% mode, append as raw output
-            case Template.modes.LITERAL:
-              _addOutput();
-              break;
-          }
-        }
-        // In string mode, just add the output
-        else {
-          _addOutput();
-        }
-    }
-
-    if (self.opts.compileDebug && newLineCount) {
-      this.currentLine += newLineCount;
-      this.source += '    ; __line = ' + this.currentLine + '\n';
-    }
-  }
-};
-
-/*
- * Export the internal function for escaping XML so people
- * can use for manual escaping if needed
- * */
-exports.escapeXML = utils.escapeXML;
-
-/**
- * Express.js support.
- *
- * This is an alias for {@link module:ejs.renderFile}, in order to support
- * Express.js out-of-the-box.
- *
- * @func
- */
-
-exports.__express = exports.renderFile;
-
-// Add require support
-/* istanbul ignore else */
-if (require.extensions) {
-  require.extensions['.ejs'] = function (module, filename) {
-    filename = filename || /* istanbul ignore next */ module.filename;
-    var options = {
-          filename: filename
-        , client: true
-        }
-      , template = fs.readFileSync(filename).toString()
-      , fn = exports.compile(template, options);
-    module._compile('module.exports = ' + fn.toString() + ';', filename);
-  };
-}
-
-/**
- * Version of EJS.
- *
- * @readonly
- * @type {String}
- * @public
- */
-
-exports.VERSION = _VERSION_STRING;
-
-/* istanbul ignore if */
-if (typeof window != 'undefined') {
-  window.ejs = exports;
-}
-
-},{"../package.json":24,"./utils":23,"fs":16,"path":51}],23:[function(require,module,exports){
-/*
- * EJS Embedded JavaScript templates
- * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-
-/**
- * Private utility functions
- * @module utils
- * @private
- */
-
-'use strict';
-
-var regExpChars = /[|\\{}()[\]^$+*?.]/g;
-
-/**
- * Escape characters reserved in regular expressions.
- *
- * If `string` is `undefined` or `null`, the empty string is returned.
- *
- * @param {String} string Input string
- * @return {String} Escaped string
- * @static
- * @private
- */
-exports.escapeRegExpChars = function (string) {
-  // istanbul ignore if
-  if (!string) {
-    return '';
-  }
-  return String(string).replace(regExpChars, '\\$&');
-};
-
-var _ENCODE_HTML_RULES = {
-      '&': '&amp;'
-    , '<': '&lt;'
-    , '>': '&gt;'
-    , '"': '&#34;'
-    , "'": '&#39;'
-    }
-  , _MATCH_HTML = /[&<>\'"]/g;
-
-function encode_char(c) {
-  return _ENCODE_HTML_RULES[c] || c;
-};
-
-/**
- * Stringified version of constants used by {@link module:utils.escapeXML}.
- *
- * It is used in the process of generating {@link ClientFunction}s.
- *
- * @readonly
- * @type {String}
- */
-
-var escapeFuncStr =
-  'var _ENCODE_HTML_RULES = {\n'
-+ '      "&": "&amp;"\n'
-+ '    , "<": "&lt;"\n'
-+ '    , ">": "&gt;"\n'
-+ '    , \'"\': "&#34;"\n'
-+ '    , "\'": "&#39;"\n'
-+ '    }\n'
-+ '  , _MATCH_HTML = /[&<>\'"]/g;\n'
-+ 'function encode_char(c) {\n'
-+ '  return _ENCODE_HTML_RULES[c] || c;\n'
-+ '};\n';
-
-/**
- * Escape characters reserved in XML.
- *
- * If `markup` is `undefined` or `null`, the empty string is returned.
- *
- * @implements {EscapeCallback}
- * @param {String} markup Input string
- * @return {String} Escaped string
- * @static
- * @private
- */
-
-exports.escapeXML = function (markup) {
-  return markup == undefined
-    ? ''
-    : String(markup)
-        .replace(_MATCH_HTML, encode_char);
-};
-exports.escapeXML.toString = function () {
-  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr
-};
-
-/**
- * Copy all properties from one object to another, in a shallow fashion.
- *
- * @param  {Object} to   Destination object
- * @param  {Object} from Source object
- * @return {Object}      Destination object
- * @static
- * @private
- */
-exports.shallowCopy = function (to, from) {
-  from = from || {};
-  for (var p in from) {
-    to[p] = from[p];
-  }
-  return to;
-};
-
-/**
- * Simple in-process cache implementation. Does not implement limits of any
- * sort.
- *
- * @implements Cache
- * @static
- * @private
- */
-exports.cache = {
-  _data: {},
-  set: function (key, val) {
-    this._data[key] = val;
-  },
-  get: function (key) {
-    return this._data[key];
-  },
-  reset: function () {
-    this._data = {};
-  }
-};
-
-
-},{}],24:[function(require,module,exports){
-module.exports={
-  "_args": [
-    [
-      "ejs",
-      "/Users/daigo/Documents/css_lab"
-    ]
-  ],
-  "_from": "ejs@latest",
-  "_id": "ejs@2.4.2",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/ejs",
-  "_nodeVersion": "4.4.4",
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/ejs-2.4.2.tgz_1464117640663_0.8193834638223052"
-  },
-  "_npmUser": {
-    "email": "mde@fleegix.org",
-    "name": "mde"
-  },
-  "_npmVersion": "2.15.1",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "ejs",
-    "raw": "ejs",
-    "rawSpec": "",
-    "scope": null,
-    "spec": "latest",
-    "type": "tag"
-  },
-  "_requiredBy": [
-    "#USER",
-    "/gulp-ejs"
-  ],
-  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz",
-  "_shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
-  "_shrinkwrap": null,
-  "_spec": "ejs",
-  "_where": "/Users/daigo/Documents/css_lab",
-  "author": {
-    "email": "mde@fleegix.org",
-    "name": "Matthew Eernisse",
-    "url": "http://fleegix.org"
-  },
-  "bugs": {
-    "url": "https://github.com/mde/ejs/issues"
-  },
-  "contributors": [
-    {
-      "email": "timothygu99@gmail.com",
-      "name": "Timothy Gu",
-      "url": "https://timothygu.github.io"
-    }
-  ],
-  "dependencies": {},
-  "description": "Embedded JavaScript templates",
-  "devDependencies": {
-    "browserify": "^8.0.3",
-    "istanbul": "~0.3.5",
-    "jake": "^8.0.0",
-    "jsdoc": "^3.3.0-beta1",
-    "lru-cache": "^2.5.0",
-    "mocha": "^2.1.0",
-    "rimraf": "^2.2.8",
-    "uglify-js": "^2.4.16"
-  },
-  "directories": {},
-  "dist": {
-    "shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
-    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "homepage": "https://github.com/mde/ejs",
-  "keywords": [
-    "template",
-    "engine",
-    "ejs"
-  ],
-  "license": "Apache-2.0",
-  "main": "./lib/ejs.js",
-  "maintainers": [
-    {
-      "email": "tj@vision-media.ca",
-      "name": "tjholowaychuk"
-    },
-    {
-      "email": "mde@fleegix.org",
-      "name": "mde"
-    }
-  ],
-  "name": "ejs",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/mde/ejs.git"
-  },
-  "scripts": {
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
-    "devdoc": "rimraf out && jsdoc -p -c jsdoc.json lib/* docs/jsdoc/*",
-    "doc": "rimraf out && jsdoc -c jsdoc.json lib/* docs/jsdoc/*",
-    "sample": "npm install express && node sample/index.js",
-    "test": "mocha"
-  },
-  "version": "2.4.2"
-}
-
-},{}],25:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],26:[function(require,module,exports){
-'use strict';
-
-var nodes = require('./nodes');
-var filters = require('./filters');
-var doctypes = require('./doctypes');
-var runtime = require('./runtime');
-var utils = require('./utils');
-var selfClosing = require('void-elements');
-var parseJSExpression = require('character-parser').parseMax;
-var constantinople = require('constantinople');
-
-function isConstant(src) {
-  return constantinople(src, {jade: runtime, 'jade_interp': undefined});
-}
-function toConstant(src) {
-  return constantinople.toConstant(src, {jade: runtime, 'jade_interp': undefined});
-}
-function errorAtNode(node, error) {
-  error.line = node.line;
-  error.filename = node.filename;
-  return error;
-}
-
-/**
- * Initialize `Compiler` with the given `node`.
- *
- * @param {Node} node
- * @param {Object} options
- * @api public
- */
-
-var Compiler = module.exports = function Compiler(node, options) {
-  this.options = options = options || {};
-  this.node = node;
-  this.hasCompiledDoctype = false;
-  this.hasCompiledTag = false;
-  this.pp = options.pretty || false;
-  if (this.pp && typeof this.pp !== 'string') {
-    this.pp = '  ';
-  }
-  this.debug = false !== options.compileDebug;
-  this.indents = 0;
-  this.parentIndents = 0;
-  this.terse = false;
-  this.mixins = {};
-  this.dynamicMixins = false;
-  if (options.doctype) this.setDoctype(options.doctype);
-};
-
-/**
- * Compiler prototype.
- */
-
-Compiler.prototype = {
-
-  /**
-   * Compile parse tree to JavaScript.
-   *
-   * @api public
-   */
-
-  compile: function(){
-    this.buf = [];
-    if (this.pp) this.buf.push("var jade_indent = [];");
-    this.lastBufferedIdx = -1;
-    this.visit(this.node);
-    if (!this.dynamicMixins) {
-      // if there are no dynamic mixins we can remove any un-used mixins
-      var mixinNames = Object.keys(this.mixins);
-      for (var i = 0; i < mixinNames.length; i++) {
-        var mixin = this.mixins[mixinNames[i]];
-        if (!mixin.used) {
-          for (var x = 0; x < mixin.instances.length; x++) {
-            for (var y = mixin.instances[x].start; y < mixin.instances[x].end; y++) {
-              this.buf[y] = '';
-            }
-          }
-        }
-      }
-    }
-    return this.buf.join('\n');
-  },
-
-  /**
-   * Sets the default doctype `name`. Sets terse mode to `true` when
-   * html 5 is used, causing self-closing tags to end with ">" vs "/>",
-   * and boolean attributes are not mirrored.
-   *
-   * @param {string} name
-   * @api public
-   */
-
-  setDoctype: function(name){
-    this.doctype = doctypes[name.toLowerCase()] || '<!DOCTYPE ' + name + '>';
-    this.terse = this.doctype.toLowerCase() == '<!doctype html>';
-    this.xml = 0 == this.doctype.indexOf('<?xml');
-  },
-
-  /**
-   * Buffer the given `str` exactly as is or with interpolation
-   *
-   * @param {String} str
-   * @param {Boolean} interpolate
-   * @api public
-   */
-
-  buffer: function (str, interpolate) {
-    var self = this;
-    if (interpolate) {
-      var match = /(\\)?([#!]){((?:.|\n)*)$/.exec(str);
-      if (match) {
-        this.buffer(str.substr(0, match.index), false);
-        if (match[1]) { // escape
-          this.buffer(match[2] + '{', false);
-          this.buffer(match[3], true);
-          return;
-        } else {
-          var rest = match[3];
-          var range = parseJSExpression(rest);
-          var code = ('!' == match[2] ? '' : 'jade.escape') + "((jade_interp = " + range.src + ") == null ? '' : jade_interp)";
-          this.bufferExpression(code);
-          this.buffer(rest.substr(range.end + 1), true);
-          return;
-        }
-      }
-    }
-
-    str = utils.stringify(str);
-    str = str.substr(1, str.length - 2);
-
-    if (this.lastBufferedIdx == this.buf.length) {
-      if (this.lastBufferedType === 'code') this.lastBuffered += ' + "';
-      this.lastBufferedType = 'text';
-      this.lastBuffered += str;
-      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + '");'
-    } else {
-      this.buf.push('buf.push("' + str + '");');
-      this.lastBufferedType = 'text';
-      this.bufferStartChar = '"';
-      this.lastBuffered = str;
-      this.lastBufferedIdx = this.buf.length;
-    }
-  },
-
-  /**
-   * Buffer the given `src` so it is evaluated at run time
-   *
-   * @param {String} src
-   * @api public
-   */
-
-  bufferExpression: function (src) {
-    if (isConstant(src)) {
-      return this.buffer(toConstant(src) + '', false)
-    }
-    if (this.lastBufferedIdx == this.buf.length) {
-      if (this.lastBufferedType === 'text') this.lastBuffered += '"';
-      this.lastBufferedType = 'code';
-      this.lastBuffered += ' + (' + src + ')';
-      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + ');'
-    } else {
-      this.buf.push('buf.push(' + src + ');');
-      this.lastBufferedType = 'code';
-      this.bufferStartChar = '';
-      this.lastBuffered = '(' + src + ')';
-      this.lastBufferedIdx = this.buf.length;
-    }
-  },
-
-  /**
-   * Buffer an indent based on the current `indent`
-   * property and an additional `offset`.
-   *
-   * @param {Number} offset
-   * @param {Boolean} newline
-   * @api public
-   */
-
-  prettyIndent: function(offset, newline){
-    offset = offset || 0;
-    newline = newline ? '\n' : '';
-    this.buffer(newline + Array(this.indents + offset).join(this.pp));
-    if (this.parentIndents)
-      this.buf.push("buf.push.apply(buf, jade_indent);");
-  },
-
-  /**
-   * Visit `node`.
-   *
-   * @param {Node} node
-   * @api public
-   */
-
-  visit: function(node){
-    var debug = this.debug;
-
-    if (debug) {
-      this.buf.push('jade_debug.unshift(new jade.DebugItem( ' + node.line
-        + ', ' + (node.filename
-          ? utils.stringify(node.filename)
-          : 'jade_debug[0].filename')
-        + ' ));');
-    }
-
-    // Massive hack to fix our context
-    // stack for - else[ if] etc
-    if (false === node.debug && this.debug) {
-      this.buf.pop();
-      this.buf.pop();
-    }
-
-    this.visitNode(node);
-
-    if (debug) this.buf.push('jade_debug.shift();');
-  },
-
-  /**
-   * Visit `node`.
-   *
-   * @param {Node} node
-   * @api public
-   */
-
-  visitNode: function(node){
-    return this['visit' + node.type](node);
-  },
-
-  /**
-   * Visit case `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitCase: function(node){
-    var _ = this.withinCase;
-    this.withinCase = true;
-    this.buf.push('switch (' + node.expr + '){');
-    this.visit(node.block);
-    this.buf.push('}');
-    this.withinCase = _;
-  },
-
-  /**
-   * Visit when `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitWhen: function(node){
-    if ('default' == node.expr) {
-      this.buf.push('default:');
-    } else {
-      this.buf.push('case ' + node.expr + ':');
-    }
-    if (node.block) {
-      this.visit(node.block);
-      this.buf.push('  break;');
-    }
-  },
-
-  /**
-   * Visit literal `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitLiteral: function(node){
-    this.buffer(node.str);
-  },
-
-  /**
-   * Visit all nodes in `block`.
-   *
-   * @param {Block} block
-   * @api public
-   */
-
-  visitBlock: function(block){
-    var len = block.nodes.length
-      , escape = this.escape
-      , pp = this.pp
-
-    // Pretty print multi-line text
-    if (pp && len > 1 && !escape && block.nodes[0].isText && block.nodes[1].isText)
-      this.prettyIndent(1, true);
-
-    for (var i = 0; i < len; ++i) {
-      // Pretty print text
-      if (pp && i > 0 && !escape && block.nodes[i].isText && block.nodes[i-1].isText)
-        this.prettyIndent(1, false);
-
-      this.visit(block.nodes[i]);
-      // Multiple text nodes are separated by newlines
-      if (block.nodes[i+1] && block.nodes[i].isText && block.nodes[i+1].isText)
-        this.buffer('\n');
-    }
-  },
-
-  /**
-   * Visit a mixin's `block` keyword.
-   *
-   * @param {MixinBlock} block
-   * @api public
-   */
-
-  visitMixinBlock: function(block){
-    if (this.pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(this.pp) + "');");
-    this.buf.push('block && block();');
-    if (this.pp) this.buf.push("jade_indent.pop();");
-  },
-
-  /**
-   * Visit `doctype`. Sets terse mode to `true` when html 5
-   * is used, causing self-closing tags to end with ">" vs "/>",
-   * and boolean attributes are not mirrored.
-   *
-   * @param {Doctype} doctype
-   * @api public
-   */
-
-  visitDoctype: function(doctype){
-    if (doctype && (doctype.val || !this.doctype)) {
-      this.setDoctype(doctype.val || 'default');
-    }
-
-    if (this.doctype) this.buffer(this.doctype);
-    this.hasCompiledDoctype = true;
-  },
-
-  /**
-   * Visit `mixin`, generating a function that
-   * may be called within the template.
-   *
-   * @param {Mixin} mixin
-   * @api public
-   */
-
-  visitMixin: function(mixin){
-    var name = 'jade_mixins[';
-    var args = mixin.args || '';
-    var block = mixin.block;
-    var attrs = mixin.attrs;
-    var attrsBlocks = mixin.attributeBlocks.slice();
-    var pp = this.pp;
-    var dynamic = mixin.name[0]==='#';
-    var key = mixin.name;
-    if (dynamic) this.dynamicMixins = true;
-    name += (dynamic ? mixin.name.substr(2,mixin.name.length-3):'"'+mixin.name+'"')+']';
-
-    this.mixins[key] = this.mixins[key] || {used: false, instances: []};
-    if (mixin.call) {
-      this.mixins[key].used = true;
-      if (pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(pp) + "');")
-      if (block || attrs.length || attrsBlocks.length) {
-
-        this.buf.push(name + '.call({');
-
-        if (block) {
-          this.buf.push('block: function(){');
-
-          // Render block with no indents, dynamically added when rendered
-          this.parentIndents++;
-          var _indents = this.indents;
-          this.indents = 0;
-          this.visit(mixin.block);
-          this.indents = _indents;
-          this.parentIndents--;
-
-          if (attrs.length || attrsBlocks.length) {
-            this.buf.push('},');
-          } else {
-            this.buf.push('}');
-          }
-        }
-
-        if (attrsBlocks.length) {
-          if (attrs.length) {
-            var val = this.attrs(attrs);
-            attrsBlocks.unshift(val);
-          }
-          this.buf.push('attributes: jade.merge([' + attrsBlocks.join(',') + '])');
-        } else if (attrs.length) {
-          var val = this.attrs(attrs);
-          this.buf.push('attributes: ' + val);
-        }
-
-        if (args) {
-          this.buf.push('}, ' + args + ');');
-        } else {
-          this.buf.push('});');
-        }
-
-      } else {
-        this.buf.push(name + '(' + args + ');');
-      }
-      if (pp) this.buf.push("jade_indent.pop();")
-    } else {
-      var mixin_start = this.buf.length;
-      args = args ? args.split(',') : [];
-      var rest;
-      if (args.length && /^\.\.\./.test(args[args.length - 1].trim())) {
-        rest = args.pop().trim().replace(/^\.\.\./, '');
-      }
-      // we need use jade_interp here for v8: https://code.google.com/p/v8/issues/detail?id=4165
-      // once fixed, use this: this.buf.push(name + ' = function(' + args.join(',') + '){');
-      this.buf.push(name + ' = jade_interp = function(' + args.join(',') + '){');
-      this.buf.push('var block = (this && this.block), attributes = (this && this.attributes) || {};');
-      if (rest) {
-        this.buf.push('var ' + rest + ' = [];');
-        this.buf.push('for (jade_interp = ' + args.length + '; jade_interp < arguments.length; jade_interp++) {');
-        this.buf.push('  ' + rest + '.push(arguments[jade_interp]);');
-        this.buf.push('}');
-      }
-      this.parentIndents++;
-      this.visit(block);
-      this.parentIndents--;
-      this.buf.push('};');
-      var mixin_end = this.buf.length;
-      this.mixins[key].instances.push({start: mixin_start, end: mixin_end});
-    }
-  },
-
-  /**
-   * Visit `tag` buffering tag markup, generating
-   * attributes, visiting the `tag`'s code and block.
-   *
-   * @param {Tag} tag
-   * @api public
-   */
-
-  visitTag: function(tag){
-    this.indents++;
-    var name = tag.name
-      , pp = this.pp
-      , self = this;
-
-    function bufferName() {
-      if (tag.buffer) self.bufferExpression(name);
-      else self.buffer(name);
-    }
-
-    if ('pre' == tag.name) this.escape = true;
-
-    if (!this.hasCompiledTag) {
-      if (!this.hasCompiledDoctype && 'html' == name) {
-        this.visitDoctype();
-      }
-      this.hasCompiledTag = true;
-    }
-
-    // pretty print
-    if (pp && !tag.isInline())
-      this.prettyIndent(0, true);
-
-    if (tag.selfClosing || (!this.xml && selfClosing[tag.name])) {
-      this.buffer('<');
-      bufferName();
-      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
-      this.terse
-        ? this.buffer('>')
-        : this.buffer('/>');
-      // if it is non-empty throw an error
-      if (tag.block &&
-          !(tag.block.type === 'Block' && tag.block.nodes.length === 0) &&
-          tag.block.nodes.some(function (tag) {
-            return tag.type !== 'Text' || !/^\s*$/.test(tag.val)
-          })) {
-        throw errorAtNode(tag, new Error(name + ' is self closing and should not have content.'));
-      }
-    } else {
-      // Optimize attributes buffering
-      this.buffer('<');
-      bufferName();
-      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
-      this.buffer('>');
-      if (tag.code) this.visitCode(tag.code);
-      this.visit(tag.block);
-
-      // pretty print
-      if (pp && !tag.isInline() && 'pre' != tag.name && !tag.canInline())
-        this.prettyIndent(0, true);
-
-      this.buffer('</');
-      bufferName();
-      this.buffer('>');
-    }
-
-    if ('pre' == tag.name) this.escape = false;
-
-    this.indents--;
-  },
-
-  /**
-   * Visit `filter`, throwing when the filter does not exist.
-   *
-   * @param {Filter} filter
-   * @api public
-   */
-
-  visitFilter: function(filter){
-    var text = filter.block.nodes.map(
-      function(node){ return node.val; }
-    ).join('\n');
-    filter.attrs.filename = this.options.filename;
-    try {
-      this.buffer(filters(filter.name, text, filter.attrs), true);
-    } catch (err) {
-      throw errorAtNode(filter, err);
-    }
-  },
-
-  /**
-   * Visit `text` node.
-   *
-   * @param {Text} text
-   * @api public
-   */
-
-  visitText: function(text){
-    this.buffer(text.val, true);
-  },
-
-  /**
-   * Visit a `comment`, only buffering when the buffer flag is set.
-   *
-   * @param {Comment} comment
-   * @api public
-   */
-
-  visitComment: function(comment){
-    if (!comment.buffer) return;
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('<!--' + comment.val + '-->');
-  },
-
-  /**
-   * Visit a `BlockComment`.
-   *
-   * @param {Comment} comment
-   * @api public
-   */
-
-  visitBlockComment: function(comment){
-    if (!comment.buffer) return;
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('<!--' + comment.val);
-    this.visit(comment.block);
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('-->');
-  },
-
-  /**
-   * Visit `code`, respecting buffer / escape flags.
-   * If the code is followed by a block, wrap it in
-   * a self-calling function.
-   *
-   * @param {Code} code
-   * @api public
-   */
-
-  visitCode: function(code){
-    // Wrap code blocks with {}.
-    // we only wrap unbuffered code blocks ATM
-    // since they are usually flow control
-
-    // Buffer code
-    if (code.buffer) {
-      var val = code.val.trim();
-      val = 'null == (jade_interp = '+val+') ? "" : jade_interp';
-      if (code.escape) val = 'jade.escape(' + val + ')';
-      this.bufferExpression(val);
-    } else {
-      this.buf.push(code.val);
-    }
-
-    // Block support
-    if (code.block) {
-      if (!code.buffer) this.buf.push('{');
-      this.visit(code.block);
-      if (!code.buffer) this.buf.push('}');
-    }
-  },
-
-  /**
-   * Visit `each` block.
-   *
-   * @param {Each} each
-   * @api public
-   */
-
-  visitEach: function(each){
-    this.buf.push(''
-      + '// iterate ' + each.obj + '\n'
-      + ';(function(){\n'
-      + '  var $$obj = ' + each.obj + ';\n'
-      + '  if (\'number\' == typeof $$obj.length) {\n');
-
-    if (each.alternative) {
-      this.buf.push('  if ($$obj.length) {');
-    }
-
-    this.buf.push(''
-      + '    for (var ' + each.key + ' = 0, $$l = $$obj.length; ' + each.key + ' < $$l; ' + each.key + '++) {\n'
-      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
-
-    this.visit(each.block);
-
-    this.buf.push('    }\n');
-
-    if (each.alternative) {
-      this.buf.push('  } else {');
-      this.visit(each.alternative);
-      this.buf.push('  }');
-    }
-
-    this.buf.push(''
-      + '  } else {\n'
-      + '    var $$l = 0;\n'
-      + '    for (var ' + each.key + ' in $$obj) {\n'
-      + '      $$l++;'
-      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
-
-    this.visit(each.block);
-
-    this.buf.push('    }\n');
-    if (each.alternative) {
-      this.buf.push('    if ($$l === 0) {');
-      this.visit(each.alternative);
-      this.buf.push('    }');
-    }
-    this.buf.push('  }\n}).call(this);\n');
-  },
-
-  /**
-   * Visit `attrs`.
-   *
-   * @param {Array} attrs
-   * @api public
-   */
-
-  visitAttributes: function(attrs, attributeBlocks){
-    if (attributeBlocks.length) {
-      if (attrs.length) {
-        var val = this.attrs(attrs);
-        attributeBlocks.unshift(val);
-      }
-      this.bufferExpression('jade.attrs(jade.merge([' + attributeBlocks.join(',') + ']), ' + utils.stringify(this.terse) + ')');
-    } else if (attrs.length) {
-      this.attrs(attrs, true);
-    }
-  },
-
-  /**
-   * Compile attributes.
-   */
-
-  attrs: function(attrs, buffer){
-    var buf = [];
-    var classes = [];
-    var classEscaping = [];
-
-    attrs.forEach(function(attr){
-      var key = attr.name;
-      var escaped = attr.escaped;
-
-      if (key === 'class') {
-        classes.push(attr.val);
-        classEscaping.push(attr.escaped);
-      } else if (isConstant(attr.val)) {
-        if (buffer) {
-          this.buffer(runtime.attr(key, toConstant(attr.val), escaped, this.terse));
-        } else {
-          var val = toConstant(attr.val);
-          if (key === 'style') val = runtime.style(val);
-          if (escaped && !(key.indexOf('data') === 0 && typeof val !== 'string')) {
-            val = runtime.escape(val);
-          }
-          buf.push(utils.stringify(key) + ': ' + utils.stringify(val));
-        }
-      } else {
-        if (buffer) {
-          this.bufferExpression('jade.attr("' + key + '", ' + attr.val + ', ' + utils.stringify(escaped) + ', ' + utils.stringify(this.terse) + ')');
-        } else {
-          var val = attr.val;
-          if (key === 'style') {
-            val = 'jade.style(' + val + ')';
-          }
-          if (escaped && !(key.indexOf('data') === 0)) {
-            val = 'jade.escape(' + val + ')';
-          } else if (escaped) {
-            val = '(typeof (jade_interp = ' + val + ') == "string" ? jade.escape(jade_interp) : jade_interp)';
-          }
-          buf.push(utils.stringify(key) + ': ' + val);
-        }
-      }
-    }.bind(this));
-    if (buffer) {
-      if (classes.every(isConstant)) {
-        this.buffer(runtime.cls(classes.map(toConstant), classEscaping));
-      } else {
-        this.bufferExpression('jade.cls([' + classes.join(',') + '], ' + utils.stringify(classEscaping) + ')');
-      }
-    } else if (classes.length) {
-      if (classes.every(isConstant)) {
-        classes = utils.stringify(runtime.joinClasses(classes.map(toConstant).map(runtime.joinClasses).map(function (cls, i) {
-          return classEscaping[i] ? runtime.escape(cls) : cls;
-        })));
-      } else {
-        classes = '(jade_interp = ' + utils.stringify(classEscaping) + ',' +
-          ' jade.joinClasses([' + classes.join(',') + '].map(jade.joinClasses).map(function (cls, i) {' +
-          '   return jade_interp[i] ? jade.escape(cls) : cls' +
-          ' }))' +
-          ')';
-      }
-      if (classes.length)
-        buf.push('"class": ' + classes);
-    }
-    return '{' + buf.join(',') + '}';
-  }
-};
-
-},{"./doctypes":27,"./filters":28,"./nodes":41,"./runtime":49,"./utils":50,"character-parser":18,"constantinople":19,"void-elements":53}],27:[function(require,module,exports){
-'use strict';
-
-module.exports = {
-    'default': '<!DOCTYPE html>'
-  , 'xml': '<?xml version="1.0" encoding="utf-8" ?>'
-  , 'transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-  , 'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-  , 'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
-  , '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-  , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
-  , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
-};
-},{}],28:[function(require,module,exports){
-'use strict';
-
-module.exports = filter;
-function filter(name, str, options) {
-  if (typeof filter[name] === 'function') {
-    return filter[name](str, options);
-  } else {
-    throw new Error('unknown filter ":' + name + '"');
-  }
-}
-
-},{}],29:[function(require,module,exports){
-(function (process){
-'use strict';
-
-/*!
- * Jade
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Parser = require('./parser')
-  , Lexer = require('./lexer')
-  , Compiler = require('./compiler')
-  , runtime = require('./runtime')
-  , addWith = require('with')
-  , fs = require('fs')
-  , utils = require('./utils');
-
-/**
- * Expose self closing tags.
- */
-
-// FIXME: either stop exporting selfClosing in v2 or export the new object
-// form
-exports.selfClosing = Object.keys(require('void-elements'));
-
-/**
- * Default supported doctypes.
- */
-
-exports.doctypes = require('./doctypes');
-
-/**
- * Text filters.
- */
-
-exports.filters = require('./filters');
-
-/**
- * Utilities.
- */
-
-exports.utils = utils;
-
-/**
- * Expose `Compiler`.
- */
-
-exports.Compiler = Compiler;
-
-/**
- * Expose `Parser`.
- */
-
-exports.Parser = Parser;
-
-/**
- * Expose `Lexer`.
- */
-
-exports.Lexer = Lexer;
-
-/**
- * Nodes.
- */
-
-exports.nodes = require('./nodes');
-
-/**
- * Jade runtime helpers.
- */
-
-exports.runtime = runtime;
-
-/**
- * Template function cache.
- */
-
-exports.cache = {};
-
-/**
- * Parse the given `str` of jade and return a function body.
- *
- * @param {String} str
- * @param {Object} options
- * @return {Object}
- * @api private
- */
-
-function parse(str, options){
-
-  if (options.lexer) {
-    console.warn('Using `lexer` as a local in render() is deprecated and '
-               + 'will be interpreted as an option in Jade 2.0.0');
-  }
-
-  // Parse
-  var parser = new (options.parser || Parser)(str, options.filename, options);
-  var tokens;
-  try {
-    // Parse
-    tokens = parser.parse();
-  } catch (err) {
-    parser = parser.context();
-    runtime.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
-  }
-
-  // Compile
-  var compiler = new (options.compiler || Compiler)(tokens, options);
-  var js;
-  try {
-    js = compiler.compile();
-  } catch (err) {
-    if (err.line && (err.filename || !options.filename)) {
-      runtime.rethrow(err, err.filename, err.line, parser.input);
-    } else {
-      if (err instanceof Error) {
-        err.message += '\n\nPlease report this entire error and stack trace to https://github.com/jadejs/jade/issues';
-      }
-      throw err;
-    }
-  }
-
-  // Debug compiler
-  if (options.debug) {
-    console.error('\nCompiled Function:\n\n\u001b[90m%s\u001b[0m', js.replace(/^/gm, '  '));
-  }
-
-  var globals = [];
-
-  if (options.globals) {
-    globals = options.globals.slice();
-  }
-
-  globals.push('jade');
-  globals.push('jade_mixins');
-  globals.push('jade_interp');
-  globals.push('jade_debug');
-  globals.push('buf');
-
-  var body = ''
-    + 'var buf = [];\n'
-    + 'var jade_mixins = {};\n'
-    + 'var jade_interp;\n'
-    + (options.self
-      ? 'var self = locals || {};\n' + js
-      : addWith('locals || {}', '\n' + js, globals)) + ';'
-    + 'return buf.join("");';
-  return {body: body, dependencies: parser.dependencies};
-}
-
-/**
- * Get the template from a string or a file, either compiled on-the-fly or
- * read from cache (if enabled), and cache the template if needed.
- *
- * If `str` is not set, the file specified in `options.filename` will be read.
- *
- * If `options.cache` is true, this function reads the file from
- * `options.filename` so it must be set prior to calling this function.
- *
- * @param {Object} options
- * @param {String=} str
- * @return {Function}
- * @api private
- */
-function handleTemplateCache (options, str) {
-  var key = options.filename;
-  if (options.cache && exports.cache[key]) {
-    return exports.cache[key];
-  } else {
-    if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
-    var templ = exports.compile(str, options);
-    if (options.cache) exports.cache[key] = templ;
-    return templ;
-  }
-}
-
-/**
- * Compile a `Function` representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` when `false` debugging code is stripped from the compiled
-       template, when it is explicitly `true`, the source code is included in
-       the compiled template for better accuracy.
- *   - `filename` used to improve errors when `compileDebug` is not `false` and to resolve imports/extends
- *
- * @param {String} str
- * @param {Options} options
- * @return {Function}
- * @api public
- */
-
-exports.compile = function(str, options){
-  var options = options || {}
-    , filename = options.filename
-      ? utils.stringify(options.filename)
-      : 'undefined'
-    , fn;
-
-  str = String(str);
-
-  var parsed = parse(str, options);
-  if (options.compileDebug !== false) {
-    fn = [
-        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
-      , 'try {'
-      , parsed.body
-      , '} catch (err) {'
-      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno' + (options.compileDebug === true ? ',' + utils.stringify(str) : '') + ');'
-      , '}'
-    ].join('\n');
-  } else {
-    fn = parsed.body;
-  }
-  fn = new Function('locals, jade', fn)
-  var res = function(locals){ return fn(locals, Object.create(runtime)) };
-  if (options.client) {
-    res.toString = function () {
-      var err = new Error('The `client` option is deprecated, use the `jade.compileClient` method instead');
-      err.name = 'Warning';
-      console.error(err.stack || /* istanbul ignore next */ err.message);
-      return exports.compileClient(str, options);
-    };
-  }
-  res.dependencies = parsed.dependencies;
-  return res;
-};
-
-/**
- * Compile a JavaScript source representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` When it is `true`, the source code is included in
- *     the compiled template for better error messages.
- *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
- *   - `name` the name of the resulting function (defaults to "template")
- *
- * @param {String} str
- * @param {Options} options
- * @return {Object}
- * @api public
- */
-
-exports.compileClientWithDependenciesTracked = function(str, options){
-  var options = options || {};
-  var name = options.name || 'template';
-  var filename = options.filename ? utils.stringify(options.filename) : 'undefined';
-  var fn;
-
-  str = String(str);
-  options.compileDebug = options.compileDebug ? true : false;
-  var parsed = parse(str, options);
-  if (options.compileDebug) {
-    fn = [
-        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
-      , 'try {'
-      , parsed.body
-      , '} catch (err) {'
-      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno, ' + utils.stringify(str) + ');'
-      , '}'
-    ].join('\n');
-  } else {
-    fn = parsed.body;
-  }
-
-  return {body: 'function ' + name + '(locals) {\n' + fn + '\n}', dependencies: parsed.dependencies};
-};
-
-/**
- * Compile a JavaScript source representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` When it is `true`, the source code is included in
- *     the compiled template for better error messages.
- *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
- *   - `name` the name of the resulting function (defaults to "template")
- *
- * @param {String} str
- * @param {Options} options
- * @return {String}
- * @api public
- */
-exports.compileClient = function (str, options) {
-  return exports.compileClientWithDependenciesTracked(str, options).body;
-};
-
-/**
- * Compile a `Function` representation of the given jade file.
- *
- * Options:
- *
- *   - `compileDebug` when `false` debugging code is stripped from the compiled
-       template, when it is explicitly `true`, the source code is included in
-       the compiled template for better accuracy.
- *
- * @param {String} path
- * @param {Options} options
- * @return {Function}
- * @api public
- */
-exports.compileFile = function (path, options) {
-  options = options || {};
-  options.filename = path;
-  return handleTemplateCache(options);
-};
-
-/**
- * Render the given `str` of jade.
- *
- * Options:
- *
- *   - `cache` enable template caching
- *   - `filename` filename required for `include` / `extends` and caching
- *
- * @param {String} str
- * @param {Object|Function} options or fn
- * @param {Function|undefined} fn
- * @returns {String}
- * @api public
- */
-
-exports.render = function(str, options, fn){
-  // support callback API
-  if ('function' == typeof options) {
-    fn = options, options = undefined;
-  }
-  if (typeof fn === 'function') {
-    var res
-    try {
-      res = exports.render(str, options);
-    } catch (ex) {
-      return fn(ex);
-    }
-    return fn(null, res);
-  }
-
-  options = options || {};
-
-  // cache requires .filename
-  if (options.cache && !options.filename) {
-    throw new Error('the "filename" option is required for caching');
-  }
-
-  return handleTemplateCache(options, str)(options);
-};
-
-/**
- * Render a Jade file at the given `path`.
- *
- * @param {String} path
- * @param {Object|Function} options or callback
- * @param {Function|undefined} fn
- * @returns {String}
- * @api public
- */
-
-exports.renderFile = function(path, options, fn){
-  // support callback API
-  if ('function' == typeof options) {
-    fn = options, options = undefined;
-  }
-  if (typeof fn === 'function') {
-    var res
-    try {
-      res = exports.renderFile(path, options);
-    } catch (ex) {
-      return fn(ex);
-    }
-    return fn(null, res);
-  }
-
-  options = options || {};
-
-  options.filename = path;
-  return handleTemplateCache(options)(options);
-};
-
-
-/**
- * Compile a Jade file at the given `path` for use on the client.
- *
- * @param {String} path
- * @param {Object} options
- * @returns {String}
- * @api public
- */
-
-exports.compileFileClient = function(path, options){
-  var key = path + ':client';
-  options = options || {};
-
-  options.filename = path;
-
-  if (options.cache && exports.cache[key]) {
-    return exports.cache[key];
-  }
-
-  var str = fs.readFileSync(options.filename, 'utf8');
-  var out = exports.compileClient(str, options);
-  if (options.cache) exports.cache[key] = out;
-  return out;
-};
-
-/**
- * Express support.
- */
-
-exports.__express = function(path, options, fn) {
-  if(options.compileDebug == undefined && process.env.NODE_ENV === 'production') {
-    options.compileDebug = false;
-  }
-  exports.renderFile(path, options, fn);
-}
-
-}).call(this,require("rH1JPG"))
-},{"./compiler":26,"./doctypes":27,"./filters":28,"./lexer":31,"./nodes":41,"./parser":48,"./runtime":49,"./utils":50,"fs":15,"rH1JPG":52,"void-elements":53,"with":54}],30:[function(require,module,exports){
-'use strict';
-
-module.exports = [
-    'a'
-  , 'abbr'
-  , 'acronym'
-  , 'b'
-  , 'br'
-  , 'code'
-  , 'em'
-  , 'font'
-  , 'i'
-  , 'img'
-  , 'ins'
-  , 'kbd'
-  , 'map'
-  , 'samp'
-  , 'small'
-  , 'span'
-  , 'strong'
-  , 'sub'
-  , 'sup'
-];
-},{}],31:[function(require,module,exports){
-'use strict';
-
-var utils = require('./utils');
-var characterParser = require('character-parser');
-
-
-/**
- * Initialize `Lexer` with the given `str`.
- *
- * @param {String} str
- * @param {String} filename
- * @api private
- */
-
-var Lexer = module.exports = function Lexer(str, filename) {
-  this.input = str.replace(/\r\n|\r/g, '\n');
-  this.filename = filename;
-  this.deferredTokens = [];
-  this.lastIndents = 0;
-  this.lineno = 1;
-  this.stash = [];
-  this.indentStack = [];
-  this.indentRe = null;
-  this.pipeless = false;
-};
-
-
-function assertExpression(exp) {
-  //this verifies that a JavaScript expression is valid
-  Function('', 'return (' + exp + ')');
-}
-function assertNestingCorrect(exp) {
-  //this verifies that code is properly nested, but allows
-  //invalid JavaScript such as the contents of `attributes`
-  var res = characterParser(exp)
-  if (res.isNesting()) {
-    throw new Error('Nesting must match on expression `' + exp + '`')
-  }
-}
-
-/**
- * Lexer prototype.
- */
-
-Lexer.prototype = {
-
-  /**
-   * Construct a token with the given `type` and `val`.
-   *
-   * @param {String} type
-   * @param {String} val
-   * @return {Object}
-   * @api private
-   */
-
-  tok: function(type, val){
-    return {
-        type: type
-      , line: this.lineno
-      , val: val
-    }
-  },
-
-  /**
-   * Consume the given `len` of input.
-   *
-   * @param {Number} len
-   * @api private
-   */
-
-  consume: function(len){
-    this.input = this.input.substr(len);
-  },
-
-  /**
-   * Scan for `type` with the given `regexp`.
-   *
-   * @param {String} type
-   * @param {RegExp} regexp
-   * @return {Object}
-   * @api private
-   */
-
-  scan: function(regexp, type){
-    var captures;
-    if (captures = regexp.exec(this.input)) {
-      this.consume(captures[0].length);
-      return this.tok(type, captures[1]);
-    }
-  },
-
-  /**
-   * Defer the given `tok`.
-   *
-   * @param {Object} tok
-   * @api private
-   */
-
-  defer: function(tok){
-    this.deferredTokens.push(tok);
-  },
-
-  /**
-   * Lookahead `n` tokens.
-   *
-   * @param {Number} n
-   * @return {Object}
-   * @api private
-   */
-
-  lookahead: function(n){
-    var fetch = n - this.stash.length;
-    while (fetch-- > 0) this.stash.push(this.next());
-    return this.stash[--n];
-  },
-
-  /**
-   * Return the indexOf `(` or `{` or `[` / `)` or `}` or `]` delimiters.
-   *
-   * @return {Number}
-   * @api private
-   */
-
-  bracketExpression: function(skip){
-    skip = skip || 0;
-    var start = this.input[skip];
-    if (start != '(' && start != '{' && start != '[') throw new Error('unrecognized start character');
-    var end = ({'(': ')', '{': '}', '[': ']'})[start];
-    var range = characterParser.parseMax(this.input, {start: skip + 1});
-    if (this.input[range.end] !== end) throw new Error('start character ' + start + ' does not match end character ' + this.input[range.end]);
-    return range;
-  },
-
-  /**
-   * Stashed token.
-   */
-
-  stashed: function() {
-    return this.stash.length
-      && this.stash.shift();
-  },
-
-  /**
-   * Deferred token.
-   */
-
-  deferred: function() {
-    return this.deferredTokens.length
-      && this.deferredTokens.shift();
-  },
-
-  /**
-   * end-of-source.
-   */
-
-  eos: function() {
-    if (this.input.length) return;
-    if (this.indentStack.length) {
-      this.indentStack.shift();
-      return this.tok('outdent');
-    } else {
-      return this.tok('eos');
-    }
-  },
-
-  /**
-   * Blank line.
-   */
-
-  blank: function() {
-    var captures;
-    if (captures = /^\n *\n/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      ++this.lineno;
-      if (this.pipeless) return this.tok('text', '');
-      return this.next();
-    }
-  },
-
-  /**
-   * Comment.
-   */
-
-  comment: function() {
-    var captures;
-    if (captures = /^\/\/(-)?([^\n]*)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('comment', captures[2]);
-      tok.buffer = '-' != captures[1];
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Interpolated tag.
-   */
-
-  interpolation: function() {
-    if (/^#\{/.test(this.input)) {
-      var match = this.bracketExpression(1);
-
-      this.consume(match.end + 1);
-      return this.tok('interpolation', match.src);
-    }
-  },
-
-  /**
-   * Tag.
-   */
-
-  tag: function() {
-    var captures;
-    if (captures = /^(\w[-:\w]*)(\/?)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok, name = captures[1];
-      if (':' == name[name.length - 1]) {
-        name = name.slice(0, -1);
-        tok = this.tok('tag', name);
-        this.defer(this.tok(':'));
-        if (this.input[0] !== ' ') {
-          console.warn('Warning: space required after `:` on line ' + this.lineno +
-              ' of jade file "' + this.filename + '"');
-        }
-        while (' ' == this.input[0]) this.input = this.input.substr(1);
-      } else {
-        tok = this.tok('tag', name);
-      }
-      tok.selfClosing = !!captures[2];
-      return tok;
-    }
-  },
-
-  /**
-   * Filter.
-   */
-
-  filter: function() {
-    var tok = this.scan(/^:([\w\-]+)/, 'filter');
-    if (tok) {
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Doctype.
-   */
-
-  doctype: function() {
-    if (this.scan(/^!!! *([^\n]+)?/, 'doctype')) {
-      throw new Error('`!!!` is deprecated, you must now use `doctype`');
-    }
-    var node = this.scan(/^(?:doctype) *([^\n]+)?/, 'doctype');
-    if (node && node.val && node.val.trim() === '5') {
-      throw new Error('`doctype 5` is deprecated, you must now use `doctype html`');
-    }
-    return node;
-  },
-
-  /**
-   * Id.
-   */
-
-  id: function() {
-    return this.scan(/^#([\w-]+)/, 'id');
-  },
-
-  /**
-   * Class.
-   */
-
-  className: function() {
-    return this.scan(/^\.([\w-]+)/, 'class');
-  },
-
-  /**
-   * Text.
-   */
-
-  text: function() {
-    return this.scan(/^(?:\| ?| )([^\n]+)/, 'text') ||
-      this.scan(/^\|?( )/, 'text') ||
-      this.scan(/^(<[^\n]*)/, 'text');
-  },
-
-  textFail: function () {
-    var tok;
-    if (tok = this.scan(/^([^\.\n][^\n]+)/, 'text')) {
-      console.warn('Warning: missing space before text for line ' + this.lineno +
-          ' of jade file "' + this.filename + '"');
-      return tok;
-    }
-  },
-
-  /**
-   * Dot.
-   */
-
-  dot: function() {
-    var match;
-    if (match = this.scan(/^\./, 'dot')) {
-      this.pipeless = true;
-      return match;
-    }
-  },
-
-  /**
-   * Extends.
-   */
-
-  "extends": function() {
-    return this.scan(/^extends? +([^\n]+)/, 'extends');
-  },
-
-  /**
-   * Block prepend.
-   */
-
-  prepend: function() {
-    var captures;
-    if (captures = /^prepend +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = 'prepend'
-        , name = captures[1]
-        , tok = this.tok('block', name);
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Block append.
-   */
-
-  append: function() {
-    var captures;
-    if (captures = /^append +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = 'append'
-        , name = captures[1]
-        , tok = this.tok('block', name);
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Block.
-   */
-
-  block: function() {
-    var captures;
-    if (captures = /^block\b *(?:(prepend|append) +)?([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = captures[1] || 'replace'
-        , name = captures[2]
-        , tok = this.tok('block', name);
-
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Mixin Block.
-   */
-
-  mixinBlock: function() {
-    var captures;
-    if (captures = /^block[ \t]*(\n|$)/.exec(this.input)) {
-      this.consume(captures[0].length - captures[1].length);
-      return this.tok('mixin-block');
-    }
-  },
-
-  /**
-   * Yield.
-   */
-
-  'yield': function() {
-    return this.scan(/^yield */, 'yield');
-  },
-
-  /**
-   * Include.
-   */
-
-  include: function() {
-    return this.scan(/^include +([^\n]+)/, 'include');
-  },
-
-  /**
-   * Include with filter
-   */
-
-  includeFiltered: function() {
-    var captures;
-    if (captures = /^include:([\w\-]+)([\( ])/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      var filter = captures[1];
-      var attrs = captures[2] === '(' ? this.attrs() : null;
-      if (!(captures[2] === ' ' || this.input[0] === ' ')) {
-        throw new Error('expected space after include:filter but got ' + utils.stringify(this.input[0]));
-      }
-      captures = /^ *([^\n]+)/.exec(this.input);
-      if (!captures || captures[1].trim() === '') {
-        throw new Error('missing path for include:filter');
-      }
-      this.consume(captures[0].length);
-      var path = captures[1];
-      var tok = this.tok('include', path);
-      tok.filter = filter;
-      tok.attrs = attrs;
-      return tok;
-    }
-  },
-
-  /**
-   * Case.
-   */
-
-  "case": function() {
-    return this.scan(/^case +([^\n]+)/, 'case');
-  },
-
-  /**
-   * When.
-   */
-
-  when: function() {
-    return this.scan(/^when +([^:\n]+)/, 'when');
-  },
-
-  /**
-   * Default.
-   */
-
-  "default": function() {
-    return this.scan(/^default */, 'default');
-  },
-
-  /**
-   * Call mixin.
-   */
-
-  call: function(){
-
-    var tok, captures;
-    if (captures = /^\+(\s*)(([-\w]+)|(#\{))/.exec(this.input)) {
-      // try to consume simple or interpolated call
-      if (captures[3]) {
-        // simple call
-        this.consume(captures[0].length);
-        tok = this.tok('call', captures[3]);
-      } else {
-        // interpolated call
-        var match = this.bracketExpression(2 + captures[1].length);
-        this.consume(match.end + 1);
-        assertExpression(match.src);
-        tok = this.tok('call', '#{'+match.src+'}');
-      }
-
-      // Check for args (not attributes)
-      if (captures = /^ *\(/.exec(this.input)) {
-        var range = this.bracketExpression(captures[0].length - 1);
-        if (!/^\s*[-\w]+ *=/.test(range.src)) { // not attributes
-          this.consume(range.end + 1);
-          tok.args = range.src;
-        }
-        if (tok.args) {
-          assertExpression('[' + tok.args + ']');
-        }
-      }
-
-      return tok;
-    }
-  },
-
-  /**
-   * Mixin.
-   */
-
-  mixin: function(){
-    var captures;
-    if (captures = /^mixin +([-\w]+)(?: *\((.*)\))? */.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('mixin', captures[1]);
-      tok.args = captures[2];
-      return tok;
-    }
-  },
-
-  /**
-   * Conditional.
-   */
-
-  conditional: function() {
-    var captures;
-    if (captures = /^(if|unless|else if|else)\b([^\n]*)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var type = captures[1]
-      var js = captures[2];
-      var isIf = false;
-      var isElse = false;
-
-      switch (type) {
-        case 'if':
-          assertExpression(js)
-          js = 'if (' + js + ')';
-          isIf = true;
-          break;
-        case 'unless':
-          assertExpression(js)
-          js = 'if (!(' + js + '))';
-          isIf = true;
-          break;
-        case 'else if':
-          assertExpression(js)
-          js = 'else if (' + js + ')';
-          isIf = true;
-          isElse = true;
-          break;
-        case 'else':
-          if (js && js.trim()) {
-            throw new Error('`else` cannot have a condition, perhaps you meant `else if`');
-          }
-          js = 'else';
-          isElse = true;
-          break;
-      }
-      var tok = this.tok('code', js);
-      tok.isElse = isElse;
-      tok.isIf = isIf;
-      tok.requiresBlock = true;
-      return tok;
-    }
-  },
-
-  /**
-   * While.
-   */
-
-  "while": function() {
-    var captures;
-    if (captures = /^while +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      assertExpression(captures[1])
-      var tok = this.tok('code', 'while (' + captures[1] + ')');
-      tok.requiresBlock = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Each.
-   */
-
-  each: function() {
-    var captures;
-    if (captures = /^(?:- *)?(?:each|for) +([a-zA-Z_$][\w$]*)(?: *, *([a-zA-Z_$][\w$]*))? * in *([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('each', captures[1]);
-      tok.key = captures[2] || '$index';
-      assertExpression(captures[3])
-      tok.code = captures[3];
-      return tok;
-    }
-  },
-
-  /**
-   * Code.
-   */
-
-  code: function() {
-    var captures;
-    if (captures = /^(!?=|-)[ \t]*([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var flags = captures[1];
-      captures[1] = captures[2];
-      var tok = this.tok('code', captures[1]);
-      tok.escape = flags.charAt(0) === '=';
-      tok.buffer = flags.charAt(0) === '=' || flags.charAt(1) === '=';
-      if (tok.buffer) assertExpression(captures[1])
-      return tok;
-    }
-  },
-
-
-  /**
-   * Block code.
-   */
-
-  blockCode: function() {
-    var captures;
-    if (captures = /^-\n/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      var tok = this.tok('blockCode');
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Attributes.
-   */
-
-  attrs: function() {
-    if ('(' == this.input.charAt(0)) {
-      var index = this.bracketExpression().end
-        , str = this.input.substr(1, index-1)
-        , tok = this.tok('attrs');
-
-      assertNestingCorrect(str);
-
-      var quote = '';
-      var interpolate = function (attr) {
-        return attr.replace(/(\\)?#\{(.+)/g, function(_, escape, expr){
-          if (escape) return _;
-          try {
-            var range = characterParser.parseMax(expr);
-            if (expr[range.end] !== '}') return _.substr(0, 2) + interpolate(_.substr(2));
-            assertExpression(range.src)
-            return quote + " + (" + range.src + ") + " + quote + interpolate(expr.substr(range.end + 1));
-          } catch (ex) {
-            return _.substr(0, 2) + interpolate(_.substr(2));
-          }
-        });
-      }
-
-      this.consume(index + 1);
-      tok.attrs = [];
-
-      var escapedAttr = true
-      var key = '';
-      var val = '';
-      var interpolatable = '';
-      var state = characterParser.defaultState();
-      var loc = 'key';
-      var isEndOfAttribute = function (i) {
-        if (key.trim() === '') return false;
-        if (i === str.length) return true;
-        if (loc === 'key') {
-          if (str[i] === ' ' || str[i] === '\n') {
-            for (var x = i; x < str.length; x++) {
-              if (str[x] != ' ' && str[x] != '\n') {
-                if (str[x] === '=' || str[x] === '!' || str[x] === ',') return false;
-                else return true;
-              }
-            }
-          }
-          return str[i] === ','
-        } else if (loc === 'value' && !state.isNesting()) {
-          try {
-            assertExpression(val);
-            if (str[i] === ' ' || str[i] === '\n') {
-              for (var x = i; x < str.length; x++) {
-                if (str[x] != ' ' && str[x] != '\n') {
-                  if (characterParser.isPunctuator(str[x]) && str[x] != '"' && str[x] != "'") return false;
-                  else return true;
-                }
-              }
-            }
-            return str[i] === ',';
-          } catch (ex) {
-            return false;
-          }
-        }
-      }
-
-      this.lineno += str.split("\n").length - 1;
-
-      for (var i = 0; i <= str.length; i++) {
-        if (isEndOfAttribute(i)) {
-          val = val.trim();
-          if (val) assertExpression(val)
-          key = key.trim();
-          key = key.replace(/^['"]|['"]$/g, '');
-          tok.attrs.push({
-            name: key,
-            val: '' == val ? true : val,
-            escaped: escapedAttr
-          });
-          key = val = '';
-          loc = 'key';
-          escapedAttr = false;
-        } else {
-          switch (loc) {
-            case 'key-char':
-              if (str[i] === quote) {
-                loc = 'key';
-                if (i + 1 < str.length && [' ', ',', '!', '=', '\n'].indexOf(str[i + 1]) === -1)
-                  throw new Error('Unexpected character ' + str[i + 1] + ' expected ` `, `\\n`, `,`, `!` or `=`');
-              } else {
-                key += str[i];
-              }
-              break;
-            case 'key':
-              if (key === '' && (str[i] === '"' || str[i] === "'")) {
-                loc = 'key-char';
-                quote = str[i];
-              } else if (str[i] === '!' || str[i] === '=') {
-                escapedAttr = str[i] !== '!';
-                if (str[i] === '!') i++;
-                if (str[i] !== '=') throw new Error('Unexpected character ' + str[i] + ' expected `=`');
-                loc = 'value';
-                state = characterParser.defaultState();
-              } else {
-                key += str[i]
-              }
-              break;
-            case 'value':
-              state = characterParser.parseChar(str[i], state);
-              if (state.isString()) {
-                loc = 'string';
-                quote = str[i];
-                interpolatable = str[i];
-              } else {
-                val += str[i];
-              }
-              break;
-            case 'string':
-              state = characterParser.parseChar(str[i], state);
-              interpolatable += str[i];
-              if (!state.isString()) {
-                loc = 'value';
-                val += interpolate(interpolatable);
-              }
-              break;
-          }
-        }
-      }
-
-      if ('/' == this.input.charAt(0)) {
-        this.consume(1);
-        tok.selfClosing = true;
-      }
-
-      return tok;
-    }
-  },
-
-  /**
-   * &attributes block
-   */
-  attributesBlock: function () {
-    var captures;
-    if (/^&attributes\b/.test(this.input)) {
-      this.consume(11);
-      var args = this.bracketExpression();
-      this.consume(args.end + 1);
-      return this.tok('&attributes', args.src);
-    }
-  },
-
-  /**
-   * Indent | Outdent | Newline.
-   */
-
-  indent: function() {
-    var captures, re;
-
-    // established regexp
-    if (this.indentRe) {
-      captures = this.indentRe.exec(this.input);
-    // determine regexp
-    } else {
-      // tabs
-      re = /^\n(\t*) */;
-      captures = re.exec(this.input);
-
-      // spaces
-      if (captures && !captures[1].length) {
-        re = /^\n( *)/;
-        captures = re.exec(this.input);
-      }
-
-      // established
-      if (captures && captures[1].length) this.indentRe = re;
-    }
-
-    if (captures) {
-      var tok
-        , indents = captures[1].length;
-
-      ++this.lineno;
-      this.consume(indents + 1);
-
-      if (' ' == this.input[0] || '\t' == this.input[0]) {
-        throw new Error('Invalid indentation, you can use tabs or spaces but not both');
-      }
-
-      // blank line
-      if ('\n' == this.input[0]) {
-        this.pipeless = false;
-        return this.tok('newline');
-      }
-
-      // outdent
-      if (this.indentStack.length && indents < this.indentStack[0]) {
-        while (this.indentStack.length && this.indentStack[0] > indents) {
-          this.stash.push(this.tok('outdent'));
-          this.indentStack.shift();
-        }
-        tok = this.stash.pop();
-      // indent
-      } else if (indents && indents != this.indentStack[0]) {
-        this.indentStack.unshift(indents);
-        tok = this.tok('indent', indents);
-      // newline
-      } else {
-        tok = this.tok('newline');
-      }
-
-      this.pipeless = false;
-      return tok;
-    }
-  },
-
-  /**
-   * Pipe-less text consumed only when
-   * pipeless is true;
-   */
-
-  pipelessText: function() {
-    if (!this.pipeless) return;
-    var captures, re;
-
-    // established regexp
-    if (this.indentRe) {
-      captures = this.indentRe.exec(this.input);
-    // determine regexp
-    } else {
-      // tabs
-      re = /^\n(\t*) */;
-      captures = re.exec(this.input);
-
-      // spaces
-      if (captures && !captures[1].length) {
-        re = /^\n( *)/;
-        captures = re.exec(this.input);
-      }
-
-      // established
-      if (captures && captures[1].length) this.indentRe = re;
-    }
-
-    var indents = captures && captures[1].length;
-    if (indents && (this.indentStack.length === 0 || indents > this.indentStack[0])) {
-      var indent = captures[1];
-      var line;
-      var tokens = [];
-      var isMatch;
-      do {
-        // text has `\n` as a prefix
-        var i = this.input.substr(1).indexOf('\n');
-        if (-1 == i) i = this.input.length - 1;
-        var str = this.input.substr(1, i);
-        isMatch = str.substr(0, indent.length) === indent || !str.trim();
-        if (isMatch) {
-          // consume test along with `\n` prefix if match
-          this.consume(str.length + 1);
-          ++this.lineno;
-          tokens.push(str.substr(indent.length));
-        }
-      } while(this.input.length && isMatch);
-      while (this.input.length === 0 && tokens[tokens.length - 1] === '') tokens.pop();
-      return this.tok('pipeless-text', tokens);
-    }
-  },
-
-  /**
-   * ':'
-   */
-
-  colon: function() {
-    var good = /^: +/.test(this.input);
-    var res = this.scan(/^: */, ':');
-    if (res && !good) {
-      console.warn('Warning: space required after `:` on line ' + this.lineno +
-          ' of jade file "' + this.filename + '"');
-    }
-    return res;
-  },
-
-  fail: function () {
-    throw new Error('unexpected text ' + this.input.substr(0, 5));
-  },
-
-  /**
-   * Return the next token object, or those
-   * previously stashed by lookahead.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  advance: function(){
-    return this.stashed()
-      || this.next();
-  },
-
-  /**
-   * Return the next token object.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  next: function() {
-    return this.deferred()
-      || this.blank()
-      || this.eos()
-      || this.pipelessText()
-      || this.yield()
-      || this.doctype()
-      || this.interpolation()
-      || this["case"]()
-      || this.when()
-      || this["default"]()
-      || this["extends"]()
-      || this.append()
-      || this.prepend()
-      || this.block()
-      || this.mixinBlock()
-      || this.include()
-      || this.includeFiltered()
-      || this.mixin()
-      || this.call()
-      || this.conditional()
-      || this.each()
-      || this["while"]()
-      || this.tag()
-      || this.filter()
-      || this.blockCode()
-      || this.code()
-      || this.id()
-      || this.className()
-      || this.attrs()
-      || this.attributesBlock()
-      || this.indent()
-      || this.text()
-      || this.comment()
-      || this.colon()
-      || this.dot()
-      || this.textFail()
-      || this.fail();
-  }
-};
-
-},{"./utils":50,"character-parser":18}],32:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Attrs` node.
- *
- * @api public
- */
-
-var Attrs = module.exports = function Attrs() {
-  this.attributeNames = [];
-  this.attrs = [];
-  this.attributeBlocks = [];
-};
-
-// Inherit from `Node`.
-Attrs.prototype = Object.create(Node.prototype);
-Attrs.prototype.constructor = Attrs;
-
-Attrs.prototype.type = 'Attrs';
-
-/**
- * Set attribute `name` to `val`, keep in mind these become
- * part of a raw js object literal, so to quote a value you must
- * '"quote me"', otherwise or example 'user.name' is literal JavaScript.
- *
- * @param {String} name
- * @param {String} val
- * @param {Boolean} escaped
- * @return {Tag} for chaining
- * @api public
- */
-
-Attrs.prototype.setAttribute = function(name, val, escaped){
-  if (name !== 'class' && this.attributeNames.indexOf(name) !== -1) {
-    throw new Error('Duplicate attribute "' + name + '" is not allowed.');
-  }
-  this.attributeNames.push(name);
-  this.attrs.push({ name: name, val: val, escaped: escaped });
-  return this;
-};
-
-/**
- * Remove attribute `name` when present.
- *
- * @param {String} name
- * @api public
- */
-
-Attrs.prototype.removeAttribute = function(name){
-  var err = new Error('attrs.removeAttribute is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  for (var i = 0, len = this.attrs.length; i < len; ++i) {
-    if (this.attrs[i] && this.attrs[i].name == name) {
-      delete this.attrs[i];
-    }
-  }
-};
-
-/**
- * Get attribute value by `name`.
- *
- * @param {String} name
- * @return {String}
- * @api public
- */
-
-Attrs.prototype.getAttribute = function(name){
-  var err = new Error('attrs.getAttribute is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  for (var i = 0, len = this.attrs.length; i < len; ++i) {
-    if (this.attrs[i] && this.attrs[i].name == name) {
-      return this.attrs[i].val;
-    }
-  }
-};
-
-Attrs.prototype.addAttributes = function (src) {
-  this.attributeBlocks.push(src);
-};
-
-},{"./node":45}],33:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `BlockComment` with the given `block`.
- *
- * @param {String} val
- * @param {Block} block
- * @param {Boolean} buffer
- * @api public
- */
-
-var BlockComment = module.exports = function BlockComment(val, block, buffer) {
-  this.block = block;
-  this.val = val;
-  this.buffer = buffer;
-};
-
-// Inherit from `Node`.
-BlockComment.prototype = Object.create(Node.prototype);
-BlockComment.prototype.constructor = BlockComment;
-
-BlockComment.prototype.type = 'BlockComment';
-
-},{"./node":45}],34:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Block` with an optional `node`.
- *
- * @param {Node} node
- * @api public
- */
-
-var Block = module.exports = function Block(node){
-  this.nodes = [];
-  if (node) this.push(node);
-};
-
-// Inherit from `Node`.
-Block.prototype = Object.create(Node.prototype);
-Block.prototype.constructor = Block;
-
-Block.prototype.type = 'Block';
-
-/**
- * Block flag.
- */
-
-Block.prototype.isBlock = true;
-
-/**
- * Replace the nodes in `other` with the nodes
- * in `this` block.
- *
- * @param {Block} other
- * @api private
- */
-
-Block.prototype.replace = function(other){
-  var err = new Error('block.replace is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  other.nodes = this.nodes;
-};
-
-/**
- * Push the given `node`.
- *
- * @param {Node} node
- * @return {Number}
- * @api public
- */
-
-Block.prototype.push = function(node){
-  return this.nodes.push(node);
-};
-
-/**
- * Check if this block is empty.
- *
- * @return {Boolean}
- * @api public
- */
-
-Block.prototype.isEmpty = function(){
-  return 0 == this.nodes.length;
-};
-
-/**
- * Unshift the given `node`.
- *
- * @param {Node} node
- * @return {Number}
- * @api public
- */
-
-Block.prototype.unshift = function(node){
-  return this.nodes.unshift(node);
-};
-
-/**
- * Return the "last" block, or the first `yield` node.
- *
- * @return {Block}
- * @api private
- */
-
-Block.prototype.includeBlock = function(){
-  var ret = this
-    , node;
-
-  for (var i = 0, len = this.nodes.length; i < len; ++i) {
-    node = this.nodes[i];
-    if (node.yield) return node;
-    else if (node.textOnly) continue;
-    else if (node.includeBlock) ret = node.includeBlock();
-    else if (node.block && !node.block.isEmpty()) ret = node.block.includeBlock();
-    if (ret.yield) return ret;
-  }
-
-  return ret;
-};
-
-/**
- * Return a clone of this block.
- *
- * @return {Block}
- * @api private
- */
-
-Block.prototype.clone = function(){
-  var err = new Error('block.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  var clone = new Block;
-  for (var i = 0, len = this.nodes.length; i < len; ++i) {
-    clone.push(this.nodes[i].clone());
-  }
-  return clone;
-};
-
-},{"./node":45}],35:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Case` with `expr`.
- *
- * @param {String} expr
- * @api public
- */
-
-var Case = exports = module.exports = function Case(expr, block){
-  this.expr = expr;
-  this.block = block;
-};
-
-// Inherit from `Node`.
-Case.prototype = Object.create(Node.prototype);
-Case.prototype.constructor = Case;
-
-Case.prototype.type = 'Case';
-
-var When = exports.When = function When(expr, block){
-  this.expr = expr;
-  this.block = block;
-  this.debug = false;
-};
-
-// Inherit from `Node`.
-When.prototype = Object.create(Node.prototype);
-When.prototype.constructor = When;
-
-When.prototype.type = 'When';
-
-},{"./node":45}],36:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Code` node with the given code `val`.
- * Code may also be optionally buffered and escaped.
- *
- * @param {String} val
- * @param {Boolean} buffer
- * @param {Boolean} escape
- * @api public
- */
-
-var Code = module.exports = function Code(val, buffer, escape) {
-  this.val = val;
-  this.buffer = buffer;
-  this.escape = escape;
-  if (val.match(/^ *else/)) this.debug = false;
-};
-
-// Inherit from `Node`.
-Code.prototype = Object.create(Node.prototype);
-Code.prototype.constructor = Code;
-
-Code.prototype.type = 'Code'; // prevent the minifiers removing this
-},{"./node":45}],37:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Comment` with the given `val`, optionally `buffer`,
- * otherwise the comment may render in the output.
- *
- * @param {String} val
- * @param {Boolean} buffer
- * @api public
- */
-
-var Comment = module.exports = function Comment(val, buffer) {
-  this.val = val;
-  this.buffer = buffer;
-};
-
-// Inherit from `Node`.
-Comment.prototype = Object.create(Node.prototype);
-Comment.prototype.constructor = Comment;
-
-Comment.prototype.type = 'Comment';
-
-},{"./node":45}],38:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Doctype` with the given `val`. 
- *
- * @param {String} val
- * @api public
- */
-
-var Doctype = module.exports = function Doctype(val) {
-  this.val = val;
-};
-
-// Inherit from `Node`.
-Doctype.prototype = Object.create(Node.prototype);
-Doctype.prototype.constructor = Doctype;
-
-Doctype.prototype.type = 'Doctype';
-
-},{"./node":45}],39:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize an `Each` node, representing iteration
- *
- * @param {String} obj
- * @param {String} val
- * @param {String} key
- * @param {Block} block
- * @api public
- */
-
-var Each = module.exports = function Each(obj, val, key, block) {
-  this.obj = obj;
-  this.val = val;
-  this.key = key;
-  this.block = block;
-};
-
-// Inherit from `Node`.
-Each.prototype = Object.create(Node.prototype);
-Each.prototype.constructor = Each;
-
-Each.prototype.type = 'Each';
-
-},{"./node":45}],40:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Filter` node with the given
- * filter `name` and `block`.
- *
- * @param {String} name
- * @param {Block|Node} block
- * @api public
- */
-
-var Filter = module.exports = function Filter(name, block, attrs) {
-  this.name = name;
-  this.block = block;
-  this.attrs = attrs;
-};
-
-// Inherit from `Node`.
-Filter.prototype = Object.create(Node.prototype);
-Filter.prototype.constructor = Filter;
-
-Filter.prototype.type = 'Filter';
-
-},{"./node":45}],41:[function(require,module,exports){
-'use strict';
-
-exports.Node = require('./node');
-exports.Tag = require('./tag');
-exports.Code = require('./code');
-exports.Each = require('./each');
-exports.Case = require('./case');
-exports.Text = require('./text');
-exports.Block = require('./block');
-exports.MixinBlock = require('./mixin-block');
-exports.Mixin = require('./mixin');
-exports.Filter = require('./filter');
-exports.Comment = require('./comment');
-exports.Literal = require('./literal');
-exports.BlockComment = require('./block-comment');
-exports.Doctype = require('./doctype');
-
-},{"./block":34,"./block-comment":33,"./case":35,"./code":36,"./comment":37,"./doctype":38,"./each":39,"./filter":40,"./literal":42,"./mixin":44,"./mixin-block":43,"./node":45,"./tag":46,"./text":47}],42:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Literal` node with the given `str.
- *
- * @param {String} str
- * @api public
- */
-
-var Literal = module.exports = function Literal(str) {
-  this.str = str;
-};
-
-// Inherit from `Node`.
-Literal.prototype = Object.create(Node.prototype);
-Literal.prototype.constructor = Literal;
-
-Literal.prototype.type = 'Literal';
-
-},{"./node":45}],43:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Block` with an optional `node`.
- *
- * @param {Node} node
- * @api public
- */
-
-var MixinBlock = module.exports = function MixinBlock(){};
-
-// Inherit from `Node`.
-MixinBlock.prototype = Object.create(Node.prototype);
-MixinBlock.prototype.constructor = MixinBlock;
-
-MixinBlock.prototype.type = 'MixinBlock';
-
-},{"./node":45}],44:[function(require,module,exports){
-'use strict';
-
-var Attrs = require('./attrs');
-
-/**
- * Initialize a new `Mixin` with `name` and `block`.
- *
- * @param {String} name
- * @param {String} args
- * @param {Block} block
- * @api public
- */
-
-var Mixin = module.exports = function Mixin(name, args, block, call){
-  Attrs.call(this);
-  this.name = name;
-  this.args = args;
-  this.block = block;
-  this.call = call;
-};
-
-// Inherit from `Attrs`.
-Mixin.prototype = Object.create(Attrs.prototype);
-Mixin.prototype.constructor = Mixin;
-
-Mixin.prototype.type = 'Mixin';
-
-},{"./attrs":32}],45:[function(require,module,exports){
-'use strict';
-
-var Node = module.exports = function Node(){};
-
-/**
- * Clone this node (return itself)
- *
- * @return {Node}
- * @api private
- */
-
-Node.prototype.clone = function(){
-  var err = new Error('node.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-  return this;
-};
-
-Node.prototype.type = '';
-
-},{}],46:[function(require,module,exports){
-'use strict';
-
-var Attrs = require('./attrs');
-var Block = require('./block');
-var inlineTags = require('../inline-tags');
-
-/**
- * Initialize a `Tag` node with the given tag `name` and optional `block`.
- *
- * @param {String} name
- * @param {Block} block
- * @api public
- */
-
-var Tag = module.exports = function Tag(name, block) {
-  Attrs.call(this);
-  this.name = name;
-  this.block = block || new Block;
-};
-
-// Inherit from `Attrs`.
-Tag.prototype = Object.create(Attrs.prototype);
-Tag.prototype.constructor = Tag;
-
-Tag.prototype.type = 'Tag';
-
-/**
- * Clone this tag.
- *
- * @return {Tag}
- * @api private
- */
-
-Tag.prototype.clone = function(){
-  var err = new Error('tag.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  var clone = new Tag(this.name, this.block.clone());
-  clone.line = this.line;
-  clone.attrs = this.attrs;
-  clone.textOnly = this.textOnly;
-  return clone;
-};
-
-/**
- * Check if this tag is an inline tag.
- *
- * @return {Boolean}
- * @api private
- */
-
-Tag.prototype.isInline = function(){
-  return ~inlineTags.indexOf(this.name);
-};
-
-/**
- * Check if this tag's contents can be inlined.  Used for pretty printing.
- *
- * @return {Boolean}
- * @api private
- */
-
-Tag.prototype.canInline = function(){
-  var nodes = this.block.nodes;
-
-  function isInline(node){
-    // Recurse if the node is a block
-    if (node.isBlock) return node.nodes.every(isInline);
-    return node.isText || (node.isInline && node.isInline());
-  }
-
-  // Empty tag
-  if (!nodes.length) return true;
-
-  // Text-only or inline-only tag
-  if (1 == nodes.length) return isInline(nodes[0]);
-
-  // Multi-line inline-only tag
-  if (this.block.nodes.every(isInline)) {
-    for (var i = 1, len = nodes.length; i < len; ++i) {
-      if (nodes[i-1].isText && nodes[i].isText)
-        return false;
-    }
-    return true;
-  }
-
-  // Mixed tag
-  return false;
-};
-
-},{"../inline-tags":30,"./attrs":32,"./block":34}],47:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Text` node with optional `line`.
- *
- * @param {String} line
- * @api public
- */
-
-var Text = module.exports = function Text(line) {
-  this.val = line;
-};
-
-// Inherit from `Node`.
-Text.prototype = Object.create(Node.prototype);
-Text.prototype.constructor = Text;
-
-Text.prototype.type = 'Text';
-
-/**
- * Flag as text.
- */
-
-Text.prototype.isText = true;
-},{"./node":45}],48:[function(require,module,exports){
-'use strict';
-
-var Lexer = require('./lexer');
-var nodes = require('./nodes');
-var utils = require('./utils');
-var filters = require('./filters');
-var path = require('path');
-var constantinople = require('constantinople');
-var parseJSExpression = require('character-parser').parseMax;
-var extname = path.extname;
-
-/**
- * Initialize `Parser` with the given input `str` and `filename`.
- *
- * @param {String} str
- * @param {String} filename
- * @param {Object} options
- * @api public
- */
-
-var Parser = exports = module.exports = function Parser(str, filename, options){
-  //Strip any UTF-8 BOM off of the start of `str`, if it exists.
-  this.input = str.replace(/^\uFEFF/, '');
-  this.lexer = new Lexer(this.input, filename);
-  this.filename = filename;
-  this.blocks = {};
-  this.mixins = {};
-  this.options = options;
-  this.contexts = [this];
-  this.inMixin = 0;
-  this.dependencies = [];
-  this.inBlock = 0;
-};
-
-/**
- * Parser prototype.
- */
-
-Parser.prototype = {
-
-  /**
-   * Save original constructor
-   */
-
-  constructor: Parser,
-
-  /**
-   * Push `parser` onto the context stack,
-   * or pop and return a `Parser`.
-   */
-
-  context: function(parser){
-    if (parser) {
-      this.contexts.push(parser);
-    } else {
-      return this.contexts.pop();
-    }
-  },
-
-  /**
-   * Return the next token object.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  advance: function(){
-    return this.lexer.advance();
-  },
-
-  /**
-   * Single token lookahead.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  peek: function() {
-    return this.lookahead(1);
-  },
-
-  /**
-   * Return lexer lineno.
-   *
-   * @return {Number}
-   * @api private
-   */
-
-  line: function() {
-    return this.lexer.lineno;
-  },
-
-  /**
-   * `n` token lookahead.
-   *
-   * @param {Number} n
-   * @return {Object}
-   * @api private
-   */
-
-  lookahead: function(n){
-    return this.lexer.lookahead(n);
-  },
-
-  /**
-   * Parse input returning a string of js for evaluation.
-   *
-   * @return {String}
-   * @api public
-   */
-
-  parse: function(){
-    var block = new nodes.Block, parser;
-    block.line = 0;
-    block.filename = this.filename;
-
-    while ('eos' != this.peek().type) {
-      if ('newline' == this.peek().type) {
-        this.advance();
-      } else {
-        var next = this.peek();
-        var expr = this.parseExpr();
-        expr.filename = expr.filename || this.filename;
-        expr.line = next.line;
-        block.push(expr);
-      }
-    }
-
-    if (parser = this.extending) {
-      this.context(parser);
-      var ast = parser.parse();
-      this.context();
-
-      // hoist mixins
-      for (var name in this.mixins)
-        ast.unshift(this.mixins[name]);
-      return ast;
-    }
-
-    if (!this.extending && !this.included && Object.keys(this.blocks).length){
-      var blocks = [];
-      utils.walkAST(block, function (node) {
-        if (node.type === 'Block' && node.name) {
-          blocks.push(node.name);
-        }
-      });
-      Object.keys(this.blocks).forEach(function (name) {
-        if (blocks.indexOf(name) === -1 && !this.blocks[name].isSubBlock) {
-          console.warn('Warning: Unexpected block "'
-                       + name
-                       + '" '
-                       + ' on line '
-                       + this.blocks[name].line
-                       + ' of '
-                       + (this.blocks[name].filename)
-                       + '. This block is never used. This warning will be an error in v2.0.0');
-        }
-      }.bind(this));
-    }
-
-    return block;
-  },
-
-  /**
-   * Expect the given type, or throw an exception.
-   *
-   * @param {String} type
-   * @api private
-   */
-
-  expect: function(type){
-    if (this.peek().type === type) {
-      return this.advance();
-    } else {
-      throw new Error('expected "' + type + '", but got "' + this.peek().type + '"');
-    }
-  },
-
-  /**
-   * Accept the given `type`.
-   *
-   * @param {String} type
-   * @api private
-   */
-
-  accept: function(type){
-    if (this.peek().type === type) {
-      return this.advance();
-    }
-  },
-
-  /**
-   *   tag
-   * | doctype
-   * | mixin
-   * | include
-   * | filter
-   * | comment
-   * | text
-   * | each
-   * | code
-   * | yield
-   * | id
-   * | class
-   * | interpolation
-   */
-
-  parseExpr: function(){
-    switch (this.peek().type) {
-      case 'tag':
-        return this.parseTag();
-      case 'mixin':
-        return this.parseMixin();
-      case 'block':
-        return this.parseBlock();
-      case 'mixin-block':
-        return this.parseMixinBlock();
-      case 'case':
-        return this.parseCase();
-      case 'extends':
-        return this.parseExtends();
-      case 'include':
-        return this.parseInclude();
-      case 'doctype':
-        return this.parseDoctype();
-      case 'filter':
-        return this.parseFilter();
-      case 'comment':
-        return this.parseComment();
-      case 'text':
-        return this.parseText();
-      case 'each':
-        return this.parseEach();
-      case 'code':
-        return this.parseCode();
-      case 'blockCode':
-        return this.parseBlockCode();
-      case 'call':
-        return this.parseCall();
-      case 'interpolation':
-        return this.parseInterpolation();
-      case 'yield':
-        this.advance();
-        var block = new nodes.Block;
-        block.yield = true;
-        return block;
-      case 'id':
-      case 'class':
-        var tok = this.advance();
-        this.lexer.defer(this.lexer.tok('tag', 'div'));
-        this.lexer.defer(tok);
-        return this.parseExpr();
-      default:
-        throw new Error('unexpected token "' + this.peek().type + '"');
-    }
-  },
-
-  /**
-   * Text
-   */
-
-  parseText: function(){
-    var tok = this.expect('text');
-    var tokens = this.parseInlineTagsInText(tok.val);
-    if (tokens.length === 1) return tokens[0];
-    var node = new nodes.Block;
-    for (var i = 0; i < tokens.length; i++) {
-      node.push(tokens[i]);
-    };
-    return node;
-  },
-
-  /**
-   *   ':' expr
-   * | block
-   */
-
-  parseBlockExpansion: function(){
-    if (':' == this.peek().type) {
-      this.advance();
-      return new nodes.Block(this.parseExpr());
-    } else {
-      return this.block();
-    }
-  },
-
-  /**
-   * case
-   */
-
-  parseCase: function(){
-    var val = this.expect('case').val;
-    var node = new nodes.Case(val);
-    node.line = this.line();
-
-    var block = new nodes.Block;
-    block.line = this.line();
-    block.filename = this.filename;
-    this.expect('indent');
-    while ('outdent' != this.peek().type) {
-      switch (this.peek().type) {
-        case 'comment':
-        case 'newline':
-          this.advance();
-          break;
-        case 'when':
-          block.push(this.parseWhen());
-          break;
-        case 'default':
-          block.push(this.parseDefault());
-          break;
-        default:
-          throw new Error('Unexpected token "' + this.peek().type
-                          + '", expected "when", "default" or "newline"');
-      }
-    }
-    this.expect('outdent');
-
-    node.block = block;
-
-    return node;
-  },
-
-  /**
-   * when
-   */
-
-  parseWhen: function(){
-    var val = this.expect('when').val;
-    if (this.peek().type !== 'newline')
-      return new nodes.Case.When(val, this.parseBlockExpansion());
-    else
-      return new nodes.Case.When(val);
-  },
-
-  /**
-   * default
-   */
-
-  parseDefault: function(){
-    this.expect('default');
-    return new nodes.Case.When('default', this.parseBlockExpansion());
-  },
-
-  /**
-   * code
-   */
-
-  parseCode: function(afterIf){
-    var tok = this.expect('code');
-    var node = new nodes.Code(tok.val, tok.buffer, tok.escape);
-    var block;
-    node.line = this.line();
-
-    // throw an error if an else does not have an if
-    if (tok.isElse && !tok.hasIf) {
-      throw new Error('Unexpected else without if');
-    }
-
-    // handle block
-    block = 'indent' == this.peek().type;
-    if (block) {
-      node.block = this.block();
-    }
-
-    // handle missing block
-    if (tok.requiresBlock && !block) {
-      node.block = new nodes.Block();
-    }
-
-    // mark presense of if for future elses
-    if (tok.isIf && this.peek().isElse) {
-      this.peek().hasIf = true;
-    } else if (tok.isIf && this.peek().type === 'newline' && this.lookahead(2).isElse) {
-      this.lookahead(2).hasIf = true;
-    }
-
-    return node;
-  },
-
-  /**
-   * block code
-   */
-
-  parseBlockCode: function(){
-    var tok = this.expect('blockCode');
-    var node;
-    var body = this.peek();
-    var text;
-    if (body.type === 'pipeless-text') {
-      this.advance();
-      text = body.val.join('\n');
-    } else {
-      text = '';
-    }
-      node = new nodes.Code(text, false, false);
-      return node;
-  },
-
-  /**
-   * comment
-   */
-
-  parseComment: function(){
-    var tok = this.expect('comment');
-    var node;
-
-    var block;
-    if (block = this.parseTextBlock()) {
-      node = new nodes.BlockComment(tok.val, block, tok.buffer);
-    } else {
-      node = new nodes.Comment(tok.val, tok.buffer);
-    }
-
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * doctype
-   */
-
-  parseDoctype: function(){
-    var tok = this.expect('doctype');
-    var node = new nodes.Doctype(tok.val);
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * filter attrs? text-block
-   */
-
-  parseFilter: function(){
-    var tok = this.expect('filter');
-    var attrs = this.accept('attrs');
-    var block;
-
-    block = this.parseTextBlock() || new nodes.Block();
-
-    var options = {};
-    if (attrs) {
-      attrs.attrs.forEach(function (attribute) {
-        options[attribute.name] = constantinople.toConstant(attribute.val);
-      });
-    }
-
-    var node = new nodes.Filter(tok.val, block, options);
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * each block
-   */
-
-  parseEach: function(){
-    var tok = this.expect('each');
-    var node = new nodes.Each(tok.code, tok.val, tok.key);
-    node.line = this.line();
-    node.block = this.block();
-    if (this.peek().type == 'code' && this.peek().val == 'else') {
-      this.advance();
-      node.alternative = this.block();
-    }
-    return node;
-  },
-
-  /**
-   * Resolves a path relative to the template for use in
-   * includes and extends
-   *
-   * @param {String}  path
-   * @param {String}  purpose  Used in error messages.
-   * @return {String}
-   * @api private
-   */
-
-  resolvePath: function (path, purpose) {
-    var p = require('path');
-    var dirname = p.dirname;
-    var basename = p.basename;
-    var join = p.join;
-
-    if (path[0] !== '/' && !this.filename)
-      throw new Error('the "filename" option is required to use "' + purpose + '" with "relative" paths');
-
-    if (path[0] === '/' && !this.options.basedir)
-      throw new Error('the "basedir" option is required to use "' + purpose + '" with "absolute" paths');
-
-    path = join(path[0] === '/' ? this.options.basedir : dirname(this.filename), path);
-
-    if (basename(path).indexOf('.') === -1) path += '.jade';
-
-    return path;
-  },
-
-  /**
-   * 'extends' name
-   */
-
-  parseExtends: function(){
-    var fs = require('fs');
-
-    var path = this.resolvePath(this.expect('extends').val.trim(), 'extends');
-    if ('.jade' != path.substr(-5)) path += '.jade';
-
-    this.dependencies.push(path);
-    var str = fs.readFileSync(path, 'utf8');
-    var parser = new this.constructor(str, path, this.options);
-    parser.dependencies = this.dependencies;
-
-    parser.blocks = this.blocks;
-    parser.included = this.included;
-    parser.contexts = this.contexts;
-    this.extending = parser;
-
-    // TODO: null node
-    return new nodes.Literal('');
-  },
-
-  /**
-   * 'block' name block
-   */
-
-  parseBlock: function(){
-    var block = this.expect('block');
-    var mode = block.mode;
-    var name = block.val.trim();
-
-    var line = block.line;
-
-    this.inBlock++;
-    block = 'indent' == this.peek().type
-      ? this.block()
-      : new nodes.Block(new nodes.Literal(''));
-    this.inBlock--;
-    block.name = name;
-    block.line = line;
-
-    var prev = this.blocks[name] || {prepended: [], appended: []}
-    if (prev.mode === 'replace') return this.blocks[name] = prev;
-
-    var allNodes = prev.prepended.concat(block.nodes).concat(prev.appended);
-
-    switch (mode) {
-      case 'append':
-        prev.appended = prev.parser === this ?
-                        prev.appended.concat(block.nodes) :
-                        block.nodes.concat(prev.appended);
-        break;
-      case 'prepend':
-        prev.prepended = prev.parser === this ?
-                         block.nodes.concat(prev.prepended) :
-                         prev.prepended.concat(block.nodes);
-        break;
-    }
-    block.nodes = allNodes;
-    block.appended = prev.appended;
-    block.prepended = prev.prepended;
-    block.mode = mode;
-    block.parser = this;
-
-    block.isSubBlock = this.inBlock > 0;
-
-    return this.blocks[name] = block;
-  },
-
-  parseMixinBlock: function () {
-    var block = this.expect('mixin-block');
-    if (!this.inMixin) {
-      throw new Error('Anonymous blocks are not allowed unless they are part of a mixin.');
-    }
-    return new nodes.MixinBlock();
-  },
-
-  /**
-   * include block?
-   */
-
-  parseInclude: function(){
-    var fs = require('fs');
-    var tok = this.expect('include');
-
-    var path = this.resolvePath(tok.val.trim(), 'include');
-    this.dependencies.push(path);
-    // has-filter
-    if (tok.filter) {
-      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
-      var options = {filename: path};
-      if (tok.attrs) {
-        tok.attrs.attrs.forEach(function (attribute) {
-          options[attribute.name] = constantinople.toConstant(attribute.val);
-        });
-      }
-      str = filters(tok.filter, str, options);
-      return new nodes.Literal(str);
-    }
-
-    // non-jade
-    if ('.jade' != path.substr(-5)) {
-      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
-      return new nodes.Literal(str);
-    }
-
-    var str = fs.readFileSync(path, 'utf8');
-    var parser = new this.constructor(str, path, this.options);
-    parser.dependencies = this.dependencies;
-
-    parser.blocks = utils.merge({}, this.blocks);
-    parser.included = true;
-
-    parser.mixins = this.mixins;
-
-    this.context(parser);
-    var ast = parser.parse();
-    this.context();
-    ast.filename = path;
-
-    if ('indent' == this.peek().type) {
-      ast.includeBlock().push(this.block());
-    }
-
-    return ast;
-  },
-
-  /**
-   * call ident block
-   */
-
-  parseCall: function(){
-    var tok = this.expect('call');
-    var name = tok.val;
-    var args = tok.args;
-    var mixin = new nodes.Mixin(name, args, new nodes.Block, true);
-
-    this.tag(mixin);
-    if (mixin.code) {
-      mixin.block.push(mixin.code);
-      mixin.code = null;
-    }
-    if (mixin.block.isEmpty()) mixin.block = null;
-    return mixin;
-  },
-
-  /**
-   * mixin block
-   */
-
-  parseMixin: function(){
-    var tok = this.expect('mixin');
-    var name = tok.val;
-    var args = tok.args;
-    var mixin;
-
-    // definition
-    if ('indent' == this.peek().type) {
-      this.inMixin++;
-      mixin = new nodes.Mixin(name, args, this.block(), false);
-      this.mixins[name] = mixin;
-      this.inMixin--;
-      return mixin;
-    // call
-    } else {
-      return new nodes.Mixin(name, args, null, true);
-    }
-  },
-
-  parseInlineTagsInText: function (str) {
-    var line = this.line();
-
-    var match = /(\\)?#\[((?:.|\n)*)$/.exec(str);
-    if (match) {
-      if (match[1]) { // escape
-        var text = new nodes.Text(str.substr(0, match.index) + '#[');
-        text.line = line;
-        var rest = this.parseInlineTagsInText(match[2]);
-        if (rest[0].type === 'Text') {
-          text.val += rest[0].val;
-          rest.shift();
-        }
-        return [text].concat(rest);
-      } else {
-        var text = new nodes.Text(str.substr(0, match.index));
-        text.line = line;
-        var buffer = [text];
-        var rest = match[2];
-        var range = parseJSExpression(rest);
-        var inner = new Parser(range.src, this.filename, this.options);
-        buffer.push(inner.parse());
-        return buffer.concat(this.parseInlineTagsInText(rest.substr(range.end + 1)));
-      }
-    } else {
-      var text = new nodes.Text(str);
-      text.line = line;
-      return [text];
-    }
-  },
-
-  /**
-   * indent (text | newline)* outdent
-   */
-
-  parseTextBlock: function(){
-    var block = new nodes.Block;
-    block.line = this.line();
-    var body = this.peek();
-    if (body.type !== 'pipeless-text') return;
-    this.advance();
-    block.nodes = body.val.reduce(function (accumulator, text) {
-      return accumulator.concat(this.parseInlineTagsInText(text));
-    }.bind(this), []);
-    return block;
-  },
-
-  /**
-   * indent expr* outdent
-   */
-
-  block: function(){
-    var block = new nodes.Block;
-    block.line = this.line();
-    block.filename = this.filename;
-    this.expect('indent');
-    while ('outdent' != this.peek().type) {
-      if ('newline' == this.peek().type) {
-        this.advance();
-      } else {
-        var expr = this.parseExpr();
-        expr.filename = this.filename;
-        block.push(expr);
-      }
-    }
-    this.expect('outdent');
-    return block;
-  },
-
-  /**
-   * interpolation (attrs | class | id)* (text | code | ':')? newline* block?
-   */
-
-  parseInterpolation: function(){
-    var tok = this.advance();
-    var tag = new nodes.Tag(tok.val);
-    tag.buffer = true;
-    return this.tag(tag);
-  },
-
-  /**
-   * tag (attrs | class | id)* (text | code | ':')? newline* block?
-   */
-
-  parseTag: function(){
-    var tok = this.advance();
-    var tag = new nodes.Tag(tok.val);
-
-    tag.selfClosing = tok.selfClosing;
-
-    return this.tag(tag);
-  },
-
-  /**
-   * Parse tag.
-   */
-
-  tag: function(tag){
-    tag.line = this.line();
-
-    var seenAttrs = false;
-    // (attrs | class | id)*
-    out:
-      while (true) {
-        switch (this.peek().type) {
-          case 'id':
-          case 'class':
-            var tok = this.advance();
-            tag.setAttribute(tok.type, "'" + tok.val + "'");
-            continue;
-          case 'attrs':
-            if (seenAttrs) {
-              console.warn(this.filename + ', line ' + this.peek().line + ':\nYou should not have jade tags with multiple attributes.');
-            }
-            seenAttrs = true;
-            var tok = this.advance();
-            var attrs = tok.attrs;
-
-            if (tok.selfClosing) tag.selfClosing = true;
-
-            for (var i = 0; i < attrs.length; i++) {
-              tag.setAttribute(attrs[i].name, attrs[i].val, attrs[i].escaped);
-            }
-            continue;
-          case '&attributes':
-            var tok = this.advance();
-            tag.addAttributes(tok.val);
-            break;
-          default:
-            break out;
-        }
-      }
-
-    // check immediate '.'
-    if ('dot' == this.peek().type) {
-      tag.textOnly = true;
-      this.advance();
-    }
-
-    // (text | code | ':')?
-    switch (this.peek().type) {
-      case 'text':
-        tag.block.push(this.parseText());
-        break;
-      case 'code':
-        tag.code = this.parseCode();
-        break;
-      case ':':
-        this.advance();
-        tag.block = new nodes.Block;
-        tag.block.push(this.parseExpr());
-        break;
-      case 'newline':
-      case 'indent':
-      case 'outdent':
-      case 'eos':
-      case 'pipeless-text':
-        break;
-      default:
-        throw new Error('Unexpected token `' + this.peek().type + '` expected `text`, `code`, `:`, `newline` or `eos`')
-    }
-
-    // newline*
-    while ('newline' == this.peek().type) this.advance();
-
-    // block?
-    if (tag.textOnly) {
-      tag.block = this.parseTextBlock() || new nodes.Block();
-    } else if ('indent' == this.peek().type) {
-      var block = this.block();
-      for (var i = 0, len = block.nodes.length; i < len; ++i) {
-        tag.block.push(block.nodes[i]);
-      }
-    }
-
-    return tag;
-  }
-};
-
-},{"./filters":28,"./lexer":31,"./nodes":41,"./utils":50,"character-parser":18,"constantinople":19,"fs":15,"path":51}],49:[function(require,module,exports){
-'use strict';
-
-/**
- * Merge two attribute objects giving precedence
- * to values in object `b`. Classes are special-cased
- * allowing for arrays and merging/joining appropriately
- * resulting in a string.
- *
- * @param {Object} a
- * @param {Object} b
- * @return {Object} a
- * @api private
- */
-
-exports.merge = function merge(a, b) {
-  if (arguments.length === 1) {
-    var attrs = a[0];
-    for (var i = 1; i < a.length; i++) {
-      attrs = merge(attrs, a[i]);
-    }
-    return attrs;
-  }
-  var ac = a['class'];
-  var bc = b['class'];
-
-  if (ac || bc) {
-    ac = ac || [];
-    bc = bc || [];
-    if (!Array.isArray(ac)) ac = [ac];
-    if (!Array.isArray(bc)) bc = [bc];
-    a['class'] = ac.concat(bc).filter(nulls);
-  }
-
-  for (var key in b) {
-    if (key != 'class') {
-      a[key] = b[key];
-    }
-  }
-
-  return a;
-};
-
-/**
- * Filter null `val`s.
- *
- * @param {*} val
- * @return {Boolean}
- * @api private
- */
-
-function nulls(val) {
-  return val != null && val !== '';
-}
-
-/**
- * join array as classes.
- *
- * @param {*} val
- * @return {String}
- */
-exports.joinClasses = joinClasses;
-function joinClasses(val) {
-  return (Array.isArray(val) ? val.map(joinClasses) :
-    (val && typeof val === 'object') ? Object.keys(val).filter(function (key) { return val[key]; }) :
-    [val]).filter(nulls).join(' ');
-}
-
-/**
- * Render the given classes.
- *
- * @param {Array} classes
- * @param {Array.<Boolean>} escaped
- * @return {String}
- */
-exports.cls = function cls(classes, escaped) {
-  var buf = [];
-  for (var i = 0; i < classes.length; i++) {
-    if (escaped && escaped[i]) {
-      buf.push(exports.escape(joinClasses([classes[i]])));
-    } else {
-      buf.push(joinClasses(classes[i]));
-    }
-  }
-  var text = joinClasses(buf);
-  if (text.length) {
-    return ' class="' + text + '"';
-  } else {
-    return '';
-  }
-};
-
-
-exports.style = function (val) {
-  if (val && typeof val === 'object') {
-    return Object.keys(val).map(function (style) {
-      return style + ':' + val[style];
-    }).join(';');
-  } else {
-    return val;
-  }
-};
-/**
- * Render the given attribute.
- *
- * @param {String} key
- * @param {String} val
- * @param {Boolean} escaped
- * @param {Boolean} terse
- * @return {String}
- */
-exports.attr = function attr(key, val, escaped, terse) {
-  if (key === 'style') {
-    val = exports.style(val);
-  }
-  if ('boolean' == typeof val || null == val) {
-    if (val) {
-      return ' ' + (terse ? key : key + '="' + key + '"');
-    } else {
-      return '';
-    }
-  } else if (0 == key.indexOf('data') && 'string' != typeof val) {
-    if (JSON.stringify(val).indexOf('&') !== -1) {
-      console.warn('Since Jade 2.0.0, ampersands (`&`) in data attributes ' +
-                   'will be escaped to `&amp;`');
-    };
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will eliminate the double quotes around dates in ' +
-                   'ISO form after 2.0.0');
-    }
-    return ' ' + key + "='" + JSON.stringify(val).replace(/'/g, '&apos;') + "'";
-  } else if (escaped) {
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will stringify dates in ISO form after 2.0.0');
-    }
-    return ' ' + key + '="' + exports.escape(val) + '"';
-  } else {
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will stringify dates in ISO form after 2.0.0');
-    }
-    return ' ' + key + '="' + val + '"';
-  }
-};
-
-/**
- * Render the given attributes object.
- *
- * @param {Object} obj
- * @param {Object} escaped
- * @return {String}
- */
-exports.attrs = function attrs(obj, terse){
-  var buf = [];
-
-  var keys = Object.keys(obj);
-
-  if (keys.length) {
-    for (var i = 0; i < keys.length; ++i) {
-      var key = keys[i]
-        , val = obj[key];
-
-      if ('class' == key) {
-        if (val = joinClasses(val)) {
-          buf.push(' ' + key + '="' + val + '"');
-        }
-      } else {
-        buf.push(exports.attr(key, val, false, terse));
-      }
-    }
-  }
-
-  return buf.join('');
-};
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-var jade_encode_html_rules = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;'
-};
-var jade_match_html = /[&<>"]/g;
-
-function jade_encode_char(c) {
-  return jade_encode_html_rules[c] || c;
-}
-
-exports.escape = jade_escape;
-function jade_escape(html){
-  var result = String(html).replace(jade_match_html, jade_encode_char);
-  if (result === '' + html) return html;
-  else return result;
-};
-
-/**
- * Re-throw the given `err` in context to the
- * the jade in `filename` at the given `lineno`.
- *
- * @param {Error} err
- * @param {String} filename
- * @param {String} lineno
- * @api private
- */
-
-exports.rethrow = function rethrow(err, filename, lineno, str){
-  if (!(err instanceof Error)) throw err;
-  if ((typeof window != 'undefined' || !filename) && !str) {
-    err.message += ' on line ' + lineno;
-    throw err;
-  }
-  try {
-    str = str || require('fs').readFileSync(filename, 'utf8')
-  } catch (ex) {
-    rethrow(err, null, lineno)
-  }
-  var context = 3
-    , lines = str.split('\n')
-    , start = Math.max(lineno - context, 0)
-    , end = Math.min(lines.length, lineno + context);
-
-  // Error context
-  var context = lines.slice(start, end).map(function(line, i){
-    var curr = i + start + 1;
-    return (curr == lineno ? '  > ' : '    ')
-      + curr
-      + '| '
-      + line;
-  }).join('\n');
-
-  // Alter exception message
-  err.path = filename;
-  err.message = (filename || 'Jade') + ':' + lineno
-    + '\n' + context + '\n\n' + err.message;
-  throw err;
-};
-
-exports.DebugItem = function DebugItem(lineno, filename) {
-  this.lineno = lineno;
-  this.filename = filename;
-}
-
-},{"fs":15}],50:[function(require,module,exports){
-'use strict';
-
-/**
- * Merge `b` into `a`.
- *
- * @param {Object} a
- * @param {Object} b
- * @return {Object}
- * @api public
- */
-
-exports.merge = function(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-};
-
-exports.stringify = function(str) {
-  return JSON.stringify(str)
-             .replace(/\u2028/g, '\\u2028')
-             .replace(/\u2029/g, '\\u2029');
-};
-
-exports.walkAST = function walkAST(ast, before, after) {
-  before && before(ast);
-  switch (ast.type) {
-    case 'Block':
-      ast.nodes.forEach(function (node) {
-        walkAST(node, before, after);
-      });
-      break;
-    case 'Case':
-    case 'Each':
-    case 'Mixin':
-    case 'Tag':
-    case 'When':
-    case 'Code':
-      ast.block && walkAST(ast.block, before, after);
-      break;
-    case 'Attrs':
-    case 'BlockComment':
-    case 'Comment':
-    case 'Doctype':
-    case 'Filter':
-    case 'Literal':
-    case 'MixinBlock':
-    case 'Text':
-      break;
-    default:
-      throw new Error('Unexpected node type ' + ast.type);
-      break;
-  }
-  after && after(ast);
-};
-
-},{}],51:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require("rH1JPG"))
-},{"rH1JPG":52}],52:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],53:[function(require,module,exports){
-/**
- * This file automatically generated from `pre-publish.js`.
- * Do not manually edit.
- */
-
-module.exports = {
-  "area": true,
-  "base": true,
-  "br": true,
-  "col": true,
-  "embed": true,
-  "hr": true,
-  "img": true,
-  "input": true,
-  "keygen": true,
-  "link": true,
-  "menuitem": true,
-  "meta": true,
-  "param": true,
-  "source": true,
-  "track": true,
-  "wbr": true
-};
-
-},{}],54:[function(require,module,exports){
-'use strict';
-
-var detect = require('acorn-globals');
-var acorn = require('acorn');
-var walk = require('acorn/dist/walk');
-
-// polyfill for https://github.com/marijnh/acorn/pull/231
-walk.base.ExportNamedDeclaration = walk.base.ExportDefaultDeclaration = function (node, st, c) {
-  return c(node.declaration, st);
-};
-walk.base.ImportDefaultSpecifier = walk.base.ImportNamespaceSpecifier = function () {};
-
-// hacky fix for https://github.com/marijnh/acorn/issues/227
-function reallyParse(source) {
-  try {
-    return acorn.parse(source, {
-      ecmaVersion: 5,
-      allowReturnOutsideFunction: true
-    });
-  } catch (ex) {
-    if (ex.name !== 'SyntaxError') {
-      throw ex;
-    }
-    return acorn.parse(source, {
-      ecmaVersion: 6,
-      allowReturnOutsideFunction: true
-    });
-  }
-}
-
-module.exports = addWith
-
-/**
- * Mimic `with` as far as possible but at compile time
- *
- * @param {String} obj The object part of a with expression
- * @param {String} src The body of the with expression
- * @param {Array.<String>} exclude A list of variable names to explicitly exclude
- */
-function addWith(obj, src, exclude) {
-  obj = obj + ''
-  src = src + ''
-  exclude = exclude || []
-  exclude = exclude.concat(detect(obj).map(function (global) { return global.name; }))
-  var vars = detect(src).map(function (global) { return global.name; })
-    .filter(function (v) {
-      return exclude.indexOf(v) === -1
-    })
-
-  if (vars.length === 0) return src
-
-  var declareLocal = ''
-  var local = 'locals_for_with'
-  var result = 'result_of_with'
-  if (/^[a-zA-Z0-9$_]+$/.test(obj)) {
-    local = obj
-  } else {
-    while (vars.indexOf(local) != -1 || exclude.indexOf(local) != -1) {
-      local += '_'
-    }
-    declareLocal = 'var ' + local + ' = (' + obj + ')'
-  }
-  while (vars.indexOf(result) != -1 || exclude.indexOf(result) != -1) {
-    result += '_'
-  }
-
-  var inputVars = vars.map(function (v) {
-    return JSON.stringify(v) + ' in ' + local + '?' +
-      local + '.' + v + ':' +
-      'typeof ' + v + '!=="undefined"?' + v + ':undefined'
-  })
-
-  src = '(function (' + vars.join(', ') + ') {' +
-    src +
-    '}.call(this' + inputVars.map(function (v) { return ',' + v; }).join('') + '))'
-
-  return ';' + declareLocal + ';' + unwrapReturns(src, result) + ';'
-}
-
-/**
- * Take a self calling function, and unwrap it such that return inside the function
- * results in return outside the function
- *
- * @param {String} src    Some JavaScript code representing a self-calling function
- * @param {String} result A temporary variable to store the result in
- */
-function unwrapReturns(src, result) {
-  var originalSource = src
-  var hasReturn = false
-  var ast = reallyParse(src)
-  var ref
-  src = src.split('')
-
-  // get a reference to the function that was inserted to add an inner context
-  if ((ref = ast.body).length !== 1
-   || (ref = ref[0]).type !== 'ExpressionStatement'
-   || (ref = ref.expression).type !== 'CallExpression'
-   || (ref = ref.callee).type !== 'MemberExpression' || ref.computed !== false || ref.property.name !== 'call'
-   || (ref = ref.object).type !== 'FunctionExpression')
-    throw new Error('AST does not seem to represent a self-calling function')
-  var fn = ref
-
-  walk.recursive(ast, null, {
-    Function: function (node, st, c) {
-      if (node === fn) {
-        c(node.body, st, "ScopeBody");
-      }
-    },
-    ReturnStatement: function (node) {
-      hasReturn = true
-      replace(node, 'return {value: ' + source(node.argument) + '};');
-    }
-  });
-  function source(node) {
-    return src.slice(node.start, node.end).join('')
-  }
-  function replace(node, str) {
-    for (var i = node.start; i < node.end; i++) {
-      src[i] = ''
-    }
-    src[node.start] = str
-  }
-  if (!hasReturn) return originalSource
-  else return 'var ' + result + '=' + src.join('') + ';if (' + result + ') return ' + result + '.value'
-}
-
-},{"acorn":12,"acorn-globals":9,"acorn/dist/walk":13}]},{},[4])
+},{}]},{},[4])
