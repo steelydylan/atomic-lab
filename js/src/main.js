@@ -8,6 +8,7 @@ jQuery(function($){
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
 	var compiler = require("./compiler.js");
+	var slackWidget = require("./slack-widget.js");
 	var editor = {};
 	var i18n = jQuery.i18n.browserLang();
 	var lang;
@@ -126,6 +127,7 @@ jQuery(function($){
 	        success: function(res) {
 	        	that.data.shortenedUrl = res.id;
 	        	that.update("html","css_share");
+						slackWidget();
 	        	var dialog = document.querySelector(".js-share-dialog");
 						dialog.showModal();
 	        },
