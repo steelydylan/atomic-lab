@@ -2,8 +2,8 @@ jQuery(function($){
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
-	var defrate = require("./jszip-deflate.js");
-	defrate(JSZip);
+	require("./jszip-deflate.js")(JSZip);
+	require("./jszip-inflate.js")(JSZip);
 	var defaultStyle = require("./defaultStyle.js");
 	var marked = require("./marked.js");
 	var parser = require("./templateParser.js");
@@ -85,9 +85,10 @@ jQuery(function($){
 				if(location.hash){
 					var zip = new JSZip();
 					var hash = location.hash
-			    var data = JSZip.base64.decode(hash);
-    			data = JSZip.compressions.DEFLATE.uncompress(data,{level:9});
-    			data = decodeURI(data);
+			    var strings = JSZip.base64.decode(hash);
+    			strings = JSZip.compressions.DEFLATE.uncompress(strings);
+    			strings = decodeURI(strings);
+    			console.log(strings);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -112,7 +113,7 @@ jQuery(function($){
     		hash = JSZip.base64.encode(hash);
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
-				var url = "http://localhost:3000";
+				var url = location.href;
 				location.hash = "";
 				$.ajax({
 					url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
