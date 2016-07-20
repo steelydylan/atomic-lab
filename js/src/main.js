@@ -144,6 +144,7 @@ jQuery(function($){
 	        	that.update("html","css_share");
 						slackWidget();
 	        	var dialog = document.querySelector(".js-share-dialog");
+	        	dialogPolyfill.registerDialog(dialog);
 						dialog.showModal();
 	        },
 				})
@@ -323,6 +324,7 @@ jQuery(function($){
 				this.data.cheatName = comp.name;
 				this.update("html","css_cheat");
 				var dialog = document.querySelector(".js-cheat-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeCheatDialog:function(){
@@ -331,6 +333,7 @@ jQuery(function($){
 			},
 			openDialog:function(){
 				var dialog = document.querySelector(".js-new-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeDialog:function(){
@@ -341,6 +344,7 @@ jQuery(function($){
 				this.update("html","css_about");
 				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-edit-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeEditDialog:function(){
@@ -349,6 +353,7 @@ jQuery(function($){
 			},
 			openRemoveDialog:function(){
 				var dialog = document.querySelector(".js-remove-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeRemoveDialog:function(){
@@ -357,12 +362,11 @@ jQuery(function($){
 			},
 			removeAllComponent:function(){
 				var dialog = document.querySelector(".js-remove-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				this.data.components = [];
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
-				componentHandler.upgradeDom();
-				this.saveData("atomic_lab");
-				dialog.close();
+				componentHandler.upgradeDom();g.close();
 			},
 			doneEditDialog:function(){
 				this.applyMethod("closeEditDialog");
@@ -380,6 +384,7 @@ jQuery(function($){
 			},
 			openSettingDialog:function(){
 				var dialog = document.querySelector(".js-setting-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeSettingDialog:function(){
@@ -388,6 +393,7 @@ jQuery(function($){
 			},
 			openAboutDialog:function(){
 				var dialog = document.querySelector(".js-about-dialog");
+				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
 			},
 			closeAboutDialog:function(){
