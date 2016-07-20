@@ -414,7 +414,6 @@ jQuery(function($){
 		},
 		convert:{
 			preview:function(text){
-				var once = false;
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				//previewからコメント文取得
@@ -431,20 +430,15 @@ jQuery(function($){
 						var comp = components[i];
 						if(name == comp.name){
 							flag = true;
-							//自身は一度しかinclude出来ない
-							if(this.data.id == comp.id){
-								if(!once){
-									once = true;
-								}else{
-									preview = preview.replace(comment,"");
-								}
 							//例えば、atomはmoluculeをincludeできない
-							}else if(!this.applyMethod("isGreaterThan",comp.category)){
+							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
 								preview = preview.replace(comment,"");
 								break;
 							}
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
+							//templateに自身が含まれていたら削除(無限ループ回避)
+							html = parser.removeSelf(html,this.data.name);
 							var defs = parser.getVarsFromTemplate(template);
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);

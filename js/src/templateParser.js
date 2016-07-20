@@ -68,6 +68,11 @@ var removeScript = function(text){
 	return text.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
 }
 
+var removeSelf = function(text,self){
+	var reg = new RegExp("<!-- "+self+"(.*?)-->");
+	return text.replace(reg,"");
+}
+
 
 module.exports = {
 	getComment:getComment,
@@ -78,5 +83,6 @@ module.exports = {
 	getInnerHtmlFromTemplate:getInnerHtmlFromTemplate,
 	getVarsFromTemplate:getVarsFromTemplate,
 	getRendered:getRendered,
-	removeScript:removeScript
+	removeScript:removeScript,
+	removeSelf:removeSelf
 }
