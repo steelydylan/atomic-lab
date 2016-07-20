@@ -723,6 +723,7 @@ jQuery(function($){
 						break;
 					}
 				}
+				this.removeData(["html","css","name","category"]);
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
@@ -946,6 +947,7 @@ jQuery(function($){
 		},
 		convert:{
 			preview:function(text){
+				var once = false;
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				//previewからコメント文取得
@@ -961,9 +963,17 @@ jQuery(function($){
 					for(var i = 0,n = components.length; i < n; i++){
 						var comp = components[i];
 						if(name == comp.name){
+							flag = true;
+							//自身は一度しかinclude出来ない
+							if(this.data.id == comp.id){
+								if(!once){
+									once = true;
+								}else{
+									preview = preview.replace(comment,"");
+								}
 							//例えば、atomはmoluculeをincludeできない
-							if(this.data.id != comp.id && !this.applyMethod("isGreaterThan",comp.category)){
-								//todo preview = preview.replace(comment,"");
+							}else if(!this.applyMethod("isGreaterThan",comp.category)){
+								preview = preview.replace(comment,"");
 								break;
 							}
 							var template = parser.getTemplate(comp.html);
@@ -975,6 +985,9 @@ jQuery(function($){
 							preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>"
 							break;
 						}
+					}
+					if(!flag){
+						preview = preview.replace(comment,"");
 					}
 				}
 				//todo delete
