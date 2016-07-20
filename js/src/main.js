@@ -1,4 +1,5 @@
 jQuery(function($){
+	var dialogPolyfill = require("./dialog-polyfill.js");
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
