@@ -26,6 +26,7 @@
       <script id="css_io" type="text/template">
       <nav class="mdl-navigation">
       	<!-- Place this tag where you want the button to render. -->
+      	<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
       	<a class="mdl-navigation__link" href="#" data-action="openSettingDialog">Settings</a>
         <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
         <a class="mdl-navigation__link" href="#"><label for="upload">Upload<input type="file" data-action="readSetting" class="cssLabRead" id="upload"></label></a>
@@ -34,6 +35,68 @@
       </script>
     </div>
   </header>
+  <dialog class="mdl-dialog mdl-dialog--wide js-about-dialog">
+  	<script id="css_exp" type="text/template">
+  	<!-- BEGIN lang:touch#ja -->
+  	<h4 class="mdl-dialog__title">Atomic Labとは</h4>
+  	<!-- END lang:touch#ja -->
+  	<!-- BEGIN lang:touch#en -->
+  	<h4 class="mdl-dialog__title">What is Atomic Lab?</h4>
+  	<!-- END lang:touch#en -->
+  	<div class="mdl-dialog__content">
+  		<!-- BEGIN lang:touch#ja -->
+  		<p>Atomic LabとはAtomicデザインに基づいた、コンポーネント制作環境です。<br/>それぞれのコンポーネントはそれよりも粒度の大きいものは読み込めません。</p>
+  		<!-- END lang:touch#ja -->
+  		<!-- BEGIN lang:touch#en -->
+  		<p>Atomic Lab is where you can make components based on Atomic design<br>Each component can't include ones that are bigger than itself.</p>
+  		<!-- END lang:touch#en -->
+  		<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp mdl-data-table--about">
+			  <thead>
+			    <tr>
+			      <th class="mdl-data-table__cell--non-numeric">Material</th>
+			      <th>Atoms</th>
+			      <th>Molucules</th>
+			      <th>Organisms</th>
+			      <th>Templates</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr>
+			      <td class="mdl-data-table__cell--non-numeric">Atoms</td>
+			      <td>×</td>
+			      <td>×</td>
+			      <td>×</td>
+			      <td>×</td>
+			    </tr>
+			    <tr>
+			      <td class="mdl-data-table__cell--non-numeric">Molucules</td>
+			      <td>○</td>
+			      <td>×</td>
+			      <td>×</td>
+			      <td>×</td>
+			    </tr>
+			    <tr>
+			      <td class="mdl-data-table__cell--non-numeric">Organisms</td>
+			      <td>○</td>
+			      <td>○</td>
+			      <td>×</td>
+			      <td>×</td>
+			    </tr>
+			    <tr>
+			      <td class="mdl-data-table__cell--non-numeric">Templates</td>
+			      <td>○</td>
+			      <td>○</td>
+			      <td>○</td>
+			      <td>×</td>
+			    </tr>
+			  </tbody>
+			</table>
+  	</div>
+  	<div class="mdl-dialog__actions">
+				<button class="mdl-button close" data-action="closeAboutDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+		</div>
+		</script>
+  </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-setting-dialog">
   	<script id="css_setting" type="text/template">
   	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
@@ -93,12 +156,12 @@
   </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
   	<script id="css_remove" type="text/template">
-  		<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
+  		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
-  			<p>すべてのコンポーネントを削除します</p>
+  			<p>Delete All Components</p>
   		</div>
   		<div class="mdl-dialog__actions">
-				<button class="mdl-button" data-action="removeAllComponent">削除</button>
+				<button class="mdl-button" data-action="removeAllComponent"><!-- BEGIN lang:touch#ja -->削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete<!-- END lang:touch#en --></button>
 				<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 			</div>
   	</script>

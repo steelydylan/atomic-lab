@@ -568,7 +568,8 @@ jQuery(function($){
 			"css_io",
 			"css_cheat",
 			"css_share",
-			"css_remove"
+			"css_remove",
+			"css_exp"
 		],
 		data:{
 			lang:lang,
@@ -909,6 +910,14 @@ jQuery(function($){
 			},
 			closeSettingDialog:function(){
 				var dialog = document.querySelector(".js-setting-dialog");
+				dialog.close();
+			},
+			openAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
+				dialog.showModal();
+			},
+			closeAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
 				dialog.close();
 			},
 			isGreaterThan:function(text){

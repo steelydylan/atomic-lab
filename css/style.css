@@ -102,6 +102,10 @@ html {
 	cursor: pointer;
 }
 
+.mdl-data-table th{
+	text-align: left;
+}
+
 .mdl-button--float{
 	position: fixed;
 	bottom: 10px;
