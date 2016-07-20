@@ -1425,11 +1425,12 @@ jQuery(function($){
 			},
 			removeAllComponent:function(){
 				var dialog = document.querySelector(".js-remove-dialog");
-				dialogPolyfill.registerDialog(dialog);
+				dialog.close();
 				this.data.components = [];
+				this.saveData("atomic_lab");
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
-				componentHandler.upgradeDom();g.close();
+				componentHandler.upgradeDom();
 			},
 			doneEditDialog:function(){
 				this.applyMethod("closeEditDialog");
