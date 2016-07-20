@@ -62,7 +62,7 @@ jQuery(function($){
 				var searchCategory = this.data.searchCategory;
 				return components
 				.sort(function(a,b){
-					if(material[a.category] > material[b.category]){
+					if(material[a.category] < material[b.category]){
 						return 1;
 					}else if(material[a.category] === material[b.category]){
 						if(a.name > b.name){
@@ -438,7 +438,7 @@ jQuery(function($){
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
 							//templateに自身が含まれていたら削除(無限ループ回避)
-							html = parser.removeSelf(html,this.data.name);
+							html = parser.removeSelf(html,comp.name);
 							var defs = parser.getVarsFromTemplate(template);
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);
