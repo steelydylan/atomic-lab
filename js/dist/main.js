@@ -567,7 +567,8 @@ jQuery(function($){
 			"css_about",
 			"css_io",
 			"css_cheat",
-			"css_share"
+			"css_share",
+			"css_remove"
 		],
 		data:{
 			lang:lang,
@@ -864,6 +865,23 @@ jQuery(function($){
 			},
 			closeEditDialog:function(){
 				var dialog = document.querySelector(".js-edit-dialog");
+				dialog.close();
+			},
+			openRemoveDialog:function(){
+				var dialog = document.querySelector(".js-remove-dialog");
+				dialog.showModal();
+			},
+			closeRemoveDialog:function(){
+				var dialog = document.querySelector(".js-remove-dialog");
+				dialog.close();
+			},
+			removeAllComponent:function(){
+				var dialog = document.querySelector(".js-remove-dialog");
+				this.data.components = [];
+				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
+				this.update("html","css_search_result");
+				componentHandler.upgradeDom();
+				this.saveData("css_lab");
 				dialog.close();
 			},
 			doneEditDialog:function(){

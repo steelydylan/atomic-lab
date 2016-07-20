@@ -95,12 +95,12 @@
   	<script id="css_remove" type="text/template">
   		<h4 class="mdl-dialog__title">コンポーネントの削除</h4>
   		<div class="mdl-dialog__content">
-  			<p>{name}を削除してもよろしいですか？</p>
-  			<div class="mdl-dialog__actions">
-					<button class="mdl-button" data-action="removeComponent">追加</button>
-					<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-				</div>
+  			<p>すべてのコンポーネントを削除します</p>
   		</div>
+  		<div class="mdl-dialog__actions">
+				<button class="mdl-button" data-action="removeAllComponent">削除</button>
+				<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+			</div>
   	</script>
   </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-cheat-dialog">
@@ -194,7 +194,10 @@
 					<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<tr>
 							<td colspan="3">
-								<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openDialog"><!-- BEGIN lang:touch#ja -->新規コンポーネント<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->New Component<!-- END lang:touch#en --></button>
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openRemoveDialog"><!-- BEGIN lang:touch#ja -->すべて削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->delete all<!-- END lang:touch#en --></button>
+								<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored mdl-button--float" data-action="openDialog">
+								  <i class="material-icons">add</i>
+								</button>
 							</td>
 						</tr>
 					</table>

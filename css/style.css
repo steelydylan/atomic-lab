@@ -102,6 +102,13 @@ html {
 	cursor: pointer;
 }
 
+.mdl-button--float{
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	z-index: 1000;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
