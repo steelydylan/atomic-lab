@@ -651,14 +651,9 @@ jQuery(function($){
 				var zip = new JSZip();
 				var data = this.data;
 				var strings = JSON.stringify(data);
-<<<<<<< HEAD
-				zip.file('data', strings);
-				var hash = zip.generate({ type: "base64" });
-=======
 				var hash = encodeURI(strings);
 				hash = JSZip.compressions.DEFLATE.compress(hash);
     		hash = JSZip.base64.encode(hash);
->>>>>>> master
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
 				var url = location.href;
@@ -14278,7 +14273,7 @@ Comment.prototype.type = 'Comment';
 var Node = require('./node');
 
 /**
- * Initialize a `Doctype` with the given `val`. 
+ * Initialize a `Doctype` with the given `val`.
  *
  * @param {String} val
  * @api public
