@@ -528,7 +528,7 @@ module.exports = {
 }
 
 },{"ejs":17,"jade":30}],3:[function(require,module,exports){
-module.exports = {"index":0,"components":[{"html":"<!-- template text=\"テスト\" -->\n<div class=\"hoverImgWrap\">\t\n\t<img src=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\">\n\t<div class=\"hoverImgCap\">\n\t\t<div class=\"hoverImgTable\">\n\t\t<h2 class=\"hoverImgTableTitle\">\n\t\t{text}</h2>\n\t\t<!-- Button modifier=\"button--red\" text=\"hoge\" -->\n\t\t</div>\n\t</div>\n</div>\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual -->\n<!-- /preview -->","css":".hoverImgWrap{\n\tposition:relative;\n}\n.hoverImgWrap img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.hoverImgCap{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTable{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTableTitle{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","name":"mainVisual","id":"EkaiahgUUnvbzXc","category":"organism","about":"## Snippet\n\n```html\n<!-- mainVisual -->\n```"},{"html":"<!-- template modifier=\"\" text=\"button\" -->\n<button class=\"button {modifier}\">{text}</button>\n<!-- /template -->\n\n<!-- preview -->\n<div class=\"container\">\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n<!-- Button -->\n</div>\n<!-- /preview -->","css":".button{\n    background: rgb(255,64,129);\n    color:#FFFFFF;\n    padding:5px;\n    border:none;\n    border-radius:3px;\n}\n\n.button--red{\n    background:red;\n}\n\n.container{\n    padding:10px;\n    background-color:#EEEEEE;\n}","name":"Button","id":"qYBWumVTL65hXV","category":"atom","about":"## Snippet\n\n```html\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n```"}],"name":"mainVisual","newName":"","css":".hoverImgWrap{\n\tposition:relative;\n}\n.hoverImgWrap img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.hoverImgCap{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTable{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.hoverImgTableTitle{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","html":"<!-- template text=\"テスト\" -->\n<div class=\"hoverImgWrap\">\t\n\t<img src=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\">\n\t<div class=\"hoverImgCap\">\n\t\t<div class=\"hoverImgTable\">\n\t\t<h2 class=\"hoverImgTableTitle\">\n\t\t{text}</h2>\n\t\t<!-- Button modifier=\"button--red\" text=\"hoge\" -->\n\t\t</div>\n\t</div>\n</div>\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual -->\n<!-- /preview -->","newCategory":"organism","category":"organism","about":"## Snippet\n\n```html\n<!-- mainVisual -->\n```","editMode":"css","search":"","searchCategory":["true","true","true","true"],"searchStatus":"active","cheatCategory":"organism","cheatAbout":"## Snippet\n\n```html\n<!-- mainVisual -->\n```","cheatName":"mainVisual","aTemplate_id":"oyhuxkgpIy","id":"EkaiahgUUnvbzXc","conc":""};
+module.exports = {"components":[{"html":"<!-- preview -->\n<!-- header title=\"THEME1\" button=\"contact\" -->\n<!-- mainVisual image=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\" text=\"theme1\" -->\n<!-- /preview -->","css":"","name":"theme1","id":"6GsxAPtnH4lGjCq","category":"template","about":"## About this theme\n\n```html\nThis is a default theme.\nYou can customize it as you want.\n```"},{"html":"<!-- template button=\"sample\" -->\n<header class=\"header\">\n    <div class=\"header__inner\"><span class=\"header__logo\">{title}</span><span class=\"header__right\"><!-- button text=\"{button}\" --></span></div>\n</header>\n<!-- /template -->\n\n\n<!-- preview -->\n<!-- header title=\"sample\" -->\n<!-- /preview -->","css":".header{\n    background-color:orange;\n    color:#FFFFFF;\n}\n\n.header__inner{\n    padding:10px;\n}\n.header__inner:after{\n    content:\"\";\n    display:block;\n    clear:both;\n}\n\n.header__right{\n    display:block;\n    float:right;\n}\n\n.header__logo{\n    line-height:30px;\n    font-size:20px;\n}","name":"header","id":"g6xdGTadUUvU91f","category":"organism","about":"## Snippet\n\n```html\n<!-- header title=\"site-name\" button=\"label\" -->\n```"},{"html":"<!-- template -->\n<div class=\"main-visual\">\t\n\t<img src=\"{image}\">\n\t<div class=\"main-visual__inner\">\n\t\t<div class=\"main-visual__body\">\n\t\t<% if (\"{text}\"){ %>\n\t\t    <h2 class=\"main-visual__title\">{text}</h2>\n\t\t<% } %>\n\t\t</div>\n\t</div>\n</div>\n<!-- mainVisual -->\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual image=\"https://pixabay.com/static/uploads/photo/2016/01/14/06/09/guitar-1139397_960_720.jpg\" text=\"Title\" -->\n<!-- /preview -->","css":".main-visual{\n\tposition:relative;\n}\n.main-visual img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.main-visual__inner{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.main-visual__body{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.main-visual__title{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","name":"mainVisual","id":"EkaiahgUUnvbzXc","category":"molucule","about":"## Snippet\n\n```html\n<!-- mainvisual image=\"url of image\" title=\"title here\" -->\n```"},{"html":"<!-- template modifier=\"\" text=\"button\" -->\n<button class=\"button {modifier}\">{text}</button>\n<!-- /template -->\n\n<!-- preview -->\n<div class=\"container\">\n<!-- button modifier=\"\" text=\"default\" -->\n<!-- button modifier=\"button--red\" text=\"red\" -->\n</div>\n<!-- /preview -->","css":".button{\n    background: rgb(255,64,129);\n    color:#FFFFFF;\n    padding:5px;\n    border:none;\n    border-radius:3px;\n}\n\n.button--red{\n    background:red;\n}\n\n.container{\n    padding:10px;\n    background-color:#EEEEEE;\n}","name":"button","id":"qYBWumVTL65hXV","category":"atom","about":"## Snippet\n\n```html\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n```"}]}
 
 },{}],4:[function(require,module,exports){
 jQuery(function($){
@@ -568,7 +568,8 @@ jQuery(function($){
 			"css_io",
 			"css_cheat",
 			"css_share",
-			"css_remove"
+			"css_remove",
+			"css_exp"
 		],
 		data:{
 			lang:lang,
@@ -577,12 +578,12 @@ jQuery(function($){
 			newName:"",
 			css:"",
 			html:"",
-			newCategory:"",
+			newCategory:"atom",
 			category:"",
 			about:"",
-			editMode:"css",
-			markup:"html",
-			styling:"css",
+			editMode:"preview",
+			markup:"ejs",
+			styling:"sass",
 			search:"",
 			searchCategory:["true","true","true","true"],
 			searchStatus:"inactive",
@@ -595,7 +596,7 @@ jQuery(function($){
 				var searchCategory = this.data.searchCategory;
 				return components
 				.sort(function(a,b){
-					if(material[a.category] > material[b.category]){
+					if(material[a.category] < material[b.category]){
 						return 1;
 					}else if(material[a.category] === material[b.category]){
 						if(a.name > b.name){
@@ -623,7 +624,6 @@ jQuery(function($){
 			    var strings = JSZip.base64.decode(hash);
     			strings = JSZip.compressions.DEFLATE.uncompress(strings);
     			strings = decodeURI(strings);
-    			console.log(strings);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -631,7 +631,15 @@ jQuery(function($){
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
-					this.loadData("css_lab");
+					this.loadData("atomic_lab");
+					var comp = this.data.components[0];
+					if(comp){
+						this.data.id = comp.id
+						this.data.html = comp.html;
+						this.data.css = comp.css;
+						this.data.category = comp.category;
+						this.data.name = comp.name;
+					}
 				}
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
@@ -678,7 +686,7 @@ jQuery(function($){
 			},
 			//after updated
 			onUpdated:function(){
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
@@ -696,7 +704,7 @@ jQuery(function($){
 			},
 			changeStyle:function(target){
 				this.update("html","css_preview");
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			editComp:function(i){
 				var data = this.data;
@@ -728,18 +736,19 @@ jQuery(function($){
 						break;
 					}
 				}
+				this.removeData(["html","css","name","category"]);
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
 				var zip = new JSZip();
-				zip.file("setting.json", JSON.stringify(this.data));
+				zip.file("setting.json", JSON.stringify({components:this.data.components}));
 				var content = zip.generate({type:"blob"});
 		  	saveAs(content, "css-lab.zip");
 			},
@@ -792,22 +801,23 @@ jQuery(function($){
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			addComponent:function(){
 				var data = this.data;
 				var id = this.applyMethod("getUniqueId");
 				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
 				var components = this.data.components;
-				var flag = false;
 				var dialog = document.querySelector(".js-new-dialog");
+				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
+				this.data.newCategory = "atom";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
+				this.update("html","css_new");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
-				dialog.close();
+				this.saveData("atomic_lab");
 			},
 			readSetting:function(){
 				var evt = this.e;
@@ -860,6 +870,8 @@ jQuery(function($){
 				dialog.close();
 			},
 			openEditDialog:function(){
+				this.update("html","css_about");
+				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-edit-dialog");
 				dialog.showModal();
 			},
@@ -881,7 +893,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				dialog.close();
 			},
 			doneEditDialog:function(){
@@ -891,7 +903,7 @@ jQuery(function($){
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				this.update();
 				if(this.data.editMode != "preview"){
 					this.applyMethod("runEditor",this.data.editMode);
@@ -904,6 +916,14 @@ jQuery(function($){
 			},
 			closeSettingDialog:function(){
 				var dialog = document.querySelector(".js-setting-dialog");
+				dialog.close();
+			},
+			openAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
+				dialog.showModal();
+			},
+			closeAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
 				dialog.close();
 			},
 			isGreaterThan:function(text){
@@ -966,13 +986,16 @@ jQuery(function($){
 					for(var i = 0,n = components.length; i < n; i++){
 						var comp = components[i];
 						if(name == comp.name){
+							flag = true;
 							//例えば、atomはmoluculeをincludeできない
-							if(this.data.id != comp.id && !this.applyMethod("isGreaterThan",comp.category)){
-								//todo preview = preview.replace(comment,"");
+							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+								preview = preview.replace(comment,"");
 								break;
 							}
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
+							//templateに自身が含まれていたら削除(無限ループ回避)
+							html = parser.removeSelf(html,comp.name);
 							var defs = parser.getVarsFromTemplate(template);
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);
@@ -980,6 +1003,9 @@ jQuery(function($){
 							preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>"
 							break;
 						}
+					}
+					if(!flag){
+						preview = preview.replace(comment,"");
 					}
 				}
 				//todo delete
@@ -4820,7 +4846,6 @@ module.exports = function(){
 
 },{}],11:[function(require,module,exports){
 var getVars = function(text){
-	console.log(text);
 	var vars = text.match(/(\w+)="(.*?)"/g);
 	var defs = {};
 	if(!vars){
@@ -4889,6 +4914,11 @@ var removeScript = function(text){
 	return text.replace(/<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')*?<\/script>/g,"");
 }
 
+var removeSelf = function(text,self){
+	var reg = new RegExp("<!-- "+self+"(.*?)-->");
+	return text.replace(reg,"");
+}
+
 
 module.exports = {
 	getComment:getComment,
@@ -4899,7 +4929,8 @@ module.exports = {
 	getInnerHtmlFromTemplate:getInnerHtmlFromTemplate,
 	getVarsFromTemplate:getVarsFromTemplate,
 	getRendered:getRendered,
-	removeScript:removeScript
+	removeScript:removeScript,
+	removeSelf:removeSelf
 }
 
 },{}],12:[function(require,module,exports){

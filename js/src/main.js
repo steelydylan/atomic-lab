@@ -35,7 +35,8 @@ jQuery(function($){
 			"css_io",
 			"css_cheat",
 			"css_share",
-			"css_remove"
+			"css_remove",
+			"css_exp"
 		],
 		data:{
 			lang:lang,
@@ -44,12 +45,12 @@ jQuery(function($){
 			newName:"",
 			css:"",
 			html:"",
-			newCategory:"",
+			newCategory:"atom",
 			category:"",
 			about:"",
-			editMode:"css",
-			markup:"html",
-			styling:"css",
+			editMode:"preview",
+			markup:"ejs",
+			styling:"sass",
 			search:"",
 			searchCategory:["true","true","true","true"],
 			searchStatus:"inactive",
@@ -62,7 +63,7 @@ jQuery(function($){
 				var searchCategory = this.data.searchCategory;
 				return components
 				.sort(function(a,b){
-					if(material[a.category] > material[b.category]){
+					if(material[a.category] < material[b.category]){
 						return 1;
 					}else if(material[a.category] === material[b.category]){
 						if(a.name > b.name){
@@ -90,7 +91,6 @@ jQuery(function($){
 			    var strings = JSZip.base64.decode(hash);
     			strings = JSZip.compressions.DEFLATE.uncompress(strings);
     			strings = decodeURI(strings);
-    			console.log(strings);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -98,7 +98,15 @@ jQuery(function($){
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
-					this.loadData("css_lab");
+					this.loadData("atomic_lab");
+					var comp = this.data.components[0];
+					if(comp){
+						this.data.id = comp.id
+						this.data.html = comp.html;
+						this.data.css = comp.css;
+						this.data.category = comp.category;
+						this.data.name = comp.name;
+					}
 				}
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
@@ -145,7 +153,7 @@ jQuery(function($){
 			},
 			//after updated
 			onUpdated:function(){
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
@@ -163,7 +171,7 @@ jQuery(function($){
 			},
 			changeStyle:function(target){
 				this.update("html","css_preview");
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			editComp:function(i){
 				var data = this.data;
@@ -195,18 +203,19 @@ jQuery(function($){
 						break;
 					}
 				}
+				this.removeData(["html","css","name","category"]);
 				this.update("html","css_search_result");
 				this.update("html","css_edit");
 				this.update("html","css_preview");
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
 				var zip = new JSZip();
-				zip.file("setting.json", JSON.stringify(this.data));
+				zip.file("setting.json", JSON.stringify({components:this.data.components}));
 				var content = zip.generate({type:"blob"});
 		  	saveAs(content, "css-lab.zip");
 			},
@@ -259,22 +268,23 @@ jQuery(function($){
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			addComponent:function(){
 				var data = this.data;
 				var id = this.applyMethod("getUniqueId");
 				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
 				var components = this.data.components;
-				var flag = false;
 				var dialog = document.querySelector(".js-new-dialog");
+				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
+				this.data.newCategory = "atom";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
+				this.update("html","css_new");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
-				dialog.close();
+				this.saveData("atomic_lab");
 			},
 			readSetting:function(){
 				var evt = this.e;
@@ -327,6 +337,8 @@ jQuery(function($){
 				dialog.close();
 			},
 			openEditDialog:function(){
+				this.update("html","css_about");
+				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-edit-dialog");
 				dialog.showModal();
 			},
@@ -348,7 +360,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				dialog.close();
 			},
 			doneEditDialog:function(){
@@ -358,7 +370,7 @@ jQuery(function($){
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				this.update();
 				if(this.data.editMode != "preview"){
 					this.applyMethod("runEditor",this.data.editMode);
@@ -371,6 +383,14 @@ jQuery(function($){
 			},
 			closeSettingDialog:function(){
 				var dialog = document.querySelector(".js-setting-dialog");
+				dialog.close();
+			},
+			openAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
+				dialog.showModal();
+			},
+			closeAboutDialog:function(){
+				var dialog = document.querySelector(".js-about-dialog");
 				dialog.close();
 			},
 			isGreaterThan:function(text){
@@ -433,13 +453,16 @@ jQuery(function($){
 					for(var i = 0,n = components.length; i < n; i++){
 						var comp = components[i];
 						if(name == comp.name){
+							flag = true;
 							//例えば、atomはmoluculeをincludeできない
-							if(this.data.id != comp.id && !this.applyMethod("isGreaterThan",comp.category)){
-								//todo preview = preview.replace(comment,"");
+							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+								preview = preview.replace(comment,"");
 								break;
 							}
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
+							//templateに自身が含まれていたら削除(無限ループ回避)
+							html = parser.removeSelf(html,comp.name);
 							var defs = parser.getVarsFromTemplate(template);
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);
@@ -447,6 +470,9 @@ jQuery(function($){
 							preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>"
 							break;
 						}
+					}
+					if(!flag){
+						preview = preview.replace(comment,"");
 					}
 				}
 				//todo delete
