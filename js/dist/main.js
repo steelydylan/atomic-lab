@@ -578,7 +578,7 @@ jQuery(function($){
 			newName:"",
 			css:"",
 			html:"",
-			newCategory:"",
+			newCategory:"atom",
 			category:"",
 			about:"",
 			editMode:"preview",
@@ -803,15 +803,16 @@ jQuery(function($){
 				var id = this.applyMethod("getUniqueId");
 				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
 				var components = this.data.components;
-				var flag = false;
 				var dialog = document.querySelector(".js-new-dialog");
+				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
+				this.data.newCategory = "atom";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
+				this.update("html","css_new");
 				componentHandler.upgradeDom();
 				this.saveData("atomic_lab");
-				dialog.close();
 			},
 			readSetting:function(){
 				var evt = this.e;
