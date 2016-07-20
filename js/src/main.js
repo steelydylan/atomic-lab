@@ -47,9 +47,9 @@ jQuery(function($){
 			newCategory:"",
 			category:"",
 			about:"",
-			editMode:"css",
-			markup:"html",
-			styling:"css",
+			editMode:"preview",
+			markup:"ejs",
+			styling:"sass",
 			search:"",
 			searchCategory:["true","true","true","true"],
 			searchStatus:"inactive",
@@ -90,7 +90,6 @@ jQuery(function($){
 			    var strings = JSZip.base64.decode(hash);
     			strings = JSZip.compressions.DEFLATE.uncompress(strings);
     			strings = decodeURI(strings);
-    			console.log(strings);
 			    var data = JSON.parse(strings);
 			    for(var key in data){
 		      	this.data[key] = data[key];
@@ -98,7 +97,15 @@ jQuery(function($){
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
-					this.loadData("css_lab");
+					this.loadData("atomic_lab");
+					var comp = this.data.components[0];
+					if(comp){
+						this.data.id = comp.id
+						this.data.html = comp.html;
+						this.data.css = comp.css;
+						this.data.category = comp.category;
+						this.data.name = comp.name;
+					}
 				}
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
@@ -140,7 +147,7 @@ jQuery(function($){
 			},
 			//after updated
 			onUpdated:function(){
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
@@ -158,7 +165,7 @@ jQuery(function($){
 			},
 			changeStyle:function(target){
 				this.update("html","css_preview");
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			editComp:function(i){
 				var data = this.data;
@@ -197,12 +204,12 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
 				var zip = new JSZip();
-				zip.file("setting.json", JSON.stringify(this.data));
+				zip.file("setting.json", JSON.stringify({components:this.data.components}));
 				var content = zip.generate({type:"blob"});
 		  	saveAs(content, "css-lab.zip");
 			},
@@ -255,7 +262,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 			},
 			addComponent:function(){
 				var data = this.data;
@@ -269,7 +276,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				dialog.close();
 			},
 			readSetting:function(){
@@ -323,6 +330,8 @@ jQuery(function($){
 				dialog.close();
 			},
 			openEditDialog:function(){
+				this.update("html","css_about");
+				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-edit-dialog");
 				dialog.showModal();
 			},
@@ -344,7 +353,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				dialog.close();
 			},
 			doneEditDialog:function(){
@@ -354,7 +363,7 @@ jQuery(function($){
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
-				this.saveData("css_lab");
+				this.saveData("atomic_lab");
 				this.update();
 				if(this.data.editMode != "preview"){
 					this.applyMethod("runEditor",this.data.editMode);

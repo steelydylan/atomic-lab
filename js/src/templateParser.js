@@ -1,5 +1,4 @@
 var getVars = function(text){
-	console.log(text);
 	var vars = text.match(/(\w+)="(.*?)"/g);
 	var defs = {};
 	if(!vars){
