@@ -13,6 +13,7 @@ jQuery(function($){
 	var editor = {};
 	var i18n = jQuery.i18n.browserLang();
 	var lang;
+	var storageName = "atomic-lab";
 	if(i18n == 'ja'){
 		lang = "ja";
 	}else{
@@ -99,7 +100,7 @@ jQuery(function($){
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
-					this.loadData("atomic_lab");
+					this.loadData(storageName);
 					var comp = this.data.components[0];
 					if(comp){
 						this.data.id = comp.id
@@ -150,7 +151,7 @@ jQuery(function($){
 			},
 			//after updated
 			onUpdated:function(){
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
@@ -168,7 +169,7 @@ jQuery(function($){
 			},
 			changeStyle:function(target){
 				this.update("html","css_preview");
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 			},
 			editComp:function(i){
 				var data = this.data;
@@ -207,7 +208,7 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 				componentHandler.upgradeDom();
 			},
 			outputComp:function(){
@@ -265,7 +266,7 @@ jQuery(function($){
 				this.applyMethod("showAlert","コンポーネントを保存しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 			},
 			addComponent:function(){
 				var data = this.data;
@@ -281,7 +282,7 @@ jQuery(function($){
 				this.update("html","css_search_result");
 				this.update("html","css_new");
 				componentHandler.upgradeDom();
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 			},
 			readSetting:function(){
 				var evt = this.e;
@@ -359,7 +360,7 @@ jQuery(function($){
 				var dialog = document.querySelector(".js-remove-dialog");
 				dialog.close();
 				this.data.components = [];
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
 				this.update("html","css_search_result");
 				componentHandler.upgradeDom();
@@ -371,7 +372,7 @@ jQuery(function($){
 			},
 			clearEditor:function(){
 				this.removeData(['name','html','css']);
-				this.saveData("atomic_lab");
+				this.saveData(storageName);
 				this.update();
 				if(this.data.editMode != "preview"){
 					this.applyMethod("runEditor",this.data.editMode);
@@ -441,9 +442,12 @@ jQuery(function($){
 		},
 		convert:{
 			preview:function(text){
+				var components = this.data.components;
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				//previewからコメント文取得
+				var imports = "";
+				// テンプレート取得
 				while(1){
 					var comment = parser.getComment(preview);
 					if(!comment){
@@ -451,14 +455,19 @@ jQuery(function($){
 					}
 					//commentからコンポーネント名取得
 					var name = parser.getComponentName(comment);
-					var components = this.data.components;
 					var flag = false;
 					for(var i = 0,n = components.length; i < n; i++){
 						var comp = components[i];
 						if(name == comp.name){
 							flag = true;
 							//例えば、atomはmoluculeをincludeできない
+							imports += parser.getImports(comp.html);
 							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+								preview = preview.replace(comment,"");
+								break;
+							}
+							// importされてなければ使えない
+							if(this.data.id !== comp.id && imports.indexOf(name) == -1){
 								preview = preview.replace(comment,"");
 								break;
 							}
@@ -470,12 +479,18 @@ jQuery(function($){
 							var overrides = parser.getVars(comment);
 							html = parser.getRendered(html,defs,overrides);
 							preview = preview.replace(comment,compiler.markup[this.data.markup](html));
-							preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>"
 							break;
 						}
 					}
 					if(!flag){
 						preview = preview.replace(comment,"");
+					}
+				}
+				//スタイルシート取得
+				for(var i = 0,n = components.length; i < n; i++){
+					var comp = components[i];
+					if(imports.indexOf(comp.name) !== -1 || this.data.id == comp.id){
+						preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>";
 					}
 				}
 				//todo delete
