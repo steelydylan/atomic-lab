@@ -72,6 +72,14 @@ var removeSelf = function(text,self){
 	return text.replace(reg,"");
 }
 
+var getImports = function(text){
+	var match = text.match(/<!-- import="(.*?)" -->/);
+	if(!match){
+		return "";
+	}
+	return match[1];
+}
+
 
 module.exports = {
 	getComment:getComment,
@@ -82,6 +90,7 @@ module.exports = {
 	getInnerHtmlFromTemplate:getInnerHtmlFromTemplate,
 	getVarsFromTemplate:getVarsFromTemplate,
 	getRendered:getRendered,
+	getImports:getImports,
 	removeScript:removeScript,
 	removeSelf:removeSelf
 }
