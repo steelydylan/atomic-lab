@@ -315,7 +315,7 @@
 						<table class="mdl-data-table mdl-data-table--selectable mdl-shadow--2dp">
 						<!-- BEGIN searchResults:loop -->
 						<tr data-action="editComp({i})"<!-- BEGIN id:touch#{id} --> class="selected"<!-- END id:touch#{id} -->>
-							<td><span class="cssLabLabel">{category}</span>{name}
+							<td><span class="cssLabLabel"><img src="./images/{category}.svg" width="20"></span>{name}
 								<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="openCheatDialog({i})">
 	  							<i class="material-icons">info</i>
 								</button>
@@ -329,7 +329,7 @@
 			<script id="css_edit" type="text/template">
 			<header class="mdl-layout__header">
 			<div class="mdl-layout__header-row">
-				<span class="mdl-layout-title"><span class="cssLabLabel">{category}</span>{name}</span>
+				<span class="mdl-layout-title"><img src="./images/{category}.svg" width="20" style="margin-right:15px;">{name}</span>
 				<button class="mdl-button mdl-js-button mdl-button--icon" data-action="deleteComp()"><i class="material-icons">delete</i></button>
 			</div>
 			<ul class="mdl-layout__tab-bar mdl-js-ripple-effect">
