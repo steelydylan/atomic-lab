@@ -113,6 +113,11 @@ html {
 	z-index: 1000;
 }
 
+.mdl-button--raised.mdl-button--trash{
+	background: rgb(255,64,129);
+	margin-right: 10px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
