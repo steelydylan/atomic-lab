@@ -20,10 +20,21 @@ code here
 <!-- /template -->
 ```
 
+set default variable
+```html
+<!-- template text="hoge" -->
+<p>{text}</p>
+<!-- /template -->
+```
+
 ### use template
 supporse that component's name is "main-visual"
 ```html
-<!-- main-visual -->
+<!-- import="main-visual,button" -->
+<!-- main-visual image="hoge.png" -->
+<!-- button -->
 ```
+
+
 ## License
 MIT License
