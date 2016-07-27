@@ -16,6 +16,9 @@
 		"gulp-merge-media-queries": "*",
 		"browser-sync": "*",
 		"browser-sync": "*",
-		"gulp-notify": "*"
+		"gulp-notify": "*",
+		"hamljs":"*",
+		"ejs":"*",
+		"jade":"*"
 	}
 }

@@ -1,5 +1,6 @@
 var ejs = require("ejs");
 var jade = require("jade");
+var haml = require("hamljs");
 module.exports = {
 	styling:{
 		sass:function(txt){
@@ -32,10 +33,27 @@ module.exports = {
 			return txt;
 		},
 		ejs:function(txt){
-			return ejs.render(txt);
+			try{
+				return ejs.render(txt);
+			}catch(err){
+				return txt;
+			}
 		},
 		jade:function(txt){
-			return jade.render(txt);
+			try{
+				return jade.render(txt);
+			}catch(err){
+				return txt;
+			}
+		},
+		haml:function(txt){
+			try{
+				console.log("test");
+				console.log(haml.render(txt));
+				return haml.render(txt);
+			}catch(err){
+				return txt;
+			}
 		}
 	}
 }
