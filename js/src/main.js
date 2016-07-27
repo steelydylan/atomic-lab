@@ -445,6 +445,7 @@ jQuery(function($){
 				var components = this.data.components;
 				//textからpreview取得
 				var preview = parser.getPreview(text);
+				preview = compiler.markup[this.data.markup](preview);
 				//previewからコメント文取得
 				var imports = "";
 				// テンプレート取得

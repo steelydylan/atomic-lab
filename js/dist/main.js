@@ -487,6 +487,7 @@
 },{}],2:[function(require,module,exports){
 var ejs = require("ejs");
 var jade = require("jade");
+var haml = require("hamljs");
 module.exports = {
 	styling:{
 		sass:function(txt){
@@ -519,15 +520,32 @@ module.exports = {
 			return txt;
 		},
 		ejs:function(txt){
-			return ejs.render(txt);
+			try{
+				return ejs.render(txt);
+			}catch(err){
+				return txt;
+			}
 		},
 		jade:function(txt){
-			return jade.render(txt);
+			try{
+				return jade.render(txt);
+			}catch(err){
+				return txt;
+			}
+		},
+		haml:function(txt){
+			try{
+				console.log("test");
+				console.log(haml.render(txt));
+				return haml.render(txt);
+			}catch(err){
+				return txt;
+			}
 		}
 	}
 }
 
-},{"ejs":18,"jade":31}],3:[function(require,module,exports){
+},{"ejs":18,"hamljs":28,"jade":32}],3:[function(require,module,exports){
 module.exports = {"components":[{"html":"<!-- import=\"header,mainVisual,modulettes,footer,common\" -->\n\n<!-- template -->\n<!-- header title=\"steelaxe\" button=\"contact\" -->\n<!-- mainVisual image=\"http://www.civillink.net/fsozaip/phote/fukei3l.jpg\" text=\"steelaxe\" -->\n<h2 class=\"mod-title\">Our Products</h2>\n<div class=\"mod-clearfix\">\n<div class=\"mod-col-6\">\n    <!-- modulettes title=\"Can I Use bot\" subtitle=\"You can check browser support on your slack without visiting caniuse website. \" url=\"http://www.caniuse-bot.com/\" -->\n</div>\n<div class=\"mod-col-6\">\n    <!-- modulettes title=\"gulp generator\" subtitle=\"Recommendable for those who often forget how to write gulpfile or for those who like GUI like me!! \" url=\"http://steelydylan.github.io/gulp-generator/\"  -->\n</div>\n<div class=\"mod-col-6\">\n    <!-- modulettes title=\"Atomic Lab.\" subtitle=\"Atomic Lab is where you can make components based on Atomic design. \" url=\"http://steelydylan.github.io/atomic-lab/\" -->\n</div>\n<div class=\"mod-col-6\">\n    <!-- modulettes title=\"Atlas.js\" subtitle=\"Simple JavaScript game engine\" url=\"http://steelydylan.github.io/Atlas.js/\" -->\n</div>\n</div>\n<!-- footer text=\"&copy; steelaxe\" -->\n<!-- /template -->\n\n<!-- preview -->\n<!-- theme1 -->\n<!-- /preview -->","css":"","name":"theme1","id":"6GsxAPtnH4lGjCq","category":"template","about":"## About this theme\n\nThis is a default theme.\nYou can customize it as you want."},{"html":"<!-- template -->\n<footer class=\"footer\">\n   <p class=\"footer__inner\">{text}</p>\n</footer>\n<!-- /template -->\n\n<!-- preview -->\n    <!-- footer text=\"steelaxe\" -->\n<!-- /preview -->","css":".footer{\n    background-color:#666666;\n    color:#FFFFFF;\n}\n\n.footer__inner{\n    text-align:center;\n    margin:0;\n    padding:10px;\n}","name":"footer","id":"p65M6knAXK0gpY","category":"organism"},{"html":"<!-- template button=\"sample\" -->\n<header class=\"header\">\n    <div class=\"header__inner\"><span class=\"header__logo\">{title}</span></div>\n</header>\n<!-- /template -->\n\n\n<!-- preview -->\n<!-- header title=\"steelaxe\" -->\n<!-- /preview -->","css":".header{\n    background-color:#666666;\n    color:#FFFFFF;\n}\n\n.header__inner{\n    padding:10px;\n}\n.header__inner:after{\n    content:\"\";\n    display:block;\n    clear:both;\n}\n\n.header__right{\n    display:block;\n    float:right;\n}\n\n.header__logo{\n    line-height:30px;\n    font-size:20px;\n}","name":"header","id":"g6xdGTadUUvU91f","category":"organism","about":"## Snippet\n\n```html\n<!-- header title=\"site-name\" button=\"label\" -->\n```"},{"html":"<!-- template -->\n<div class=\"main-visual\">\t\n\t<img src=\"{image}\">\n\t<div class=\"main-visual__inner\">\n\t\t<div class=\"main-visual__body\">\n\t\t<% if (\"{text}\"){ %>\n\t\t    <h2 class=\"main-visual__title\">{text}</h2>\n\t\t<% } %>\n\t\t</div>\n\t</div>\n</div>\n<!-- mainVisual -->\n<!-- /template -->\n\n<!-- preview -->\n<!-- mainVisual image=\"http://www.civillink.net/fsozaip/phote/fukei3l.jpg\" text=\"steelaxe\" -->\n<!-- /preview -->","css":".main-visual{\n\tposition:relative;\n}\n.main-visual img{\n\twidth:100%;\n\theight:auto;\n\tdisplay:block;\n}\n.main-visual__inner{\n\tposition:absolute;\n\tfont-size:20px;\n\ttop:0;\n\tleft:0;\n\tpadding:10px;\n\tcolor:#FFFFFF;\n\tbackground:rgba(0,0,0,.7);\n\twidth:100%;\n\theight:100%;\n}\n.main-visual__body{\n\tdisplay:table;\n\twidth:100%;\n\theight:100%;\n}\n.main-visual__title{\n\tdisplay:table-cell;\n\ttext-align:center;\n\twidth:100%;\n\theight:100%;\n\tvertical-align:middle;\n}","name":"mainVisual","id":"EkaiahgUUnvbzXc","category":"molucule","about":"## Snippet\n\n```html\n<!-- mainvisual image=\"url of image\" title=\"title here\" -->\n```"},{"html":"<!-- template -->\n<div class=\"modulettes\">\n    <a class=\"modulette default\" href=\"{url}\">\n      <img class=\"icon callout-icon\" src=\"/static/images/callout_default.svg\" alt=\"\">\n      <div class=\"info\">\n        <div class=\"title\">{title}</div>\n        <span class=\"subtitle\">{subtitle}</span>\n      </div>\n    </a>\n</div>\n<!-- /template -->\n\n<!-- preview -->\n<div class=\"container\">\n<!-- modulettes title=\"Material icons\" subtitle=\"Material icons are easy to use in your web, Android, and iOS projects. \" -->\n</div>\n<!-- /preview -->","css":".container{\n    padding:20px;\n}\n\n.modulettes {\n    margin-bottom: 40px;\n    margin-top: 0;\n    width: 100%;\n}\n\n.modulettes a{\n    text-decoration:none;\n}\n\n.modulettes .modulette {\n    display: block;\n    margin-bottom: 24px\n}\n\n.modulettes .modulette .icon {\n    float: left;\n    height: 24px;\n    margin: 0;\n    width: auto\n}\n\n.modulettes .modulette .download-icon {\n    opacity: 0.54\n}\n\n.modulettes .modulette .callout-icon {\n    opacity: 0.54\n}\n\n.modulettes .modulette .info {\n    font-size: 13px;\n    line-height: 24px;\n    margin-left: 40px;\n    padding-top: 1px\n}\n\n@media screen and (max-width: 1240px) {\n    .modulettes .modulette .info {\n        font-size:14px\n    }\n}\n\n.modulettes .modulette .info .subtitle {\n    color: #757575\n}\n\n.modulettes .modulette .info .title {\n    font-weight: 700\n}\n\n.modulettes .modulette.default,.modulettes .modulette.android,.modulettes .modulette.polymer {\n    background-color: #eee;\n    border: 1px solid #eee;\n    position: relative\n}\n\n.modulettes .modulette.default .icon,.modulettes .modulette.android .icon,.modulettes .modulette.polymer .icon {\n    position: absolute;\n    top: 50%;\n    margin-top: -12px;\n    left: 16px\n}\n\n.modulettes .modulette.default .info,.modulettes .modulette.android .info,.modulettes .modulette.polymer .info {\n    margin-left: 56px;\n    background-color: #fff;\n    padding: 24px\n}\n\n.modulettes .modulette.default .callout-icon {\n    opacity: 0.26\n}\n\n.modulettes .modulette.android .callout-icon,.modulettes .modulette.polymer .callout-icon {\n    opacity: 1\n}\n\n@media screen and (max-width: 360px) {\n    .modulettes {\n        width:100%\n    }\n}","name":"modulettes","id":"l7TpSj8w79T2b9M","category":"molucule"},{"html":"<!-- template modifier=\"\" text=\"button\" -->\n<button class=\"button {modifier}\">{text}</button>\n<!-- /template -->\n\n<!-- preview -->\n<div class=\"container\">\n<!-- button modifier=\"\" text=\"default\" -->\n<!-- button modifier=\"button--basic\" text=\"primary\" -->\n</div>\n<!-- /preview -->","css":".button{\n    padding: 6px 10px;\n    text-decoration: none !important;\n    color: #ffffff !important;\n    font-size: 16px;\n    display: inline-block;\n    border-radius: 4px;\n    border: none;\n}\n\n.button--basic{\n    background-color: #004c2c;\n    background-image: linear-gradient(-180deg, #004c2c 0%, #004c2c 100%);\n    /* background-color: #00BC00; */\n    /* background-image: linear-gradient(-180deg, #00BC00 0%, #00BC00 100%); */\n}\n\n.button--basic:hover{\n    background-color: #02824c;\n    background-image: linear-gradient(-180deg, #02824c 0%, #004c2c 100%);\n    /* background-color: #00DB00; */\n    /* background-image: linear-gradient(-180deg, #00DB00 0%, #00BC00 100%); */\n}\n\n.button--red{\n    background:red;\n}\n\n.container{\n    padding:10px;\n    background-color:#EEEEEE;\n}","name":"button","id":"qYBWumVTL65hXV","category":"atom","about":"## Snippet\n\n```html\n<!-- Button modifier=\"\" text=\"default\" -->\n<!-- Button modifier=\"button--red\" text=\"red\" -->\n```"},{"html":"<!-- preview -->\n<div class=\"mod-clearfix\">\n    <div class=\"mod-col-6\">\n        <h2 class=\"mod-title\">Grid1</h2>    \n    </div>\n    <div class=\"mod-col-6\">\n        <h2 class=\"mod-title\">Grid2</h2>    \n    </div>\n</div>\n<!-- /preview -->","css":".mod-title{\n    text-align:center;\n    font-size:24px;\n    margin-bottom:20px;\n}\n\n.mod-col-6{\n    width:50%;\n    float:left;\n    padding:0 15px;\n}\n\n.mod-clearfix:after{\n    content:\"\";\n    display:block;\n    clear:both;\n}","name":"common","id":"bqaDcTYbNDuY1tx","category":"atom"}]};
 
 },{}],4:[function(require,module,exports){
@@ -1513,6 +1531,7 @@ jQuery(function($){
 				var components = this.data.components;
 				//textからpreview取得
 				var preview = parser.getPreview(text);
+				preview = compiler.markup[this.data.markup](preview);
 				//previewからコメント文取得
 				var imports = "";
 				// テンプレート取得
@@ -12370,6 +12389,721 @@ process.chdir = function (dir) {
 };
 
 },{}],28:[function(require,module,exports){
+(function (process){
+// Haml - Copyright TJ Holowaychuk <tj@vision-media.ca> (MIT Licensed)
+
+var HAML = {};
+
+/**
+ * Version.
+ */
+
+HAML.version = '0.6.2'
+
+/**
+ * Haml template cache.
+ */
+
+HAML.cache = {}
+
+/**
+ * Default error context length.
+ */
+
+HAML.errorContextLength = 15
+
+/**
+ * Self closing tags.
+ */
+
+HAML.selfClosing = [
+    'meta',
+    'img',
+    'link',
+    'br',
+    'hr',
+    'input',
+    'area',
+    'base'
+  ]
+
+/**
+ * Default supported doctypes.
+ */
+
+HAML.doctypes = {
+  '5': '<!DOCTYPE html>',
+  'xml': '<?xml version="1.0" encoding="utf-8" ?>',
+  'default': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+  'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+  'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
+  '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
+  'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">',
+  'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
+}
+
+/**
+ * Default filters.
+ */
+
+HAML.filters = {
+
+  /**
+   * Return plain string.
+   */
+
+  plain: function(str, buf) {
+    buf.push(str)
+  },
+
+  /**
+   * Wrap with CDATA tags.
+   */
+
+  cdata: function(str, buf) {
+    buf.push('<![CDATA[\n' + str + '\n]]>')
+  },
+
+  /**
+   * Wrap with <script> and CDATA tags.
+   */
+
+  javascript: function(str, buf) {
+    buf.push('<script type="text/javascript">\n//<![CDATA[\n' + str + '\n//]]></script>')
+  }
+}
+
+/**
+ * HamlError.
+ */
+
+var HamlError = HAML.HamlError = function(msg) {
+    this.name = 'HamlError'
+    this.message = msg
+    Error.captureStackTrace(this, HAML.render)
+}
+
+/**
+ * HamlError inherits from Error.
+ */
+HamlError.super_ = Error;
+HamlError.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: HamlError,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
+});
+
+/**
+ * Lexing rules.
+ */
+
+var rules = {
+  indent: /^\n( *)(?! *-#)/,
+  conditionalComment: /^\/(\[[^\n]+\])/,
+  comment: /^\n? *\/ */,
+  silentComment: /^\n? *-#([^\n]*)/,
+  doctype: /^!!! *([^\n]*)/,
+  escape: /^\\(.)/,
+  filter: /^:(\w+) */,
+  each: /^\- *each *(\w+)(?: *, *(\w+))? * in ([^\n]+)/,
+  code: /^\-([^\n]+)/,
+  outputCode: /^!=([^\n]+)/,
+  escapeCode: /^=([^\n]+)/,
+  attrs: /^\{(.*?)\}/,
+  tag: /^%([-a-zA-Z][-a-zA-Z0-9:]*)/,
+  class: /^\.([\w\-]+)/,
+  id: /^\#([\w\-]+)/,
+  text: /^([^\n]+)/
+}
+
+/**
+ * Return error context _str_.
+ *
+ * @param  {string} str
+ * @return {string}
+ * @api private
+ */
+
+function context(str) {
+  return String(str)
+    .substr(0, HAML.errorContextLength)
+    .replace(/\n/g, '\\n')
+}
+
+/**
+ * Tokenize _str_.
+ *
+ * @param  {string} str
+ * @return {array}
+ * @api private
+ */
+
+function tokenize(str) {
+  var captures,
+      token,
+      tokens = [],
+      line = 1,
+      lastIndents = 0,
+      str = String(str).trim().replace(/\r\n|\r|\n *\n/g, '\n')
+  function error(msg){ throw new HamlError('(Haml):' + line + ' ' + msg) }
+  while (str.length) {
+    for (var type in rules)
+      if (captures = rules[type].exec(str)) {
+        token = {
+          type: type,
+          line: line,
+          match: captures[0],
+          val: captures.length > 2
+            ? captures.slice(1)
+            : captures[1]
+        }
+        str = str.substr(captures[0].length)
+        if (type === 'indent') ++line
+        else  break
+        var indents = token.val.length / 2
+        if (indents % 1)
+          error('invalid indentation; got ' + token.val.length + ' spaces, should be multiple of 2')
+        else if (indents - 1 > lastIndents)
+          error('invalid indentation; got ' + indents + ', when previous was ' + lastIndents)
+        else if (lastIndents > indents)
+          while (lastIndents-- > indents)
+            tokens.push({ type: 'outdent', line: line })
+        else if (lastIndents !== indents)
+          tokens.push({ type: 'indent', line: line })
+        else
+          tokens.push({ type: 'newline', line: line })
+        lastIndents = indents
+      }
+    if (token) {
+      if (token.type !== 'silentComment')
+        tokens.push(token)
+      token = null
+    } else
+      error('near "' + context(str) + '"')
+  }
+  return tokens.concat({ type: 'eof' })
+}
+
+// --- Parser
+
+/**
+ * Initialize parser with _str_ and _options_.
+ */
+
+var Parser = HAML.Parser = function (str, options) {
+  options = options || {}
+  this.tokens = tokenize(str)
+  this.xml = options.xml
+}
+
+Parser.prototype = {
+
+  /**
+   * Lookahead a single token.
+   *
+   * @return {object}
+   * @api private
+   */
+
+  get peek() {
+    return this.tokens[0]
+  },
+
+  /**
+   * Advance a single token.
+   *
+   * @return {object}
+   * @api private
+   */
+
+  get advance() {
+    return this.current = this.tokens.shift()
+  },
+
+  /**
+   *    outdent
+   *  | eof
+   */
+
+  get outdent() {
+    switch (this.peek.type) {
+      case 'eof':
+        return
+      case 'outdent':
+        return this.advance
+      default:
+        throw new HamlError('expected outdent, got ' + this.peek.type)
+    }
+  },
+
+  /**
+   * text
+   */
+
+  get text() {
+    var text = this.advance.val.trim();
+
+    // String interpolation
+    text = text.replace(/#\{(.*)\}/, '" + $1 + "')
+
+    this.buffer(text)
+  },
+
+  /**
+   * indent expr outdent
+   */
+
+  get block() {
+    this.advance
+    while (this.peek.type !== 'outdent' &&
+           this.peek.type !== 'eof')
+      this.expr
+    this.outdent
+  },
+
+  /**
+   * indent expr
+   */
+
+  get textBlock() {
+    var token,
+        indents = 1
+    this.advance
+    while (this.peek.type !== 'eof' && indents)
+      switch((token = this.advance).type) {
+        case 'newline':
+          this.buffer('\\n' + Array(indents).join('  ') + '')
+          break
+        case 'indent':
+          ++indents
+          this.buffer('\\n' + Array(indents).join('  ') + '')
+          break
+        case 'outdent':
+          --indents
+          if (indents === 1) this.buffer('\\n')
+          break
+        default:
+          this.buffer(token.match.replace(/"/g, '\\\"'))
+      }
+  },
+
+  /**
+   *  ( attrs | class | id )*
+   */
+
+  get attrs() {
+    var attrs = ['attrs', 'class', 'id'],
+        buf = []
+
+    while (attrs.indexOf(this.peek.type) !== -1)
+      switch (this.peek.type) {
+        case 'id':
+          buf.push('{ id: "' + this.advance.val + '" }')
+          break
+        case 'class':
+          buf.push('{ class: "' + this.advance.val + '" }');
+          break
+        case 'attrs':
+          buf.push('{ ' + this.advance.val.replace(/(for) *:/gi, '"$1":') + ' }')
+      }
+
+    return buf.length
+      ? ' " + attrs([' + buf.join(', ') + ']) + "'
+      : ''
+  },
+
+  /**
+   *   tag
+   * | tag text
+   * | tag conditionalComment
+   * | tag comment
+   * | tag outputCode
+   * | tag escapeCode
+   * | tag block
+   */
+
+  get tag() {
+    var tag = this.advance.val,
+        selfClosing = !this.xml && HAML.selfClosing.indexOf(tag) !== -1
+
+    this.buffer('\\n<' + tag + this.attrs + (selfClosing ? '/>' : '>'));
+    switch (this.peek.type) {
+      case 'text':
+        this.text
+        break
+      case 'conditionalComment':
+        this.conditionalComment
+        break;
+      case 'comment':
+        this.comment
+        break
+      case 'outputCode':
+        this.outputCode
+        break
+      case 'escapeCode':
+        this.escapeCode
+        break
+      case 'indent':
+        this.block
+    }
+    if (!selfClosing) this.buffer('</' + tag + '>')
+  },
+
+  /**
+   * outputCode
+   */
+
+  get outputCode() {
+    this.buffer(this.advance.val, false)
+  },
+
+  /**
+   * escapeCode
+   */
+
+  get escapeCode() {
+    this.buffer('escape(' + this.advance.val + ')', false)
+  },
+
+  /**
+   * doctype
+   */
+
+  get doctype() {
+    var doctype = this.advance.val.trim().toLowerCase() || 'default'
+    if (doctype in HAML.doctypes)
+      this.buffer(HAML.doctypes[doctype].replace(/"/g, '\\"'))
+    else
+      throw new HamlError("doctype `" + doctype + "' does not exist")
+  },
+
+  /**
+   * conditional comment expr
+   */
+
+  get conditionalComment() {
+    var condition= this.advance.val
+
+    this.buffer('<!--' + condition + '>')
+
+    this.peek.type === 'indent'
+      ? this.block
+      : this.expr
+
+    this.buffer('<![endif]-->')
+  },
+
+  /**
+   * comment expr
+   */
+
+  get comment() {
+    this.advance
+    this.buffer('<!-- ')
+    var buf = this.peek.type === 'indent'
+      ? this.block
+      : this.expr
+    this.buffer(' -->')
+  },
+
+  /**
+   *   code
+   * | code block
+   */
+
+  get code() {
+    var code = this.advance.val
+
+    if (this.peek.type === 'indent') {
+      this.buf.push(code)
+      this.buf.push('{')
+      this.block
+      this.buf.push('}')
+      return
+    }
+
+    this.buf.push(code)
+  },
+
+  /**
+   * filter textBlock
+   */
+
+  get filter() {
+    var filter = this.advance.val
+    if (!(filter in HAML.filters))
+      throw new HamlError("filter `" + filter + "' does not exist")
+    if (this.peek.type !== 'indent')
+      throw new HamlError("filter `" + filter + "' expects a text block")
+
+    this.buf.push('HAML.filters.' + filter + '(')
+    this.buf.push('(function(){')
+    this.buf.push('var buf = []')
+    this.textBlock
+    this.buf.push('return buf.join("")')
+    this.buf.push('}).call(this)')
+    this.buf.push(', buf)')
+  },
+
+  /**
+   * each block
+   */
+
+  get iterate() {
+    var each = this.advance,
+      key = each.val[1],
+      vals = each.val[2],
+      val = each.val[0]
+
+    if (this.peek.type !== 'indent')
+      throw new HamlError("'- each' expects a block, but got " + this.peek.type)
+
+    this.buf.push('for (var ' + (key || 'index') + ' in ' + vals + ') {')
+    this.buf.push('var ' + val + ' = ' + vals + '[' + (key || 'index') + '];')
+
+    this.block
+
+    this.buf.push('}')
+  },
+
+  /**
+   *   eof
+   * | tag
+   * | text*
+   * | each
+   * | code
+   * | escape
+   * | doctype
+   * | filter
+   * | comment
+   * | conditionalComment
+   * | escapeCode
+   * | outputCode
+   */
+
+  get expr() {
+    switch (this.peek.type) {
+      case 'id':
+      case 'class':
+        this.tokens.unshift({ type: 'tag', val: 'div' })
+        return this.tag
+      case 'tag':
+        return this.tag
+      case 'text':
+        var buf = []
+        while (this.peek.type === 'text') {
+          buf.push(this.advance.val.trim())
+          if (this.peek.type === 'newline')
+            this.advance
+        }
+        return this.buffer(buf.join(' '))
+      case 'each':
+        return this.iterate
+      case 'code':
+        return this.code
+      case 'escape':
+        return this.buffer(this.advance.val);
+      case 'doctype':
+        return this.doctype
+      case 'filter':
+        return this.filter
+      case 'conditionalComment':
+        return this.conditionalComment
+      case 'comment':
+        return this.comment
+      case 'escapeCode':
+        return this.escapeCode
+      case 'outputCode':
+        return this.outputCode
+      case 'newline':
+      case 'indent':
+      case 'outdent':
+        this.advance
+        return this.expr
+      default:
+        throw new HamlError('unexpected ' + this.peek.type)
+    }
+  },
+
+  /**
+   * expr*
+   */
+
+  get js() {
+    this.buf = [
+      'with (locals || {}) {',
+      '  var buf = [];'
+    ]
+
+    while (this.peek.type !== 'eof')
+      this.expr
+
+    this.buf.push('  return buf.join("")')
+    this.buf.push('}');
+
+    return this.buf.join('\n')
+  },
+
+  buffer: function (str, quoted) {
+    if (typeof quoted === 'undefined')
+      var quoted = true
+
+    if (quoted)
+      this.buf.push('  buf.push("' + str + '")')
+    else
+      this.buf.push('  buf.push(' + str + ')')
+  }
+}
+
+/**
+ * Escape html entities in _str_.
+ *
+ * @param  {string} str
+ * @return {string}
+ * @api private
+ */
+
+function escape(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/>/g, '&gt;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;')
+}
+
+/**
+ * Render _attrs_ to html escaped attributes.
+ *
+ * @param  {array} attrs
+ * @return {string}
+ * @api public
+ */
+
+function attrs(attrs) {
+  var finalAttrs = {}
+    , classes = []
+    , buf = []
+
+  for (var i = 0, len = attrs.length; i < len; i++)
+    for (var attrName in attrs[i])
+      if (attrName === 'class')
+        classes.push(attrs[i][attrName])
+      else
+        finalAttrs[attrName] = attrs[i][attrName]
+
+  if (classes.length)
+    finalAttrs['class'] = classes.join(' ')
+
+  for (var key in finalAttrs)
+    if (typeof finalAttrs[key] === 'boolean') {
+      if (finalAttrs[key] === true)
+        buf.push(key + '="' + key + '"')
+    } else if (finalAttrs[key])
+      buf.push(key + '="' + escape(finalAttrs[key]) + '"')
+  return buf.join(' ')
+}
+
+/**
+ * Compile a function from the given `str`.
+ *
+ * @param {String} str
+ * @return {Function}
+ * @api public
+ */
+
+HAML.compile = function(str, options){
+  var parser = new Parser(str, options);
+  var fn = new Function('locals, attrs, escape, HAML', parser.js);
+  return function(locals){
+    return fn.apply(this, [locals, attrs, escape, HAML]);
+  };
+};
+
+/**
+ * Render a _str_ of haml.
+ *
+ * Options:
+ *
+ *   - locals   Local variables available to the template
+ *   - context  Context in which the template is evaluated (becoming "this")
+ *   - filename Filename used to aid in error reporting
+ *   - cache    Cache compiled javascript, requires "filename"
+ *   - xml      Force xml support (no self-closing tags)
+ *
+ * @param  {string} str
+ * @param  {object} options
+ * @return {string}
+ * @api public
+ */
+
+HAML.render = function(str, options) {
+  var parser,
+      options = options || {}
+  if (options.cache && !options.filename)
+    throw new Error('filename option must be passed when cache is enabled')
+  return (function(){
+    try {
+      var fn
+      if (options.cache && HAML.cache[options.filename])
+        fn = HAML.cache[options.filename]
+      else {
+        parser = new Parser(str, options)
+        fn = Function('locals, attrs, escape, HAML', parser.js)
+      }
+      return (options.cache
+          ? HAML.cache[options.filename] = fn
+          : fn).call(options.context, options.locals, attrs, escape, HAML)
+    } catch (err) {
+      if (parser && err instanceof HamlError)
+        err.message = '(Haml):' + parser.peek.line + ' ' + err.message
+      else if (!(err instanceof HamlError))
+        err.message = '(Haml): ' + err.message
+      if (options.filename)
+        err.message = err.message.replace('Haml', options.filename)
+      throw err
+    }
+  }).call(options.context)
+}
+
+/**
+ * Render a file containing haml and cache the parser.
+ *
+ * @param  {string} filename
+ * @param  {string} encoding
+ * @param  {object} options
+ * @param  {function} callback
+ * @return {void}
+ * @api public
+ */
+
+HAML.renderFile = function(filename, encoding, options, callback) {
+  var fs = require('fs');
+  options = options || {}
+  options.filename = options.filename || filename
+  options.cache = options.hasOwnProperty('cache') ? options.cache : true
+
+  if (HAML.cache[filename]) {
+    process.nextTick(function() {
+      callback(null, HAML.render(null, options))
+    });
+  } else {
+    fs.readFile(filename, encoding, function(err, str) {
+      if (err) {
+        callback(err)
+      } else {
+        callback(null, HAML.render(str, options))
+      }
+    });
+  }
+}
+
+module.exports = HAML;
+
+}).call(this,require("oMfpAn"))
+},{"fs":21,"oMfpAn":27}],29:[function(require,module,exports){
 'use strict';
 
 var nodes = require('./nodes');
@@ -13094,7 +13828,7 @@ Compiler.prototype = {
   }
 };
 
-},{"./doctypes":29,"./filters":30,"./nodes":43,"./runtime":51,"./utils":52,"character-parser":16,"constantinople":17,"void-elements":53}],29:[function(require,module,exports){
+},{"./doctypes":30,"./filters":31,"./nodes":44,"./runtime":52,"./utils":53,"character-parser":16,"constantinople":17,"void-elements":54}],30:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -13107,7 +13841,7 @@ module.exports = {
   , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
   , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 module.exports = filter;
@@ -13119,7 +13853,7 @@ function filter(name, str, options) {
   }
 }
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -13541,7 +14275,7 @@ exports.__express = function(path, options, fn) {
 }
 
 }).call(this,require("oMfpAn"))
-},{"./compiler":28,"./doctypes":29,"./filters":30,"./lexer":33,"./nodes":43,"./parser":50,"./runtime":51,"./utils":52,"fs":22,"oMfpAn":27,"void-elements":53,"with":54}],32:[function(require,module,exports){
+},{"./compiler":29,"./doctypes":30,"./filters":31,"./lexer":34,"./nodes":44,"./parser":51,"./runtime":52,"./utils":53,"fs":22,"oMfpAn":27,"void-elements":54,"with":55}],33:[function(require,module,exports){
 'use strict';
 
 module.exports = [
@@ -13565,7 +14299,7 @@ module.exports = [
   , 'sub'
   , 'sup'
 ];
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -14516,7 +15250,7 @@ Lexer.prototype = {
   }
 };
 
-},{"./utils":52,"character-parser":16}],34:[function(require,module,exports){
+},{"./utils":53,"character-parser":16}],35:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14601,7 +15335,7 @@ Attrs.prototype.addAttributes = function (src) {
   this.attributeBlocks.push(src);
 };
 
-},{"./node":47}],35:[function(require,module,exports){
+},{"./node":48}],36:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14627,7 +15361,7 @@ BlockComment.prototype.constructor = BlockComment;
 
 BlockComment.prototype.type = 'BlockComment';
 
-},{"./node":47}],36:[function(require,module,exports){
+},{"./node":48}],37:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14747,7 +15481,7 @@ Block.prototype.clone = function(){
   return clone;
 };
 
-},{"./node":47}],37:[function(require,module,exports){
+},{"./node":48}],38:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14782,7 +15516,7 @@ When.prototype.constructor = When;
 
 When.prototype.type = 'When';
 
-},{"./node":47}],38:[function(require,module,exports){
+},{"./node":48}],39:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14809,7 +15543,7 @@ Code.prototype = Object.create(Node.prototype);
 Code.prototype.constructor = Code;
 
 Code.prototype.type = 'Code'; // prevent the minifiers removing this
-},{"./node":47}],39:[function(require,module,exports){
+},{"./node":48}],40:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14834,7 +15568,7 @@ Comment.prototype.constructor = Comment;
 
 Comment.prototype.type = 'Comment';
 
-},{"./node":47}],40:[function(require,module,exports){
+},{"./node":48}],41:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14856,7 +15590,7 @@ Doctype.prototype.constructor = Doctype;
 
 Doctype.prototype.type = 'Doctype';
 
-},{"./node":47}],41:[function(require,module,exports){
+},{"./node":48}],42:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14884,7 +15618,7 @@ Each.prototype.constructor = Each;
 
 Each.prototype.type = 'Each';
 
-},{"./node":47}],42:[function(require,module,exports){
+},{"./node":48}],43:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14910,7 +15644,7 @@ Filter.prototype.constructor = Filter;
 
 Filter.prototype.type = 'Filter';
 
-},{"./node":47}],43:[function(require,module,exports){
+},{"./node":48}],44:[function(require,module,exports){
 'use strict';
 
 exports.Node = require('./node');
@@ -14928,7 +15662,7 @@ exports.Literal = require('./literal');
 exports.BlockComment = require('./block-comment');
 exports.Doctype = require('./doctype');
 
-},{"./block":36,"./block-comment":35,"./case":37,"./code":38,"./comment":39,"./doctype":40,"./each":41,"./filter":42,"./literal":44,"./mixin":46,"./mixin-block":45,"./node":47,"./tag":48,"./text":49}],44:[function(require,module,exports){
+},{"./block":37,"./block-comment":36,"./case":38,"./code":39,"./comment":40,"./doctype":41,"./each":42,"./filter":43,"./literal":45,"./mixin":47,"./mixin-block":46,"./node":48,"./tag":49,"./text":50}],45:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14950,7 +15684,7 @@ Literal.prototype.constructor = Literal;
 
 Literal.prototype.type = 'Literal';
 
-},{"./node":47}],45:[function(require,module,exports){
+},{"./node":48}],46:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -14970,7 +15704,7 @@ MixinBlock.prototype.constructor = MixinBlock;
 
 MixinBlock.prototype.type = 'MixinBlock';
 
-},{"./node":47}],46:[function(require,module,exports){
+},{"./node":48}],47:[function(require,module,exports){
 'use strict';
 
 var Attrs = require('./attrs');
@@ -14998,7 +15732,7 @@ Mixin.prototype.constructor = Mixin;
 
 Mixin.prototype.type = 'Mixin';
 
-},{"./attrs":34}],47:[function(require,module,exports){
+},{"./attrs":35}],48:[function(require,module,exports){
 'use strict';
 
 var Node = module.exports = function Node(){};
@@ -15018,7 +15752,7 @@ Node.prototype.clone = function(){
 
 Node.prototype.type = '';
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 var Attrs = require('./attrs');
@@ -15109,7 +15843,7 @@ Tag.prototype.canInline = function(){
   return false;
 };
 
-},{"../inline-tags":32,"./attrs":34,"./block":36}],49:[function(require,module,exports){
+},{"../inline-tags":33,"./attrs":35,"./block":37}],50:[function(require,module,exports){
 'use strict';
 
 var Node = require('./node');
@@ -15136,7 +15870,7 @@ Text.prototype.type = 'Text';
  */
 
 Text.prototype.isText = true;
-},{"./node":47}],50:[function(require,module,exports){
+},{"./node":48}],51:[function(require,module,exports){
 'use strict';
 
 var Lexer = require('./lexer');
@@ -15984,7 +16718,7 @@ Parser.prototype = {
   }
 };
 
-},{"./filters":30,"./lexer":33,"./nodes":43,"./utils":52,"character-parser":16,"constantinople":17,"fs":22,"path":26}],51:[function(require,module,exports){
+},{"./filters":31,"./lexer":34,"./nodes":44,"./utils":53,"character-parser":16,"constantinople":17,"fs":22,"path":26}],52:[function(require,module,exports){
 'use strict';
 
 /**
@@ -16232,7 +16966,7 @@ exports.DebugItem = function DebugItem(lineno, filename) {
   this.filename = filename;
 }
 
-},{"fs":22}],52:[function(require,module,exports){
+},{"fs":22}],53:[function(require,module,exports){
 'use strict';
 
 /**
@@ -16287,7 +17021,7 @@ exports.walkAST = function walkAST(ast, before, after) {
   after && after(ast);
 };
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  * This file automatically generated from `pre-publish.js`.
  * Do not manually edit.
@@ -16312,7 +17046,7 @@ module.exports = {
   "wbr": true
 };
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 var detect = require('acorn-globals');
@@ -16439,7 +17173,7 @@ function unwrapReturns(src, result) {
   else return 'var ' + result + '=' + src.join('') + ';if (' + result + ') return ' + result + '.value'
 }
 
-},{"acorn":55,"acorn-globals":13,"acorn/dist/walk":56}],55:[function(require,module,exports){
+},{"acorn":56,"acorn-globals":13,"acorn/dist/walk":57}],56:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.acorn = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -20456,7 +21190,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.acorn || (g.acorn = {})).walk = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
