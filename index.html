@@ -169,7 +169,16 @@
   			<!-- BEGIN lang:touch#en -->
   			<p>You can share components you have created here with others via this URL</p>
   			<!-- END lang:touch#en -->
-  			<p><a class="slack-button-widget" data-source="http://slackbutton.herokuapp.com/embed" href="http://slackbutton.herokuapp.com/post/new" data-url="{shortenedUrl}">Post to Slack</a></p>
+  			<p><a class="slack-button-widget" data-source="http://slackbutton.herokuapp.com/embed" href="http://slackbutton.herokuapp.com/post/new" data-url="{shortenedUrl}">Post to Slack</a>
+  			<a href="http://getpocket.com/edit?url={shortenedUrl}&title=atomic-lab" class="cssLabSocialBtn pocket" target="_blank">
+					<!-- BEGIN lang:touch#ja -->Pocketに保存<!-- END lang:touch#ja -->
+					<!-- BEGIN lang:touch#en -->Save on Pocket<!-- END lang:touch#en -->
+        </a>
+        <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomic-lab" class="cssLabSocialBtn twitter" target="_blank">
+					<!-- BEGIN lang:touch#ja -->Twitterで共有<!-- END lang:touch#ja -->
+					<!-- BEGIN lang:touch#en -->Share on Twitter<!-- END lang:touch#en -->
+        </a>
+        </p>
   			<p><input type="text" value="{shortenedUrl}"></p>
   		</div>
   		<div class="mdl-dialog__actions">
