@@ -43,6 +43,11 @@ supporse that component's name is "main-visual"
 <!-- button -->
 ```
 
-
+## Attribution
+We use these icons created by http://patternlab.io/
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/atom.svg">
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/molucule.svg">
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/organism.svg">
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/template.svg">
 ## License
 MIT License
