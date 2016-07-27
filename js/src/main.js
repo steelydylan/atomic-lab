@@ -219,7 +219,9 @@ jQuery(function($){
 				comps.forEach(function(comp){
 					var file1 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.markup;
 					var file2 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.styling;
-					zip.file(file1,comp.html);
+					var template = parser.getTemplate(comp.html);
+					var html = parser.getInnerHtmlFromTemplate(template);
+					zip.file(file1,html);
 					zip.file(file2,comp.css);
 				});
 				var content = zip.generate({type:"blob"});
