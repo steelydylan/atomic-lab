@@ -4,6 +4,12 @@ Template sharing and coding environment based on atomic design
 ## Screenshot
 <img src="https://raw.github.com/steelydylan/atomic-lab/master/screenshot.png"></img>
 
+## Features
+
+- You can use template engines like haml, ejs and jade.
+- You can use css preprocessors like scss, less and stylus
+- You can share components you have created with others by sharing shortened URL
+
 ## Usage
 
 ### preview
