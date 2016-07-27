@@ -213,7 +213,15 @@ jQuery(function($){
 			},
 			outputComp:function(){
 				var zip = new JSZip();
-				zip.file("setting.json", JSON.stringify({components:this.data.components}));
+				var comps = this.data.components;
+				var that = this;
+				zip.file("setting.json", JSON.stringify({components:comps}));
+				comps.forEach(function(comp){
+					var file1 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.markup;
+					var file2 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.styling;
+					zip.file(file1,comp.html);
+					zip.file(file2,comp.css);
+				});
 				var content = zip.generate({type:"blob"});
 		  	saveAs(content, "css-lab.zip");
 			},
