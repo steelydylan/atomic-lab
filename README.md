@@ -20,5 +20,10 @@ code here
 <!-- /template -->
 ```
 
+### use template
+supporse that component's name is "main-visual"
+```html
+<!-- main-visual -->
+```
 ## License
 MIT License
