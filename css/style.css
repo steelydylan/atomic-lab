@@ -118,6 +118,10 @@ html {
 	margin-right: 10px;
 }
 
+.mdl-data-table--about{
+	margin-bottom: 20px;
+}
+
 .ace_editor {
 	height: 100%;
 	margin-top: 0;
