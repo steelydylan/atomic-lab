@@ -44,6 +44,7 @@
       	<!-- Place this tag where you want the button to render. -->
       	<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
       	<a class="mdl-navigation__link" href="#" data-action="openSettingDialog">Settings</a>
+      	<a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Collections</a>
         <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
         <a class="mdl-navigation__link" href="#"><label for="upload">Upload<input type="file" data-action="readSetting" class="cssLabRead" id="upload"></label></a>
         <a class="mdl-navigation__link" href="#" data-action="openShareDialog">Share</a>
@@ -130,6 +131,10 @@
   	<script id="css_setting" type="text/template">
   	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
+  			<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					<input type="text" data-bind="projectName" class="mdl-textfield__input" id="projectName">
+					<label class="mdl-textfield__label" for="projectName">Project Name</label>
+				</div>
 				<p>Markup</p>
 				<p>
 				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="html">
@@ -172,6 +177,30 @@
 			</div>
   	</script>
   </dialog>
+  <dialog class="mdl-dialog mdl-dialog--wide js-collections-dialog">
+  	<script id="css_collections" type="text/template">
+  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Collections<!-- END lang:touch#en --></h4>
+  	<div class="mdl-dialog__content">
+  		<table class="mdl-data-table mdl-shadow--2dp">
+  		<tr>
+  			<th>Name</th>
+  			<th colspan="2">URL</th>
+  		</tr>
+  		<!-- BEGIN collections:loop -->
+			<tr>
+				<td>{projectName}</td>
+				<td><a href="{shortenedUrl}">{shortenedUrl}</a></td>
+				<td><button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="removeCollection({i})"><i class="material-icons">delete</i>
+				</button></td>
+			</tr>
+  		<!-- END collections:loop -->
+  		</table>
+  	</div>
+		<div class="mdl-dialog__actions">
+				<button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+		</div>
+		</script>
+	</dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-share-dialog">
   	<script id="css_share" type="text/template">
   		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの共有<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Share Component<!-- END lang:touch#en --></h4>
@@ -191,6 +220,14 @@
 					<!-- BEGIN lang:touch#ja -->Twitterで共有<!-- END lang:touch#ja -->
 					<!-- BEGIN lang:touch#en -->Share on Twitter<!-- END lang:touch#en -->
         </a>
+        <button class="cssLabSocialBtn" data-action="addToCollection">
+        <!-- BEGIN lang:touch#ja -->
+        add to my collections
+				<!-- END lang:touch#ja -->
+				<!-- BEGIN lang:touch#en -->
+				コレクションに追加
+				<!-- END lang:touch#en -->
+        </button>
         </p>
   			<p><input type="text" value="{shortenedUrl}"></p>
   		</div>
