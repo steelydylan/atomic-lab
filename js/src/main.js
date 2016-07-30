@@ -99,6 +99,8 @@ jQuery(function($){
 			    var data = JSON.parse(strings);
 			    this.loadData(storageName);
 			    this.data.components = data.components;
+			    this.data.styling = data.styling;
+			    this.data.markup = data.markup;
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
