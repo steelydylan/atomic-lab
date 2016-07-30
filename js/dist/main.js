@@ -1189,14 +1189,14 @@ jQuery(function($){
 				}else{
 					this.setData(defaultStyle);
 					this.loadData(storageName);
-					var comp = this.data.components[0];
-					if(comp){
-						this.data.id = comp.id
-						this.data.html = comp.html;
-						this.data.css = comp.css;
-						this.data.category = comp.category;
-						this.data.name = comp.name;
-					}
+				}
+				var comp = this.data.components[0];
+				if(comp){
+					this.data.id = comp.id
+					this.data.html = comp.html;
+					this.data.css = comp.css;
+					this.data.category = comp.category;
+					this.data.name = comp.name;
 				}
 				this.update();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
