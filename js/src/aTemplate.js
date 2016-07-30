@@ -117,7 +117,7 @@
 			var data = JSON.parse(localStorage.getItem(key));
 			if(data){
 				for(var i in data){
-					if(typeof data[i] !== "function"){
+					if(typeof data[i] !== "function" && data[i]){
 						this.data[i] = data[i];
 					}
 				}

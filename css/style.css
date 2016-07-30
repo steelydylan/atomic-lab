@@ -127,6 +127,18 @@ html {
 	margin-top: 0;
 }
 
+.mdl-dialog{
+	-webkit-transition: .3s opacity;
+	   -moz-transition: .3s opacity;
+	    -ms-transition: .3s opacity;
+	     -o-transition: .3s opacity;
+	        transition: .3s opacity;
+}
+
+.mdl-dialog.mdl-dialog--fade{
+	opacity: 0;
+}
+
 .sourceCopied {
 	position: fixed;
 	z-index: 1000;

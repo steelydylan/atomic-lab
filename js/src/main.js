@@ -38,11 +38,14 @@ jQuery(function($){
 			"css_cheat",
 			"css_share",
 			"css_remove",
-			"css_exp"
+			"css_exp",
+			"css_collections"
 		],
 		data:{
 			lang:lang,
 			components:[],
+			collections:[],
+			projectName:"project1",
 			name:"",
 			newName:"",
 			css:"",
@@ -94,9 +97,8 @@ jQuery(function($){
     			strings = JSZip.compressions.DEFLATE.uncompress(strings);
     			strings = decodeURI(strings);
 			    var data = JSON.parse(strings);
-			    for(var key in data){
-		      	this.data[key] = data[key];
-		      }
+			    this.loadData(storageName);
+			    this.data.components = data.components;
 		      location.hash = "";
 				}else{
 					this.setData(defaultStyle);
@@ -155,6 +157,7 @@ jQuery(function($){
 			},
 			showAlert:function(msg){
 				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
+				$(".mdl-dialog").addClass("mdl-dialog--fade");
 				$("body").append($alert);
 				$alert.delay(1).queue(function(next){
 				  $(this).addClass("active");
@@ -164,6 +167,7 @@ jQuery(function($){
 				  next();
 				}).delay(200).queue(function(next){
 				  $(this).remove();
+				  $(".mdl-dialog").removeClass("mdl-dialog--fade");
 				  next();
 				});
 			},
@@ -448,6 +452,30 @@ jQuery(function($){
 				editor.getSession().on('change',function(e){
 					that.data[name] = editor.getSession().getValue();
 				});
+			},
+			addToCollection:function(){
+				var obj = {
+					projectName:this.data.projectName,
+					shortenedUrl:this.data.shortenedUrl
+				}
+				this.data.collections.push(obj);
+				this.saveData(storageName);
+				this.update("html","css_collections");
+				this.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+			},
+			openCollectionsDialog:function(){
+				var dialog = document.querySelector(".js-collections-dialog");
+				dialogPolyfill.registerDialog(dialog);
+				dialog.showModal();
+			},
+			closeCollectionsDialog:function(){
+				var dialog = document.querySelector(".js-collections-dialog");
+				dialog.close();
+			},
+			removeCollection:function(i){
+				this.data.collections.splice(i,1);
+				this.update("html","css_collections");
+				this.saveData(storageName);
 			}
 		},
 		convert:{
