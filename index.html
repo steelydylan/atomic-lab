@@ -193,8 +193,8 @@
 		  </div>
 		  <table class="mdl-data-table mdl-shadow--2dp">
 	  		<tr>
-	  			<th style="width:90px">Name</th>
-	  			<th style="width:190px">URL</th>
+	  			<th style="width:150px;">Name</th>
+	  			<th style="width:200px;">URL</th>
 	  			<th>Social</th>
 	  			<th></th>
 	  		</tr>
@@ -203,8 +203,11 @@
 	  		<table class="mdl-data-table mdl-shadow--2dp mdl-data-table--collection">
 	  		<!-- BEGIN collectionsReverse:loop -->
 				<tr>
-					<td>{projectName}</td>
-					<td><a href="{shortenedUrl}">{shortenedUrl}</a></td>
+					<td style="width:150px;"><!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})">{projectName}</span><!-- END onEdit:touchnot#true --><!-- BEGIN onEdit:touch#true --><input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;"><button data-action="updateCollection({i})" class="cssLabRenameBtn">
+						<!-- \BEGIN lang:touch#ja -->変更<!-- \END lang:touch#ja -->
+						<!-- \BEGIN lang:touch#en -->Update<!-- \END lang:touch#en -->
+					</button><!-- END onEdit:touch#true --></td>
+					<td style="width:200px;"><a href="{shortenedUrl}">{shortenedUrl}</a></td>
 					<td>
 	  			<a href="http://getpocket.com/edit?url={shortenedUrl}&title=atomic-lab" class="cssLabSocialBtn pocket" target="_blank">
 						<!-- \BEGIN lang:touch#ja -->Pocketに保存<!-- \END lang:touch#ja -->
