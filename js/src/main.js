@@ -119,7 +119,8 @@ jQuery(function($){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 			},
-			openShareDialog:function(){
+			getShortenedUrl:function(){
+				var d = new $.Deferred();
 				var that = this;
 				var zip = new JSZip();
 				var data = this.data;
@@ -141,13 +142,21 @@ jQuery(function($){
 	        dataType: "json",
 	        success: function(res) {
 	        	that.data.shortenedUrl = res.id;
-	        	that.update("html","css_share");
+	        	d.resolve();
+	        },
+				})
+				return d.promise();
+			},
+			openShareDialog:function(){
+				var self = this;
+				self.applyMethod("getShortenedUrl")
+				.then(function(){
+						self.update("html","css_share");
 						slackWidget();
 	        	var dialog = document.querySelector(".js-share-dialog");
 	        	dialogPolyfill.registerDialog(dialog);
 						dialog.showModal();
-	        },
-				})
+				});
 			},
 			closeShareDialog:function(){
 				var dialog = document.querySelector(".js-share-dialog");
@@ -456,14 +465,18 @@ jQuery(function($){
 				});
 			},
 			addToCollection:function(){
-				var obj = {
-					projectName:this.data.projectName,
-					shortenedUrl:this.data.shortenedUrl
-				}
-				this.data.collections.push(obj);
-				this.saveData(storageName);
-				this.update("html","css_collections");
-				this.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+				var self = this;
+				self.applyMethod("getShortenedUrl")
+				.then(function(){
+					var obj = {
+						projectName:self.data.projectName,
+						shortenedUrl:self.data.shortenedUrl
+					}
+					self.data.collections.push(obj);
+					self.saveData(storageName);
+					self.update("html","css_collections");
+					self.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+				});
 			},
 			openCollectionsDialog:function(){
 				var dialog = document.querySelector(".js-collections-dialog");
