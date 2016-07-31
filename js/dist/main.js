@@ -1122,7 +1122,6 @@ jQuery(function($){
 			"css_about",
 			"css_io",
 			"css_cheat",
-			"css_share",
 			"css_remove",
 			"css_exp",
 			"css_collections"
@@ -1172,6 +1171,9 @@ jQuery(function($){
 					}
 					return comp.name.indexOf(search) >= 0;
 				});
+			},
+			collectionsReverse:function(){
+				return this.data.collections.slice().reverse();
 			}
 		},
 		method:{
@@ -1232,21 +1234,6 @@ jQuery(function($){
 	        },
 				})
 				return d.promise();
-			},
-			openShareDialog:function(){
-				var self = this;
-				self.applyMethod("getShortenedUrl")
-				.then(function(){
-						self.update("html","css_share");
-						slackWidget();
-	        	var dialog = document.querySelector(".js-share-dialog");
-	        	dialogPolyfill.registerDialog(dialog);
-						dialog.showModal();
-				});
-			},
-			closeShareDialog:function(){
-				var dialog = document.querySelector(".js-share-dialog");
-				dialog.close();
 			},
 			//after updated
 			onUpdated:function(){
@@ -1550,31 +1537,37 @@ jQuery(function($){
 					that.data[name] = editor.getSession().getValue();
 				});
 			},
-			addToCollection:function(){
+			/*
+				feature collection
+			*/
+			openCollectionsDialog:function(){
 				var self = this;
 				self.applyMethod("getShortenedUrl")
 				.then(function(){
-					var obj = {
-						projectName:self.data.projectName,
-						shortenedUrl:self.data.shortenedUrl
-					}
-					self.data.collections.push(obj);
-					self.saveData(storageName);
 					self.update("html","css_collections");
-					self.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+					var dialog = document.querySelector(".js-collections-dialog");
+					dialogPolyfill.registerDialog(dialog);
+					dialog.showModal();
 				});
-			},
-			openCollectionsDialog:function(){
-				var dialog = document.querySelector(".js-collections-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
 			},
 			closeCollectionsDialog:function(){
 				var dialog = document.querySelector(".js-collections-dialog");
 				dialog.close();
 			},
+			addToCollection:function(){
+					var obj = {
+						projectName:this.data.projectName,
+						shortenedUrl:this.data.shortenedUrl
+					}
+					this.data.collections.push(obj);
+					this.saveData(storageName);
+					this.update("html","css_collections");
+					this.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+			},
 			removeCollection:function(i){
-				this.data.collections.splice(i,1);
+				var index = this.data.collections.length - i -1;
+				console.log(index);
+				this.data.collections.splice(index,1);
 				this.update("html","css_collections");
 				this.saveData(storageName);
 			}

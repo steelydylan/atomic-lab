@@ -47,7 +47,6 @@
       	<a class="mdl-navigation__link" href="#" data-action="openSettingDialog">Settings</a>
         <a class="mdl-navigation__link" href="#" data-action="outputComp">Download</a>
         <a class="mdl-navigation__link" href="#"><label for="upload">Upload<input type="file" data-action="readSetting" class="cssLabRead" id="upload"></label></a>
-        <a class="mdl-navigation__link" href="#" data-action="openShareDialog">Share</a>
       </nav>
       </script>
     </div>
@@ -131,10 +130,6 @@
   	<script id="css_setting" type="text/template">
   	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
-  			<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
-					<input type="text" data-bind="projectName" class="mdl-textfield__input" id="projectName">
-					<label class="mdl-textfield__label" for="projectName">Project Name</label>
-				</div>
 				<p>Markup</p>
 				<p>
 				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="html">
@@ -177,67 +172,61 @@
 			</div>
   	</script>
   </dialog>
-  <dialog class="mdl-dialog mdl-dialog--wide js-collections-dialog">
+  <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog">
   	<script id="css_collections" type="text/template">
   	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Collections<!-- END lang:touch#en --></h4>
   	<div class="mdl-dialog__content">
-  		<p>
-  		  <button class="cssLabSocialBtn" data-action="addToCollection">
-        <!-- BEGIN lang:touch#ja -->
-        add current project to my collections
-				<!-- END lang:touch#ja -->
-				<!-- BEGIN lang:touch#en -->
-				現在のプロジェクトをコレクションに追加
-				<!-- END lang:touch#en -->
-        </button>
-      </p>
-  		<table class="mdl-data-table mdl-shadow--2dp">
-  		<tr>
-  			<th>Name</th>
-  			<th colspan="2">URL</th>
-  		</tr>
-  		<!-- BEGIN collections:loop -->
-			<tr>
-				<td>{projectName}</td>
-				<td><a href="{shortenedUrl}">{shortenedUrl}</a></td>
-				<td><button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="removeCollection({i})"><i class="material-icons">delete</i>
-				</button></td>
-			</tr>
-  		<!-- END collections:loop -->
-  		</table>
+  		<div class="mdl-grid">
+  			<div class="mdl-cell mdl-cell--6-col">
+						<input type="text" data-bind="projectName" class="mdl-textfield__input" id="search" placeholder="Project Name">
+		    </div>
+		    <div class="mdl-cell mdl-cell--6-col">
+		  		  <button class="cssLabSocialBtn" data-action="addToCollection">
+		        <!-- BEGIN lang:touch#ja -->
+		        add current project to my collections
+						<!-- END lang:touch#ja -->
+						<!-- BEGIN lang:touch#en -->
+						現在のプロジェクトをコレクションに追加
+						<!-- END lang:touch#en -->
+		        </button>
+		    </div>
+		  </div>
+		  <table class="mdl-data-table mdl-shadow--2dp">
+	  		<tr>
+	  			<th style="width:90px">Name</th>
+	  			<th style="width:190px">URL</th>
+	  			<th>Social</th>
+	  			<th></th>
+	  		</tr>
+	  	</table>
+		  <div class="cssLabCollectionTableWrap">
+	  		<table class="mdl-data-table mdl-shadow--2dp mdl-data-table--collection">
+	  		<!-- BEGIN collectionsReverse:loop -->
+				<tr>
+					<td>{projectName}</td>
+					<td><a href="{shortenedUrl}">{shortenedUrl}</a></td>
+					<td>
+	  			<a href="http://getpocket.com/edit?url={shortenedUrl}&title=atomic-lab" class="cssLabSocialBtn pocket" target="_blank">
+						<!-- \BEGIN lang:touch#ja -->Pocketに保存<!-- \END lang:touch#ja -->
+						<!-- \BEGIN lang:touch#en -->Save on Pocket<!-- \END lang:touch#en -->
+	        </a>
+	        <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
+						<!-- \BEGIN lang:touch#ja -->Twitterで共有<!-- \END lang:touch#ja -->
+						<!-- \BEGIN lang:touch#en -->Share on Twitter<!-- \END lang:touch#en -->
+	        </a>
+	        </td>
+					<td><button class="mdl-button mdl-js-button mdl-button--icon mdl-button--pull-right" data-action="removeCollection({i})"><i class="material-icons">delete</i>
+					</button></td>
+				</tr>
+	  		<!-- END collectionsReverse:loop -->
+	  		</table>
+  		</div>
   	</div>
 		<div class="mdl-dialog__actions">
 				<button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
 		</div>
 		</script>
 	</dialog>
-  <dialog class="mdl-dialog mdl-dialog--wide js-share-dialog">
-  	<script id="css_share" type="text/template">
-  		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの共有<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Share Component<!-- END lang:touch#en --></h4>
-  		<div class="mdl-dialog__content">
-  			<!-- BEGIN lang:touch#ja -->
-  			<p>URLよりここで作成したコンポーネントの情報を他の人と共有する事が出来ます。</p>
-  			<!-- END lang:touch#ja -->
-  			<!-- BEGIN lang:touch#en -->
-  			<p>You can share components you have created here with others via this URL</p>
-  			<!-- END lang:touch#en -->
-  			<p><a class="slack-button-widget" data-source="http://slackbutton.herokuapp.com/embed" href="http://slackbutton.herokuapp.com/post/new" data-url="{shortenedUrl}">Post to Slack</a>
-  			<a href="http://getpocket.com/edit?url={shortenedUrl}&title=atomic-lab" class="cssLabSocialBtn pocket" target="_blank">
-					<!-- BEGIN lang:touch#ja -->Pocketに保存<!-- END lang:touch#ja -->
-					<!-- BEGIN lang:touch#en -->Save on Pocket<!-- END lang:touch#en -->
-        </a>
-        <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
-					<!-- BEGIN lang:touch#ja -->Twitterで共有<!-- END lang:touch#ja -->
-					<!-- BEGIN lang:touch#en -->Share on Twitter<!-- END lang:touch#en -->
-        </a>
-        </p>
-  			<p><input type="text" value="{shortenedUrl}"></p>
-  		</div>
-  		<div class="mdl-dialog__actions">
-				<button class="mdl-button close" data-action="closeShareDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-			</div>
-  	</script>
-  </dialog>
   <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
   	<script id="css_remove" type="text/template">
   		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
