@@ -482,6 +482,20 @@ jQuery(function($){
 				this.data.collections.splice(index,1);
 				this.update("html","css_collections");
 				this.saveData(storageName);
+			},
+			updateCollection:function(i){
+				var collections = this.data.collections;
+				var index = collections.length - i - 1;
+				var project = collections[index];
+				project.onEdit = "false";
+				this.update("html","css_collections");
+			},
+			renameProject:function(i){
+				var collections = this.data.collections
+				var index = collections.length - i -1;
+				var project = collections[index];
+				project.onEdit = "true";
+				this.update("html","css_collections");
 			}
 		},
 		convert:{
@@ -546,6 +560,9 @@ jQuery(function($){
 			},
 			markdown:function(data){
 				return marked(data);
+			},
+			reversedIndex:function(i){
+				return this.data.collections.length - i -1;
 			}
 		}
 	}).applyMethod("initialize");
