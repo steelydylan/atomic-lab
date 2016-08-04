@@ -1307,11 +1307,11 @@ jQuery(function($){
 				comps.forEach(function(comp){
 					var file1 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.markup;
 					var file2 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.styling;
-					var template = parser.getTemplate(comp.html);
-					var html = parser.getInnerHtmlFromTemplate(template);
-					zip.file(file1,html);
+					zip.file(file1,comp.html);
 					zip.file(file2,comp.css);
 				});
+				zip.file("package.json",this.getHtml("#package_json"));
+				zip.file("index.js",this.getHtml("#index_js"));
 				var content = zip.generate({type:"blob"});
 		  	saveAs(content, "css-lab.zip");
 			},

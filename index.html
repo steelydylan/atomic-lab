@@ -421,6 +421,32 @@
 			</script>
 		</main>
 	</div>
+<script type="text/template" id="package_json">
+{
+  "name": "atomic-lab",
+  "version": "1.0.0",
+  "description": "static html generator based on atomic design",
+  "main": "index.js",
+  "scripts": {
+    "run": "watch-run -p 'components/**/**' node index.js"
+  },
+  "devDependencies":{
+    "watch-run":"*",
+    "atomic-generator":"*"
+  },
+  "author": "steelydylan",
+  "license": "MIT"
+}
+</script>
+<script type="text/template" id="index_js">
+var atomicBuilder = require("atomic-generator");
+atomicBuilder.build({
+	src:"components/",
+	dist:"dist/",
+	markup:"{markup}",
+	styling:"{styling}"
+});
+</script>
 <!-- Place this tag in your head or just before your close body tag. -->
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/sass.js/0.4.0/sass.min.js"></script>
