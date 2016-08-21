@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 html {
 	box-sizing: border-box;
 }
@@ -279,3 +281,5 @@ iframe{
 	display: inline-block;
 	width: 80px;
 }
+
+
