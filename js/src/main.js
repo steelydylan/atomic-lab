@@ -316,7 +316,7 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					editor.destroy();
 				}
-			  	this.data.editMode = mode;
+			  this.data.editMode = mode;
 				this.update();
 				componentHandler.upgradeDom();
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
