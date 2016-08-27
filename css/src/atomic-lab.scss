@@ -1,0 +1,110 @@
+@charset "utf-8";
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-width: 1040px;
+    height: 100%;
+    overflow: hidden;
+    color: #848484;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: inherit;
+}
+
+.atomicLabHeader {
+    box-shadow: none;
+    &-row {
+        padding-left: 40px;
+    }
+    &-gitHubMark {
+        width: 34px;
+    }
+}
+/* Side Menu */
+
+.atomicLabSideMenu {
+    width: 25%;
+    height: 100%;
+    border-right: 1px solid #D7D7D7;
+    background: #fff;
+}
+/* Project Control */
+
+.atomicLabProjectControl {
+    border-bottom: 1px solid #D7D7D7;
+    padding: 20px 20px 0 20px;
+    &-title {
+        font-size: 20px;
+        vertical-align: middle;
+        color: rgb(255, 82, 82);
+        position: relative;
+        cursor: pointer;
+        margin: 0 0 15px 0;
+        i {
+            vertical-align: bottom;
+        }
+        .atomicLabProjectControl-arrow {
+            position: absolute;
+            right: 5px;
+        }
+        .atomicLabProjectControl-shotDescription {
+            line-height: 1.3em;
+        }
+    }
+    &-actions {
+        margin: 20px 0 10px 0;
+        ul {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        li {
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            cursor: pointer;
+        }
+    }
+}
+/* Floatin Action Button */
+
+.AtomicLabFAB {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 56px;
+    height: 270px;
+    &-main {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    &-subActionsList {
+        display: block;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 7px;
+        li {
+            display: block;
+            margin: 10px 0;
+            padding: 0;
+        }
+    }
+}
+
+
+/* Header small screen */
+@media screen and (max-width: 1024px) {
+    .mdl-layout__header {
+        display: block;
+    }
+}

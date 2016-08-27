@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.blue_grey-red.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="/css/ui-static.css">
+    <link rel="stylesheet" href="/css/atomic-lab.css">
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
 </head>
 
 <body>
 
     <header class="mdl-layout__header atomicLabHeader">
-        <div class="mdl-layout__header-row atomicLabHeaderRow">
+        <div class="mdl-layout__header-row atomicLabHeader-row">
             <!-- Title -->
             <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
             <!-- Add spacer, to align navigation to the right -->
@@ -25,7 +25,7 @@
                 <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
                 <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
                 <a class="mdl-navigation__link" href="#">Upload</a>
-                <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabGitHubMark" src="/images/githubMark.png" alt="GitHub">
+                <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
                 </a>
             </nav>
         </div>
@@ -36,6 +36,7 @@
 
         <div class="atomicLabProjectControl">
 
+            <!-- Project title -->
             <div class="atomicLabProjectControl-title">
                 <i class="material-icons">folder</i> My Website
                 <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
@@ -43,6 +44,8 @@
             <p class="atomicLabProjectControl-shotDescription">
                 Keep your eyes on the stars, and your feet on the ground.
             </p>
+
+            <!-- Project actions -->
             <nav class="atomicLabProjectControl-actions">
                 <ul>
                     <li>
