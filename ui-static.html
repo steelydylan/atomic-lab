@@ -103,25 +103,46 @@
             </div>
             <!-- / Side menu -->
 
+            <!-- Main panel -->
             <main class="atomicLabMain">
-
 
                 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 
-                    <div class="atomicLabComponentContorl mdl-shadow--2dp">
+                    <div class="atomicLabComponentControl mdl-shadow--2dp">
 
-                        <div class="atomicLabComponentContorl-icon">
+                        <!-- Actions -->
+                        <div class="atomicLabComponentControl-actions">
+                            <nav>
+                                <ul>
+                                    <li>
+                                    <i id="componentAction-delete" class="material-icons">delete</i>
+                                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+                                    </li>
+                                    <li>
+                                    <i id="componentAction-settings" class="material-icons">settings</i>
+                                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
+                        <div class="atomicLabComponentControl-icon">
                             <img src="/images/iconAtom-l.png" alt="">
                         </div>
-                        <div class="atomicLabComponentContorl-texts">
-                            <div class="atomicLabComponentContorl-title">
-                                Button
+
+                        <!-- Component title -->
+                        <div class="atomicLabComponentControl-texts">
+                            <div class="atomicLabComponentControl-title">
+                                My Primary Button 1
                             </div>
-                            <p class="atomicLabComponentContorl-description">
+                            <p class="atomicLabComponentControl-description">
                                 Short description of the component. This is common button.
                             </p>
                         </div>
 
+
+                        <!-- Tabs -->
                         <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
                             <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
                             <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
@@ -131,6 +152,7 @@
 
                     </div>
 
+                    <!-- Tab panels -->
                     <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
                         <p>Tab 1 Content</p>
                     </div>
@@ -159,27 +181,30 @@
                 <!-- sub actions -->
                 <ul class="AtomicLabFAB-subActionsList">
                     <li>
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                            <i class="material-icons">add</i>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconAtom-s.png" alt="Add Atom">
                         </button>
                     </li>
                     <li>
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                            <i class="material-icons">add</i>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconMolecule-s.png" alt="Add Molecules">
                         </button>
                     </li>
                     <li>
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                            <i class="material-icons">add</i>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconOrganism-s.png" alt="Add Organism">
                         </button>
                     </li>
                     <li>
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                            <i class="material-icons">add</i>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconTemplate-s.png" alt="Add Template">
                         </button>
                     </li>
                 </ul>
             </div>
+
+
+
         </div>
     </div>
 

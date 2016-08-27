@@ -166,6 +166,13 @@ body {
             padding: 0;
         }
     }
+    &-miniFAB{
+        background-color: #D8D8D8 !important;
+        img{
+            margin-top: 2px;
+            width: 40px;
+        }
+    }
 }
 
 // Main panel
@@ -178,7 +185,7 @@ body {
 }
 
 
-.atomicLabComponentContorl{
+.atomicLabComponentControl{
 
     box-sizing: border-box;
     position: relative;
@@ -199,7 +206,7 @@ body {
     }
     &-title{
         font-size: 25px;
-        margin: 15px 0 10px 0;
+        margin: 20px 0 10px 0;
     }
     &-description{
         font-size: 17px;
@@ -231,6 +238,27 @@ body {
     }
     &-tab{
         flex-grow: 1;
+    }
+}
+
+.atomicLabComponentControl-actions{
+    position: absolute;
+    right: 60px;
+    top: 25px;
+    color: #{$text-color-light};
+    ul,li{
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+    }
+    i{
+        padding: 5px;
+        cursor: pointer;
+
+        &:hover{
+            color: #{$text-color-dark};
+        }
+
     }
 }
 

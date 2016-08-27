@@ -114,6 +114,11 @@ body {
       display: block;
       margin: 10px 0;
       padding: 0; }
+  .AtomicLabFAB-miniFAB {
+    background-color: #D8D8D8 !important; }
+    .AtomicLabFAB-miniFAB img {
+      margin-top: 2px;
+      width: 40px; }
 
 .atomicLabMain {
   box-sizing: border-box;
@@ -122,27 +127,27 @@ body {
   height: 100%;
   background-color: #F6F6F6; }
 
-.atomicLabComponentContorl {
+.atomicLabComponentControl {
   box-sizing: border-box;
   position: relative;
   background-color: #fff;
   height: 200px;
   padding: 25px 40px 0 40px; }
-  .atomicLabComponentContorl-icon {
+  .atomicLabComponentControl-icon {
     float: left;
     width: 100px; }
-    .atomicLabComponentContorl-icon img {
+    .atomicLabComponentControl-icon img {
       width: 100%; }
-  .atomicLabComponentContorl-texts {
+  .atomicLabComponentControl-texts {
     float: left;
     padding-left: 25px; }
-  .atomicLabComponentContorl-title {
+  .atomicLabComponentControl-title {
     font-size: 25px;
-    margin: 15px 0 10px 0; }
-  .atomicLabComponentContorl-description {
+    margin: 20px 0 10px 0; }
+  .atomicLabComponentControl-description {
     font-size: 17px;
     color: #848484; }
-  .atomicLabComponentContorl .atomicLabTabs-bar {
+  .atomicLabComponentControl .atomicLabTabs-bar {
     width: 100%;
     position: absolute;
     bottom: 0;
@@ -154,6 +159,21 @@ body {
 
 .atomicLabTabs-tab {
   flex-grow: 1; }
+
+.atomicLabComponentControl-actions {
+  position: absolute;
+  right: 60px;
+  top: 25px;
+  color: #848484; }
+  .atomicLabComponentControl-actions ul, .atomicLabComponentControl-actions li {
+    margin: 0;
+    padding: 0;
+    display: inline-block; }
+  .atomicLabComponentControl-actions i {
+    padding: 5px;
+    cursor: pointer; }
+    .atomicLabComponentControl-actions i:hover {
+      color: #454545; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {
