@@ -60,6 +60,11 @@
 
 // Component list
 .atomicLabComponentList{
+
+    height: -webkit-calc(100vh - 300px);
+    height: calc(100vh - 300px);
+    overflow: auto;
+
     ul,li{
         display: block;
         margin: 0;
@@ -102,4 +107,19 @@
             }
         }
     }
+
+    &-item-subAction{
+        display: none;
+        float: right;
+        line-height: 24px;
+    }
+
+}
+
+.atomicLabComponentList-item:hover{
+
+    .atomicLabComponentList-item-subAction{
+        display: inline-block;
+    }
+
 }

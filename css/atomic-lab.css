@@ -63,36 +63,45 @@ body {
         .atomicLabProjectControl-actions li i:hover {
           color: #454545; }
 
-.atomicLabComponentList ul, .atomicLabComponentList li {
-  display: block;
-  margin: 0;
-  padding: 0; }
-
-.atomicLabComponentList-category {
-  margin: 0;
-  font-size: 17px; }
-  .atomicLabComponentList-category > span {
+.atomicLabComponentList {
+  height: -webkit-calc(100vh - 300px);
+  height: calc(100vh - 300px);
+  overflow: auto; }
+  .atomicLabComponentList ul, .atomicLabComponentList li {
     display: block;
-    padding: 15px 25px; }
-  .atomicLabComponentList-category-icon {
-    width: 32px;
-    margin-right: 10px; }
-
-.atomicLabComponentList-item {
-  color: #848484;
-  cursor: pointer;
-  transition: 0.1s; }
-  .atomicLabComponentList-item:hover {
-    background-color: #E2E2E2;
-    color: #454545;
-    transition: 0.1s; }
-  .atomicLabComponentList-item > span {
-    display: block;
-    padding: 15px 20px 15px 50px; }
-    .atomicLabComponentList-item > span i {
-      font-size: 20px;
-      vertical-align: middle;
+    margin: 0;
+    padding: 0; }
+  .atomicLabComponentList-category {
+    margin: 0;
+    font-size: 17px; }
+    .atomicLabComponentList-category > span {
+      display: block;
+      padding: 15px 25px; }
+    .atomicLabComponentList-category-icon {
+      width: 32px;
       margin-right: 10px; }
+  .atomicLabComponentList-item {
+    color: #848484;
+    cursor: pointer;
+    transition: 0.1s; }
+    .atomicLabComponentList-item:hover {
+      background-color: #E2E2E2;
+      color: #454545;
+      transition: 0.1s; }
+    .atomicLabComponentList-item > span {
+      display: block;
+      padding: 15px 20px 15px 50px; }
+      .atomicLabComponentList-item > span i {
+        font-size: 20px;
+        vertical-align: middle;
+        margin-right: 10px; }
+  .atomicLabComponentList-item-subAction {
+    display: none;
+    float: right;
+    line-height: 24px; }
+
+.atomicLabComponentList-item:hover .atomicLabComponentList-item-subAction {
+  display: inline-block; }
 
 .AtomicLabFAB {
   position: fixed;

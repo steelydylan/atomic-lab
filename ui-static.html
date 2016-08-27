@@ -26,10 +26,17 @@
                 <nav class="mdl-navigation">
                     <!-- Place this tag where you want the button to render. -->
                     <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+
                     <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
-                    <a class="mdl-navigation__link" href="#">Upload</a>
-                    <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
+
+                    <a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
+                        <br>exported JSON</div>
+
+                    <a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
                     </a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
+                        <br>Please star on GitHub! ;D</div>
                 </nav>
             </div>
         </header>
@@ -81,19 +88,66 @@
                         <li class="atomicLabComponentList-category _atom">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
                             <ul>
+
                                 <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>Button1</span>
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Button1
+                                    <i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
+                                    </span>
                                 </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Heading1
+                                    <i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
+                                    </span>
+                                </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Profile Icon
+                                    <i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
+                                    </span>
+                                </li>
+
                             </ul>
                         </li>
 
                         <li class="atomicLabComponentList-category _molecule">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
-                            <ul></ul>
+                            <ul>
+
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Profile Card
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Search Box
+                                    <i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+
+                            </ul>
                         </li>
                         <li class="atomicLabComponentList-category _organism">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
-                            <ul></ul>
+                            <ul>
+
+                            <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Entry Summary
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+
+                            </ul>
                         </li>
                         <li class="atomicLabComponentList-category _template">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
