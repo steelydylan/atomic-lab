@@ -180,10 +180,38 @@ body {
 
 .atomicLabComponentContorl{
 
+    box-sizing: border-box;
     position: relative;
     background-color: #fff;
     height: 200px;
+    padding: 25px 40px 0 40px;
 
+    &-icon{
+        float: left;
+        width: 100px;
+        img{
+            width: 100%;
+        }
+    }
+    &-texts{
+        float: left;
+        padding-left: 25px;
+    }
+    &-title{
+        font-size: 25px;
+        margin: 15px 0 10px 0;
+    }
+    &-description{
+        font-size: 17px;
+        color: #{$text-color-light};
+    }
+
+
+    &-actions{
+
+    }
+
+    // tab style adjust
     .atomicLabTabs-bar{
         width: 100%;
         position: absolute;
@@ -192,6 +220,7 @@ body {
     }
 
 }
+
 
 // Tabs
 .atomicLabTabs{

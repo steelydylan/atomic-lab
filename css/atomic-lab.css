@@ -123,9 +123,25 @@ body {
   background-color: #F6F6F6; }
 
 .atomicLabComponentContorl {
+  box-sizing: border-box;
   position: relative;
   background-color: #fff;
-  height: 200px; }
+  height: 200px;
+  padding: 25px 40px 0 40px; }
+  .atomicLabComponentContorl-icon {
+    float: left;
+    width: 100px; }
+    .atomicLabComponentContorl-icon img {
+      width: 100%; }
+  .atomicLabComponentContorl-texts {
+    float: left;
+    padding-left: 25px; }
+  .atomicLabComponentContorl-title {
+    font-size: 25px;
+    margin: 15px 0 10px 0; }
+  .atomicLabComponentContorl-description {
+    font-size: 17px;
+    color: #848484; }
   .atomicLabComponentContorl .atomicLabTabs-bar {
     width: 100%;
     position: absolute;
