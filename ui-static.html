@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AtomicLab (Static)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.blue_grey-red.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/css/ui-static.css">
+    <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+</head>
+
+<body>
+
+    <header class="mdl-layout__header atomicLabHeader">
+        <div class="mdl-layout__header-row atomicLabHeaderRow">
+            <!-- Title -->
+            <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+            <!-- Navigation -->
+            <nav class="mdl-navigation">
+                <!-- Place this tag where you want the button to render. -->
+                <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+                <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+                <a class="mdl-navigation__link" href="#">Upload</a>
+                <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabGitHubMark" src="/images/githubMark.png" alt="GitHub">
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div class="atomicLabSideMenu">
+
+        <div class="atomicLabProjectControl">
+
+            <div class="atomicLabProjectControl-title">
+                <i class="material-icons">folder</i> My Website
+                <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+            </div>
+            <p class="atomicLabProjectControl-shotDescription">
+                Keep your eyes on the stars, and your feet on the ground.
+            </p>
+            <nav class="atomicLabProjectControl-actions">
+                <ul>
+                    <li>
+                        <i id="projectAction-share" class="material-icons">share</i>
+                        <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+                    </li>
+                    <li>
+                        <i id="projectAction-save" class="material-icons">save</i>
+                        <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+                    </li>
+                    <li>
+                        <i id="projectAction-download" class="material-icons">file_download</i>
+                        <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as Zip</div>
+                    </li>
+                    <li>
+                        <i id="projectAction-settings" class="material-icons">settings</i>
+                        <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+
+
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="AtomicLabFAB">
+
+        <button class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+            <i class="material-icons">add</i>
+        </button>
+
+        <!-- sub actions -->
+        <ul class="AtomicLabFAB-subActionsList">
+            <li>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                    <i class="material-icons">add</i>
+                </button>
+            </li>
+            <li>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                    <i class="material-icons">add</i>
+                </button>
+            </li>
+            <li>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                    <i class="material-icons">add</i>
+                </button>
+            </li>
+            <li>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                    <i class="material-icons">add</i>
+                </button>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>
