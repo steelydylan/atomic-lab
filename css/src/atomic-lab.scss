@@ -1,14 +1,22 @@
 @charset "utf-8";
-* {
-    box-sizing: border-box;
-}
+
+
+$text-color-default: #454545;
+$text-color-light: #848484;
+$text-color-dark: #454545;
+
+$line-color-default: #D7D7D7;
+$line-color-light: #efefef;
+
+$color-primary: rgb(120,144,156);
+$color-accent: rgb(0,150,136);
 
 html,
 body {
     min-width: 1040px;
     height: 100%;
-    overflow: hidden;
-    color: #848484;
+    color: #{$text-color-default};
+    position: relative;
 }
 
 *,
@@ -26,23 +34,28 @@ body {
         width: 34px;
     }
 }
-/* Side Menu */
-
-.atomicLabSideMenu {
-    width: 25%;
+.mdl-layout__content{
     height: 100%;
-    border-right: 1px solid #D7D7D7;
+}
+
+// Side Menu
+.atomicLabSideMenu {
+    box-sizing: border-box;
+    width: 25%;
+    float: left;
+    height: 100%;
+    border-right: 1px solid #{$line-color-default};
     background: #fff;
 }
-/* Project Control */
 
+// Project Control
 .atomicLabProjectControl {
-    border-bottom: 1px solid #D7D7D7;
+    border-bottom: 1px solid #{$line-color-default};
     padding: 20px 20px 0 20px;
     &-title {
         font-size: 20px;
         vertical-align: middle;
-        color: rgb(255, 82, 82);
+        color: #{$color-accent};
         position: relative;
         cursor: pointer;
         margin: 0 0 15px 0;
@@ -53,11 +66,13 @@ body {
             position: absolute;
             right: 5px;
         }
-        .atomicLabProjectControl-shotDescription {
-            line-height: 1.3em;
-        }
+    }
+    &-shotDescription {
+        line-height: 1.5em;
+        color: #{$text-color-light};
     }
     &-actions {
+        color: #{$text-color-light};
         margin: 20px 0 10px 0;
         ul {
             margin: 0;
@@ -67,14 +82,66 @@ body {
         }
         li {
             margin: 0;
-            padding: 10px;
             display: flex;
             cursor: pointer;
+            i{
+                padding: 10px;
+
+                &:hover{
+                    color: #{$text-color-dark};
+                }
+            }
+
         }
     }
 }
-/* Floatin Action Button */
 
+
+// Component list
+.atomicLabComponentList{
+    ul,li{
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+    &-category{
+        margin: 0;
+        border-bottom: 1px solid #{$line-color-light};
+        font-size: 17px;
+
+        > span{
+            display: block;
+            padding: 15px 25px;
+        }
+        &-icon{
+            width: 32px;
+            margin-right: 10px;
+        }
+    }
+    &-item{
+
+        color: #{$text-color-light};
+        cursor: pointer;
+
+        &:hover{
+            background-color: #E2E2E2;
+            color: #{$text-color-dark};
+        }
+
+        > span{
+            display: block;
+            padding: 15px 20px 15px 50px;
+
+            i {
+                font-size: 20px;
+                vertical-align: middle;
+                margin-right: 5px;
+            }
+        }
+    }
+}
+
+// Floatin Action Button
 .AtomicLabFAB {
     position: fixed;
     right: 30px;
@@ -101,8 +168,45 @@ body {
     }
 }
 
+// Main panel
+.atomicLabMain{
+    box-sizing: border-box;
+    width: 75%;
+    float: left;
+    height: 100%;
+    background-color: #F6F6F6;
+}
 
-/* Header small screen */
+
+.atomicLabComponentContorl{
+
+    position: relative;
+    background-color: #fff;
+    height: 200px;
+
+    .atomicLabTabs-bar{
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+}
+
+// Tabs
+.atomicLabTabs{
+
+    .is-active:after{
+        height: 3px !important;
+        background: #{$color-accent} !important;
+    }
+    &-tab{
+        flex-grow: 1;
+    }
+}
+
+
+// Header style for small screen
 @media screen and (max-width: 1024px) {
     .mdl-layout__header {
         display: block;

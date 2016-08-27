@@ -5,104 +5,180 @@
     <meta charset="UTF-8">
     <title>AtomicLab (Static)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.blue_grey-red.min.css" />
+    <link rel="stylesheet" href="/css/material-customized.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/atomic-lab.css">
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
 </head>
 
 <body>
+    <div class="mdl-layout">
 
-    <header class="mdl-layout__header atomicLabHeader">
-        <div class="mdl-layout__header-row atomicLabHeader-row">
-            <!-- Title -->
-            <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
-            <!-- Add spacer, to align navigation to the right -->
-            <div class="mdl-layout-spacer"></div>
-            <!-- Navigation -->
-            <nav class="mdl-navigation">
-                <!-- Place this tag where you want the button to render. -->
-                <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
-                <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
-                <a class="mdl-navigation__link" href="#">Upload</a>
-                <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
-                </a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Side Menu -->
-    <div class="atomicLabSideMenu">
-
-        <div class="atomicLabProjectControl">
-
-            <!-- Project title -->
-            <div class="atomicLabProjectControl-title">
-                <i class="material-icons">folder</i> My Website
-                <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+        <header class="mdl-layout__header atomicLabHeader">
+            <div class="mdl-layout__header-row atomicLabHeader-row">
+                <!-- Title -->
+                <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation -->
+                <nav class="mdl-navigation">
+                    <!-- Place this tag where you want the button to render. -->
+                    <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+                    <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+                    <a class="mdl-navigation__link" href="#">Upload</a>
+                    <a class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
+                    </a>
+                </nav>
             </div>
-            <p class="atomicLabProjectControl-shotDescription">
-                Keep your eyes on the stars, and your feet on the ground.
-            </p>
+        </header>
 
-            <!-- Project actions -->
-            <nav class="atomicLabProjectControl-actions">
-                <ul>
+        <div class="mdl-layout__content">
+
+            <!-- Side Menu -->
+            <div class="atomicLabSideMenu">
+
+                <div class="atomicLabProjectControl">
+
+                    <!-- Project title -->
+                    <div class="atomicLabProjectControl-title">
+                        <i class="material-icons">folder</i> My Website
+                        <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+                    </div>
+                    <p class="atomicLabProjectControl-shotDescription">
+                        Keep your eyes on the stars, and your feet on the ground.
+                    </p>
+
+                    <!-- Project actions -->
+                    <nav class="atomicLabProjectControl-actions">
+                        <ul>
+                            <li>
+                                <i id="projectAction-share" class="material-icons">share</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-save" class="material-icons">save</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-download" class="material-icons">file_download</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
+                                    <br>(included Export JSON data)</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-settings" class="material-icons">settings</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+
+                <!-- Component list -->
+                <div class="atomicLabComponentList">
+                    <ul>
+                        <li class="atomicLabComponentList-category _atom">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
+                            <ul>
+                                <li class="atomicLabComponentList-item">
+                                    <span>
+                                <i class="material-icons">insert_drive_file</i>
+                                Button1
+                            </span>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="atomicLabComponentList-category _molecule">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
+                            <ul></ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _organism">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
+                            <ul></ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _template">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
+                            <ul></ul>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            <!-- / Side menu -->
+
+            <main class="atomicLabMain">
+
+
+                <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
+
+                    <div class="atomicLabComponentContorl mdl-shadow--2dp">
+
+                       <div class="atomicLabComponentContorl-title">
+                            Button
+                       </div>
+
+                        <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
+                            <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
+                            <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
+                            <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
+                            <a href="#tab4-panel" class="atomicLabTabs-tab mdl-tabs__tab">About</a>
+                        </div>
+
+                    </div>
+
+                    <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
+                        <p>Tab 1 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
+                        <p>Tab 2 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
+                        <p>Tab 3 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab4-panel">
+                        <p>Tab 4 Content</p>
+                    </div>
+                </div>
+
+            </main>
+
+
+
+            <!-- Floating Action Button -->
+            <div class="AtomicLabFAB">
+
+                <button class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                    <i class="material-icons">add</i>
+                </button>
+
+                <!-- sub actions -->
+                <ul class="AtomicLabFAB-subActionsList">
                     <li>
-                        <i id="projectAction-share" class="material-icons">share</i>
-                        <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <i class="material-icons">add</i>
+                        </button>
                     </li>
                     <li>
-                        <i id="projectAction-save" class="material-icons">save</i>
-                        <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <i class="material-icons">add</i>
+                        </button>
                     </li>
                     <li>
-                        <i id="projectAction-download" class="material-icons">file_download</i>
-                        <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as Zip</div>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <i class="material-icons">add</i>
+                        </button>
                     </li>
                     <li>
-                        <i id="projectAction-settings" class="material-icons">settings</i>
-                        <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <i class="material-icons">add</i>
+                        </button>
                     </li>
                 </ul>
-            </nav>
-
+            </div>
         </div>
-
-
     </div>
 
-    <!-- Floating Action Button -->
-    <div class="AtomicLabFAB">
 
-        <button class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-            <i class="material-icons">add</i>
-        </button>
-
-        <!-- sub actions -->
-        <ul class="AtomicLabFAB-subActionsList">
-            <li>
-                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                    <i class="material-icons">add</i>
-                </button>
-            </li>
-            <li>
-                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                    <i class="material-icons">add</i>
-                </button>
-            </li>
-            <li>
-                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                    <i class="material-icons">add</i>
-                </button>
-            </li>
-            <li>
-                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-                    <i class="material-icons">add</i>
-                </button>
-            </li>
-        </ul>
-    </div>
 </body>
 
 </html>
