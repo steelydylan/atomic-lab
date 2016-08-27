@@ -10,7 +10,7 @@ var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
 gulp.task('sass', function () {
-    gulp.src(['css/src/**/*.scss'])
+    gulp.src(['css/src/atomic-lab.scss'])
         .pipe(plumber({
             handleError: function (err) {
                 console.log(err);

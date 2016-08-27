@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="/css/material-customized.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/atomic-lab.css">
+
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 </head>
 
 <body>
@@ -115,12 +117,12 @@
                             <nav>
                                 <ul>
                                     <li>
-                                    <i id="componentAction-delete" class="material-icons">delete</i>
-                                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+                                        <i id="componentAction-delete" class="material-icons">delete</i>
+                                        <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
                                     </li>
                                     <li>
-                                    <i id="componentAction-settings" class="material-icons">settings</i>
-                                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
+                                        <i id="componentAction-settings" class="material-icons">settings</i>
+                                        <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
                                     </li>
                                 </ul>
                             </nav>
@@ -174,16 +176,18 @@
             <!-- Floating Action Button -->
             <div class="AtomicLabFAB">
 
-                <button class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
                     <i class="material-icons">add</i>
                 </button>
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
 
                 <!-- sub actions -->
                 <ul class="AtomicLabFAB-subActionsList">
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
                             <img src="/images/iconAtom-s.png" alt="Add Atom">
                         </button>
+                        <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
                     </li>
                     <li>
                         <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
@@ -202,6 +206,46 @@
                     </li>
                 </ul>
             </div>
+
+            <script>
+                $(function () {
+
+                    $(".AtomicLabFAB-main").click(function () {
+
+                        if ($(this).hasClass("is-open") == false) {
+
+                            $(this)
+                                .css({
+                                    "transform": "rotate(45deg)"
+                                })
+                                .addClass("is-open");
+
+                            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                                $(this).css({
+                                    "transform": "scale(1) translateY(0px)",
+                                    "opacity": 1
+                                });
+                            });
+
+                        } else {
+
+                            $(this)
+                                .css({
+                                    "transform": "rotate(0deg)"
+                                })
+                                .removeClass("is-open");
+
+                            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                                $(this).css({
+                                    "transform": "scale(0) translateY(200px)",
+                                    "opacity": 0
+                                });
+                            });
+                        }
+                    });
+
+                });
+            </script>
 
 
 

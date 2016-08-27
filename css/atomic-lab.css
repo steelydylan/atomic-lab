@@ -70,7 +70,6 @@ body {
 
 .atomicLabComponentList-category {
   margin: 0;
-  border-bottom: 1px solid #efefef;
   font-size: 17px; }
   .atomicLabComponentList-category > span {
     display: block;
@@ -81,17 +80,19 @@ body {
 
 .atomicLabComponentList-item {
   color: #848484;
-  cursor: pointer; }
+  cursor: pointer;
+  transition: 0.1s; }
   .atomicLabComponentList-item:hover {
     background-color: #E2E2E2;
-    color: #454545; }
+    color: #454545;
+    transition: 0.1s; }
   .atomicLabComponentList-item > span {
     display: block;
     padding: 15px 20px 15px 50px; }
     .atomicLabComponentList-item > span i {
       font-size: 20px;
       vertical-align: middle;
-      margin-right: 5px; }
+      margin-right: 10px; }
 
 .AtomicLabFAB {
   position: fixed;
@@ -102,7 +103,8 @@ body {
   .AtomicLabFAB-main {
     position: absolute;
     bottom: 0;
-    left: 0; }
+    left: 0;
+    transition: 0.3s; }
   .AtomicLabFAB-subActionsList {
     display: block;
     margin: 0;
@@ -113,12 +115,18 @@ body {
     .AtomicLabFAB-subActionsList li {
       display: block;
       margin: 10px 0;
-      padding: 0; }
+      transition: 0.3s;
+      transform: scale(0) translateY(200px);
+      opacity: 0; }
   .AtomicLabFAB-miniFAB {
-    background-color: #D8D8D8 !important; }
+    background-color: #D8D8D8 !important;
+    transition: 0.2s; }
     .AtomicLabFAB-miniFAB img {
       margin-top: 2px;
       width: 40px; }
+    .AtomicLabFAB-miniFAB:hover {
+      transform: scale(1.15);
+      transition: 0.1s; }
 
 .atomicLabMain {
   box-sizing: border-box;

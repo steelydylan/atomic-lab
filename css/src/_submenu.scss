@@ -1,0 +1,105 @@
+
+// Side Menu
+.atomicLabSideMenu {
+    box-sizing: border-box;
+    width: 25%;
+    float: left;
+    height: 100%;
+    border-right: 1px solid #{$line-color-default};
+    background: #fff;
+}
+
+// Project Control
+.atomicLabProjectControl {
+    border-bottom: 1px solid #{$line-color-default};
+    padding: 20px 20px 0 20px;
+    &-title {
+        font-size: 20px;
+        vertical-align: middle;
+        color: #{$color-accent};
+        position: relative;
+        cursor: pointer;
+        margin: 0 0 15px 0;
+        i {
+            vertical-align: bottom;
+        }
+        .atomicLabProjectControl-arrow {
+            position: absolute;
+            right: 5px;
+        }
+    }
+    &-shotDescription {
+        line-height: 1.5em;
+        color: #{$text-color-light};
+    }
+    &-actions {
+        color: #{$text-color-light};
+        margin: 20px 0 10px 0;
+        ul {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        li {
+            margin: 0;
+            display: flex;
+            cursor: pointer;
+            i{
+                padding: 10px;
+
+                &:hover{
+                    color: #{$text-color-dark};
+                }
+            }
+
+        }
+    }
+}
+
+
+// Component list
+.atomicLabComponentList{
+    ul,li{
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+    &-category{
+        margin: 0;
+        //border-bottom: 1px solid #{$line-color-light};
+        font-size: 17px;
+
+        > span{
+            display: block;
+            padding: 15px 25px;
+        }
+        &-icon{
+            width: 32px;
+            margin-right: 10px;
+        }
+    }
+    &-item{
+
+        color: #{$text-color-light};
+        cursor: pointer;
+        transition: 0.1s;
+
+        &:hover{
+            background-color: #E2E2E2;
+            color: #{$text-color-dark};
+            transition: 0.1s;
+        }
+
+        > span{
+            display: block;
+            padding: 15px 20px 15px 50px;
+
+            i {
+                font-size: 20px;
+                vertical-align: middle;
+                margin-right: 10px;
+            }
+        }
+    }
+}
