@@ -13,32 +13,43 @@ var getVars = function(text){
 }
 
 var getPreview = function(text){
-	var preview = text.match(/<!-- preview -->(([\n\r\t]|.)*?)<!-- \/preview -->/g);
+	var preview = text.match(/<preview>(([\n\r\t]|.)*?)<\/preview>/g);
 	if(!preview){
 		return "";
 	}
 	preview = preview[0];
-	return preview.replace(/<!-- (\/)?preview -->/g,"");
+	return preview.replace(/<(\/)?preview>/g,"");
 }
 
 
-var getComment = function(text){
-	var ret = text.match(/<!--(.*?)-->/g);
-	if(ret){
-		return ret[0];
-	}else{
+var getTag = function(text,components){
+	var ret = text.match(/<(.*?)>/g);
+	var result = "";
+	if(!ret){
 		return "";
 	}
+	for(var i = 0, length = ret.length; i < length; i++){
+		var name = getComponentName(ret[i]);
+		components.forEach(function(comp){
+			if(name.indexOf(comp.name) !== -1){
+				result = ret[i];
+			}
+		});
+		if(result){
+			break;
+		}
+	}
+	return result;
 }
 
 var getComponentName = function(text){
-	return text.replace(/<!-- ([a-zA-Z0-9._-]+) (.*?)-->/g,function(comment,name){
+	return text.replace(/<([a-zA-Z0-9._-]+)\s*\w*.*?>/g,function(comment,name){
 		return name;
 	});
 }
 
 var getTemplate = function(text){
-	var template = text.match(/<!-- template(.*?)-->(([\n\r\t]|.)*?)<!-- \/template -->/g);
+	var template = text.match(/<template(.*?)>(([\n\r\t]|.)*?)<\/template>/g);
 	if(!template){
 		return "";
 	}
@@ -47,7 +58,7 @@ var getTemplate = function(text){
 }
 
 var getInnerHtmlFromTemplate = function(template){
-	return template.replace(/<!-- (\/)?template(.*?) -->/g,"");
+	return template.replace(/<(\/)?template(.*?)>/g,"");
 }
 
 var getVarsFromTemplate = function(template){
@@ -68,7 +79,7 @@ var removeScript = function(text){
 }
 
 var removeSelf = function(text,self){
-	var reg = new RegExp("<!-- "+self+"(.*?)-->");
+	var reg = new RegExp("<"+self+"(.*?)>");
 	return text.replace(reg,"");
 }
 
@@ -82,7 +93,7 @@ var getImports = function(text){
 
 
 module.exports = {
-	getComment:getComment,
+	getTag:getTag,
 	getPreview:getPreview,
 	getComponentName:getComponentName,
 	getVars:getVars,

@@ -508,7 +508,7 @@ jQuery(function($){
 				var imports = "";
 				// テンプレート取得
 				while(1){
-					var comment = parser.getComment(preview);
+					var comment = parser.getTag(preview,components);
 					if(!comment){
 						break;
 					}
@@ -530,6 +530,7 @@ jQuery(function($){
 								preview = preview.replace(comment,"");
 								break;
 							}
+							console.log("name is "+name);
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
 							//templateに自身が含まれていたら削除(無限ループ回避)
