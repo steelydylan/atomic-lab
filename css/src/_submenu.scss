@@ -116,10 +116,53 @@
 
 }
 
+// hover
 .atomicLabComponentList-item:hover{
 
     .atomicLabComponentList-item-subAction{
         display: inline-block;
+    }
+
+}
+
+
+
+// Search box
+.atomicLabSearchBox{
+
+    box-sizing: border-box;
+    height: 40px;
+    width: 310px;
+    border-top: 1px solid #{$line-color-default};
+
+    &-floatingCard{
+
+    }
+    &-expandContent{
+        display: none;
+        position: absolute;
+        bottom: 9px;
+        left: 0;
+    }
+    &-main{
+        border-radius: 5px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #F2F2F2;
+        margin: 10px;
+        box-sizing: border-box;
+        padding: 0 10px;
+
+        i{
+            vertical-align: middle;
+            color: #{$text-color-light};
+        }
+    }
+    &-input{
+        border: none;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
     }
 
 }

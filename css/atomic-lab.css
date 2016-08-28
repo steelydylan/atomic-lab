@@ -103,6 +103,33 @@ body {
 .atomicLabComponentList-item:hover .atomicLabComponentList-item-subAction {
   display: inline-block; }
 
+.atomicLabSearchBox {
+  box-sizing: border-box;
+  height: 40px;
+  width: 310px;
+  border-top: 1px solid #D7D7D7; }
+  .atomicLabSearchBox-expandContent {
+    display: none;
+    position: absolute;
+    bottom: 9px;
+    left: 0; }
+  .atomicLabSearchBox-main {
+    border-radius: 5px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #F2F2F2;
+    margin: 10px;
+    box-sizing: border-box;
+    padding: 0 10px; }
+    .atomicLabSearchBox-main i {
+      vertical-align: middle;
+      color: #848484; }
+  .atomicLabSearchBox-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent; }
+
 .AtomicLabFAB {
   position: fixed;
   right: 30px;
