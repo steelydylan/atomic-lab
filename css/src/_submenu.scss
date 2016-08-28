@@ -130,28 +130,24 @@
 // Search box
 .atomicLabSearchBox{
 
+    $this: &;
+
     box-sizing: border-box;
     height: 40px;
     width: 310px;
+    padding: 10px 20px;
     border-top: 1px solid #{$line-color-default};
 
-    &-floatingCard{
-
-    }
     &-expandContent{
         display: none;
-        position: absolute;
-        bottom: 9px;
-        left: 0;
     }
     &-main{
         border-radius: 5px;
         height: 40px;
         line-height: 40px;
         background-color: #F2F2F2;
-        margin: 10px;
         box-sizing: border-box;
-        padding: 0 10px;
+        padding: 0 15px;
 
         i{
             vertical-align: middle;
@@ -163,6 +159,33 @@
         outline: none;
         font-size: 16px;
         background: transparent;
+    }
+
+    // modifier
+    &.is-open{
+
+        #{$this}-expandContent{
+            display: block;
+            padding: 20px;
+            height: 0;
+            opacity: 0;
+            border-bottom: 1px solid #{$line-color-default};
+        }
+        #{$this}-floatingCard{
+            background-color: #fff;
+            border-radius: 3px;
+            width: 270px;
+            position: absolute;
+            bottom: 9px;
+            left: 20px;
+            box-shadow:0px 0px 4px 1px #a0a0a0;
+            -moz-box-shadow:0px 0px 4px 1px #a0a0a0;
+            -webkit-box-shadow:0px 0px 4px 1px #a0a0a0;
+        }
+        #{$this}-main{
+            background-color: #fff;
+            border-radius: 0;
+        }
     }
 
 }

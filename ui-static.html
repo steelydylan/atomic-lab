@@ -190,6 +190,24 @@
                         </div>
                     </div>
 
+
+                    <script>
+                    $(".atomicLabSearchBox-input").focus(function(){
+
+                        if( $(".atomicLabSearchBox").hasClass("is-open") == false ){
+
+                            $(".atomicLabSearchBox").addClass("is-open");
+
+                            $(".atomicLabSearchBox-expandContent").animate({
+                                "height": "150px",
+                                "opacity": 1
+                            }, 200);
+                        }
+
+                    });
+
+                    </script>
+
                 </div>
 
 
