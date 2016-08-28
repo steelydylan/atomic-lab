@@ -5,21 +5,21 @@ var jshint = require('gulp-jshint');
 var browserify = require('gulp-browserify');
 var uglify = require('gulp-uglify');
 var notify = require('gulp-notify');
-// var sass = require('gulp-sass');
+var sass = require('gulp-sass');
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
-// gulp.task('sass', function () {
-//     gulp.src(['css/src/atomic-lab.scss'])
-//         .pipe(plumber({
-//             handleError: function (err) {
-//                 console.log(err);
-//                 this.emit('end');
-//             }
-//         }))
-//         .pipe(sass())
-//         .pipe(gulp.dest('css/'));
-// });
+gulp.task('sass', function () {
+     gulp.src(['css/src/atomic-lab.scss'])
+         .pipe(plumber({
+             handleError: function (err) {
+                 console.log(err);
+                 this.emit('end');
+             }
+         }))
+         .pipe(sass())
+         .pipe(gulp.dest('css/'));
+});
 
 gulp.task('js', function () {
     gulp.src(['js/src/main.js'])
