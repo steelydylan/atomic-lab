@@ -158,28 +158,31 @@
 
 
                 <!-- Search box -->
+
+                <div id="mask-search-cancel"></div>
+
                 <div class="atomicLabSearchBox">
                     <div class="atomicLabSearchBox-floatingCard">
 
                         <!-- Filter settings -->
                         <div class="atomicLabSearchBox-expandContent">
 
-                            Category filter
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
-                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" checked>
-                                <span class="mdl-checkbox__label">Checkbox</span>
+                            <span class="atomicLabSearchBox-title">Category filter</span>
+                            <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-atom">
+                                <input type="checkbox" id="filter-atom" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Atom</span>
                             </label>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
-                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" checked>
-                                <span class="mdl-checkbox__label">Checkbox</span>
+                            <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-molecule">
+                                <input type="checkbox" id="filter-molecule" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Molecule</span>
                             </label>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
-                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" checked>
-                                <span class="mdl-checkbox__label">Checkbox</span>
+                            <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-organism">
+                                <input type="checkbox" id="filter-organism" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Organism</span>
                             </label>
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
-                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input" checked>
-                                <span class="mdl-checkbox__label">Checkbox</span>
+                            <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-template">
+                                <input type="checkbox" id="filter-template" class="mdl-checkbox__input" checked>
+                                <span class="mdl-checkbox__label">Template</span>
                             </label>
 
                         </div>
@@ -199,10 +202,24 @@
                             $(".atomicLabSearchBox").addClass("is-open");
 
                             $(".atomicLabSearchBox-expandContent").animate({
-                                "height": "150px",
+                                "height": "200px",
                                 "opacity": 1
-                            }, 200);
+                            }, 180);
+
+                            $("#mask-search-cancel").show();
                         }
+                    });
+
+                    $("#mask-search-cancel").click(function(){
+
+                            $(".atomicLabSearchBox").removeClass("is-open");
+
+                            $(".atomicLabSearchBox-expandContent").css({
+                                "height": "0px",
+                                "opacity": 0
+                            });
+
+                            $("#mask-search-cancel").hide();
 
                     });
 
