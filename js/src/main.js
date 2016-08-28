@@ -525,13 +525,12 @@ jQuery(function($){
 								preview = preview.replace(comment,"");
 								break;
 							}
-							console.log("test");
 							// importされてなければ使えない
 							if(this.data.id !== comp.id && imports.indexOf(name) == -1){
 								preview = preview.replace(comment,"");
 								break;
 							}
-							console.log("test");
+							console.log("name is "+name);
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
 							//templateに自身が含まれていたら削除(無限ループ回避)

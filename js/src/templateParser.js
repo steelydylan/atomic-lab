@@ -43,7 +43,7 @@ var getTag = function(text,components){
 }
 
 var getComponentName = function(text){
-	return text.replace(/<([a-zA-Z0-9._-]+) (.*?)>/g,function(comment,name){
+	return text.replace(/<([a-zA-Z0-9._-]+)\s*\w*.*?>/g,function(comment,name){
 		return name;
 	});
 }
