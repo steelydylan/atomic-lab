@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AtomicLab (Static)</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/css/material-customized.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/css/atomic-lab.css">
+
+    <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+</head>
+
+<body>
+    <div class="mdl-layout">
+
+        <header class="mdl-layout__header atomicLabHeader">
+            <div class="mdl-layout__header-row atomicLabHeader-row">
+                <!-- Title -->
+                <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation -->
+                <nav class="mdl-navigation">
+                    <!-- Place this tag where you want the button to render. -->
+                    <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+
+                    <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+
+                    <a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
+                        <br>exported JSON</div>
+
+                    <a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
+                    </a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
+                        <br>Please star on GitHub! ;D</div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="mdl-layout__content">
+
+            <!-- Side Menu -->
+            <div class="atomicLabSideMenu">
+
+                <div class="atomicLabProjectControl">
+
+                    <!-- Project title -->
+                    <div class="atomicLabProjectControl-title">
+                        <i class="material-icons">folder</i> My Website
+                        <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+                    </div>
+                    <p class="atomicLabProjectControl-shotDescription">
+                        Keep your eyes on the stars, and your feet on the ground.
+                    </p>
+
+                    <!-- Project actions -->
+                    <nav class="atomicLabProjectControl-actions">
+                        <ul>
+                            <li>
+                                <i id="projectAction-share" class="material-icons">share</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-save" class="material-icons">save</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-download" class="material-icons">file_download</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
+                                    <br>(included Export JSON data)</div>
+                            </li>
+                            <li>
+                                <i id="projectAction-settings" class="material-icons">settings</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </div>
+
+                <!-- Component list -->
+                <div class="atomicLabComponentList">
+                    <ul>
+                        <li class="atomicLabComponentList-category _atom">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
+                            <ul>
+
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Button1
+                                    <i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
+                                    </span>
+                                </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Heading1
+                                    <i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
+                                    </span>
+                                </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Profile Icon
+                                    <i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
+                                    </span>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="atomicLabComponentList-category _molecule">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
+                            <ul>
+
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Profile Card
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+                                <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Search Box
+                                    <i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _organism">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
+                            <ul>
+
+                            <li class="atomicLabComponentList-item">
+                                    <span><i class="material-icons">insert_drive_file</i>
+                                    Entry Summary
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _template">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
+                            <ul></ul>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            <!-- / Side menu -->
+
+            <!-- Main panel -->
+            <main class="atomicLabMain">
+
+                <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
+
+                    <div class="atomicLabComponentControl mdl-shadow--2dp">
+
+                        <!-- Actions -->
+                        <div class="atomicLabComponentControl-actions">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <i id="componentAction-delete" class="material-icons">delete</i>
+                                        <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+                                    </li>
+                                    <li>
+                                        <i id="componentAction-settings" class="material-icons">settings</i>
+                                        <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
+                        <div class="atomicLabComponentControl-icon">
+                            <img src="/images/iconAtom-l.png" alt="">
+                        </div>
+
+                        <!-- Component title -->
+                        <div class="atomicLabComponentControl-texts">
+                            <div class="atomicLabComponentControl-title">
+                                My Primary Button 1
+                            </div>
+                            <p class="atomicLabComponentControl-description">
+                                Short description of the component. This is common button.
+                            </p>
+                        </div>
+
+
+                        <!-- Tabs -->
+                        <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
+                            <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
+                            <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
+                            <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
+                            <a href="#tab4-panel" class="atomicLabTabs-tab mdl-tabs__tab">About</a>
+                        </div>
+
+                    </div>
+
+                    <!-- Tab panels -->
+                    <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
+                        <p>Tab 1 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
+                        <p>Tab 2 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
+                        <p>Tab 3 Content</p>
+                    </div>
+                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab4-panel">
+                        <p>Tab 4 Content</p>
+                    </div>
+                </div>
+
+            </main>
+
+
+
+            <!-- Floating Action Button -->
+            <div class="AtomicLabFAB">
+
+                <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                    <i class="material-icons">add</i>
+                </button>
+                <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
+
+                <!-- sub actions -->
+                <ul class="AtomicLabFAB-subActionsList">
+                    <li>
+                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconAtom-s.png" alt="Add Atom">
+                        </button>
+                        <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
+                    </li>
+                    <li>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconMolecule-s.png" alt="Add Molecules">
+                        </button>
+                    </li>
+                    <li>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconOrganism-s.png" alt="Add Organism">
+                        </button>
+                    </li>
+                    <li>
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                            <img src="/images/iconTemplate-s.png" alt="Add Template">
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <script>
+                $(function () {
+
+                    $(".AtomicLabFAB-main").click(function () {
+
+                        if ($(this).hasClass("is-open") == false) {
+
+                            $(this)
+                                .css({
+                                    "transform": "rotate(45deg)"
+                                })
+                                .addClass("is-open");
+
+                            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                                $(this).css({
+                                    "transform": "scale(1) translateY(0px)",
+                                    "opacity": 1
+                                });
+                            });
+
+                        } else {
+
+                            $(this)
+                                .css({
+                                    "transform": "rotate(0deg)"
+                                })
+                                .removeClass("is-open");
+
+                            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                                $(this).css({
+                                    "transform": "scale(0) translateY(200px)",
+                                    "opacity": 0
+                                });
+                            });
+                        }
+                    });
+
+                });
+            </script>
+
+
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>

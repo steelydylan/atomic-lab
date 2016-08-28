@@ -1,0 +1,87 @@
+
+// Main panel
+.atomicLabMain{
+    box-sizing: border-box;
+    width: 75%;
+    float: left;
+    height: 100%;
+    background-color: #F6F6F6;
+}
+
+
+.atomicLabComponentControl{
+
+    box-sizing: border-box;
+    position: relative;
+    background-color: #fff;
+    height: 200px;
+    padding: 25px 40px 0 40px;
+
+    &-icon{
+        float: left;
+        width: 100px;
+        img{
+            width: 100%;
+        }
+    }
+    &-texts{
+        float: left;
+        padding-left: 25px;
+    }
+    &-title{
+        font-size: 25px;
+        margin: 20px 0 10px 0;
+    }
+    &-description{
+        font-size: 17px;
+        color: #{$text-color-light};
+    }
+
+
+    &-actions{
+
+    }
+
+    // tab style adjust
+    .atomicLabTabs-bar{
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+
+}
+
+
+// Tabs
+.atomicLabTabs{
+
+    .is-active:after{
+        height: 3px !important;
+        background: #{$color-accent} !important;
+    }
+    &-tab{
+        flex-grow: 1;
+    }
+}
+
+.atomicLabComponentControl-actions{
+    position: absolute;
+    right: 60px;
+    top: 25px;
+    color: #{$text-color-light};
+    ul,li{
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+    }
+    i{
+        padding: 5px;
+        cursor: pointer;
+
+        &:hover{
+            color: #{$text-color-dark};
+        }
+
+    }
+}

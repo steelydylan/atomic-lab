@@ -1,0 +1,197 @@
+html,
+body {
+  min-width: 1040px;
+  height: 100%;
+  color: #454545;
+  position: relative; }
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit; }
+
+.atomicLabHeader {
+  box-shadow: none; }
+  .atomicLabHeader-row {
+    padding-left: 40px; }
+  .atomicLabHeader-gitHubMark {
+    width: 34px; }
+
+.mdl-layout__content {
+  height: 100%; }
+
+.atomicLabSideMenu {
+  box-sizing: border-box;
+  width: 25%;
+  float: left;
+  height: 100%;
+  border-right: 1px solid #D7D7D7;
+  background: #fff; }
+
+.atomicLabProjectControl {
+  border-bottom: 1px solid #D7D7D7;
+  padding: 20px 20px 0 20px; }
+  .atomicLabProjectControl-title {
+    font-size: 20px;
+    vertical-align: middle;
+    color: #009688;
+    position: relative;
+    cursor: pointer;
+    margin: 0 0 15px 0; }
+    .atomicLabProjectControl-title i {
+      vertical-align: bottom; }
+    .atomicLabProjectControl-title .atomicLabProjectControl-arrow {
+      position: absolute;
+      right: 5px; }
+  .atomicLabProjectControl-shotDescription {
+    line-height: 1.5em;
+    color: #848484; }
+  .atomicLabProjectControl-actions {
+    color: #848484;
+    margin: 20px 0 10px 0; }
+    .atomicLabProjectControl-actions ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around; }
+    .atomicLabProjectControl-actions li {
+      margin: 0;
+      display: flex;
+      cursor: pointer; }
+      .atomicLabProjectControl-actions li i {
+        padding: 10px; }
+        .atomicLabProjectControl-actions li i:hover {
+          color: #454545; }
+
+.atomicLabComponentList {
+  height: -webkit-calc(100vh - 300px);
+  height: calc(100vh - 300px);
+  overflow: auto; }
+  .atomicLabComponentList ul, .atomicLabComponentList li {
+    display: block;
+    margin: 0;
+    padding: 0; }
+  .atomicLabComponentList-category {
+    margin: 0;
+    font-size: 17px; }
+    .atomicLabComponentList-category > span {
+      display: block;
+      padding: 15px 25px; }
+    .atomicLabComponentList-category-icon {
+      width: 32px;
+      margin-right: 10px; }
+  .atomicLabComponentList-item {
+    color: #848484;
+    cursor: pointer;
+    transition: 0.1s; }
+    .atomicLabComponentList-item:hover {
+      background-color: #E2E2E2;
+      color: #454545;
+      transition: 0.1s; }
+    .atomicLabComponentList-item > span {
+      display: block;
+      padding: 15px 20px 15px 50px; }
+      .atomicLabComponentList-item > span i {
+        font-size: 20px;
+        vertical-align: middle;
+        margin-right: 10px; }
+  .atomicLabComponentList-item-subAction {
+    display: none;
+    float: right;
+    line-height: 24px; }
+
+.atomicLabComponentList-item:hover .atomicLabComponentList-item-subAction {
+  display: inline-block; }
+
+.AtomicLabFAB {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  width: 56px;
+  height: 270px; }
+  .AtomicLabFAB-main {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: 0.3s; }
+  .AtomicLabFAB-subActionsList {
+    display: block;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 7px; }
+    .AtomicLabFAB-subActionsList li {
+      display: block;
+      margin: 10px 0;
+      transition: 0.3s;
+      transform: scale(0) translateY(200px);
+      opacity: 0; }
+  .AtomicLabFAB-miniFAB {
+    background-color: #D8D8D8 !important;
+    transition: 0.2s; }
+    .AtomicLabFAB-miniFAB img {
+      margin-top: 2px;
+      width: 40px; }
+    .AtomicLabFAB-miniFAB:hover {
+      transform: scale(1.15);
+      transition: 0.1s; }
+
+.atomicLabMain {
+  box-sizing: border-box;
+  width: 75%;
+  float: left;
+  height: 100%;
+  background-color: #F6F6F6; }
+
+.atomicLabComponentControl {
+  box-sizing: border-box;
+  position: relative;
+  background-color: #fff;
+  height: 200px;
+  padding: 25px 40px 0 40px; }
+  .atomicLabComponentControl-icon {
+    float: left;
+    width: 100px; }
+    .atomicLabComponentControl-icon img {
+      width: 100%; }
+  .atomicLabComponentControl-texts {
+    float: left;
+    padding-left: 25px; }
+  .atomicLabComponentControl-title {
+    font-size: 25px;
+    margin: 20px 0 10px 0; }
+  .atomicLabComponentControl-description {
+    font-size: 17px;
+    color: #848484; }
+  .atomicLabComponentControl .atomicLabTabs-bar {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0; }
+
+.atomicLabTabs .is-active:after {
+  height: 3px !important;
+  background: #009688 !important; }
+
+.atomicLabTabs-tab {
+  flex-grow: 1; }
+
+.atomicLabComponentControl-actions {
+  position: absolute;
+  right: 60px;
+  top: 25px;
+  color: #848484; }
+  .atomicLabComponentControl-actions ul, .atomicLabComponentControl-actions li {
+    margin: 0;
+    padding: 0;
+    display: inline-block; }
+  .atomicLabComponentControl-actions i {
+    padding: 5px;
+    cursor: pointer; }
+    .atomicLabComponentControl-actions i:hover {
+      color: #454545; }
+
+@media screen and (max-width: 1024px) {
+  .mdl-layout__header {
+    display: block; } }
