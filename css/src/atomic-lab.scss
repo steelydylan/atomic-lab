@@ -56,6 +56,73 @@ body {
 }
 
 
+.atomicLabProjectsDialog{
+    $this: &;
+
+    width: 750px;
+
+    &-table{
+        width: 100%;
+        border-collapse: collapse;
+
+        th{
+            text-align: left;
+            border-bottom: 1px solid #979797;
+            padding: 5px 0;
+        }
+        td{
+            padding: 10px 0;
+            vertical-align: middle;
+        }
+
+    }
+    &-icon{
+        width: 5%;
+        text-align: center;
+        color: #{$text-color-light};
+    }
+    &-name{
+        width: 35%;
+    }
+    &-url{
+        width: 30%;
+    }
+    &-share{
+        width: 25%;
+    }
+    &-delete{
+        display: none;
+    }
+    &-shareIcon{
+        width: 22px;
+        display: inline-block;
+        margin-right: 5px;
+        cursor: pointer;
+        img{
+            width: 100%;
+        }
+    }
+
+    &-projectsContainer{
+
+        height: 180px;
+        border-bottom: 1px solid #979797;
+        overflow: auto;
+
+        tr:hover{
+
+            background-color: #e2e2e2;
+
+            #{$this}-delete{
+                display: inline-block;
+            }
+        }
+
+    }
+
+
+}
+
 // Header style for small screen
 @media screen and (max-width: 1024px) {
     .mdl-layout__header {

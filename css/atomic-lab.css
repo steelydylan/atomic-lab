@@ -253,6 +253,46 @@ body {
   z-index: 8000;
   display: none; }
 
+.atomicLabProjectsDialog {
+  width: 750px; }
+  .atomicLabProjectsDialog-table {
+    width: 100%;
+    border-collapse: collapse; }
+    .atomicLabProjectsDialog-table th {
+      text-align: left;
+      border-bottom: 1px solid #979797;
+      padding: 5px 0; }
+    .atomicLabProjectsDialog-table td {
+      padding: 10px 0;
+      vertical-align: middle; }
+  .atomicLabProjectsDialog-icon {
+    width: 5%;
+    text-align: center;
+    color: #848484; }
+  .atomicLabProjectsDialog-name {
+    width: 35%; }
+  .atomicLabProjectsDialog-url {
+    width: 30%; }
+  .atomicLabProjectsDialog-share {
+    width: 25%; }
+  .atomicLabProjectsDialog-delete {
+    display: none; }
+  .atomicLabProjectsDialog-shareIcon {
+    width: 22px;
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer; }
+    .atomicLabProjectsDialog-shareIcon img {
+      width: 100%; }
+  .atomicLabProjectsDialog-projectsContainer {
+    height: 180px;
+    border-bottom: 1px solid #979797;
+    overflow: auto; }
+    .atomicLabProjectsDialog-projectsContainer tr:hover {
+      background-color: #e2e2e2; }
+      .atomicLabProjectsDialog-projectsContainer tr:hover .atomicLabProjectsDialog-delete {
+        display: inline-block; }
+
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {
     display: block; } }

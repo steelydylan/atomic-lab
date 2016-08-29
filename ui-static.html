@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/css/material-customized.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/atomic-lab.css">
-
+    <link rel="stylesheet" href="css/dialog-polyfill.css">
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 </head>
@@ -27,7 +27,7 @@
                     <!-- Place this tag where you want the button to render. -->
                     <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
 
-                    <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+                    <a id="openDialog-projects" class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
 
                     <a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
                     <div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
@@ -195,22 +195,22 @@
 
 
                     <script>
-                    $(".atomicLabSearchBox-input").focus(function(){
+                        $(".atomicLabSearchBox-input").focus(function () {
 
-                        if( $(".atomicLabSearchBox").hasClass("is-open") == false ){
+                            if ($(".atomicLabSearchBox").hasClass("is-open") == false) {
 
-                            $(".atomicLabSearchBox").addClass("is-open");
+                                $(".atomicLabSearchBox").addClass("is-open");
 
-                            $(".atomicLabSearchBox-expandContent").animate({
-                                "height": "200px",
-                                "opacity": 1
-                            }, 180);
+                                $(".atomicLabSearchBox-expandContent").animate({
+                                    "height": "200px",
+                                    "opacity": 1
+                                }, 180);
 
-                            $("#mask-search-cancel").show();
-                        }
-                    });
+                                $("#mask-search-cancel").show();
+                            }
+                        });
 
-                    $("#mask-search-cancel").click(function(){
+                        $("#mask-search-cancel").click(function () {
 
                             $(".atomicLabSearchBox").removeClass("is-open");
 
@@ -221,8 +221,7 @@
 
                             $("#mask-search-cancel").hide();
 
-                    });
-
+                        });
                     </script>
 
                 </div>
@@ -275,7 +274,6 @@
                             <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
                             <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
                             <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
-                            <a href="#tab4-panel" class="atomicLabTabs-tab mdl-tabs__tab">About</a>
                         </div>
 
                     </div>
@@ -283,15 +281,13 @@
                     <!-- Tab panels -->
                     <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
                         <p>Tab 1 Content</p>
+
                     </div>
                     <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
                         <p>Tab 2 Content</p>
                     </div>
                     <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
                         <p>Tab 3 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab4-panel">
-                        <p>Tab 4 Content</p>
                     </div>
                 </div>
 
@@ -373,12 +369,70 @@
                 });
             </script>
 
-
-
         </div>
     </div>
 
+    <!-- Projects dialog -->
+    <dialog id="dialog-projects" class="atomicLabProjectsDialog mdl-dialog">
+        <h4 class="mdl-dialog__title">My Projects Collection</h4>
+        <div class="mdl-dialog__content">
 
+            <table class="atomicLabProjectsDialog-table _header">
+                <tbody>
+                    <tr>
+                        <th class="atomicLabProjectsDialog-icon"></th>
+                        <th class="atomicLabProjectsDialog-name">Name</th>
+                        <th class="atomicLabProjectsDialog-url">URL</th>
+                        <th class="atomicLabProjectsDialog-share">Share</th>
+                        <th class="atomicLabProjectsDialog-icon"></th>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="atomicLabProjectsDialog-projectsContainer">
+                <table class="atomicLabProjectsDialog-table _projects">
+                    <tbody>
+                        <tr>
+                            <td class="atomicLabProjectsDialog-icon">
+                                <i class="material-icons">folder</i>
+                            </td>
+                            <td class="atomicLabProjectsDialog-name">
+                                Steelaxe official site
+                            </td>
+                            <td class="atomicLabProjectsDialog-url">
+                                <a href="#">http://goo.gl/Uv5b2e/</a>
+                            </td>
+                            <td class="atomicLabProjectsDialog-share">
+                                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+                            </td>
+                            <td class="atomicLabProjectsDialog-icon">
+                                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button">Agree</button>
+            <button type="button" class="mdl-button mdl-button-colored">Disagree</button>
+        </div>
+    </dialog>
+
+    <script>
+        var dialog_projects = document.querySelector('#dialog-projects');
+        var showDialogButton = document.querySelector('#openDialog-projects');
+        if (!dialog_projects.showModal) {
+            dialogPolyfill.registerDialog(dialog_projects);
+        }
+        showDialogButton.addEventListener('click', function () {
+            dialog_projects.showModal();
+        });
+        dialog_projects.querySelector('.close').addEventListener('click', function () {
+            dialog_projects.close();
+        });
+    </script>
 </body>
 
 </html>
