@@ -1124,7 +1124,8 @@ jQuery(function($){
 			"css_cheat",
 			"css_remove",
 			"css_exp",
-			"css_collections"
+			"css_collections",
+			"css_project"
 		],
 		data:{
 			lang:lang,
