@@ -255,6 +255,11 @@ body {
 
 .atomicLabProjectsDialog {
   width: 750px; }
+  .atomicLabProjectsDialog-title {
+    padding: 15px 24px 0;
+    margin: 0;
+    font-size: 24px;
+    color: #009688; }
   .atomicLabProjectsDialog-table {
     width: 100%;
     border-collapse: collapse; }
@@ -265,6 +270,8 @@ body {
     .atomicLabProjectsDialog-table td {
       padding: 10px 0;
       vertical-align: middle; }
+    .atomicLabProjectsDialog-table i {
+      color: #848484; }
   .atomicLabProjectsDialog-icon {
     width: 5%;
     text-align: center;
@@ -284,6 +291,15 @@ body {
     cursor: pointer; }
     .atomicLabProjectsDialog-shareIcon img {
       width: 100%; }
+  .atomicLabProjectsDialog-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    cursor: pointer; }
+  .atomicLabProjectsDialog-delete, .atomicLabProjectsDialog-shareIcon {
+    cursor: pointer; }
+    .atomicLabProjectsDialog-delete:hover, .atomicLabProjectsDialog-shareIcon:hover {
+      color: #454545; }
   .atomicLabProjectsDialog-projectsContainer {
     height: 180px;
     border-bottom: 1px solid #979797;

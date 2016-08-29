@@ -4,6 +4,7 @@
 $text-color-default: #454545;
 $text-color-light: #848484;
 $text-color-dark: #454545;
+$text-color-accent: rgb(0,150,136);
 
 $line-color-default: #D7D7D7;
 $line-color-light: #efefef;
@@ -61,6 +62,13 @@ body {
 
     width: 750px;
 
+    &-title{
+        padding: 15px 24px 0;
+        margin: 0;
+        font-size: 24px;
+        color: #{$text-color-accent};
+    }
+
     &-table{
         width: 100%;
         border-collapse: collapse;
@@ -73,6 +81,9 @@ body {
         td{
             padding: 10px 0;
             vertical-align: middle;
+        }
+        i{
+            color: #{$text-color-light};
         }
 
     }
@@ -102,22 +113,32 @@ body {
             width: 100%;
         }
     }
+    &-close{
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        cursor: pointer;
+    }
+    &-delete, &-shareIcon{
+        cursor: pointer;
+            &:hover{
+                color: #{$text-color-default};
+        }
+    }
 
+    // Project list area
     &-projectsContainer{
 
         height: 180px;
         border-bottom: 1px solid #979797;
         overflow: auto;
-
         tr:hover{
-
             background-color: #e2e2e2;
 
             #{$this}-delete{
                 display: inline-block;
             }
         }
-
     }
 
 
