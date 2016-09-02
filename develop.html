@@ -439,7 +439,7 @@
 
             <!-- Main panel -->
             <main class="atomicLabMain">
-
+								<script id="css_edit" type="text/template">
                 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 
                     <div class="atomicLabComponentControl mdl-shadow--2dp">
@@ -468,7 +468,7 @@
                         <!-- Component title -->
                         <div class="atomicLabComponentControl-texts">
                             <div class="atomicLabComponentControl-title">
-                                My Primary Button 1
+                                {name}
                             </div>
                             <p class="atomicLabComponentControl-description">
                                 Short description of the component. This is common button.
@@ -478,29 +478,44 @@
 
                         <!-- Tabs -->
                         <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-                            <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
-                            <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
-                            <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
-                            <a href="#tab4-panel" class="atomicLabTabs-tab mdl-tabs__tab">About</a>
+                            <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#about --> is-active<!-- END editMode:touch#about -->" data-action="changeMode(about)">About</a>
                         </div>
 
                     </div>
 
                     <!-- Tab panels -->
-                    <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
-                        <p>Tab 1 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
-                        <p>Tab 2 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
-                        <p>Tab 3 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab4-panel">
-                        <p>Tab 4 Content</p>
-                    </div>
+                    <!-- BEGIN editMode:touch#css -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											<textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
+										</div>
+										<!-- END editMode:touch#css -->
+										<!-- BEGIN editMode:touch#html -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											<textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
+										</div>
+										<!-- END editMode:touch#html -->
+										<!-- BEGIN editMode:touch#preview -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											{html}[preview]
+										</div>
+										<!-- END editMode:touch#preview -->
+										<!-- BEGIN editMode:touch#about -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog"><!-- BEGIN lang:touch#ja -->編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit<!-- END lang:touch#en --></button>
+											<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right mdl-button--trash" data-action="deleteComp()"><i class="material-icons">delete</i></button>
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{name}</p>
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{category}</p>
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About This Component<!-- END lang:touch#en --></span></p>
+											<div class="cssLabExpArea">
+											{about}[markdown]
+											</div>
+										</div>
+										<!-- END editMode:touch#about -->
                 </div>
-
+							</script>
             </main>
 
 

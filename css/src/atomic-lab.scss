@@ -44,6 +44,10 @@ body {
 
 @import "mainpanel";
 
+.ace_editor {
+    height: 100%;
+    margin-top: 0;
+}
 
 // Header style for small screen
 @media screen and (max-width: 1024px) {
