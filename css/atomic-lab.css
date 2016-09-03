@@ -76,10 +76,28 @@ body {
     font-size: 17px; }
     .atomicLabComponentList-category > span {
       display: block;
-      padding: 15px 25px; }
+      padding: 15px 25px;
+      position: relative;
+      cursor: pointer; }
+      .atomicLabComponentList-category > span i {
+        opacity: 0;
+        display: block;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: #848484; }
+      .atomicLabComponentList-category > span:hover i {
+        opacity: 1; }
     .atomicLabComponentList-category-icon {
       width: 32px;
       margin-right: 10px; }
+    .atomicLabComponentList-category > ul {
+      transition: 0.2s;
+      overflow: hidden; }
+    .atomicLabComponentList-category.js-closed {
+      opacity: 0.6; }
+      .atomicLabComponentList-category.js-closed > ul {
+        transition: 0.2s; }
   .atomicLabComponentList-item {
     color: #848484;
     cursor: pointer;

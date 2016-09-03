@@ -78,11 +78,43 @@
         > span{
             display: block;
             padding: 15px 25px;
+            position: relative;
+            cursor: pointer;
+
+            i {
+                opacity: 0;
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                color: #{$text-color-light};
+            }
+
+            &:hover{
+                i { opacity: 1; }
+            }
+
         }
         &-icon{
             width: 32px;
             margin-right: 10px;
         }
+
+
+        > ul{
+            transition: 0.2s;
+            overflow: hidden;
+        }
+
+        // Closed pattern
+        &.js-closed{
+            opacity: 0.6;
+
+            > ul{
+                transition: 0.2s;
+            }
+        }
+
     }
     &-item{
 

@@ -85,10 +85,11 @@
                 <!-- Component list -->
                 <div class="atomicLabComponentList">
                     <ul>
+                        <!-- Atom -->
                         <li class="atomicLabComponentList-category _atom">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom
+                            <i class="material-icons">remove</i></span>
                             <ul>
-
                                 <li class="atomicLabComponentList-item">
                                     <span><i class="material-icons">insert_drive_file</i>
                                     Button1
@@ -114,8 +115,10 @@
                             </ul>
                         </li>
 
+                        <!-- Molecule -->
                         <li class="atomicLabComponentList-category _molecule">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule
+                            <i class="material-icons">remove</i></span>
                             <ul>
 
                                 <li class="atomicLabComponentList-item">
@@ -135,8 +138,11 @@
 
                             </ul>
                         </li>
+
+                        <!-- Organism -->
                         <li class="atomicLabComponentList-category _organism">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism
+                            <i class="material-icons">remove</i></span>
                             <ul>
 
                                 <li class="atomicLabComponentList-item">
@@ -149,11 +155,41 @@
 
                             </ul>
                         </li>
+
+                        <!-- Template -->
                         <li class="atomicLabComponentList-category _template">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template
+                            <i class="material-icons">remove</i></span>
                             <ul></ul>
                         </li>
                     </ul>
+
+                    <script>
+                        $(".atomicLabComponentList-category > span").click(function () {
+
+                            var cat_btn = $(this).closest(".atomicLabComponentList-category");
+                            console.log(cat_btn);
+
+                            // アニメーションあとから変えるかも...
+                            if (cat_btn.hasClass("js-closed") == false) {
+                                // close
+                                cat_btn.addClass("js-closed");
+                                $("ul", cat_btn)
+                                    .animate({
+                                        "height": "0px"
+                                    }, 120);
+                                $("i", this).text("add");
+
+                            } else {
+                                // open
+                                cat_btn.removeClass("js-closed");
+                                $("ul", cat_btn)
+                                    .css({"height": ""});
+                                $("i", this).text("remove");
+                            }
+                        });
+                    </script>
+
                 </div>
 
 
@@ -525,8 +561,11 @@
             </div>
 
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-                Save current project to collection
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
+                Save
+            </button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
+                Save As New
             </button>
 
 
