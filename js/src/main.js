@@ -21,7 +21,7 @@ jQuery(function($){
 	}
 	var material = {
 		atom:0,
-		molucule:1,
+		molecule:1,
 		organism:2,
 		template:3
 	};
@@ -38,7 +38,9 @@ jQuery(function($){
 			"css_cheat",
 			"css_remove",
 			"css_exp",
-			"css_collections"
+			"css_collections",
+			"css_project",
+			"css_fab"
 		],
 		data:{
 			lang:lang,
@@ -61,30 +63,18 @@ jQuery(function($){
 			cheatCategory:"",
 			cheatAbout:"",
 			cheatName:"",
-			searchResults:function(){
-				var search = this.data.search;
-				var components = this.data.components;
-				var searchCategory = this.data.searchCategory;
-				return components
-				.sort(function(a,b){
-					if(material[a.category] < material[b.category]){
-						return 1;
-					}else if(material[a.category] === material[b.category]){
-						if(a.name > b.name){
-							return 1;
-						}else{
-							return -1;
-						}
-					}else{
-						return -1;
-					}
-				})
-				.filter(function(comp){
-					if(searchCategory[material[comp.category]] != "true"){
-						return false;
-					}
-					return comp.name.indexOf(search) >= 0;
-				});
+			fabState:"is-closed",
+			atomSearchResults:function(){
+				return this.applyMethod("getSearchResults","atom");
+			},
+			moleculeSearchResults:function(){
+				return this.applyMethod("getSearchResults","molecule");
+			},
+			organismSearchResults:function(){
+				return this.applyMethod("getSearchResults","organism");
+			},
+			templateSearchResults:function(){
+				return this.applyMethod("getSearchResults","template");
 			},
 			collectionsReverse:function(){
 				return this.data.collections.slice().reverse();
@@ -120,6 +110,26 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+				return this;
+			},
+			getSearchResults:function(category){
+				var search = this.data.search;
+				var components = this.data.components;
+				var searchCategory = this.data.searchCategory;
+				return components
+				.sort(function(a,b){
+					if(a.name > b.name){
+						return 1;
+					}else{
+						return -1;
+					}
+				})
+				.filter(function(comp){
+					if(comp.category !== category){
+						return false;
+					}
+					return comp.name.indexOf(search) >= 0;
+				});
 			},
 			getShortenedUrl:function(){
 				var d = new $.Deferred();
@@ -173,10 +183,15 @@ jQuery(function($){
 				this.update("html","css_preview");
 				this.saveData(storageName);
 			},
-			editComp:function(i){
+			editComp:function(id){
 				var data = this.data;
-				var components = this.getComputedProp("searchResults");
-				var comp = components[i];
+				var components = data.components;
+				var comp;
+				for(var i = 0, n = components.length; i < n; i++){
+					if(components[i].id == id){
+						comp = components[i];
+					}
+				}
 				this.data.css = comp.css;
 				this.data.name = comp.name;
 				this.data.html = comp.html;
@@ -289,7 +304,6 @@ jQuery(function($){
 				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
-				this.data.newCategory = "atom";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
 				this.update("html","css_new");
@@ -339,7 +353,10 @@ jQuery(function($){
 				var dialog = document.querySelector(".js-cheat-dialog");
 				dialog.close();
 			},
-			openDialog:function(){
+			openDialog:function(category){
+				this.data.newCategory = category;
+				this.update("html","css_new");
+				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-new-dialog");
 				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
@@ -519,7 +536,7 @@ jQuery(function($){
 						var comp = components[i];
 						if(name == comp.name){
 							flag = true;
-							//例えば、atomはmoluculeをincludeできない
+							//例えば、atomはmoleculeをincludeできない
 							imports += parser.getImports(comp.html);
 							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
 								preview = preview.replace(comment,"");
@@ -567,4 +584,36 @@ jQuery(function($){
 			}
 		}
 	}).applyMethod("initialize");
+	/*ここから先はアニメーション関係*/
+	$(".AtomicLabFAB-main").click(function () {
+		if ($(this).hasClass("is-open") == false) {
+			$(this)
+			.css({
+	    	"transform": "rotate(45deg)"
+			})
+			.addClass("is-open");
+			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+				$(this).css({
+			    "transform": "scale(1) translateY(0px)",
+			    "opacity": 1
+				});
+			});
+		} else {
+			$(this)
+			.css({
+			    "transform": "rotate(0deg)"
+			})
+			.removeClass("is-open");
+			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+				$(this).css({
+				    "transform": "scale(0) translateY(200px)",
+				    "opacity": 0
+				});
+			});
+		}
+	});
+	$(".js-add-category").click(function(){
+		var category = $(this).data("category");
+		cssLab.applyMethod("openDialog",category);
+	});
 });

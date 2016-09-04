@@ -33,7 +33,7 @@
 			    <tr>
 			      <th class="mdl-data-table__cell--non-numeric">Material</th>
 			      <th>Atoms</th>
-			      <th>Molucules</th>
+			      <th>Molecules</th>
 			      <th>Organisms</th>
 			      <th>Templates</th>
 			    </tr>
@@ -47,7 +47,7 @@
 			      <td>×</td>
 			    </tr>
 			    <tr>
-			      <td class="mdl-data-table__cell--non-numeric">Molucules</td>
+			      <td class="mdl-data-table__cell--non-numeric">Molecules</td>
 			      <td>○</td>
 			      <td>×</td>
 			      <td>×</td>
@@ -231,9 +231,9 @@
 					  <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" data-bind="newCategory">
 					  <span class="mdl-radio__label">Atom</span>
 					</label>
-					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molucule">
-					  <input type="radio" id="molucule" class="mdl-radio__button" name="newCategory" value="molucule" data-bind="newCategory">
-					  <span class="mdl-radio__label">Molucule</span>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molecule">
+					  <input type="radio" id="molecule" class="mdl-radio__button" name="newCategory" value="molecule" data-bind="newCategory">
+					  <span class="mdl-radio__label">Molecule</span>
 					</label>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
 					  <input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
@@ -262,9 +262,9 @@
 					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" data-bind="category">
 					  <span class="mdl-radio__label">Atom</span>
 					</label>
-					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molucule">
-					  <input type="radio" id="to-molucule" class="mdl-radio__button" name="category" value="molucule" data-bind="category">
-					  <span class="mdl-radio__label">Molucule</span>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molecule">
+					  <input type="radio" id="to-molecule" class="mdl-radio__button" name="category" value="molecule" data-bind="category">
+					  <span class="mdl-radio__label">Molecule</span>
 					</label>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
 					  <input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
@@ -335,6 +335,7 @@
                     </p>
 
                     <!-- Project actions -->
+                    <script type="text/template" id="css_project">
                     <nav class="atomicLabProjectControl-actions">
                         <ul>
                             <li>
@@ -345,92 +346,82 @@
                                 <i id="projectAction-save" class="material-icons">save</i>
                                 <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
                             </li>
-                            <li>
+                            <li data-action="outputComp">
                                 <i id="projectAction-download" class="material-icons">file_download</i>
                                 <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
                                     <br>(included Export JSON data)</div>
                             </li>
-                            <li>
+                            <li data-action="openSettingDialog">
                                 <i id="projectAction-settings" class="material-icons">settings</i>
                                 <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
                             </li>
                         </ul>
                     </nav>
-
+										</script>
                 </div>
 
                 <!-- Component list -->
                 <div class="atomicLabComponentList">
+                	<script id="css_search_result" type="text/template">
                     <ul>
                         <li class="atomicLabComponentList-category _atom">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
                             <ul>
-
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Button1
-                                    <i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
-                                    </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Heading1
-                                    <i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
-                                    </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Profile Icon
-                                    <i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
-                                    </span>
-                                </li>
-
-                            </ul>
-                        </li>
-
-                        <li class="atomicLabComponentList-category _molecule">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
-                            <ul>
-
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Profile Card
+                            <!-- BEGIN atomSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
                                     <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
                                     <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
                                     </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Search Box
-                                    <i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                            </li>
+														<!-- END atomSearchResults:loop -->
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _molecule">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
+                            <ul>
+                            <!-- BEGIN moleculeSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
                                     <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
                                     </span>
-                                </li>
-
+                            </li>
+														<!-- END atomSearchResults:loop -->
                             </ul>
                         </li>
                         <li class="atomicLabComponentList-category _organism">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
                             <ul>
-
-                            <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Entry Summary
+                            <!-- BEGIN organismSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
                                     <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
                                     <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
                                     </span>
-                                </li>
-
+                            </li>
+														<!-- END organismSearchResults:loop -->
                             </ul>
                         </li>
                         <li class="atomicLabComponentList-category _template">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
-                            <ul></ul>
+                            <ul>
+                            <!-- BEGIN templateSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                            </li>
+														<!-- END templateSearchResults:loop -->
+                            </ul>
                         </li>
                     </ul>
+                  </script>
                 </div>
 
             </div>
@@ -438,7 +429,7 @@
 
             <!-- Main panel -->
             <main class="atomicLabMain">
-
+								<script id="css_edit" type="text/template">
                 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 
                     <div class="atomicLabComponentControl mdl-shadow--2dp">
@@ -448,11 +439,11 @@
                             <nav>
                                 <ul>
                                     <li>
-                                        <i id="componentAction-delete" class="material-icons">delete</i>
+                                        <i id="componentAction-delete" class="material-icons" data-action="deleteComp()">delete</i>
                                         <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
                                     </li>
                                     <li>
-                                        <i id="componentAction-settings" class="material-icons">settings</i>
+                                        <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">settings</i>
                                         <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
                                     </li>
                                 </ul>
@@ -461,13 +452,13 @@
 
                         <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
                         <div class="atomicLabComponentControl-icon">
-                            <img src="/images/iconAtom-l.png" alt="">
+                            <img src="/images/icon{category}-l.png" alt="">
                         </div>
 
                         <!-- Component title -->
                         <div class="atomicLabComponentControl-texts">
                             <div class="atomicLabComponentControl-title">
-                                My Primary Button 1
+                                {name}
                             </div>
                             <p class="atomicLabComponentControl-description">
                                 Short description of the component. This is common button.
@@ -477,29 +468,37 @@
 
                         <!-- Tabs -->
                         <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-                            <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
-                            <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
-                            <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
-                            <a href="#tab4-panel" class="atomicLabTabs-tab mdl-tabs__tab">About</a>
+                        		<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
                         </div>
 
                     </div>
 
                     <!-- Tab panels -->
-                    <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
-                        <p>Tab 1 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
-                        <p>Tab 2 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
-                        <p>Tab 3 Content</p>
-                    </div>
-                    <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab4-panel">
-                        <p>Tab 4 Content</p>
-                    </div>
+                    <!-- BEGIN editMode:touch#css -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											<textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
+										</div>
+										<!-- END editMode:touch#css -->
+										<!-- BEGIN editMode:touch#html -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											<textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
+										</div>
+										<!-- END editMode:touch#html -->
+										<!-- BEGIN editMode:touch#preview -->
+										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
+											{html}[preview]
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{name}</p>
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{category}</p>
+											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About This Component<!-- END lang:touch#en --></span></p>
+											<div class="cssLabExpArea">
+											{about}[markdown]
+											</div>
+										</div>
+										<!-- END editMode:touch#preview -->
                 </div>
-
+							</script>
             </main>
 
 
@@ -515,23 +514,23 @@
                 <!-- sub actions -->
                 <ul class="AtomicLabFAB-subActionsList">
                     <li>
-                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="atom">
                             <img src="/images/iconAtom-s.png" alt="Add Atom">
                         </button>
                         <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="molecule">
                             <img src="/images/iconMolecule-s.png" alt="Add Molecules">
                         </button>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="organism">
                             <img src="/images/iconOrganism-s.png" alt="Add Organism">
                         </button>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="template">
                             <img src="/images/iconTemplate-s.png" alt="Add Template">
                         </button>
                     </li>
@@ -553,41 +552,5 @@
 	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 	<script src="js/jquery.i18n.properties.js"></script>
 	<script src="js/dist/main.min.js"></script>
-<script>
-$(function () {
-    $(".AtomicLabFAB-main").click(function () {
-        if ($(this).hasClass("is-open") == false) {
-
-            $(this)
-                .css({
-                    "transform": "rotate(45deg)"
-                })
-                .addClass("is-open");
-
-            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-                $(this).css({
-                    "transform": "scale(1) translateY(0px)",
-                    "opacity": 1
-                });
-            });
-
-        } else {
-
-            $(this)
-                .css({
-                    "transform": "rotate(0deg)"
-                })
-                .removeClass("is-open");
-
-            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-                $(this).css({
-                    "transform": "scale(0) translateY(200px)",
-                    "opacity": 0
-                });
-            });
-        }
-    });
-});
-</script>
 </body>
 </html>

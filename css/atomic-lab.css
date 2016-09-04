@@ -88,6 +88,8 @@ body {
       background-color: #E2E2E2;
       color: #454545;
       transition: 0.1s; }
+    .atomicLabComponentList-item.selected {
+      background-color: #E2E2E2; }
     .atomicLabComponentList-item > span {
       display: block;
       padding: 15px 20px 15px 50px; }
@@ -169,6 +171,22 @@ body {
     position: absolute;
     bottom: 0;
     left: 0; }
+  .atomicLabComponentControl .atomicLabTabs-tab:after {
+    height: 2px;
+    width: 100%;
+    display: block;
+    content: " ";
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    background: #FFFFFF;
+    animation: border-expand 0.2s cubic-bezier(0.4, 0, 0.4, 1) 0.01s alternate forwards;
+    transition: all 1s cubic-bezier(0.4, 0, 1, 1); }
+  .atomicLabComponentControl .atomicLabTabs-tab {
+    color: rgba(0, 0, 0, 0.54);
+    cursor: pointer; }
+  .atomicLabComponentControl .atomicLabTabs-tab.is-active {
+    color: rgba(0, 0, 0, 0.87); }
 
 .atomicLabTabs .is-active:after {
   height: 3px !important;
@@ -191,6 +209,18 @@ body {
     cursor: pointer; }
     .atomicLabComponentControl-actions i:hover {
       color: #454545; }
+
+.atomicLabTabs-panel {
+  height: 400px; }
+  .atomicLabTabs-panel-editArea {
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px; }
+
+.ace_editor {
+  height: 100%;
+  margin-top: 0; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {

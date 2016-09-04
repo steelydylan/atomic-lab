@@ -96,6 +96,10 @@
             transition: 0.1s;
         }
 
+        &.selected{
+        	background-color: #E2E2E2;
+        }
+
         > span{
             display: block;
             padding: 15px 20px 15px 50px;
