@@ -1107,7 +1107,7 @@ jQuery(function($){
 	}
 	var material = {
 		atom:0,
-		molucule:1,
+		molecule:1,
 		organism:2,
 		template:3
 	};
@@ -1125,7 +1125,8 @@ jQuery(function($){
 			"css_remove",
 			"css_exp",
 			"css_collections",
-			"css_project"
+			"css_project",
+			"css_fab"
 		],
 		data:{
 			lang:lang,
@@ -1148,6 +1149,7 @@ jQuery(function($){
 			cheatCategory:"",
 			cheatAbout:"",
 			cheatName:"",
+			fabState:"is-closed",
 			searchResults:function(){
 				var search = this.data.search;
 				var components = this.data.components;
@@ -1207,6 +1209,7 @@ jQuery(function($){
 				if(this.data.editMode != "preview" && this.data.editMode != "about"){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
+				return this;
 			},
 			getShortenedUrl:function(){
 				var d = new $.Deferred();
@@ -1376,7 +1379,6 @@ jQuery(function($){
 				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
-				this.data.newCategory = "atom";
 				this.applyMethod("showAlert","コンポーネントを追加しました。");
 				this.update("html","css_search_result");
 				this.update("html","css_new");
@@ -1426,7 +1428,10 @@ jQuery(function($){
 				var dialog = document.querySelector(".js-cheat-dialog");
 				dialog.close();
 			},
-			openDialog:function(){
+			openDialog:function(category){
+				this.data.newCategory = category;
+				this.update("html","css_new");
+				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-new-dialog");
 				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
@@ -1606,7 +1611,7 @@ jQuery(function($){
 						var comp = components[i];
 						if(name == comp.name){
 							flag = true;
-							//例えば、atomはmoluculeをincludeできない
+							//例えば、atomはmoleculeをincludeできない
 							imports += parser.getImports(comp.html);
 							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
 								preview = preview.replace(comment,"");
@@ -1654,6 +1659,38 @@ jQuery(function($){
 			}
 		}
 	}).applyMethod("initialize");
+	/*ここから先はアニメーション関係*/
+	$(".AtomicLabFAB-main").click(function () {
+		if ($(this).hasClass("is-open") == false) {
+			$(this)
+			.css({
+	    	"transform": "rotate(45deg)"
+			})
+			.addClass("is-open");
+			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+				$(this).css({
+			    "transform": "scale(1) translateY(0px)",
+			    "opacity": 1
+				});
+			});
+		} else {
+			$(this)
+			.css({
+			    "transform": "rotate(0deg)"
+			})
+			.removeClass("is-open");
+			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+				$(this).css({
+				    "transform": "scale(0) translateY(200px)",
+				    "opacity": 0
+				});
+			});
+		}
+	});
+	$(".js-add-category").click(function(){
+		var category = $(this).data("category");
+		cssLab.applyMethod("openDialog",category);
+	});
 });
 
 },{"./aTemplate.js":1,"./compiler.js":2,"./defaultStyle.js":3,"./dialog-polyfill.js":4,"./fileSaver.min.js":6,"./jszip-deflate.js":7,"./jszip-inflate.js":8,"./jszip.min.js":9,"./marked.js":10,"./slack-widget.js":11,"./templateParser.js":12}],6:[function(require,module,exports){

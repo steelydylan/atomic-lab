@@ -33,7 +33,7 @@
 			    <tr>
 			      <th class="mdl-data-table__cell--non-numeric">Material</th>
 			      <th>Atoms</th>
-			      <th>Molucules</th>
+			      <th>Molecules</th>
 			      <th>Organisms</th>
 			      <th>Templates</th>
 			    </tr>
@@ -47,7 +47,7 @@
 			      <td>×</td>
 			    </tr>
 			    <tr>
-			      <td class="mdl-data-table__cell--non-numeric">Molucules</td>
+			      <td class="mdl-data-table__cell--non-numeric">Molecules</td>
 			      <td>○</td>
 			      <td>×</td>
 			      <td>×</td>
@@ -231,9 +231,9 @@
 					  <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" data-bind="newCategory">
 					  <span class="mdl-radio__label">Atom</span>
 					</label>
-					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molucule">
-					  <input type="radio" id="molucule" class="mdl-radio__button" name="newCategory" value="molucule" data-bind="newCategory">
-					  <span class="mdl-radio__label">Molucule</span>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molecule">
+					  <input type="radio" id="molecule" class="mdl-radio__button" name="newCategory" value="molecule" data-bind="newCategory">
+					  <span class="mdl-radio__label">Molecule</span>
 					</label>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
 					  <input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
@@ -262,9 +262,9 @@
 					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" data-bind="category">
 					  <span class="mdl-radio__label">Atom</span>
 					</label>
-					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molucule">
-					  <input type="radio" id="to-molucule" class="mdl-radio__button" name="category" value="molucule" data-bind="category">
-					  <span class="mdl-radio__label">Molucule</span>
+					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molecule">
+					  <input type="radio" id="to-molecule" class="mdl-radio__button" name="category" value="molecule" data-bind="category">
+					  <span class="mdl-radio__label">Molecule</span>
 					</label>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
 					  <input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
@@ -426,10 +426,9 @@
 
                         <!-- Tabs -->
                         <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-                            <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
+                        		<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
 														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
-														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
-														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#about --> is-active<!-- END editMode:touch#about -->" data-action="changeMode(about)">About</a>
+														<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
                         </div>
 
                     </div>
@@ -448,12 +447,6 @@
 										<!-- BEGIN editMode:touch#preview -->
 										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
 											{html}[preview]
-										</div>
-										<!-- END editMode:touch#preview -->
-										<!-- BEGIN editMode:touch#about -->
-										<div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-											<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right" data-action="openEditDialog"><!-- BEGIN lang:touch#ja -->編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit<!-- END lang:touch#en --></button>
-											<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-button--pull-right mdl-button--trash" data-action="deleteComp()"><i class="material-icons">delete</i></button>
 											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{name}</p>
 											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{category}</p>
 											<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About This Component<!-- END lang:touch#en --></span></p>
@@ -461,7 +454,7 @@
 											{about}[markdown]
 											</div>
 										</div>
-										<!-- END editMode:touch#about -->
+										<!-- END editMode:touch#preview -->
                 </div>
 							</script>
             </main>
@@ -479,23 +472,23 @@
                 <!-- sub actions -->
                 <ul class="AtomicLabFAB-subActionsList">
                     <li>
-                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="atom">
                             <img src="/images/iconAtom-s.png" alt="Add Atom">
                         </button>
                         <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="molecule">
                             <img src="/images/iconMolecule-s.png" alt="Add Molecules">
                         </button>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="organism">
                             <img src="/images/iconOrganism-s.png" alt="Add Organism">
                         </button>
                     </li>
                     <li>
-                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+                        <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="template">
                             <img src="/images/iconTemplate-s.png" alt="Add Template">
                         </button>
                     </li>
@@ -517,41 +510,5 @@
 	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 	<script src="js/jquery.i18n.properties.js"></script>
 	<script src="js/dist/main.min.js"></script>
-<script>
-$(function () {
-    $(".AtomicLabFAB-main").click(function () {
-        if ($(this).hasClass("is-open") == false) {
-
-            $(this)
-                .css({
-                    "transform": "rotate(45deg)"
-                })
-                .addClass("is-open");
-
-            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-                $(this).css({
-                    "transform": "scale(1) translateY(0px)",
-                    "opacity": 1
-                });
-            });
-
-        } else {
-
-            $(this)
-                .css({
-                    "transform": "rotate(0deg)"
-                })
-                .removeClass("is-open");
-
-            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-                $(this).css({
-                    "transform": "scale(0) translateY(200px)",
-                    "opacity": 0
-                });
-            });
-        }
-    });
-});
-</script>
 </body>
 </html>
