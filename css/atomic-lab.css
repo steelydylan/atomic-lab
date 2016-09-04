@@ -88,6 +88,8 @@ body {
       background-color: #E2E2E2;
       color: #454545;
       transition: 0.1s; }
+    .atomicLabComponentList-item.selected {
+      background-color: #E2E2E2; }
     .atomicLabComponentList-item > span {
       display: block;
       padding: 15px 20px 15px 50px; }

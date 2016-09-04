@@ -1150,30 +1150,17 @@ jQuery(function($){
 			cheatAbout:"",
 			cheatName:"",
 			fabState:"is-closed",
-			searchResults:function(){
-				var search = this.data.search;
-				var components = this.data.components;
-				var searchCategory = this.data.searchCategory;
-				return components
-				.sort(function(a,b){
-					if(material[a.category] < material[b.category]){
-						return 1;
-					}else if(material[a.category] === material[b.category]){
-						if(a.name > b.name){
-							return 1;
-						}else{
-							return -1;
-						}
-					}else{
-						return -1;
-					}
-				})
-				.filter(function(comp){
-					if(searchCategory[material[comp.category]] != "true"){
-						return false;
-					}
-					return comp.name.indexOf(search) >= 0;
-				});
+			atomSearchResults:function(){
+				return this.applyMethod("getSearchResults","atom");
+			},
+			moleculeSearchResults:function(){
+				return this.applyMethod("getSearchResults","molecule");
+			},
+			organismSearchResults:function(){
+				return this.applyMethod("getSearchResults","organism");
+			},
+			templateSearchResults:function(){
+				return this.applyMethod("getSearchResults","template");
 			},
 			collectionsReverse:function(){
 				return this.data.collections.slice().reverse();
@@ -1210,6 +1197,25 @@ jQuery(function($){
 					this.applyMethod("runEditor",this.data.editMode);
 				}
 				return this;
+			},
+			getSearchResults:function(category){
+				var search = this.data.search;
+				var components = this.data.components;
+				var searchCategory = this.data.searchCategory;
+				return components
+				.sort(function(a,b){
+					if(a.name > b.name){
+						return 1;
+					}else{
+						return -1;
+					}
+				})
+				.filter(function(comp){
+					if(comp.category !== category){
+						return false;
+					}
+					return comp.name.indexOf(search) >= 0;
+				});
 			},
 			getShortenedUrl:function(){
 				var d = new $.Deferred();
@@ -1263,10 +1269,15 @@ jQuery(function($){
 				this.update("html","css_preview");
 				this.saveData(storageName);
 			},
-			editComp:function(i){
+			editComp:function(id){
 				var data = this.data;
-				var components = this.getComputedProp("searchResults");
-				var comp = components[i];
+				var components = data.components;
+				var comp;
+				for(var i = 0, n = components.length; i < n; i++){
+					if(components[i].id == id){
+						comp = components[i];
+					}
+				}
 				this.data.css = comp.css;
 				this.data.name = comp.name;
 				this.data.html = comp.html;

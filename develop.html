@@ -367,15 +367,57 @@
                         <li class="atomicLabComponentList-category _atom">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
                             <ul>
-                            <!-- BEGIN searchResults:loop -->
-                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({i})">
+                            <!-- BEGIN atomSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
                               <span><i class="material-icons">insert_drive_file</i>
                                     {name}
                                     <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
                                     <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
                                     </span>
                             </li>
-														<!-- END searchResults:loop -->
+														<!-- END atomSearchResults:loop -->
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _molecule">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
+                            <ul>
+                            <!-- BEGIN moleculeSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                            </li>
+														<!-- END atomSearchResults:loop -->
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _organism">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
+                            <ul>
+                            <!-- BEGIN organismSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                            </li>
+														<!-- END organismSearchResults:loop -->
+                            </ul>
+                        </li>
+                        <li class="atomicLabComponentList-category _template">
+                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
+                            <ul>
+                            <!-- BEGIN templateSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                                    </span>
+                            </li>
+														<!-- END templateSearchResults:loop -->
                             </ul>
                         </li>
                     </ul>
