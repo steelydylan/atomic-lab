@@ -362,76 +362,24 @@
 
                 <!-- Component list -->
                 <div class="atomicLabComponentList">
+                	<script id="css_search_result" type="text/template">
                     <ul>
                         <li class="atomicLabComponentList-category _atom">
                             <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom</span>
                             <ul>
-
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Button1
-                                    <i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
-                                    </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Heading1
-                                    <i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
-                                    </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Profile Icon
-                                    <i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
-                                    </span>
-                                </li>
-
-                            </ul>
-                        </li>
-
-                        <li class="atomicLabComponentList-category _molecule">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule</span>
-                            <ul>
-
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Profile Card
+                            <!-- BEGIN searchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({i})">
+                              <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
                                     <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
                                     <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
                                     </span>
-                                </li>
-                                <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Search Box
-                                    <i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
-                                    </span>
-                                </li>
-
+                            </li>
+														<!-- END searchResults:loop -->
                             </ul>
-                        </li>
-                        <li class="atomicLabComponentList-category _organism">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism</span>
-                            <ul>
-
-                            <li class="atomicLabComponentList-item">
-                                    <span><i class="material-icons">insert_drive_file</i>
-                                    Entry Summary
-                                    <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
-                                    <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
-                                    </span>
-                                </li>
-
-                            </ul>
-                        </li>
-                        <li class="atomicLabComponentList-category _template">
-                            <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template</span>
-                            <ul></ul>
                         </li>
                     </ul>
+                  </script>
                 </div>
 
             </div>
@@ -449,11 +397,11 @@
                             <nav>
                                 <ul>
                                     <li>
-                                        <i id="componentAction-delete" class="material-icons">delete</i>
+                                        <i id="componentAction-delete" class="material-icons" data-action="deleteComp()">delete</i>
                                         <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
                                     </li>
                                     <li>
-                                        <i id="componentAction-settings" class="material-icons">settings</i>
+                                        <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">settings</i>
                                         <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
                                     </li>
                                 </ul>
@@ -462,7 +410,7 @@
 
                         <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
                         <div class="atomicLabComponentControl-icon">
-                            <img src="/images/iconAtom-l.png" alt="">
+                            <img src="/images/icon{category}-l.png" alt="">
                         </div>
 
                         <!-- Component title -->
