@@ -76,10 +76,28 @@ body {
     font-size: 17px; }
     .atomicLabComponentList-category > span {
       display: block;
-      padding: 15px 25px; }
+      padding: 15px 25px;
+      position: relative;
+      cursor: pointer; }
+      .atomicLabComponentList-category > span i {
+        opacity: 0;
+        display: block;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: #848484; }
+      .atomicLabComponentList-category > span:hover i {
+        opacity: 1; }
     .atomicLabComponentList-category-icon {
       width: 32px;
       margin-right: 10px; }
+    .atomicLabComponentList-category > ul {
+      transition: 0.2s;
+      overflow: hidden; }
+    .atomicLabComponentList-category.js-closed {
+      opacity: 0.6; }
+      .atomicLabComponentList-category.js-closed > ul {
+        transition: 0.2s; }
   .atomicLabComponentList-item {
     color: #848484;
     cursor: pointer;
@@ -104,6 +122,58 @@ body {
 
 .atomicLabComponentList-item:hover .atomicLabComponentList-item-subAction {
   display: inline-block; }
+
+.atomicLabSearchBox {
+  box-sizing: border-box;
+  height: 40px;
+  width: 310px;
+  padding: 10px 20px;
+  border-top: 1px solid #D7D7D7; }
+  .atomicLabSearchBox-expandContent {
+    display: none; }
+  .atomicLabSearchBox-title {
+    font-size: 17px;
+    display: inline-block;
+    margin-bottom: 10px; }
+  .atomicLabSearchBox-main {
+    border-radius: 5px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #F2F2F2;
+    box-sizing: border-box;
+    padding: 0 15px; }
+    .atomicLabSearchBox-main i {
+      vertical-align: middle;
+      color: #848484; }
+  .atomicLabSearchBox-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent; }
+  .atomicLabSearchBox-checkbox {
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #848484; }
+  .atomicLabSearchBox.is-open .atomicLabSearchBox-expandContent {
+    display: block;
+    padding: 20px;
+    height: 0;
+    opacity: 0;
+    border-bottom: 1px solid #D7D7D7; }
+  .atomicLabSearchBox.is-open .atomicLabSearchBox-floatingCard {
+    background-color: #fff;
+    border-radius: 3px;
+    width: 270px;
+    position: absolute;
+    z-index: 9000;
+    bottom: 9px;
+    left: 20px;
+    box-shadow: 0px 0px 4px 1px #a0a0a0;
+    -moz-box-shadow: 0px 0px 4px 1px #a0a0a0;
+    -webkit-box-shadow: 0px 0px 4px 1px #a0a0a0; }
+  .atomicLabSearchBox.is-open .atomicLabSearchBox-main {
+    background-color: #fff;
+    border-radius: 0; }
 
 .AtomicLabFAB {
   position: fixed;
@@ -221,6 +291,71 @@ body {
 .ace_editor {
   height: 100%;
   margin-top: 0; }
+
+#mask-search-cancel {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 8000;
+  display: none; }
+
+.atomicLabProjectsDialog {
+  width: 750px; }
+  .atomicLabProjectsDialog-title {
+    padding: 15px 24px 0;
+    margin: 0;
+    font-size: 24px;
+    color: #009688; }
+  .atomicLabProjectsDialog-table {
+    width: 100%;
+    border-collapse: collapse; }
+    .atomicLabProjectsDialog-table th {
+      text-align: left;
+      border-bottom: 1px solid #979797;
+      padding: 5px 0; }
+    .atomicLabProjectsDialog-table td {
+      padding: 10px 0;
+      vertical-align: middle; }
+    .atomicLabProjectsDialog-table i {
+      color: #848484; }
+  .atomicLabProjectsDialog-icon {
+    width: 5%;
+    text-align: center;
+    color: #848484; }
+  .atomicLabProjectsDialog-name {
+    width: 35%; }
+  .atomicLabProjectsDialog-url {
+    width: 30%; }
+  .atomicLabProjectsDialog-share {
+    width: 25%; }
+  .atomicLabProjectsDialog-delete {
+    display: none; }
+  .atomicLabProjectsDialog-shareIcon {
+    width: 22px;
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer; }
+    .atomicLabProjectsDialog-shareIcon img {
+      width: 100%; }
+  .atomicLabProjectsDialog-close {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    cursor: pointer; }
+  .atomicLabProjectsDialog-delete, .atomicLabProjectsDialog-shareIcon {
+    cursor: pointer; }
+    .atomicLabProjectsDialog-delete:hover, .atomicLabProjectsDialog-shareIcon:hover {
+      color: #454545; }
+  .atomicLabProjectsDialog-projectsContainer {
+    height: 180px;
+    border-bottom: 1px solid #979797;
+    overflow: auto; }
+    .atomicLabProjectsDialog-projectsContainer tr:hover {
+      background-color: #e2e2e2; }
+      .atomicLabProjectsDialog-projectsContainer tr:hover .atomicLabProjectsDialog-delete {
+        display: inline-block; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {

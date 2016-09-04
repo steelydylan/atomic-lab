@@ -4,6 +4,7 @@
 $text-color-default: #454545;
 $text-color-light: #848484;
 $text-color-dark: #454545;
+$text-color-accent: rgb(0,150,136);
 
 $line-color-default: #D7D7D7;
 $line-color-light: #efefef;
@@ -47,6 +48,104 @@ body {
 .ace_editor {
     height: 100%;
     margin-top: 0;
+}
+
+#mask-search-cancel{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 8000;
+    display: none;
+}
+
+
+.atomicLabProjectsDialog{
+    $this: &;
+
+    width: 750px;
+
+    &-title{
+        padding: 15px 24px 0;
+        margin: 0;
+        font-size: 24px;
+        color: #{$text-color-accent};
+    }
+
+    &-table{
+        width: 100%;
+        border-collapse: collapse;
+
+        th{
+            text-align: left;
+            border-bottom: 1px solid #979797;
+            padding: 5px 0;
+        }
+        td{
+            padding: 10px 0;
+            vertical-align: middle;
+        }
+        i{
+            color: #{$text-color-light};
+        }
+
+    }
+    &-icon{
+        width: 5%;
+        text-align: center;
+        color: #{$text-color-light};
+    }
+    &-name{
+        width: 35%;
+    }
+    &-url{
+        width: 30%;
+    }
+    &-share{
+        width: 25%;
+    }
+    &-delete{
+        display: none;
+    }
+    &-shareIcon{
+        width: 22px;
+        display: inline-block;
+        margin-right: 5px;
+        cursor: pointer;
+        img{
+            width: 100%;
+        }
+    }
+    &-close{
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        cursor: pointer;
+    }
+    &-delete, &-shareIcon{
+        cursor: pointer;
+            &:hover{
+                color: #{$text-color-default};
+        }
+    }
+
+    // Project list area
+    &-projectsContainer{
+
+        height: 180px;
+        border-bottom: 1px solid #979797;
+        overflow: auto;
+        tr:hover{
+            background-color: #e2e2e2;
+
+            #{$this}-delete{
+                display: inline-block;
+            }
+        }
+    }
+
+
 }
 
 // Header style for small screen

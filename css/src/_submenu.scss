@@ -78,11 +78,43 @@
         > span{
             display: block;
             padding: 15px 25px;
+            position: relative;
+            cursor: pointer;
+
+            i {
+                opacity: 0;
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                color: #{$text-color-light};
+            }
+
+            &:hover{
+                i { opacity: 1; }
+            }
+
         }
         &-icon{
             width: 32px;
             margin-right: 10px;
         }
+
+
+        > ul{
+            transition: 0.2s;
+            overflow: hidden;
+        }
+
+        // Closed pattern
+        &.js-closed{
+            opacity: 0.6;
+
+            > ul{
+                transition: 0.2s;
+            }
+        }
+
     }
     &-item{
 
@@ -120,10 +152,88 @@
 
 }
 
+// hover
 .atomicLabComponentList-item:hover{
 
     .atomicLabComponentList-item-subAction{
         display: inline-block;
+    }
+
+}
+
+
+
+// Search box
+.atomicLabSearchBox{
+
+    $this: &;
+
+    box-sizing: border-box;
+    height: 40px;
+    width: 310px;
+    padding: 10px 20px;
+    border-top: 1px solid #{$line-color-default};
+
+    &-expandContent{
+        display: none;
+    }
+    &-title{
+        font-size: 17px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    &-main{
+        border-radius: 5px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #F2F2F2;
+        box-sizing: border-box;
+        padding: 0 15px;
+
+        i{
+            vertical-align: middle;
+            color: #{$text-color-light};
+        }
+    }
+    &-input{
+        border: none;
+        outline: none;
+        font-size: 16px;
+        background: transparent;
+    }
+    &-checkbox{
+        margin-bottom: 10px;
+        cursor: pointer;
+        color: #{$text-color-light};
+    }
+
+    // modifier
+    &.is-open{
+
+        #{$this}-expandContent{
+            display: block;
+            padding: 20px;
+            height: 0;
+            opacity: 0;
+            border-bottom: 1px solid #{$line-color-default};
+        }
+        #{$this}-floatingCard{
+            background-color: #fff;
+            border-radius: 3px;
+            width: 270px;
+            position: absolute;
+            z-index: 9000;
+            bottom: 9px;
+            left: 20px;
+            box-shadow:0px 0px 4px 1px #a0a0a0;
+            -moz-box-shadow:0px 0px 4px 1px #a0a0a0;
+            -webkit-box-shadow:0px 0px 4px 1px #a0a0a0;
+        }
+        #{$this}-main{
+            background-color: #fff;
+            border-radius: 0;
+        }
     }
 
 }
