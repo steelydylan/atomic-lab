@@ -13,13 +13,13 @@
 </head>
 
 <body>
-  <dialog class="mdl-dialog mdl-dialog--wide js-about-dialog">
+  <dialog class="mdl-dialog js-about-dialog atomicLabProjectsDialog">
   	<script id="css_exp" type="text/template">
   	<!-- BEGIN lang:touch#ja -->
-  	<h4 class="mdl-dialog__title">Atomic Labとは</h4>
+  	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title">Atomic Labとは</h4>
   	<!-- END lang:touch#ja -->
   	<!-- BEGIN lang:touch#en -->
-  	<h4 class="mdl-dialog__title">What is Atomic Lab?</h4>
+  	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title">What is Atomic Lab?</h4>
   	<!-- END lang:touch#en -->
   	<div class="mdl-dialog__content">
   		<!-- BEGIN lang:touch#ja -->
@@ -88,9 +88,9 @@
 		</div>
 		</script>
   </dialog>
-  <dialog class="mdl-dialog mdl-dialog--wide js-setting-dialog">
+  <dialog class="mdl-dialog js-setting-dialog atomicLabProjectsDialog">
   	<script id="css_setting" type="text/template">
-  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
+  	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
 				<p>Markup</p>
 				<p>
@@ -134,9 +134,9 @@
 			</div>
   	</script>
   </dialog>
-  <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog">
+  <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog atomicLabProjectsDialog">
   	<script id="css_collections" type="text/template">
-  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクト<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects<!-- END lang:touch#en --></h4>
+  	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクト<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects<!-- END lang:touch#en --></h4>
   	<div class="mdl-dialog__content">
   		<div class="mdl-grid">
   			<div class="mdl-cell mdl-cell--6-col">
@@ -192,9 +192,9 @@
 		</div>
 		</script>
 	</dialog>
-  <dialog class="mdl-dialog mdl-dialog--wide js-remove-dialog">
+  <dialog class="mdl-dialog js-remove-dialog atomicLabProjectsDialog">
   	<script id="css_remove" type="text/template">
-  		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
+  		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
   		<div class="mdl-dialog__content">
   			<p>Delete All Components</p>
   		</div>
@@ -204,9 +204,9 @@
 			</div>
   	</script>
   </dialog>
-  <dialog class="mdl-dialog mdl-dialog--wide js-cheat-dialog">
+  <dialog class="mdl-dialog js-cheat-dialog atomicLabProjectsDialog">
   	<script id="css_cheat" type="text/template">
-  	<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
+  	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
 				<div class="cssLabAbout">
 					<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{cheatName}</p>
@@ -222,9 +222,9 @@
 			</div>
 		</script>
   </dialog>
-	<dialog class="mdl-dialog mdl-dialog--wide js-new-dialog">
+	<dialog class="mdl-dialog atomicLabProjectsDialog js-new-dialog">
 		<script id="css_new" type="text/template">
-			<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
+			<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
 					<p><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></p>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
@@ -254,10 +254,11 @@
 			</div>
 		</script>
 	</dialog>
-	<dialog class="mdl-dialog mdl-dialog--wide js-edit-dialog">
+	<dialog class="mdl-dialog atomicLabProjectsDialog js-edit-dialog">
 		<script id="css_about" type="text/template">
-		<h4 class="mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
+		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
 			<div class="mdl-dialog__content">
+					<div>
 					<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
 					  <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" data-bind="category">
 					  <span class="mdl-radio__label">Atom</span>
@@ -274,7 +275,8 @@
 					  <input type="radio" id="to-template" class="mdl-radio__button" name="category" value="template" data-bind="category">
 					  <span class="mdl-radio__label">Template</span>
 					</label>
-				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+					</div>
+				<div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
 					<input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
 					<label class="mdl-textfield__label" for="update-name">Component Name...</label>
 				</div>
@@ -290,7 +292,6 @@
 		</script>
 	</dialog>
     <div class="mdl-layout">
-
         <header class="mdl-layout__header atomicLabHeader">
             <div class="mdl-layout__header-row atomicLabHeader-row">
                 <!-- Title -->
@@ -423,15 +424,17 @@
                     </ul>
                   </script>
                 </div>
+								<script id="css_search" type="text/template">
 								<div id="mask-search-cancel"></div>
 								<div class="atomicLabSearchBox">
 									<div class="atomicLabSearchBox-floatingCard">
 										<div class="atomicLabSearchBox-main">
 											<i class="material-icons">search</i>
-											<input class="atomicLabSearchBox-input" type="text" placeholder="Search">
+											<input class="atomicLabSearchBox-input" type="text" placeholder="Search" data-action="searchComponents" data-bind="search">
 										</div>
 									</div>
 								</div>
+								</script>
             </div>
             <!-- / Side menu -->
 

@@ -301,6 +301,22 @@ body {
   z-index: 8000;
   display: none; }
 
+.sourceCopied {
+  position: fixed;
+  z-index: 1000;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  -webkit-transition: background-color .2s ease-in;
+  transition: background-color .2s ease-in;
+  text-align: center;
+  color: #fff;
+  background-color: transparent; }
+
+.sourceCopied.active {
+  background-color: rgba(0, 0, 0, 0.9); }
+
 .atomicLabProjectsDialog {
   width: 750px; }
   .atomicLabProjectsDialog-title {
