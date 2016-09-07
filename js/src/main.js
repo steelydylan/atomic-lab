@@ -401,6 +401,7 @@ jQuery(function($){
                 this.applyMethod("closeEditDialog");
                 this.applyMethod("saveComponent");
                 this.update("html","css_edit");
+                this.applyMethod("runEditor",this.data.editMode);
             },
             clearEditor:function(){
                 this.removeData(['name','html','css']);
@@ -481,6 +482,7 @@ jQuery(function($){
             },
             closeCollectionsDialog:function(){
                 var dialog = document.querySelector(".js-collections-dialog");
+                this.update("html","css_project");
                 dialog.close();
             },
             addToCollection:function(){
@@ -501,6 +503,7 @@ jQuery(function($){
                 var index = this.data.collections.length - i -1;
                 this.data.collections.splice(index,1);
                 this.update("html","css_collections");
+                this.update("html","css_project");
                 this.saveData(storageName);
             },
             updateCollection:function(i){
@@ -509,12 +512,24 @@ jQuery(function($){
                 var project = collections[index];
                 project.onEdit = "false";
                 this.update("html","css_collections");
+                this.update("html","css_project");
             },
             renameProject:function(i){
                 var collections = this.data.collections
                 var index = collections.length - i -1;
                 var project = collections[index];
                 project.onEdit = "true";
+                this.update("html","css_collections");
+                this.update("html","css_project");
+            },
+            editProjectName:function(i){
+                this.data.projectOnEdit = "true";
+                this.update("html","css_project");
+                this.update("html","css_collections");
+            },
+            changeProjectName:function(i){
+                this.data.projectOnEdit = "false";
+                this.update("html","css_project");
                 this.update("html","css_collections");
             }
         },

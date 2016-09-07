@@ -264,11 +264,17 @@
             <!-- Side Menu -->
             <div class="atomicLabSideMenu">
 
+                <script type="text/template" id="css_project">
                 <div class="atomicLabProjectControl">
 
                     <!-- Project title -->
                     <div class="atomicLabProjectControl-title">
-                        <i class="material-icons">folder</i> My Website
+
+                        <i class="material-icons">folder</i>
+                        <!-- BEGIN projectOnEdit:touchnot#true --><span data-action="editProjectName()">{projectName}</span><!-- END projectOnEdit:touchnot#true -->
+                        <!-- BEGIN projectOnEdit:touch#true --><input type="text" data-bind="projectName" placeholder="Project Name"> <button data-action="changeProjectName()">保存</button><!-- END projectOnEdit:touch#true -->
+
+
                         <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
                     </div>
                     <p class="atomicLabProjectControl-shotDescription">
@@ -276,7 +282,6 @@
                     </p>
 
                     <!-- Project actions -->
-                    <script type="text/template" id="css_project">
                     <nav class="atomicLabProjectControl-actions">
                         <ul>
                             <li>
@@ -298,8 +303,9 @@
                             </li>
                         </ul>
                     </nav>
-                                        </script>
                 </div>
+                </script>
+
 
                 <!-- Component list -->
                 <div class="atomicLabComponentList">
