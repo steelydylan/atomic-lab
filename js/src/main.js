@@ -3,6 +3,7 @@ jQuery(function($){
 	var aTemplate = require("./aTemplate.js");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
+	var urlParser = require("url");
 	require("./jszip-deflate.js")(JSZip);
 	require("./jszip-inflate.js")(JSZip);
 	var marked = require("./marked.js");
@@ -81,22 +82,11 @@ jQuery(function($){
 		},
 		method:{
 			initialize:function(){
-				if(location.hash){
-					var zip = new JSZip();
-					var hash = location.hash
-			    var strings = JSZip.base64.decode(hash);
-    			strings = JSZip.compressions.DEFLATE.uncompress(strings);
-    			strings = decodeURI(strings);
-			    var data = JSON.parse(strings);
-			    this.loadData(storageName);
-			    this.data.components = data.components;
-			    this.data.styling = data.styling;
-			    this.data.markup = data.markup;
-		      location.hash = "";
-		      this.applyMethod("applyData");
-				}else{
-					var self = this;
-					this.loadData(storageName);
+				var self = this;
+				var query = urlParser.parse(location.href,true).query;
+				this.loadData(storageName);
+				//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
+				if(query && query.json_enable){
 					$.getJSON('./json/project.json')
 					.success(function(data) {
 						self.setData(data);
@@ -105,6 +95,21 @@ jQuery(function($){
 						console.log(err);
 						self.applyMethod("applyData");
 					});
+				//ハッシュタグがあればハッシュタグからデータを復元
+				}else if(location.hash){
+					var zip = new JSZip();
+					var hash = location.hash
+			    var strings = JSZip.base64.decode(hash);
+    			strings = JSZip.compressions.DEFLATE.uncompress(strings);
+    			strings = decodeURI(strings);
+			    var data = JSON.parse(strings);
+			    this.data.components = data.components;
+			    this.data.styling = data.styling;
+			    this.data.markup = data.markup;
+		      location.hash = "";
+		      this.applyMethod("applyData");
+				}else{
+					this.applyMethod("applyData");
 				}
 				return this;
 			},
@@ -543,7 +548,7 @@ jQuery(function($){
 				var preview = parser.getPreview(text);
 				preview = compiler.markup[this.data.markup](preview);
 				//previewからコメント文取得
-				var imports = "";
+				var imports = ""+parser.getImports(text);
 				// テンプレート取得
 				while(1){
 					var comment = parser.getTag(preview,components);
@@ -568,7 +573,6 @@ jQuery(function($){
 								preview = preview.replace(comment,"");
 								break;
 							}
-							console.log("name is "+name);
 							var template = parser.getTemplate(comp.html);
 							var html = parser.getInnerHtmlFromTemplate(template);
 							//templateに自身が含まれていたら削除(無限ループ回避)

@@ -19,6 +19,7 @@
     "gulp-sass": "^2.3.2",
     "gulp-uglify": "*",
     "hamljs": "*",
-    "jade": "*"
+    "jade": "*",
+    "url":"*"
   }
 }

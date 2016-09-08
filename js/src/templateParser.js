@@ -90,6 +90,7 @@ var getImports = function(text){
 	if(!match){
 		return "";
 	}
+	console.log(match);
 	return match[1];
 }
 
