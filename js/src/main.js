@@ -159,6 +159,10 @@ jQuery(function($){
 				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
 				location.hash = hash;
 				var url = location.href;
+				var obj = urlParser.parse(url);
+				//remove query
+  			obj.search = obj.query = "";
+  			url = urlParser.format(obj);
 				location.hash = "";
 				$.ajax({
 					url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
