@@ -6,6 +6,7 @@ var browserify = require('gulp-browserify');
 var uglify = require('gulp-uglify');
 var notify = require('gulp-notify');
 var sass = require('gulp-sass');
+var atomic = require('atomic-generator');
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
@@ -43,12 +44,23 @@ gulp.task('js', function () {
         }))
         .pipe(notify('js task finished'))
 });
+
+gulp.task('atomic', function(){
+		atomic.build({
+			src:"components/",
+			dist:"resources/",
+			markup:"ejs",
+			styling:"sass"
+		});
+});
+
 gulp.task('default', function () {
     browserSync.init({
         server: "./"
     });
     gulp.watch('js/src/**/*.js', ['js']);
     gulp.watch('css/src/**/*.scss', ['sass']);
+    gulp.watch('components/**',['atomic']);
 });
 gulp.task('sass-watch', function () {
     gulp.watch('css/src/**/*.scss', ['sass']);

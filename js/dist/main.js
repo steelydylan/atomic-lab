@@ -1170,7 +1170,7 @@ jQuery(function($){
 				this.loadData(storageName);
 				//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
 				if(query && query.json_enable){
-					$.getJSON('./json/project.json')
+					$.getJSON('./resources/setting.json')
 					.success(function(data) {
 						self.setData(data);
 						self.applyMethod("applyData");

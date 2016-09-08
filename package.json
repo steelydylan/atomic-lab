@@ -20,6 +20,7 @@
     "gulp-uglify": "*",
     "hamljs": "*",
     "jade": "*",
-    "url":"*"
+    "url":"*",
+    "atomic-generator":"*"
   }
 }
