@@ -13,12 +13,14 @@ var getVars = function(text){
 }
 
 var getPreview = function(text){
-	var preview = text.match(/<preview>(([\n\r\t]|.)*?)<\/preview>/g);
+	var preview = text.match(/<!-- preview(([\n\r\t]|.)*?)\/preview -->/g);
 	if(!preview){
 		return "";
 	}
 	preview = preview[0];
-	return preview.replace(/<(\/)?preview>/g,"");
+	return preview
+		.replace(/<!-- preview/g,"")
+		.replace(/\/preview -->/g,"");
 }
 
 
