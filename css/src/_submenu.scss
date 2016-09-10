@@ -35,13 +35,13 @@
     &-actions {
         color: #{$text-color-light};
         margin: 20px 0 10px 0;
-        ul {
+        > ul {
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: space-around;
         }
-        li {
+        > ul > li {
             margin: 0;
             display: flex;
             cursor: pointer;

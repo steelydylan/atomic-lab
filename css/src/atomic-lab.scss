@@ -167,6 +167,15 @@ body {
 
 }
 
+// Delete action hover behavior
+.material-icons._danger:hover{
+    color: #ed3838;
+}
+
+.mdl-dialog{
+    width: 750px;
+}
+
 // Header style for small screen
 @media screen and (max-width: 1024px) {
     .mdl-layout__header {

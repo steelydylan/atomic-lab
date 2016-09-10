@@ -110,14 +110,13 @@
                                                                 <a href="{shortenedUrl}">{shortenedUrl}</a>
                                                         </td>
                                                         <td class="atomicLabProjectsDialog-share">
-                                                                <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconSlack-s.png" alt=""></i>
-                                                                <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
-                                                                                <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconTwitter-s.png" alt=""></i>
-                                                </a>
-
+                                                            <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconSlack-s.png" alt=""></i>
+                                                            <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
+                                                            <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconTwitter-s.png" alt=""></i>
+                                                            </a>
                                                         </td>
                                                         <td class="atomicLabProjectsDialog-icon">
-                                                                <i class="atomicLabProjectsDialog-delete material-icons" data-action="removeCollection({i})">delete</i>
+                                                                <i class="atomicLabProjectsDialog-delete material-icons _danger" data-action="removeCollection({i})">delete</i>
                                                         </td>
                                                 </tr>
                                                 <!-- END collectionsReverse:loop -->
@@ -130,7 +129,7 @@
                 </div>
                 </script>
         </dialog>
-    <dialog class="mdl-dialog js-remove-dialog atomicLabProjectsDialog">
+    <dialog class="mdl-dialog js-remove-dialog">
             <script id="css_remove" type="text/template">
                     <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
                     <div class="mdl-dialog__content">
@@ -142,7 +141,7 @@
                         </div>
             </script>
     </dialog>
-    <dialog class="mdl-dialog js-cheat-dialog atomicLabProjectsDialog">
+    <dialog class="mdl-dialog js-cheat-dialog">
             <script id="css_cheat" type="text/template">
             <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
                         <div class="mdl-dialog__content">
@@ -160,7 +159,7 @@
                         </div>
                 </script>
     </dialog>
-        <dialog class="mdl-dialog atomicLabProjectsDialog js-new-dialog">
+        <dialog class="mdl-dialog js-new-dialog">
                 <script id="css_new" type="text/template">
                         <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
                         <div class="mdl-dialog__content">
@@ -192,7 +191,8 @@
                         </div>
                 </script>
         </dialog>
-        <dialog class="mdl-dialog atomicLabProjectsDialog js-edit-dialog">
+
+        <dialog class="mdl-dialog js-edit-dialog">
                 <script id="css_about" type="text/template">
                 <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
                         <div class="mdl-dialog__content">
@@ -228,11 +228,12 @@
                                 </div>
                         </div>
                         <div class="mdl-dialog__actions">
-                                <button class="mdl-button" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
                                 <button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+                                <button class="mdl-button mdl-button--accent" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
                         </div>
                 </script>
         </dialog>
+
         <div class="mdl-layout">
                 <header class="mdl-layout__header atomicLabHeader">
                         <div class="mdl-layout__header-row atomicLabHeader-row">
@@ -288,7 +289,14 @@
                                                 <ul>
                                                         <li>
                                                                 <i id="projectAction-share" class="material-icons">share</i>
-                                                                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+                                                                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share this project</div>
+
+                                                                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                                                                    for="projectAction-share">
+                                                                  <li class="mdl-menu__item">Slack</li>
+                                                                  <li class="mdl-menu__item">Twitter</li>
+                                                                </ul>
+
                                                         </li>
                                                         <li>
                                                                 <i id="projectAction-save" class="material-icons" data-action="addToCollection">save</i>
@@ -388,25 +396,25 @@
 
                         <!-- Main panel -->
                         <main class="atomicLabMain">
-                                                                <script id="css_edit" type="text/template">
+                            <script id="css_edit" type="text/template">
                                 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 
                                         <div class="atomicLabComponentControl mdl-shadow--2dp">
 
                                                 <!-- Actions -->
                                                 <div class="atomicLabComponentControl-actions">
-                                                        <nav>
-                                                                <ul>
-                                                                        <li>
-                                                                                <i id="componentAction-delete" class="material-icons" data-action="deleteComp()">delete</i>
-                                                                                <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
-                                                                        </li>
-                                                                        <li>
-                                                                                <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">settings</i>
-                                                                                <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
-                                                                        </li>
-                                                                </ul>
-                                                        </nav>
+                                                    <nav>
+                                                        <ul>
+                                                            <li>
+                                                                <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
+                                                                <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
+                                                            </li>
+                                                            <li>
+                                                                <i id="componentAction-delete" class="material-icons _danger" data-action="deleteComp()">delete</i>
+                                                                <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
                                                 </div>
 
                                                 <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
