@@ -17,13 +17,14 @@ body {
   .atomicLabHeader-gitHubMark {
     width: 34px; }
 
-.mdl-layout__content {
-  height: 100%; }
+.atomicLabContent {
+  height: 100%;
+  display: flex; }
 
 .atomicLabSideMenu {
   box-sizing: border-box;
-  width: 25%;
-  float: left;
+  width: 310px;
+  flex-grow: 0;
   height: 100%;
   border-right: 1px solid #D7D7D7;
   background: #fff; }
@@ -102,12 +103,10 @@ body {
     color: #848484;
     cursor: pointer;
     transition: 0.1s; }
-    .atomicLabComponentList-item:hover {
+    .atomicLabComponentList-item:hover, .atomicLabComponentList-item.selected {
       background-color: #E2E2E2;
       color: #454545;
       transition: 0.1s; }
-    .atomicLabComponentList-item.selected {
-      background-color: #E2E2E2; }
     .atomicLabComponentList-item > span {
       display: block;
       padding: 15px 20px 15px 50px; }
@@ -211,8 +210,7 @@ body {
 
 .atomicLabMain {
   box-sizing: border-box;
-  width: 75%;
-  float: left;
+  flex-grow: 1;
   height: 100%;
   background-color: #F6F6F6; }
 

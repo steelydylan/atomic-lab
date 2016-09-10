@@ -20,7 +20,10 @@
     "gulp-uglify": "*",
     "hamljs": "*",
     "jade": "*",
-    "url":"*",
-    "atomic-generator":"*"
+    "url": "*",
+    "atomic-generator": "*"
+  },
+  "dependencies": {
+    "atomic-generator": "^1.0.1"
   }
 }

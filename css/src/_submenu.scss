@@ -2,8 +2,8 @@
 // Side Menu
 .atomicLabSideMenu {
     box-sizing: border-box;
-    width: 25%;
-    float: left;
+    width: 310px;
+    flex-grow: 0;
     height: 100%;
     border-right: 1px solid #{$line-color-default};
     background: #fff;
@@ -122,14 +122,10 @@
         cursor: pointer;
         transition: 0.1s;
 
-        &:hover{
+        &:hover,&.selected{
             background-color: #E2E2E2;
             color: #{$text-color-dark};
             transition: 0.1s;
-        }
-
-        &.selected{
-        	background-color: #E2E2E2;
         }
 
         > span{
