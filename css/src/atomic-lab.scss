@@ -91,6 +91,14 @@ body {
 }
 
 
+// Dialog title style
+.mdl-dialog__title{
+    padding: 15px 24px 0;
+    margin: 0;
+    font-size: 24px;
+    color: #{$text-color-accent};
+}
+
 // Delete action hover behavior
 .material-icons._danger:hover{
     color: #ed3838;

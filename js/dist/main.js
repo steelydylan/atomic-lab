@@ -545,7 +545,7 @@ module.exports = {
 	}
 }
 
-},{"ejs":17,"hamljs":32,"jade":36}],3:[function(require,module,exports){
+},{"ejs":12,"hamljs":27,"jade":31}],3:[function(require,module,exports){
 (function() {
 
 	var supportCustomEvent = window.CustomEvent;
@@ -1082,541 +1082,541 @@ module.exports = {
 
 },{}],4:[function(require,module,exports){
 jQuery(function($){
-	var dialogPolyfill = require("./dialog-polyfill.js");
-	var aTemplate = require("./aTemplate.js");
-	var saveAs = require("./fileSaver.min.js").saveAs;
-	var JSZip = require("./jszip.min.js");
-	var urlParser = require("url");
-	require("./jszip-deflate.js")(JSZip);
-	require("./jszip-inflate.js")(JSZip);
-	var marked = require("./marked.js");
-	var parser = require("./templateParser.js");
-	var compiler = require("./compiler.js");
-	var slackWidget = require("./slack-widget.js");
-	var editor = {};
-	var i18n = jQuery.i18n.browserLang();
-	var lang;
-	var storageName = "atomic-lab";
-	if(i18n == 'ja'){
-		lang = "ja";
-	}else{
-		lang = "en";
-	}
-	var material = {
-		atom:0,
-		molecule:1,
-		organism:2,
-		template:3
-	};
-	var cssLab = new aTemplate.View({
-		templates:[
-			"css_preview",
-			"css_edit",
-			"css_search_result",
-			"css_search",
-			"css_setting",
-			"css_new",
-			"css_about",
-			"css_io",
-			"css_cheat",
-			"css_remove",
-			"css_exp",
-			"css_collections",
-			"css_project",
-			"css_fab"
-		],
-		data:{
-			lang:lang,
-			components:[],
-			collections:[],
-			projectName:"project1",
-			name:"",
-			newName:"",
-			css:"",
-			html:"",
-			newCategory:"atom",
-			category:"",
-			about:"",
-			editMode:"preview",
-			markup:"ejs",
-			styling:"sass",
-			search:"",
-			searchCategory:["true","true","true","true"],
-			searchStatus:"inactive",
-			cheatCategory:"",
-			cheatAbout:"",
-			cheatName:"",
-			fabState:"is-closed",
-			atomSearchResults:function(){
-				return this.applyMethod("getSearchResults","atom");
-			},
-			moleculeSearchResults:function(){
-				return this.applyMethod("getSearchResults","molecule");
-			},
-			organismSearchResults:function(){
-				return this.applyMethod("getSearchResults","organism");
-			},
-			templateSearchResults:function(){
-				return this.applyMethod("getSearchResults","template");
-			},
-			collectionsReverse:function(){
-				return this.data.collections.slice().reverse();
-			}
-		},
-		method:{
-			initialize:function(){
-				var self = this;
-				var query = urlParser.parse(location.href,true).query;
-				this.loadData(storageName);
-				//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
-				if(query && query.json_enable){
-					$.getJSON('./resources/setting.json')
-					.success(function(data) {
-						self.setData(data);
-						self.applyMethod("applyData");
-					}).error(function(err){
-						console.log(err);
-						self.applyMethod("applyData");
-					});
-				//ハッシュタグがあればハッシュタグからデータを復元
-				}else if(location.hash){
-					var zip = new JSZip();
-					var hash = location.hash
-			    var strings = JSZip.base64.decode(hash);
-    			strings = JSZip.compressions.DEFLATE.uncompress(strings);
-    			strings = decodeURI(strings);
-			    var data = JSON.parse(strings);
-			    this.data.components = data.components;
-			    this.data.styling = data.styling;
-			    this.data.markup = data.markup;
-		      location.hash = "";
-		      this.applyMethod("applyData");
-				}else{
-					this.applyMethod("applyData");
-				}
-				return this;
-			},
-			applyData:function(){
-				var comp = this.data.components[0];
-				if(comp){
-					this.data.id = comp.id
-					this.data.html = comp.html;
-					this.data.css = comp.css;
-					this.data.category = comp.category;
-					this.data.name = comp.name;
-				}
-				this.update();
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					this.applyMethod("runEditor",this.data.editMode);
-				}
-				return this;
-			},
-			getSearchResults:function(category){
-				var search = this.data.search;
-				var components = this.data.components;
-				var searchCategory = this.data.searchCategory;
-				return components
-				.sort(function(a,b){
-					if(a.name > b.name){
-						return 1;
-					}else{
-						return -1;
-					}
-				})
-				.filter(function(comp){
-					if(comp.category !== category){
-						return false;
-					}
-					return comp.name.indexOf(search) >= 0;
-				});
-			},
-			getShortenedUrl:function(){
-				var d = new $.Deferred();
-				var that = this;
-				var zip = new JSZip();
-				var data = this.data;
-				var strings = JSON.stringify(data);
-				var hash = encodeURI(strings);
-				hash = JSZip.compressions.DEFLATE.compress(hash);
-    		hash = JSZip.base64.encode(hash);
-				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
-				location.hash = hash;
-				var url = location.href;
-				var obj = urlParser.parse(url);
-				//remove query
-  			obj.search = obj.query = "";
-  			url = urlParser.format(obj);
-				location.hash = "";
-				$.ajax({
-					url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
-	        type: "POST",
-	        contentType: "application/json; charset=utf-8",
-	        data: JSON.stringify({
-	          longUrl: url,
-	        }),
-	        dataType: "json",
-	        success: function(res) {
-	        	that.data.shortenedUrl = res.id;
-	        	d.resolve();
-	        },
-				})
-				return d.promise();
-			},
-			//after updated
-			onUpdated:function(){
-				this.saveData(storageName);
-			},
-			showAlert:function(msg){
-				var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
-				$(".mdl-dialog").addClass("mdl-dialog--fade");
-				$("body").append($alert);
-				$alert.delay(1).queue(function(next){
-				  $(this).addClass("active");
-				  next();
-				}).delay(700).queue(function(next){
-				  $(this).removeClass('active');
-				  next();
-				}).delay(200).queue(function(next){
-				  $(this).remove();
-				  $(".mdl-dialog").removeClass("mdl-dialog--fade");
-				  next();
-				});
-			},
-			changeStyle:function(target){
-				this.update("html","css_preview");
-				this.saveData(storageName);
-			},
-			editComp:function(id){
-				var data = this.data;
-				var components = data.components;
-				var comp;
-				for(var i = 0, n = components.length; i < n; i++){
-					if(components[i].id == id){
-						comp = components[i];
-					}
-				}
-				this.data.css = comp.css;
-				this.data.name = comp.name;
-				this.data.html = comp.html;
-				this.data.category = comp.category;
-				this.data.about = comp.about;
-				this.data.id = comp.id;
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					editor.destroy();
-				}
-				this.update("html","css_search_result");
-				this.update("html","css_edit");
-				this.update("html","css_preview");
-				componentHandler.upgradeDom();
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					this.applyMethod("runEditor",this.data.editMode);
-				}
-			},
-			deleteComp:function(){
-				var id = this.data.id;
-				var comps = this.data.components;
-				for(var i = 0,n = comps.length; i < n; i++){
-					if(comps[i].id == id){
-						comps.splice(i,1);
-						break;
-					}
-				}
-				this.removeData(["html","css","name","category"]);
-				this.update("html","css_search_result");
-				this.update("html","css_edit");
-				this.update("html","css_preview");
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					this.applyMethod("runEditor",this.data.editMode);
-				}
-				this.saveData(storageName);
-				componentHandler.upgradeDom();
-			},
-			outputComp:function(){
-				var zip = new JSZip();
-				var comps = this.data.components;
-				var that = this;
-				zip.file("setting.json", JSON.stringify({components:comps}));
-				comps.forEach(function(comp){
-					var file1 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.markup;
-					var file2 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.styling;
-					zip.file(file1,comp.html);
-					zip.file(file2,comp.css);
-				});
-				zip.file("package.json",this.getHtml("#package_json"));
-				zip.file("index.js",this.getHtml("#index_js"));
-				var content = zip.generate({type:"blob"});
-		  	saveAs(content, "css-lab.zip");
-			},
-			searchComponents:function(){
-				this.data.searchStatus = "active";
-				this.update("html","css_search_result");
-				componentHandler.upgradeDom();
-			},
-			convertCompToHtml:function(word){
-				var data = this.data.components;
-				var html = "";
-				for(var i = 0,n = data.length; i < n; i++){
-					if(data[i].name == word){
-						html = "<style>"+data[i].css+"</style>"+data[i].html;
-					}
-				}
-				return html;
-			},
-			getUniqueId:function(){
-				var components = this.data.components;
-				var id = this.getRandText(15);
-				var flag = false;
-				while(1){
-					for(var i = 0,n = components.length; i < n; i++){
-						if(components[i].id == id){
-							flag = true;
-						}
-					}
-					if(flag === false){
-						break;
-					}
-				}
-				return id;
-			},
-			saveComponent:function(e){
-				var data = this.data;
-				var components = this.data.components;
-				var flag = false;
-				for(var i = 0,n = components.length; i < n; i++){
-					var comp = components[i];
-					if(comp.id == data.id){
-						comp.html = data.html;
-						comp.css = data.css;
-						comp.name = data.name;
-						comp.id = data.id;
-						comp.category = data.category;
-						comp.about = data.about;
-					}
-				}
-				this.applyMethod("showAlert","コンポーネントを保存しました。");
-				this.update("html","css_search_result");
-				componentHandler.upgradeDom();
-				this.saveData(storageName);
-			},
-			addComponent:function(){
-				var data = this.data;
-				var id = this.applyMethod("getUniqueId");
-				var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
-				var components = this.data.components;
-				var dialog = document.querySelector(".js-new-dialog");
-				dialog.close();
-				this.data.components.push(obj);
-				this.data.newName = "";
-				this.applyMethod("showAlert","コンポーネントを追加しました。");
-				this.update("html","css_search_result");
-				this.update("html","css_new");
-				componentHandler.upgradeDom();
-				this.saveData(storageName);
-			},
-			readSetting:function(){
-				var evt = this.e;
-				var files = evt.target.files;
-				var that = this;
-				for (var i = 0, f; f = files[i]; i++) {
-					var reader = new FileReader();
-					reader.onload = (function(theFile) {
-						var json = theFile.target.result.replace("data:application/json;base64,","");
-						json = atob(json);
-						json = JSON.parse(json);
-						that.setData(json);
-						that.update();
-					});
-					reader.readAsDataURL(f);
-				}
-			},
-			changeMode:function(mode){
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					editor.destroy();
-				}
-			  this.data.editMode = mode;
-				this.update();
-				componentHandler.upgradeDom();
-				if(this.data.editMode != "preview" && this.data.editMode != "about"){
-					this.applyMethod("runEditor",this.data.editMode);
-				}
-			},
-			openCheatDialog:function(i){
-				this.e.stopPropagation();
-				var components = this.getComputedProp("searchResults");
-				var comp = components[i];
-				this.data.cheatAbout = comp.about;
-				this.data.cheatCategory = comp.category;
-				this.data.cheatName = comp.name;
-				this.update("html","css_cheat");
-				var dialog = document.querySelector(".js-cheat-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeCheatDialog:function(){
-				var dialog = document.querySelector(".js-cheat-dialog");
-				dialog.close();
-			},
-			openDialog:function(category){
-				this.data.newCategory = category;
-				this.update("html","css_new");
-				componentHandler.upgradeDom();
-				var dialog = document.querySelector(".js-new-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeDialog:function(){
-				var dialog = document.querySelector(".js-new-dialog");
-				dialog.close();
-			},
-			openEditDialog:function(){
-				this.update("html","css_about");
-				componentHandler.upgradeDom();
-				var dialog = document.querySelector(".js-edit-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeEditDialog:function(){
-				var dialog = document.querySelector(".js-edit-dialog");
-				dialog.close();
-			},
-			openRemoveDialog:function(){
-				var dialog = document.querySelector(".js-remove-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeRemoveDialog:function(){
-				var dialog = document.querySelector(".js-remove-dialog");
-				dialog.close();
-			},
-			removeAllComponent:function(){
-				var dialog = document.querySelector(".js-remove-dialog");
-				dialog.close();
-				this.data.components = [];
-				this.saveData(storageName);
-				this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
-				this.update("html","css_search_result");
-				componentHandler.upgradeDom();
-			},
-			doneEditDialog:function(){
-				this.applyMethod("closeEditDialog");
-				this.applyMethod("saveComponent");
-				this.update("html","css_edit");
-			},
-			clearEditor:function(){
-				this.removeData(['name','html','css']);
-				this.saveData(storageName);
-				this.update();
-				if(this.data.editMode != "preview"){
-					this.applyMethod("runEditor",this.data.editMode);
-				}
-				componentHandler.upgradeDom();
-			},
-			openSettingDialog:function(){
-				var dialog = document.querySelector(".js-setting-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeSettingDialog:function(){
-				var dialog = document.querySelector(".js-setting-dialog");
-				dialog.close();
-			},
-			openAboutDialog:function(){
-				var dialog = document.querySelector(".js-about-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeAboutDialog:function(){
-				var dialog = document.querySelector(".js-about-dialog");
-				dialog.close();
-			},
-			isGreaterThan:function(text){
-				var cat = this.data.category;
-				if(material[cat] > material[text]){
-					return true;
-				}else{
-					return false;
-				}
-			},
-			runEditor:function(name){
-				var that = this;
-				var mode = "";
-				if(name == "html"){
-					mode = this.data.markup;
-				}else if(name == "css"){
-					mode = this.data.styling;
-				}
-				editor = ace.edit("js-"+name);
-				editor.setTheme("ace/theme/monokai");
-				editor.getSession().setMode("ace/mode/"+name);
-				editor.setOptions({
-					enableBasicAutocompletion: true,
-					enableSnippets: true,
-					enableLiveAutocompletion: true
-				});
-				editor.commands.addCommand({
-					name:"save",
-					bindKey:{win:"Ctrl+S",mac:"Command-S"},
-					exec: function(){
-						that.data[name] = editor.getSession().getValue();
-						that.applyMethod("saveComponent");
-					}
-				});
-				editor.commands.on("exec",function(e){
-					if(e.command && (e.command.name == "reload" || e.command.name == "save")){
-						e.preventDefault();
-						e.command.exec();
-					}
-				});
-				editor.getSession().on('change',function(e){
-					that.data[name] = editor.getSession().getValue();
-				});
-			},
-			/*
-				feature collection
-			*/
-			openCollectionsDialog:function(){
-				var dialog = document.querySelector(".js-collections-dialog");
-				dialogPolyfill.registerDialog(dialog);
-				dialog.showModal();
-			},
-			closeCollectionsDialog:function(){
-				var dialog = document.querySelector(".js-collections-dialog");
-				dialog.close();
-			},
-			addToCollection:function(){
-					var self = this;
-					self.applyMethod("getShortenedUrl")
-					.then(function(){
-						var obj = {
-							projectName:self.data.projectName,
-							shortenedUrl:self.data.shortenedUrl
-						}
-						self.data.collections.push(obj);
-						self.saveData(storageName);
-						self.update("html","css_collections");
-						self.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
-					});
-			},
-			removeCollection:function(i){
-				var index = this.data.collections.length - i -1;
-				this.data.collections.splice(index,1);
-				this.update("html","css_collections");
-				this.saveData(storageName);
-			},
-			updateCollection:function(i){
-				var collections = this.data.collections;
-				var index = collections.length - i - 1;
-				var project = collections[index];
-				project.onEdit = "false";
-				this.update("html","css_collections");
-			},
-			renameProject:function(i){
-				var collections = this.data.collections
-				var index = collections.length - i -1;
-				var project = collections[index];
-				project.onEdit = "true";
-				this.update("html","css_collections");
-			},
+    var dialogPolyfill = require("./dialog-polyfill.js");
+    var aTemplate = require("./aTemplate.js");
+    var saveAs = require("./fileSaver.min.js").saveAs;
+    var JSZip = require("./jszip.min.js");
+    var urlParser = require("url");
+    require("./jszip-deflate.js")(JSZip);
+    require("./jszip-inflate.js")(JSZip);
+    var marked = require("./marked.js");
+    var parser = require("./templateParser.js");
+    var compiler = require("./compiler.js");
+    var slackWidget = require("./slack-widget.js");
+    var editor = {};
+    var i18n = jQuery.i18n.browserLang();
+    var lang;
+    var storageName = "atomic-lab";
+    if(i18n == 'ja'){
+        lang = "ja";
+    }else{
+        lang = "en";
+    }
+    var material = {
+        atom:0,
+        molecule:1,
+        organism:2,
+        template:3
+    };
+    var cssLab = new aTemplate.View({
+        templates:[
+            "css_preview",
+            "css_edit",
+            "css_search_result",
+            "css_search",
+            "css_setting",
+            "css_new",
+            "css_about",
+            "css_io",
+            "css_cheat",
+            "css_remove",
+            "css_exp",
+            "css_collections",
+            "css_project",
+            "css_fab"
+        ],
+        data:{
+            lang:lang,
+            components:[],
+            collections:[],
+            projectName:"project1",
+            name:"",
+            newName:"",
+            css:"",
+            html:"",
+            newCategory:"atom",
+            category:"",
+            about:"",
+            editMode:"preview",
+            markup:"ejs",
+            styling:"sass",
+            search:"",
+            searchCategory:["true","true","true","true"],
+            searchStatus:"inactive",
+            cheatCategory:"",
+            cheatAbout:"",
+            cheatName:"",
+            fabState:"is-closed",
+            atomSearchResults:function(){
+                return this.applyMethod("getSearchResults","atom");
+            },
+            moleculeSearchResults:function(){
+                return this.applyMethod("getSearchResults","molecule");
+            },
+            organismSearchResults:function(){
+                return this.applyMethod("getSearchResults","organism");
+            },
+            templateSearchResults:function(){
+                return this.applyMethod("getSearchResults","template");
+            },
+            collectionsReverse:function(){
+                return this.data.collections.slice().reverse();
+            }
+        },
+        method:{
+            initialize:function(){
+                var self = this;
+                var query = urlParser.parse(location.href,true).query;
+                this.loadData(storageName);
+                //json_enable=trueならローカルフォルダのproject.jsonからデータを復元
+                if(query && query.json_enable){
+                    $.getJSON('./resources/setting.json')
+                    .success(function(data) {
+                        self.setData(data);
+                        self.applyMethod("applyData");
+                    }).error(function(err){
+                        console.log(err);
+                        self.applyMethod("applyData");
+                    });
+                //ハッシュタグがあればハッシュタグからデータを復元
+                }else if(location.hash){
+                    var zip = new JSZip();
+                    var hash = location.hash
+                var strings = JSZip.base64.decode(hash);
+                strings = JSZip.compressions.DEFLATE.uncompress(strings);
+                strings = decodeURI(strings);
+                var data = JSON.parse(strings);
+                this.data.components = data.components;
+                this.data.styling = data.styling;
+                this.data.markup = data.markup;
+              location.hash = "";
+              this.applyMethod("applyData");
+                }else{
+                    this.applyMethod("applyData");
+                }
+                return this;
+            },
+            applyData:function(){
+                var comp = this.data.components[0];
+                if(comp){
+                    this.data.id = comp.id
+                    this.data.html = comp.html;
+                    this.data.css = comp.css;
+                    this.data.category = comp.category;
+                    this.data.name = comp.name;
+                }
+                this.update();
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    this.applyMethod("runEditor",this.data.editMode);
+                }
+                return this;
+            },
+            getSearchResults:function(category){
+                var search = this.data.search;
+                var components = this.data.components;
+                var searchCategory = this.data.searchCategory;
+                return components
+                .sort(function(a,b){
+                    if(a.name > b.name){
+                        return 1;
+                    }else{
+                        return -1;
+                    }
+                })
+                .filter(function(comp){
+                    if(comp.category !== category){
+                        return false;
+                    }
+                    return comp.name.indexOf(search) >= 0;
+                });
+            },
+            getShortenedUrl:function(){
+                var d = new $.Deferred();
+                var that = this;
+                var zip = new JSZip();
+                var data = this.data;
+                var strings = JSON.stringify(data);
+                var hash = encodeURI(strings);
+                hash = JSZip.compressions.DEFLATE.compress(hash);
+            hash = JSZip.base64.encode(hash);
+                var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
+                location.hash = hash;
+                var url = location.href;
+                var obj = urlParser.parse(url);
+                //remove query
+              obj.search = obj.query = "";
+              url = urlParser.format(obj);
+                location.hash = "";
+                $.ajax({
+                    url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+              longUrl: url,
+            }),
+            dataType: "json",
+            success: function(res) {
+                that.data.shortenedUrl = res.id;
+                d.resolve();
+            },
+                })
+                return d.promise();
+            },
+            //after updated
+            onUpdated:function(){
+                this.saveData(storageName);
+            },
+            showAlert:function(msg){
+                var $alert = $("<div class='sourceCopied'>"+msg+"</div>");
+                $(".mdl-dialog").addClass("mdl-dialog--fade");
+                $("body").append($alert);
+                $alert.delay(1).queue(function(next){
+                  $(this).addClass("active");
+                  next();
+                }).delay(700).queue(function(next){
+                  $(this).removeClass('active');
+                  next();
+                }).delay(200).queue(function(next){
+                  $(this).remove();
+                  $(".mdl-dialog").removeClass("mdl-dialog--fade");
+                  next();
+                });
+            },
+            changeStyle:function(target){
+                this.update("html","css_preview");
+                this.saveData(storageName);
+            },
+            editComp:function(id){
+                var data = this.data;
+                var components = data.components;
+                var comp;
+                for(var i = 0, n = components.length; i < n; i++){
+                    if(components[i].id == id){
+                        comp = components[i];
+                    }
+                }
+                this.data.css = comp.css;
+                this.data.name = comp.name;
+                this.data.html = comp.html;
+                this.data.category = comp.category;
+                this.data.about = comp.about;
+                this.data.id = comp.id;
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    editor.destroy();
+                }
+                this.update("html","css_search_result");
+                this.update("html","css_edit");
+                this.update("html","css_preview");
+                componentHandler.upgradeDom();
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    this.applyMethod("runEditor",this.data.editMode);
+                }
+            },
+            deleteComp:function(){
+                var id = this.data.id;
+                var comps = this.data.components;
+                for(var i = 0,n = comps.length; i < n; i++){
+                    if(comps[i].id == id){
+                        comps.splice(i,1);
+                        break;
+                    }
+                }
+                this.removeData(["html","css","name","category"]);
+                this.update("html","css_search_result");
+                this.update("html","css_edit");
+                this.update("html","css_preview");
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    this.applyMethod("runEditor",this.data.editMode);
+                }
+                this.saveData(storageName);
+                componentHandler.upgradeDom();
+            },
+            outputComp:function(){
+                var zip = new JSZip();
+                var comps = this.data.components;
+                var that = this;
+                zip.file("setting.json", JSON.stringify({components:comps}));
+                comps.forEach(function(comp){
+                    var file1 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.markup;
+                    var file2 = "components/"+ comp.category + "/" + comp.name + "/" + comp.name + "." + that.data.styling;
+                    zip.file(file1,comp.html);
+                    zip.file(file2,comp.css);
+                });
+                zip.file("package.json",this.getHtml("#package_json"));
+                zip.file("index.js",this.getHtml("#index_js"));
+                var content = zip.generate({type:"blob"});
+              saveAs(content, "css-lab.zip");
+            },
+            searchComponents:function(){
+                this.data.searchStatus = "active";
+                this.update("html","css_search_result");
+                componentHandler.upgradeDom();
+            },
+            convertCompToHtml:function(word){
+                var data = this.data.components;
+                var html = "";
+                for(var i = 0,n = data.length; i < n; i++){
+                    if(data[i].name == word){
+                        html = "<style>"+data[i].css+"</style>"+data[i].html;
+                    }
+                }
+                return html;
+            },
+            getUniqueId:function(){
+                var components = this.data.components;
+                var id = this.getRandText(15);
+                var flag = false;
+                while(1){
+                    for(var i = 0,n = components.length; i < n; i++){
+                        if(components[i].id == id){
+                            flag = true;
+                        }
+                    }
+                    if(flag === false){
+                        break;
+                    }
+                }
+                return id;
+            },
+            saveComponent:function(e){
+                var data = this.data;
+                var components = this.data.components;
+                var flag = false;
+                for(var i = 0,n = components.length; i < n; i++){
+                    var comp = components[i];
+                    if(comp.id == data.id){
+                        comp.html = data.html;
+                        comp.css = data.css;
+                        comp.name = data.name;
+                        comp.id = data.id;
+                        comp.category = data.category;
+                        comp.about = data.about;
+                    }
+                }
+                this.applyMethod("showAlert","コンポーネントを保存しました。");
+                this.update("html","css_search_result");
+                componentHandler.upgradeDom();
+                this.saveData(storageName);
+            },
+            addComponent:function(){
+                var data = this.data;
+                var id = this.applyMethod("getUniqueId");
+                var obj = {html:"",css:"",name:data.newName,id:id,category:data.newCategory};
+                var components = this.data.components;
+                var dialog = document.querySelector(".js-new-dialog");
+                dialog.close();
+                this.data.components.push(obj);
+                this.data.newName = "";
+                this.applyMethod("showAlert","コンポーネントを追加しました。");
+                this.update("html","css_search_result");
+                this.update("html","css_new");
+                componentHandler.upgradeDom();
+                this.saveData(storageName);
+            },
+            readSetting:function(){
+                var evt = this.e;
+                var files = evt.target.files;
+                var that = this;
+                for (var i = 0, f; f = files[i]; i++) {
+                    var reader = new FileReader();
+                    reader.onload = (function(theFile) {
+                        var json = theFile.target.result.replace("data:application/json;base64,","");
+                        json = atob(json);
+                        json = JSON.parse(json);
+                        that.setData(json);
+                        that.update();
+                    });
+                    reader.readAsDataURL(f);
+                }
+            },
+            changeMode:function(mode){
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    editor.destroy();
+                }
+              this.data.editMode = mode;
+                this.update();
+                componentHandler.upgradeDom();
+                if(this.data.editMode != "preview" && this.data.editMode != "about"){
+                    this.applyMethod("runEditor",this.data.editMode);
+                }
+            },
+            openCheatDialog:function(i){
+                this.e.stopPropagation();
+                var components = this.getComputedProp("searchResults");
+                var comp = components[i];
+                this.data.cheatAbout = comp.about;
+                this.data.cheatCategory = comp.category;
+                this.data.cheatName = comp.name;
+                this.update("html","css_cheat");
+                var dialog = document.querySelector(".js-cheat-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeCheatDialog:function(){
+                var dialog = document.querySelector(".js-cheat-dialog");
+                dialog.close();
+            },
+            openDialog:function(category){
+                this.data.newCategory = category;
+                this.update("html","css_new");
+                componentHandler.upgradeDom();
+                var dialog = document.querySelector(".js-new-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeDialog:function(){
+                var dialog = document.querySelector(".js-new-dialog");
+                dialog.close();
+            },
+            openEditDialog:function(){
+                this.update("html","css_about");
+                componentHandler.upgradeDom();
+                var dialog = document.querySelector(".js-edit-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeEditDialog:function(){
+                var dialog = document.querySelector(".js-edit-dialog");
+                dialog.close();
+            },
+            openRemoveDialog:function(){
+                var dialog = document.querySelector(".js-remove-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeRemoveDialog:function(){
+                var dialog = document.querySelector(".js-remove-dialog");
+                dialog.close();
+            },
+            removeAllComponent:function(){
+                var dialog = document.querySelector(".js-remove-dialog");
+                dialog.close();
+                this.data.components = [];
+                this.saveData(storageName);
+                this.applyMethod("showAlert","すべてのコンポーネントを削除しました。");
+                this.update("html","css_search_result");
+                componentHandler.upgradeDom();
+            },
+            doneEditDialog:function(){
+                this.applyMethod("closeEditDialog");
+                this.applyMethod("saveComponent");
+                this.update("html","css_edit");
+            },
+            clearEditor:function(){
+                this.removeData(['name','html','css']);
+                this.saveData(storageName);
+                this.update();
+                if(this.data.editMode != "preview"){
+                    this.applyMethod("runEditor",this.data.editMode);
+                }
+                componentHandler.upgradeDom();
+            },
+            openSettingDialog:function(){
+                var dialog = document.querySelector(".js-setting-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeSettingDialog:function(){
+                var dialog = document.querySelector(".js-setting-dialog");
+                dialog.close();
+            },
+            openAboutDialog:function(){
+                var dialog = document.querySelector(".js-about-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeAboutDialog:function(){
+                var dialog = document.querySelector(".js-about-dialog");
+                dialog.close();
+            },
+            isGreaterThan:function(text){
+                var cat = this.data.category;
+                if(material[cat] > material[text]){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            runEditor:function(name){
+                var that = this;
+                var mode = "";
+                if(name == "html"){
+                    mode = this.data.markup;
+                }else if(name == "css"){
+                    mode = this.data.styling;
+                }
+                editor = ace.edit("js-"+name);
+                editor.setTheme("ace/theme/monokai");
+                editor.getSession().setMode("ace/mode/"+name);
+                editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+                editor.commands.addCommand({
+                    name:"save",
+                    bindKey:{win:"Ctrl+S",mac:"Command-S"},
+                    exec: function(){
+                        that.data[name] = editor.getSession().getValue();
+                        that.applyMethod("saveComponent");
+                    }
+                });
+                editor.commands.on("exec",function(e){
+                    if(e.command && (e.command.name == "reload" || e.command.name == "save")){
+                        e.preventDefault();
+                        e.command.exec();
+                    }
+                });
+                editor.getSession().on('change',function(e){
+                    that.data[name] = editor.getSession().getValue();
+                });
+            },
+            /*
+                feature collection
+            */
+            openCollectionsDialog:function(){
+                var dialog = document.querySelector(".js-collections-dialog");
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            },
+            closeCollectionsDialog:function(){
+                var dialog = document.querySelector(".js-collections-dialog");
+                dialog.close();
+            },
+            addToCollection:function(){
+                    var self = this;
+                    self.applyMethod("getShortenedUrl")
+                    .then(function(){
+                        var obj = {
+                            projectName:self.data.projectName,
+                            shortenedUrl:self.data.shortenedUrl
+                        }
+                        self.data.collections.push(obj);
+                        self.saveData(storageName);
+                        self.update("html","css_collections");
+                        self.applyMethod("showAlert","プロジェクトをコレクションに追加しました。");
+                    });
+            },
+            removeCollection:function(i){
+                var index = this.data.collections.length - i -1;
+                this.data.collections.splice(index,1);
+                this.update("html","css_collections");
+                this.saveData(storageName);
+            },
+            updateCollection:function(i){
+                var collections = this.data.collections;
+                var index = collections.length - i - 1;
+                var project = collections[index];
+                project.onEdit = "false";
+                this.update("html","css_collections");
+            },
+            renameProject:function(i){
+                var collections = this.data.collections
+                var index = collections.length - i -1;
+                var project = collections[index];
+                project.onEdit = "true";
+                this.update("html","css_collections");
+            },
       editProjectName:function(i){
           this.data.projectOnEdit = "true";
           this.update("html","css_project");
@@ -1627,110 +1627,110 @@ jQuery(function($){
           this.update("html","css_project");
           this.update("html","css_collections");
       }
-		},
-		convert:{
-			preview:function(text){
-				var components = this.data.components;
-				//textからpreview取得
-				var preview = parser.getPreview(text);
-				preview = compiler.markup[this.data.markup](preview);
-				//previewからコメント文取得
-				var imports = ""+parser.getImports(text);
-				// テンプレート取得
-				while(1){
-					var comment = parser.getTag(preview,components);
-					if(!comment){
-						break;
-					}
-					//commentからコンポーネント名取得
-					var name = parser.getComponentName(comment);
-					var flag = false;
-					for(var i = 0,n = components.length; i < n; i++){
-						var comp = components[i];
-						if(name == comp.name){
-							flag = true;
-							//例えば、atomはmoleculeをincludeできない
-							imports += parser.getImports(comp.html);
-							if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
-								preview = preview.replace(comment,"");
-								break;
-							}
-							// importされてなければ使えない
-							if(this.data.id !== comp.id && imports.indexOf(name) == -1){
-								preview = preview.replace(comment,"");
-								break;
-							}
-							var template = parser.getTemplate(comp.html);
-							var html = parser.getInnerHtmlFromTemplate(template);
-							//templateに自身が含まれていたら削除(無限ループ回避)
-							html = parser.removeSelf(html,comp.name);
-							var defs = parser.getVarsFromTemplate(template);
-							var overrides = parser.getVars(comment);
-							html = parser.getRendered(html,defs,overrides);
-							preview = preview.replace(comment,compiler.markup[this.data.markup](html));
-							break;
-						}
-					}
-					if(!flag){
-						preview = preview.replace(comment,"");
-					}
-				}
-				//スタイルシート取得
-				for(var i = 0,n = components.length; i < n; i++){
-					var comp = components[i];
-					if(imports.indexOf(comp.name) !== -1 || this.data.id == comp.id){
-						preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>";
-					}
-				}
-				//todo delete
-				return parser.removeScript(preview);
-			},
-			deleteScriptTag:function(data){
-				return parser.removeScript(data);
-			},
-			markdown:function(data){
-				return marked(data);
-			},
-			reversedIndex:function(i){
-				return this.data.collections.length - i -1;
-			}
-		}
-	}).applyMethod("initialize");
-	/*ここから先はアニメーション関係*/
-	$(".AtomicLabFAB-main").click(function () {
-		if ($(this).hasClass("is-open") == false) {
-			$(this)
-			.css({
-	    	"transform": "rotate(45deg)"
-			})
-			.addClass("is-open");
-			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-				$(this).css({
-			    "transform": "scale(1) translateY(0px)",
-			    "opacity": 1
-				});
-			});
-		} else {
-			$(this)
-			.css({
-			    "transform": "rotate(0deg)"
-			})
-			.removeClass("is-open");
-			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-				$(this).css({
-				    "transform": "scale(0) translateY(200px)",
-				    "opacity": 0
-				});
-			});
-		}
-	});
-	$(".js-add-category").click(function(){
-		var category = $(this).data("category");
-		cssLab.applyMethod("openDialog",category);
-	});
+        },
+        convert:{
+            preview:function(text){
+                var components = this.data.components;
+                //textからpreview取得
+                var preview = parser.getPreview(text);
+                preview = compiler.markup[this.data.markup](preview);
+                //previewからコメント文取得
+                var imports = ""+parser.getImports(text);
+                // テンプレート取得
+                while(1){
+                    var comment = parser.getTag(preview,components);
+                    if(!comment){
+                        break;
+                    }
+                    //commentからコンポーネント名取得
+                    var name = parser.getComponentName(comment);
+                    var flag = false;
+                    for(var i = 0,n = components.length; i < n; i++){
+                        var comp = components[i];
+                        if(name == comp.name){
+                            flag = true;
+                            //例えば、atomはmoleculeをincludeできない
+                            imports += parser.getImports(comp.html);
+                            if(this.data.id !== comp.id && !this.applyMethod("isGreaterThan",comp.category)){
+                                preview = preview.replace(comment,"");
+                                break;
+                            }
+                            // importされてなければ使えない
+                            if(this.data.id !== comp.id && imports.indexOf(name) == -1){
+                                preview = preview.replace(comment,"");
+                                break;
+                            }
+                            var template = parser.getTemplate(comp.html);
+                            var html = parser.getInnerHtmlFromTemplate(template);
+                            //templateに自身が含まれていたら削除(無限ループ回避)
+                            html = parser.removeSelf(html,comp.name);
+                            var defs = parser.getVarsFromTemplate(template);
+                            var overrides = parser.getVars(comment);
+                            html = parser.getRendered(html,defs,overrides);
+                            preview = preview.replace(comment,compiler.markup[this.data.markup](html));
+                            break;
+                        }
+                    }
+                    if(!flag){
+                        preview = preview.replace(comment,"");
+                    }
+                }
+                //スタイルシート取得
+                for(var i = 0,n = components.length; i < n; i++){
+                    var comp = components[i];
+                    if(imports.indexOf(comp.name) !== -1 || this.data.id == comp.id){
+                        preview += "<style>"+compiler.styling[this.data.styling](comp.css)+"</style>";
+                    }
+                }
+                //todo delete
+                return parser.removeScript(preview);
+            },
+            deleteScriptTag:function(data){
+                return parser.removeScript(data);
+            },
+            markdown:function(data){
+                return marked(data);
+            },
+            reversedIndex:function(i){
+                return this.data.collections.length - i -1;
+            }
+        }
+    }).applyMethod("initialize");
+    /*ここから先はアニメーション関係*/
+    $(".AtomicLabFAB-main").click(function () {
+        if ($(this).hasClass("is-open") == false) {
+            $(this)
+            .css({
+            "transform": "rotate(45deg)"
+            })
+            .addClass("is-open");
+            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                $(this).css({
+                "transform": "scale(1) translateY(0px)",
+                "opacity": 1
+                });
+            });
+        } else {
+            $(this)
+            .css({
+                "transform": "rotate(0deg)"
+            })
+            .removeClass("is-open");
+            $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                $(this).css({
+                    "transform": "scale(0) translateY(200px)",
+                    "opacity": 0
+                });
+            });
+        }
+    });
+    $(".js-add-category").click(function(){
+        var category = $(this).data("category");
+        cssLab.applyMethod("openDialog",category);
+    });
 });
 
-},{"./aTemplate.js":1,"./compiler.js":2,"./dialog-polyfill.js":3,"./fileSaver.min.js":5,"./jszip-deflate.js":6,"./jszip-inflate.js":7,"./jszip.min.js":8,"./marked.js":9,"./slack-widget.js":10,"./templateParser.js":11,"url":31}],5:[function(require,module,exports){
+},{"./aTemplate.js":1,"./compiler.js":2,"./dialog-polyfill.js":3,"./fileSaver.min.js":5,"./jszip-deflate.js":6,"./jszip-inflate.js":7,"./jszip.min.js":8,"./marked.js":9,"./slack-widget.js":10,"./templateParser.js":11,"url":26}],5:[function(require,module,exports){
 /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
 var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/MSIE [1-9]\./.test(navigator.userAgent)){var t=e.document,n=function(){return e.URL||e.webkitURL||e},o=t.createElementNS("http://www.w3.org/1999/xhtml","a"),r="download"in o,i=function(n){var o=t.createEvent("MouseEvents");o.initMouseEvent("click",!0,!1,e,0,0,0,0,0,!1,!1,!1,!1,0,null),n.dispatchEvent(o)},a=e.webkitRequestFileSystem,c=e.requestFileSystem||a||e.mozRequestFileSystem,u=function(t){(e.setImmediate||e.setTimeout)(function(){throw t},0)},f="application/octet-stream",s=0,d=500,l=function(t){var o=function(){"string"==typeof t?n().revokeObjectURL(t):t.remove()};e.chrome?o():setTimeout(o,d)},v=function(e,t,n){t=[].concat(t);for(var o=t.length;o--;){var r=e["on"+t[o]];if("function"==typeof r)try{r.call(e,n||e)}catch(i){u(i)}}},p=function(e){return/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(e.type)?new Blob(["\ufeff",e],{type:e.type}):e},w=function(t,u){t=p(t);var d,w,y,m=this,S=t.type,h=!1,O=function(){v(m,"writestart progress write writeend".split(" "))},E=function(){if((h||!d)&&(d=n().createObjectURL(t)),w)w.location.href=d;else{var o=e.open(d,"_blank");void 0==o&&"undefined"!=typeof safari&&(e.location.href=d)}m.readyState=m.DONE,O(),l(d)},R=function(e){return function(){return m.readyState!==m.DONE?e.apply(this,arguments):void 0}},b={create:!0,exclusive:!1};return m.readyState=m.INIT,u||(u="download"),r?(d=n().createObjectURL(t),o.href=d,o.download=u,i(o),m.readyState=m.DONE,O(),void l(d)):(e.chrome&&S&&S!==f&&(y=t.slice||t.webkitSlice,t=y.call(t,0,t.size,f),h=!0),a&&"download"!==u&&(u+=".download"),(S===f||a)&&(w=e),c?(s+=t.size,void c(e.TEMPORARY,s,R(function(e){e.root.getDirectory("saved",b,R(function(e){var n=function(){e.getFile(u,b,R(function(e){e.createWriter(R(function(n){n.onwriteend=function(t){w.location.href=e.toURL(),m.readyState=m.DONE,v(m,"writeend",t),l(e)},n.onerror=function(){var e=n.error;e.code!==e.ABORT_ERR&&E()},"writestart progress write abort".split(" ").forEach(function(e){n["on"+e]=m["on"+e]}),n.write(t),m.abort=function(){n.abort(),m.readyState=m.DONE},m.readyState=m.WRITING}),E)}),E)};e.getFile(u,{create:!1},R(function(e){e.remove(),n()}),R(function(e){e.code===e.NOT_FOUND_ERR?n():E()}))}),E)}),E)):void E())},y=w.prototype,m=function(e,t){return new w(e,t)};return"undefined"!=typeof navigator&&navigator.msSaveOrOpenBlob?function(e,t){return navigator.msSaveOrOpenBlob(p(e),t)}:(y.abort=function(){var e=this;e.readyState=e.DONE,v(e,"abort")},y.readyState=y.INIT=0,y.WRITING=1,y.DONE=2,y.error=y.onwritestart=y.onprogress=y.onwrite=y.onabort=y.onerror=y.onwriteend=null,m)}}("undefined"!=typeof self&&self||"undefined"!=typeof window&&window||this.content);"undefined"!=typeof module&&module.exports?module.exports.saveAs=saveAs:"undefined"!=typeof define&&null!==define&&null!=define.amd&&define([],function(){return saveAs});
 
@@ -4240,7 +4240,7 @@ https://github.com/nodeca/pako/blob/master/LICENSE
 break}for(c.back=0;Ab=c.lencode[m&(1<<c.lenbits)-1],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(rb&&0===(240&rb)){for(tb=qb,ub=rb,vb=sb;Ab=c.lencode[vb+((m&(1<<tb+ub)-1)>>tb)],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=tb+qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}m>>>=tb,n-=tb,c.back+=tb}if(m>>>=qb,n-=qb,c.back+=qb,c.length=sb,0===rb){c.mode=hb;break}if(32&rb){c.back=-1,c.mode=V;break}if(64&rb){a.msg="invalid literal/length code",c.mode=lb;break}c.extra=15&rb,c.mode=db;case db:if(c.extra){for(zb=c.extra;zb>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}c.length+=m&(1<<c.extra)-1,m>>>=c.extra,n-=c.extra,c.back+=c.extra}c.was=c.length,c.mode=eb;case eb:for(;Ab=c.distcode[m&(1<<c.distbits)-1],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(0===(240&rb)){for(tb=qb,ub=rb,vb=sb;Ab=c.distcode[vb+((m&(1<<tb+ub)-1)>>tb)],qb=Ab>>>24,rb=Ab>>>16&255,sb=65535&Ab,!(n>=tb+qb);){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}m>>>=tb,n-=tb,c.back+=tb}if(m>>>=qb,n-=qb,c.back+=qb,64&rb){a.msg="invalid distance code",c.mode=lb;break}c.offset=sb,c.extra=15&rb,c.mode=fb;case fb:if(c.extra){for(zb=c.extra;zb>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}c.offset+=m&(1<<c.extra)-1,m>>>=c.extra,n-=c.extra,c.back+=c.extra}if(c.offset>c.dmax){a.msg="invalid distance too far back",c.mode=lb;break}c.mode=gb;case gb:if(0===j)break a;if(q=p-j,c.offset>q){if(q=c.offset-q,q>c.whave&&c.sane){a.msg="invalid distance too far back",c.mode=lb;break}q>c.wnext?(q-=c.wnext,ob=c.wsize-q):ob=c.wnext-q,q>c.length&&(q=c.length),pb=c.window}else pb=f,ob=h-c.offset,q=c.length;q>j&&(q=j),j-=q,c.length-=q;do f[h++]=pb[ob++];while(--q);0===c.length&&(c.mode=cb);break;case hb:if(0===j)break a;f[h++]=c.length,j--,c.mode=cb;break;case ib:if(c.wrap){for(;32>n;){if(0===i)break a;i--,m|=e[g++]<<n,n+=8}if(p-=j,a.total_out+=p,c.total+=p,p&&(a.adler=c.check=c.flags?t(c.check,f,p,h-p):s(c.check,f,p,h-p)),p=j,(c.flags?m:d(m))!==c.check){a.msg="incorrect data check",c.mode=lb;break}m=0,n=0}c.mode=jb;case jb:if(c.wrap&&c.flags){for(;32>n;){if(0===i)break a;i--,m+=e[g++]<<n,n+=8}if(m!==(4294967295&c.total)){a.msg="incorrect length check",c.mode=lb;break}m=0,n=0}c.mode=kb;case kb:xb=D;break a;case lb:xb=G;break a;case mb:return H;case nb:default:return F}return a.next_out=h,a.avail_out=j,a.next_in=g,a.avail_in=i,c.hold=m,c.bits=n,(c.wsize||p!==a.avail_out&&c.mode<lb&&(c.mode<ib||b!==z))&&l(a,a.output,a.next_out,p-a.avail_out)?(c.mode=mb,H):(o-=a.avail_in,p-=a.avail_out,a.total_in+=o,a.total_out+=p,c.total+=p,c.wrap&&p&&(a.adler=c.check=c.flags?t(c.check,f,p,a.next_out-p):s(c.check,f,p,a.next_out-p)),a.data_type=c.bits+(c.last?64:0)+(c.mode===V?128:0)+(c.mode===bb||c.mode===Y?256:0),(0===o&&0===p||b===z)&&xb===C&&(xb=I),xb)}function n(a){if(!a||!a.state)return F;var b=a.state;return b.window&&(b.window=null),a.state=null,C}function o(a,b){var c;return a&&a.state?(c=a.state,0===(2&c.wrap)?F:(c.head=b,b.done=!1,C)):F}var p,q,r=a("../utils/common"),s=a("./adler32"),t=a("./crc32"),u=a("./inffast"),v=a("./inftrees"),w=0,x=1,y=2,z=4,A=5,B=6,C=0,D=1,E=2,F=-2,G=-3,H=-4,I=-5,J=8,K=1,L=2,M=3,N=4,O=5,P=6,Q=7,R=8,S=9,T=10,U=11,V=12,W=13,X=14,Y=15,Z=16,$=17,_=18,ab=19,bb=20,cb=21,db=22,eb=23,fb=24,gb=25,hb=26,ib=27,jb=28,kb=29,lb=30,mb=31,nb=32,ob=852,pb=592,qb=15,rb=qb,sb=!0;c.inflateReset=g,c.inflateReset2=h,c.inflateResetKeep=f,c.inflateInit=j,c.inflateInit2=i,c.inflate=m,c.inflateEnd=n,c.inflateGetHeader=o,c.inflateInfo="pako inflate (from Nodeca project)"},{"../utils/common":27,"./adler32":29,"./crc32":31,"./inffast":34,"./inftrees":36}],36:[function(a,b){"use strict";var c=a("../utils/common"),d=15,e=852,f=592,g=0,h=1,i=2,j=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],k=[16,16,16,16,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,16,72,78],l=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0],m=[16,16,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,64,64];b.exports=function(a,b,n,o,p,q,r,s){var t,u,v,w,x,y,z,A,B,C=s.bits,D=0,E=0,F=0,G=0,H=0,I=0,J=0,K=0,L=0,M=0,N=null,O=0,P=new c.Buf16(d+1),Q=new c.Buf16(d+1),R=null,S=0;for(D=0;d>=D;D++)P[D]=0;for(E=0;o>E;E++)P[b[n+E]]++;for(H=C,G=d;G>=1&&0===P[G];G--);if(H>G&&(H=G),0===G)return p[q++]=20971520,p[q++]=20971520,s.bits=1,0;for(F=1;G>F&&0===P[F];F++);for(F>H&&(H=F),K=1,D=1;d>=D;D++)if(K<<=1,K-=P[D],0>K)return-1;if(K>0&&(a===g||1!==G))return-1;for(Q[1]=0,D=1;d>D;D++)Q[D+1]=Q[D]+P[D];for(E=0;o>E;E++)0!==b[n+E]&&(r[Q[b[n+E]]++]=E);if(a===g?(N=R=r,y=19):a===h?(N=j,O-=257,R=k,S-=257,y=256):(N=l,R=m,y=-1),M=0,E=0,D=F,x=q,I=H,J=0,v=-1,L=1<<H,w=L-1,a===h&&L>e||a===i&&L>f)return 1;for(var T=0;;){T++,z=D-J,r[E]<y?(A=0,B=r[E]):r[E]>y?(A=R[S+r[E]],B=N[O+r[E]]):(A=96,B=0),t=1<<D-J,u=1<<I,F=u;do u-=t,p[x+(M>>J)+u]=z<<24|A<<16|B|0;while(0!==u);for(t=1<<D-1;M&t;)t>>=1;if(0!==t?(M&=t-1,M+=t):M=0,E++,0===--P[D]){if(D===G)break;D=b[n+r[E]]}if(D>H&&(M&w)!==v){for(0===J&&(J=H),x+=F,I=D-J,K=1<<I;G>I+J&&(K-=P[I+J],!(0>=K));)I++,K<<=1;if(L+=1<<I,a===h&&L>e||a===i&&L>f)return 1;v=M&w,p[v]=H<<24|I<<16|x-q|0}}return 0!==M&&(p[x+M]=D-J<<24|64<<16|0),s.bits=H,0}},{"../utils/common":27}],37:[function(a,b){"use strict";b.exports={2:"need dictionary",1:"stream end",0:"","-1":"file error","-2":"stream error","-3":"data error","-4":"insufficient memory","-5":"buffer error","-6":"incompatible version"}},{}],38:[function(a,b,c){"use strict";function d(a){for(var b=a.length;--b>=0;)a[b]=0}function e(a){return 256>a?gb[a]:gb[256+(a>>>7)]}function f(a,b){a.pending_buf[a.pending++]=255&b,a.pending_buf[a.pending++]=b>>>8&255}function g(a,b,c){a.bi_valid>V-c?(a.bi_buf|=b<<a.bi_valid&65535,f(a,a.bi_buf),a.bi_buf=b>>V-a.bi_valid,a.bi_valid+=c-V):(a.bi_buf|=b<<a.bi_valid&65535,a.bi_valid+=c)}function h(a,b,c){g(a,c[2*b],c[2*b+1])}function i(a,b){var c=0;do c|=1&a,a>>>=1,c<<=1;while(--b>0);return c>>>1}function j(a){16===a.bi_valid?(f(a,a.bi_buf),a.bi_buf=0,a.bi_valid=0):a.bi_valid>=8&&(a.pending_buf[a.pending++]=255&a.bi_buf,a.bi_buf>>=8,a.bi_valid-=8)}function k(a,b){var c,d,e,f,g,h,i=b.dyn_tree,j=b.max_code,k=b.stat_desc.static_tree,l=b.stat_desc.has_stree,m=b.stat_desc.extra_bits,n=b.stat_desc.extra_base,o=b.stat_desc.max_length,p=0;for(f=0;U>=f;f++)a.bl_count[f]=0;for(i[2*a.heap[a.heap_max]+1]=0,c=a.heap_max+1;T>c;c++)d=a.heap[c],f=i[2*i[2*d+1]+1]+1,f>o&&(f=o,p++),i[2*d+1]=f,d>j||(a.bl_count[f]++,g=0,d>=n&&(g=m[d-n]),h=i[2*d],a.opt_len+=h*(f+g),l&&(a.static_len+=h*(k[2*d+1]+g)));if(0!==p){do{for(f=o-1;0===a.bl_count[f];)f--;a.bl_count[f]--,a.bl_count[f+1]+=2,a.bl_count[o]--,p-=2}while(p>0);for(f=o;0!==f;f--)for(d=a.bl_count[f];0!==d;)e=a.heap[--c],e>j||(i[2*e+1]!==f&&(a.opt_len+=(f-i[2*e+1])*i[2*e],i[2*e+1]=f),d--)}}function l(a,b,c){var d,e,f=new Array(U+1),g=0;for(d=1;U>=d;d++)f[d]=g=g+c[d-1]<<1;for(e=0;b>=e;e++){var h=a[2*e+1];0!==h&&(a[2*e]=i(f[h]++,h))}}function m(){var a,b,c,d,e,f=new Array(U+1);for(c=0,d=0;O-1>d;d++)for(ib[d]=c,a=0;a<1<<_[d];a++)hb[c++]=d;for(hb[c-1]=d,e=0,d=0;16>d;d++)for(jb[d]=e,a=0;a<1<<ab[d];a++)gb[e++]=d;for(e>>=7;R>d;d++)for(jb[d]=e<<7,a=0;a<1<<ab[d]-7;a++)gb[256+e++]=d;for(b=0;U>=b;b++)f[b]=0;for(a=0;143>=a;)eb[2*a+1]=8,a++,f[8]++;for(;255>=a;)eb[2*a+1]=9,a++,f[9]++;for(;279>=a;)eb[2*a+1]=7,a++,f[7]++;for(;287>=a;)eb[2*a+1]=8,a++,f[8]++;for(l(eb,Q+1,f),a=0;R>a;a++)fb[2*a+1]=5,fb[2*a]=i(a,5);kb=new nb(eb,_,P+1,Q,U),lb=new nb(fb,ab,0,R,U),mb=new nb(new Array(0),bb,0,S,W)}function n(a){var b;for(b=0;Q>b;b++)a.dyn_ltree[2*b]=0;for(b=0;R>b;b++)a.dyn_dtree[2*b]=0;for(b=0;S>b;b++)a.bl_tree[2*b]=0;a.dyn_ltree[2*X]=1,a.opt_len=a.static_len=0,a.last_lit=a.matches=0}function o(a){a.bi_valid>8?f(a,a.bi_buf):a.bi_valid>0&&(a.pending_buf[a.pending++]=a.bi_buf),a.bi_buf=0,a.bi_valid=0}function p(a,b,c,d){o(a),d&&(f(a,c),f(a,~c)),E.arraySet(a.pending_buf,a.window,b,c,a.pending),a.pending+=c}function q(a,b,c,d){var e=2*b,f=2*c;return a[e]<a[f]||a[e]===a[f]&&d[b]<=d[c]}function r(a,b,c){for(var d=a.heap[c],e=c<<1;e<=a.heap_len&&(e<a.heap_len&&q(b,a.heap[e+1],a.heap[e],a.depth)&&e++,!q(b,d,a.heap[e],a.depth));)a.heap[c]=a.heap[e],c=e,e<<=1;a.heap[c]=d}function s(a,b,c){var d,f,i,j,k=0;if(0!==a.last_lit)do d=a.pending_buf[a.d_buf+2*k]<<8|a.pending_buf[a.d_buf+2*k+1],f=a.pending_buf[a.l_buf+k],k++,0===d?h(a,f,b):(i=hb[f],h(a,i+P+1,b),j=_[i],0!==j&&(f-=ib[i],g(a,f,j)),d--,i=e(d),h(a,i,c),j=ab[i],0!==j&&(d-=jb[i],g(a,d,j)));while(k<a.last_lit);h(a,X,b)}function t(a,b){var c,d,e,f=b.dyn_tree,g=b.stat_desc.static_tree,h=b.stat_desc.has_stree,i=b.stat_desc.elems,j=-1;for(a.heap_len=0,a.heap_max=T,c=0;i>c;c++)0!==f[2*c]?(a.heap[++a.heap_len]=j=c,a.depth[c]=0):f[2*c+1]=0;for(;a.heap_len<2;)e=a.heap[++a.heap_len]=2>j?++j:0,f[2*e]=1,a.depth[e]=0,a.opt_len--,h&&(a.static_len-=g[2*e+1]);for(b.max_code=j,c=a.heap_len>>1;c>=1;c--)r(a,f,c);e=i;do c=a.heap[1],a.heap[1]=a.heap[a.heap_len--],r(a,f,1),d=a.heap[1],a.heap[--a.heap_max]=c,a.heap[--a.heap_max]=d,f[2*e]=f[2*c]+f[2*d],a.depth[e]=(a.depth[c]>=a.depth[d]?a.depth[c]:a.depth[d])+1,f[2*c+1]=f[2*d+1]=e,a.heap[1]=e++,r(a,f,1);while(a.heap_len>=2);a.heap[--a.heap_max]=a.heap[1],k(a,b),l(f,j,a.bl_count)}function u(a,b,c){var d,e,f=-1,g=b[1],h=0,i=7,j=4;for(0===g&&(i=138,j=3),b[2*(c+1)+1]=65535,d=0;c>=d;d++)e=g,g=b[2*(d+1)+1],++h<i&&e===g||(j>h?a.bl_tree[2*e]+=h:0!==e?(e!==f&&a.bl_tree[2*e]++,a.bl_tree[2*Y]++):10>=h?a.bl_tree[2*Z]++:a.bl_tree[2*$]++,h=0,f=e,0===g?(i=138,j=3):e===g?(i=6,j=3):(i=7,j=4))}function v(a,b,c){var d,e,f=-1,i=b[1],j=0,k=7,l=4;for(0===i&&(k=138,l=3),d=0;c>=d;d++)if(e=i,i=b[2*(d+1)+1],!(++j<k&&e===i)){if(l>j){do h(a,e,a.bl_tree);while(0!==--j)}else 0!==e?(e!==f&&(h(a,e,a.bl_tree),j--),h(a,Y,a.bl_tree),g(a,j-3,2)):10>=j?(h(a,Z,a.bl_tree),g(a,j-3,3)):(h(a,$,a.bl_tree),g(a,j-11,7));j=0,f=e,0===i?(k=138,l=3):e===i?(k=6,l=3):(k=7,l=4)}}function w(a){var b;for(u(a,a.dyn_ltree,a.l_desc.max_code),u(a,a.dyn_dtree,a.d_desc.max_code),t(a,a.bl_desc),b=S-1;b>=3&&0===a.bl_tree[2*cb[b]+1];b--);return a.opt_len+=3*(b+1)+5+5+4,b}function x(a,b,c,d){var e;for(g(a,b-257,5),g(a,c-1,5),g(a,d-4,4),e=0;d>e;e++)g(a,a.bl_tree[2*cb[e]+1],3);v(a,a.dyn_ltree,b-1),v(a,a.dyn_dtree,c-1)}function y(a){var b,c=4093624447;for(b=0;31>=b;b++,c>>>=1)if(1&c&&0!==a.dyn_ltree[2*b])return G;if(0!==a.dyn_ltree[18]||0!==a.dyn_ltree[20]||0!==a.dyn_ltree[26])return H;for(b=32;P>b;b++)if(0!==a.dyn_ltree[2*b])return H;return G}function z(a){pb||(m(),pb=!0),a.l_desc=new ob(a.dyn_ltree,kb),a.d_desc=new ob(a.dyn_dtree,lb),a.bl_desc=new ob(a.bl_tree,mb),a.bi_buf=0,a.bi_valid=0,n(a)}function A(a,b,c,d){g(a,(J<<1)+(d?1:0),3),p(a,b,c,!0)}function B(a){g(a,K<<1,3),h(a,X,eb),j(a)}function C(a,b,c,d){var e,f,h=0;a.level>0?(a.strm.data_type===I&&(a.strm.data_type=y(a)),t(a,a.l_desc),t(a,a.d_desc),h=w(a),e=a.opt_len+3+7>>>3,f=a.static_len+3+7>>>3,e>=f&&(e=f)):e=f=c+5,e>=c+4&&-1!==b?A(a,b,c,d):a.strategy===F||f===e?(g(a,(K<<1)+(d?1:0),3),s(a,eb,fb)):(g(a,(L<<1)+(d?1:0),3),x(a,a.l_desc.max_code+1,a.d_desc.max_code+1,h+1),s(a,a.dyn_ltree,a.dyn_dtree)),n(a),d&&o(a)}function D(a,b,c){return a.pending_buf[a.d_buf+2*a.last_lit]=b>>>8&255,a.pending_buf[a.d_buf+2*a.last_lit+1]=255&b,a.pending_buf[a.l_buf+a.last_lit]=255&c,a.last_lit++,0===b?a.dyn_ltree[2*c]++:(a.matches++,b--,a.dyn_ltree[2*(hb[c]+P+1)]++,a.dyn_dtree[2*e(b)]++),a.last_lit===a.lit_bufsize-1}var E=a("../utils/common"),F=4,G=0,H=1,I=2,J=0,K=1,L=2,M=3,N=258,O=29,P=256,Q=P+1+O,R=30,S=19,T=2*Q+1,U=15,V=16,W=7,X=256,Y=16,Z=17,$=18,_=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0],ab=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],bb=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7],cb=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],db=512,eb=new Array(2*(Q+2));d(eb);var fb=new Array(2*R);d(fb);var gb=new Array(db);d(gb);var hb=new Array(N-M+1);d(hb);var ib=new Array(O);d(ib);var jb=new Array(R);d(jb);var kb,lb,mb,nb=function(a,b,c,d,e){this.static_tree=a,this.extra_bits=b,this.extra_base=c,this.elems=d,this.max_length=e,this.has_stree=a&&a.length},ob=function(a,b){this.dyn_tree=a,this.max_code=0,this.stat_desc=b},pb=!1;c._tr_init=z,c._tr_stored_block=A,c._tr_flush_block=C,c._tr_tally=D,c._tr_align=B},{"../utils/common":27}],39:[function(a,b){"use strict";function c(){this.input=null,this.next_in=0,this.avail_in=0,this.total_in=0,this.output=null,this.next_out=0,this.avail_out=0,this.total_out=0,this.msg="",this.state=null,this.data_type=2,this.adler=0}b.exports=c},{}]},{},[9])(9)});
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"buffer":22}],9:[function(require,module,exports){
+},{"buffer":17}],9:[function(require,module,exports){
 (function (global){
 /**
  * marked - a markdown parser
@@ -5666,188 +5666,9027 @@ module.exports = {
 }
 
 },{}],12:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
 'use strict';
+
+/**
+ * @file Embedded JavaScript templating engine.
+ * @author Matthew Eernisse <mde@fleegix.org>
+ * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
+ * @project EJS
+ * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
+ */
+
+/**
+ * EJS internal functions.
+ *
+ * Technically this "module" lies in the same file as {@link module:ejs}, for
+ * the sake of organization all the private functions re grouped into this
+ * module.
+ *
+ * @module ejs-internal
+ * @private
+ */
+
+/**
+ * Embedded JavaScript templating engine.
+ *
+ * @module ejs
+ * @public
+ */
+
+var fs = require('fs');
+var path = require('path');
+var utils = require('./utils');
+
+var scopeOptionWarned = false;
+var _VERSION_STRING = require('../package.json').version;
+var _DEFAULT_DELIMITER = '%';
+var _DEFAULT_LOCALS_NAME = 'locals';
+var _REGEX_STRING = '(<%%|%%>|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)';
+var _OPTS = [ 'cache', 'filename', 'delimiter', 'scope', 'context',
+        'debug', 'compileDebug', 'client', '_with', 'root', 'rmWhitespace',
+        'strict', 'localsName'];
+var _TRAILING_SEMCOL = /;\s*$/;
+var _BOM = /^\uFEFF/;
+
+/**
+ * EJS template function cache. This can be a LRU object from lru-cache NPM
+ * module. By default, it is {@link module:utils.cache}, a simple in-process
+ * cache that grows continuously.
+ *
+ * @type {Cache}
+ */
+
+exports.cache = utils.cache;
+
+/**
+ * Name of the object containing the locals.
+ *
+ * This variable is overriden by {@link Options}`.localsName` if it is not
+ * `undefined`.
+ *
+ * @type {String}
+ * @public
+ */
+
+exports.localsName = _DEFAULT_LOCALS_NAME;
+
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String}  name     specified path
+ * @param {String}  filename parent file path
+ * @param {Boolean} isDir    parent file path whether is directory
+ * @return {String}
+ */
+exports.resolveInclude = function(name, filename, isDir) {
+  var dirname = path.dirname;
+  var extname = path.extname;
+  var resolve = path.resolve;
+  var includePath = resolve(isDir ? filename : dirname(filename), name);
+  var ext = extname(name);
+  if (!ext) {
+    includePath += '.ejs';
+  }
+  return includePath;
+};
+
+/**
+ * Get the path to the included file by Options
+ * 
+ * @param  {String}  path    specified path
+ * @param  {Options} options compilation options
+ * @return {String}
+ */
+function getIncludePath(path, options){
+  var includePath;
+  if (path.charAt(0) == '/') {
+    includePath = exports.resolveInclude(path.replace(/^\/*/,''), options.root || '/', true);
+  }
+  else {
+    if (!options.filename) {
+      throw new Error('`include` use relative path requires the \'filename\' option.');
+    }
+    includePath = exports.resolveInclude(path, options.filename);  
+  }
+  return includePath;
+}
+
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `template` is not set, the file specified in `options.filename` will be
+ * read.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @memberof module:ejs-internal
+ * @param {Options} options   compilation options
+ * @param {String} [template] template source
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned.
+ * @static
+ */
+
+function handleCache(options, template) {
+  var func;
+  var filename = options.filename;
+  var hasTemplate = arguments.length > 1;
+
+  if (options.cache) {
+    if (!filename) {
+      throw new Error('cache option requires a filename');
+    }
+    func = exports.cache.get(filename);
+    if (func) {
+      return func;
+    }
+    if (!hasTemplate) {
+      template = fs.readFileSync(filename).toString().replace(_BOM, '');
+    }
+  }
+  else if (!hasTemplate) {
+    // istanbul ignore if: should not happen at all
+    if (!filename) {
+      throw new Error('Internal EJS error: no file name or template '
+                    + 'provided');
+    }
+    template = fs.readFileSync(filename).toString().replace(_BOM, '');
+  }
+  func = exports.compile(template, options);
+  if (options.cache) {
+    exports.cache.set(filename, func);
+  }
+  return func;
+}
+
+/**
+ * Get the template function.
+ *
+ * If `options.cache` is `true`, then the template is cached.
+ *
+ * @memberof module:ejs-internal
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned
+ * @static
+ */
+
+function includeFile(path, options) {
+  var opts = utils.shallowCopy({}, options);
+  opts.filename = getIncludePath(path, opts);
+  return handleCache(opts);
+}
+
+/**
+ * Get the JavaScript source of an included file.
+ *
+ * @memberof module:ejs-internal
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {Object}
+ * @static
+ */
+
+function includeSource(path, options) {
+  var opts = utils.shallowCopy({}, options);
+  var includePath;
+  var template;
+  includePath = getIncludePath(path,opts);
+  template = fs.readFileSync(includePath).toString().replace(_BOM, '');
+  opts.filename = includePath;
+  var templ = new Template(template, opts);
+  templ.generateSource();
+  return {
+    source: templ.source,
+    filename: includePath,
+    template: template
+  };
+}
+
+/**
+ * Re-throw the given `err` in context to the `str` of ejs, `filename`, and
+ * `lineno`.
+ *
+ * @implements RethrowCallback
+ * @memberof module:ejs-internal
+ * @param {Error}  err      Error object
+ * @param {String} str      EJS source
+ * @param {String} filename file name of the EJS file
+ * @param {String} lineno   line number of the error
+ * @static
+ */
+
+function rethrow(err, str, filename, lineno){
+  var lines = str.split('\n');
+  var start = Math.max(lineno - 3, 0);
+  var end = Math.min(lines.length, lineno + 3);
+  // Error context
+  var context = lines.slice(start, end).map(function (line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? ' >> ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'ejs') + ':'
+    + lineno + '\n'
+    + context + '\n\n'
+    + err.message;
+
+  throw err;
+}
+
+/**
+ * Copy properties in data object that are recognized as options to an
+ * options object.
+ *
+ * This is used for compatibility with earlier versions of EJS and Express.js.
+ *
+ * @memberof module:ejs-internal
+ * @param {Object}  data data object
+ * @param {Options} opts options object
+ * @static
+ */
+
+function cpOptsInData(data, opts) {
+  _OPTS.forEach(function (p) {
+    if (typeof data[p] != 'undefined') {
+      opts[p] = data[p];
+    }
+  });
+}
+
+/**
+ * Compile the given `str` of ejs into a template function.
+ *
+ * @param {String}  template EJS template
+ *
+ * @param {Options} opts     compilation options
+ *
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `opts.client`, either type might be returned.
+ * @public
+ */
+
+exports.compile = function compile(template, opts) {
+  var templ;
+
+  // v1 compat
+  // 'scope' is 'context'
+  // FIXME: Remove this in a future version
+  if (opts && opts.scope) {
+    if (!scopeOptionWarned){
+      console.warn('`scope` option is deprecated and will be removed in EJS 3');
+      scopeOptionWarned = true;
+    }
+    if (!opts.context) {
+      opts.context = opts.scope;
+    }
+    delete opts.scope;
+  }
+  templ = new Template(template, opts);
+  return templ.compile();
+};
+
+/**
+ * Render the given `template` of ejs.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}   template EJS template
+ * @param {Object}  [data={}] template data
+ * @param {Options} [opts={}] compilation and rendering options
+ * @return {String}
+ * @public
+ */
+
+exports.render = function (template, d, o) {
+  var data = d || {};
+  var opts = o || {};
+
+  // No options object -- if there are optiony names
+  // in the data, copy them to options
+  if (arguments.length == 2) {
+    cpOptsInData(data, opts);
+  }
+
+  return handleCache(opts, template)(data);
+};
+
+/**
+ * Render an EJS file at the given `path` and callback `cb(err, str)`.
+ *
+ * If you would like to include options but not data, you need to explicitly
+ * call this function with `data` being an empty object or `null`.
+ *
+ * @param {String}             path     path to the EJS file
+ * @param {Object}            [data={}] template data
+ * @param {Options}           [opts={}] compilation and rendering options
+ * @param {RenderFileCallback} cb callback
+ * @public
+ */
+
+exports.renderFile = function () {
+  var args = Array.prototype.slice.call(arguments);
+  var filename = args.shift();
+  var cb = args.pop();
+  var data = args.shift() || {};
+  var opts = args.pop() || {};
+  var result;
+
+  // Don't pollute passed in opts obj with new vals
+  opts = utils.shallowCopy({}, opts);
+
+  // No options object -- if there are optiony names
+  // in the data, copy them to options
+  if (arguments.length == 3) {
+    // express auto 'root' option;
+    if (data && data.settings && typeof(data.settings.views) == 'string') {
+      opts.root = data.settings.views;
+    }
+    // Express 4
+    if (data.settings && data.settings['view options']) {
+      cpOptsInData(data.settings['view options'], opts);
+    }
+    // Express 3 and lower
+    else {
+      cpOptsInData(data, opts);
+    }
+  }
+  opts.filename = filename;
+
+  try {
+    result = handleCache(opts)(data);
+  }
+  catch(err) {
+    return cb(err);
+  }
+  return cb(null, result);
+};
+
+/**
+ * Clear intermediate JavaScript cache. Calls {@link Cache#reset}.
+ * @public
+ */
+
+exports.clearCache = function () {
+  exports.cache.reset();
+};
+
+function Template(text, opts) {
+  opts = opts || {};
+  var options = {};
+  this.templateText = text;
+  this.mode = null;
+  this.truncate = false;
+  this.currentLine = 1;
+  this.source = '';
+  this.dependencies = [];
+  options.client = opts.client || false;
+  options.escapeFunction = opts.escape || utils.escapeXML;
+  options.compileDebug = opts.compileDebug !== false;
+  options.debug = !!opts.debug;
+  options.filename = opts.filename;
+  options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
+  options.strict = opts.strict || false;
+  options.context = opts.context;
+  options.cache = opts.cache || false;
+  options.rmWhitespace = opts.rmWhitespace;
+  options.root = opts.root;
+  options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
+
+  if (options.strict) {
+    options._with = false;
+  }
+  else {
+    options._with = typeof opts._with != 'undefined' ? opts._with : true;
+  }
+
+  this.opts = options;
+
+  this.regex = this.createRegex();
+}
+
+Template.modes = {
+  EVAL: 'eval',
+  ESCAPED: 'escaped',
+  RAW: 'raw',
+  COMMENT: 'comment',
+  LITERAL: 'literal'
+};
+
+Template.prototype = {
+  createRegex: function () {
+    var str = _REGEX_STRING;
+    var delim = utils.escapeRegExpChars(this.opts.delimiter);
+    str = str.replace(/%/g, delim);
+    return new RegExp(str);
+  },
+
+  compile: function () {
+    var src;
+    var fn;
+    var opts = this.opts;
+    var prepended = '';
+    var appended = '';
+    var escape = opts.escapeFunction;
+
+    if (!this.source) {
+      this.generateSource();
+      prepended += '  var __output = [], __append = __output.push.bind(__output);' + '\n';
+      if (opts._with !== false) {
+        prepended +=  '  with (' + opts.localsName + ' || {}) {' + '\n';
+        appended += '  }' + '\n';
+      }
+      appended += '  return __output.join("");' + '\n';
+      this.source = prepended + this.source + appended;
+    }
+
+    if (opts.compileDebug) {
+      src = 'var __line = 1' + '\n'
+          + '  , __lines = ' + JSON.stringify(this.templateText) + '\n'
+          + '  , __filename = ' + (opts.filename ?
+                JSON.stringify(opts.filename) : 'undefined') + ';' + '\n'
+          + 'try {' + '\n'
+          + this.source
+          + '} catch (e) {' + '\n'
+          + '  rethrow(e, __lines, __filename, __line);' + '\n'
+          + '}' + '\n';
+    }
+    else {
+      src = this.source;
+    }
+
+    if (opts.debug) {
+      console.log(src);
+    }
+
+    if (opts.client) {
+      src = 'escape = escape || ' + escape.toString() + ';' + '\n' + src;
+      if (opts.compileDebug) {
+        src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
+      }
+    }
+
+    if (opts.strict) {
+      src = '"use strict";\n' + src;
+    }
+
+    try {
+      fn = new Function(opts.localsName + ', escape, include, rethrow', src);
+    }
+    catch(e) {
+      // istanbul ignore else
+      if (e instanceof SyntaxError) {
+        if (opts.filename) {
+          e.message += ' in ' + opts.filename;
+        }
+        e.message += ' while compiling ejs';
+      }
+      throw e;
+    }
+
+    if (opts.client) {
+      fn.dependencies = this.dependencies;
+      return fn;
+    }
+
+    // Return a callable function which will execute the function
+    // created by the source-code, with the passed data as locals
+    // Adds a local `include` function which allows full recursive include
+    var returnedFn = function (data) {
+      var include = function (path, includeData) {
+        var d = utils.shallowCopy({}, data);
+        if (includeData) {
+          d = utils.shallowCopy(d, includeData);
+        }
+        return includeFile(path, opts)(d);
+      };
+      return fn.apply(opts.context, [data || {}, escape, include, rethrow]);
+    };
+    returnedFn.dependencies = this.dependencies;
+    return returnedFn;
+  },
+
+  generateSource: function () {
+    var opts = this.opts;
+
+    if (opts.rmWhitespace) {
+      // Have to use two separate replace here as `^` and `$` operators don't
+      // work well with `\r`.
+      this.templateText =
+        this.templateText.replace(/\r/g, '').replace(/^\s+|\s+$/gm, '');
+    }
+
+    // Slurp spaces and tabs before <%_ and after _%>
+    this.templateText =
+      this.templateText.replace(/[ \t]*<%_/gm, '<%_').replace(/_%>[ \t]*/gm, '_%>');
+
+    var self = this;
+    var matches = this.parseTemplateText();
+    var d = this.opts.delimiter;
+
+    if (matches && matches.length) {
+      matches.forEach(function (line, index) {
+        var opening;
+        var closing;
+        var include;
+        var includeOpts;
+        var includeObj;
+        var includeSrc;
+        // If this is an opening tag, check for closing tags
+        // FIXME: May end up with some false positives here
+        // Better to store modes as k/v with '<' + delimiter as key
+        // Then this can simply check against the map
+        if ( line.indexOf('<' + d) === 0        // If it is a tag
+          && line.indexOf('<' + d + d) !== 0) { // and is not escaped
+          closing = matches[index + 2];
+          if (!(closing == d + '>' || closing == '-' + d + '>' || closing == '_' + d + '>')) {
+            throw new Error('Could not find matching close tag for "' + line + '".');
+          }
+        }
+        // HACK: backward-compat `include` preprocessor directives
+        if ((include = line.match(/^\s*include\s+(\S+)/))) {
+          opening = matches[index - 1];
+          // Must be in EVAL or RAW mode
+          if (opening && (opening == '<' + d || opening == '<' + d + '-' || opening == '<' + d + '_')) {
+            includeOpts = utils.shallowCopy({}, self.opts);
+            includeObj = includeSource(include[1], includeOpts);
+            if (self.opts.compileDebug) {
+              includeSrc =
+                  '    ; (function(){' + '\n'
+                  + '      var __line = 1' + '\n'
+                  + '      , __lines = ' + JSON.stringify(includeObj.template) + '\n'
+                  + '      , __filename = ' + JSON.stringify(includeObj.filename) + ';' + '\n'
+                  + '      try {' + '\n'
+                  + includeObj.source
+                  + '      } catch (e) {' + '\n'
+                  + '        rethrow(e, __lines, __filename, __line);' + '\n'
+                  + '      }' + '\n'
+                  + '    ; }).call(this)' + '\n';
+            }else{
+              includeSrc = '    ; (function(){' + '\n' + includeObj.source +
+                  '    ; }).call(this)' + '\n';
+            }
+            self.source += includeSrc;
+            self.dependencies.push(exports.resolveInclude(include[1],
+                includeOpts.filename));
+            return;
+          }
+        }
+        self.scanLine(line);
+      });
+    }
+
+  },
+
+  parseTemplateText: function () {
+    var str = this.templateText;
+    var pat = this.regex;
+    var result = pat.exec(str);
+    var arr = [];
+    var firstPos;
+
+    while (result) {
+      firstPos = result.index;
+
+      if (firstPos !== 0) {
+        arr.push(str.substring(0, firstPos));
+        str = str.slice(firstPos);
+      }
+
+      arr.push(result[0]);
+      str = str.slice(result[0].length);
+      result = pat.exec(str);
+    }
+
+    if (str) {
+      arr.push(str);
+    }
+
+    return arr;
+  },
+
+  scanLine: function (line) {
+    var self = this;
+    var d = this.opts.delimiter;
+    var newLineCount = 0;
+
+    function _addOutput() {
+      if (self.truncate) {
+        // Only replace single leading linebreak in the line after
+        // -%> tag -- this is the single, trailing linebreak
+        // after the tag that the truncation mode replaces
+        // Handle Win / Unix / old Mac linebreaks -- do the \r\n
+        // combo first in the regex-or
+        line = line.replace(/^(?:\r\n|\r|\n)/, '');
+        self.truncate = false;
+      }
+      else if (self.opts.rmWhitespace) {
+        // Gotta be more careful here.
+        // .replace(/^(\s*)\n/, '$1') might be more appropriate here but as
+        // rmWhitespace already removes trailing spaces anyway so meh.
+        line = line.replace(/^\n/, '');
+      }
+      if (!line) {
+        return;
+      }
+
+      // Preserve literal slashes
+      line = line.replace(/\\/g, '\\\\');
+
+      // Convert linebreaks
+      line = line.replace(/\n/g, '\\n');
+      line = line.replace(/\r/g, '\\r');
+
+      // Escape double-quotes
+      // - this will be the delimiter during execution
+      line = line.replace(/"/g, '\\"');
+      self.source += '    ; __append("' + line + '")' + '\n';
+    }
+
+    newLineCount = (line.split('\n').length - 1);
+
+    switch (line) {
+      case '<' + d:
+      case '<' + d + '_':
+        this.mode = Template.modes.EVAL;
+        break;
+      case '<' + d + '=':
+        this.mode = Template.modes.ESCAPED;
+        break;
+      case '<' + d + '-':
+        this.mode = Template.modes.RAW;
+        break;
+      case '<' + d + '#':
+        this.mode = Template.modes.COMMENT;
+        break;
+      case '<' + d + d:
+        this.mode = Template.modes.LITERAL;
+        this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
+        break;
+      case d + d + '>':
+        this.mode = Template.modes.LITERAL;
+        this.source += '    ; __append("' + line.replace(d + d + '>', d + '>') + '")' + '\n';
+        break;
+      case d + '>':
+      case '-' + d + '>':
+      case '_' + d + '>':
+        if (this.mode == Template.modes.LITERAL) {
+          _addOutput();
+        }
+
+        this.mode = null;
+        this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
+        break;
+      default:
+        // In script mode, depends on type of tag
+        if (this.mode) {
+          // If '//' is found without a line break, add a line break.
+          switch (this.mode) {
+            case Template.modes.EVAL:
+            case Template.modes.ESCAPED:
+            case Template.modes.RAW:
+              if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
+                line += '\n';
+              }
+          }
+          switch (this.mode) {
+            // Just executing code
+            case Template.modes.EVAL:
+              this.source += '    ; ' + line + '\n';
+              break;
+            // Exec, esc, and output
+            case Template.modes.ESCAPED:
+              this.source += '    ; __append(escape(' +
+                line.replace(_TRAILING_SEMCOL, '').trim() + '))' + '\n';
+              break;
+            // Exec and output
+            case Template.modes.RAW:
+              this.source += '    ; __append(' +
+                line.replace(_TRAILING_SEMCOL, '').trim() + ')' + '\n';
+              break;
+            case Template.modes.COMMENT:
+              // Do nothing
+              break;
+            // Literal <%% mode, append as raw output
+            case Template.modes.LITERAL:
+              _addOutput();
+              break;
+          }
+        }
+        // In string mode, just add the output
+        else {
+          _addOutput();
+        }
+    }
+
+    if (self.opts.compileDebug && newLineCount) {
+      this.currentLine += newLineCount;
+      this.source += '    ; __line = ' + this.currentLine + '\n';
+    }
+  }
+};
+
+/**
+ * Escape characters reserved in XML.
+ *
+ * This is simply an export of {@link module:utils.escapeXML}.
+ *
+ * If `markup` is `undefined` or `null`, the empty string is returned.
+ *
+ * @param {String} markup Input string
+ * @return {String} Escaped string
+ * @public
+ * @func
+ * */
+exports.escapeXML = utils.escapeXML;
+
+/**
+ * Express.js support.
+ *
+ * This is an alias for {@link module:ejs.renderFile}, in order to support
+ * Express.js out-of-the-box.
+ *
+ * @func
+ */
+
+exports.__express = exports.renderFile;
+
+// Add require support
+/* istanbul ignore else */
+if (require.extensions) {
+  require.extensions['.ejs'] = function (module, flnm) {
+    var filename = flnm || /* istanbul ignore next */ module.filename;
+    var options = {
+          filename: filename,
+          client: true
+        };
+    var template = fs.readFileSync(filename).toString();
+    var fn = exports.compile(template, options);
+    module._compile('module.exports = ' + fn.toString() + ';', filename);
+  };
+}
+
+/**
+ * Version of EJS.
+ *
+ * @readonly
+ * @type {String}
+ * @public
+ */
+
+exports.VERSION = _VERSION_STRING;
+
+/* istanbul ignore if */
+if (typeof window != 'undefined') {
+  window.ejs = exports;
+}
+
+},{"../package.json":14,"./utils":13,"fs":15,"path":20}],13:[function(require,module,exports){
+/*
+ * EJS Embedded JavaScript templates
+ * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+/**
+ * Private utility functions
+ * @module utils
+ * @private
+ */
+
+'use strict';
+
+var regExpChars = /[|\\{}()[\]^$+*?.]/g;
+
+/**
+ * Escape characters reserved in regular expressions.
+ *
+ * If `string` is `undefined` or `null`, the empty string is returned.
+ *
+ * @param {String} string Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+exports.escapeRegExpChars = function (string) {
+  // istanbul ignore if
+  if (!string) {
+    return '';
+  }
+  return String(string).replace(regExpChars, '\\$&');
+};
+
+var _ENCODE_HTML_RULES = {
+      '&': '&amp;'
+    , '<': '&lt;'
+    , '>': '&gt;'
+    , '"': '&#34;'
+    , "'": '&#39;'
+    }
+  , _MATCH_HTML = /[&<>\'"]/g;
+
+function encode_char(c) {
+  return _ENCODE_HTML_RULES[c] || c;
+};
+
+/**
+ * Stringified version of constants used by {@link module:utils.escapeXML}.
+ *
+ * It is used in the process of generating {@link ClientFunction}s.
+ *
+ * @readonly
+ * @type {String}
+ */
+
+var escapeFuncStr =
+  'var _ENCODE_HTML_RULES = {\n'
++ '      "&": "&amp;"\n'
++ '    , "<": "&lt;"\n'
++ '    , ">": "&gt;"\n'
++ '    , \'"\': "&#34;"\n'
++ '    , "\'": "&#39;"\n'
++ '    }\n'
++ '  , _MATCH_HTML = /[&<>\'"]/g;\n'
++ 'function encode_char(c) {\n'
++ '  return _ENCODE_HTML_RULES[c] || c;\n'
++ '};\n';
+
+/**
+ * Escape characters reserved in XML.
+ *
+ * If `markup` is `undefined` or `null`, the empty string is returned.
+ *
+ * @implements {EscapeCallback}
+ * @param {String} markup Input string
+ * @return {String} Escaped string
+ * @static
+ * @private
+ */
+
+exports.escapeXML = function (markup) {
+  return markup == undefined
+    ? ''
+    : String(markup)
+        .replace(_MATCH_HTML, encode_char);
+};
+exports.escapeXML.toString = function () {
+  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr
+};
+
+/**
+ * Copy all properties from one object to another, in a shallow fashion.
+ *
+ * @param  {Object} to   Destination object
+ * @param  {Object} from Source object
+ * @return {Object}      Destination object
+ * @static
+ * @private
+ */
+exports.shallowCopy = function (to, from) {
+  from = from || {};
+  for (var p in from) {
+    to[p] = from[p];
+  }
+  return to;
+};
+
+/**
+ * Simple in-process cache implementation. Does not implement limits of any
+ * sort.
+ *
+ * @implements Cache
+ * @static
+ * @private
+ */
+exports.cache = {
+  _data: {},
+  set: function (key, val) {
+    this._data[key] = val;
+  },
+  get: function (key) {
+    return this._data[key];
+  },
+  reset: function () {
+    this._data = {};
+  }
+};
+
+
+},{}],14:[function(require,module,exports){
+module.exports={
+  "name": "ejs",
+  "description": "Embedded JavaScript templates",
+  "keywords": [
+    "template",
+    "engine",
+    "ejs"
+  ],
+  "version": "2.5.1",
+  "author": {
+    "name": "Matthew Eernisse",
+    "email": "mde@fleegix.org",
+    "url": "http://fleegix.org"
+  },
+  "contributors": [
+    {
+      "name": "Timothy Gu",
+      "email": "timothygu99@gmail.com",
+      "url": "https://timothygu.github.io"
+    }
+  ],
+  "license": "Apache-2.0",
+  "main": "./lib/ejs.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mde/ejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mde/ejs/issues"
+  },
+  "homepage": "https://github.com/mde/ejs",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^13.0.1",
+    "eslint": "^3.0.0",
+    "istanbul": "~0.4.3",
+    "jake": "^8.0.0",
+    "jsdoc": "^3.4.0",
+    "lru-cache": "^4.0.1",
+    "mocha": "^2.1.0",
+    "rimraf": "^2.2.8",
+    "uglify-js": "^2.6.2"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "sample": "npm install express && node sample/index.js",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
+    "doc": "rimraf out && jsdoc -c jsdoc.json lib/* docs/jsdoc/*",
+    "devdoc": "rimraf out && jsdoc -p -c jsdoc.json lib/* docs/jsdoc/*"
+  },
+  "_id": "ejs@2.5.1",
+  "_shasum": "dbc0ac40812d3b451dad063fcd369e4e47d80287",
+  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.5.1.tgz",
+  "_from": "ejs@*",
+  "_npmVersion": "2.14.7",
+  "_nodeVersion": "4.2.2",
+  "_npmUser": {
+    "name": "mde",
+    "email": "mde@fleegix.org"
+  },
+  "dist": {
+    "shasum": "dbc0ac40812d3b451dad063fcd369e4e47d80287",
+    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.5.1.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "tjholowaychuk",
+      "email": "tj@vision-media.ca"
+    },
+    {
+      "name": "mde",
+      "email": "mde@fleegix.org"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/ejs-2.5.1.tgz_1469467300312_0.7665372854098678"
+  },
+  "directories": {},
+  "readme": "ERROR: No README data found!"
+}
+
+},{}],15:[function(require,module,exports){
+
+},{}],16:[function(require,module,exports){
+module.exports=require(15)
+},{}],17:[function(require,module,exports){
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+
+var base64 = require('base64-js')
+var ieee754 = require('ieee754')
+
+exports.Buffer = Buffer
+exports.SlowBuffer = Buffer
+exports.INSPECT_MAX_BYTES = 50
+Buffer.poolSize = 8192
+
+/**
+ * If `Buffer._useTypedArrays`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (compatible down to IE6)
+ */
+Buffer._useTypedArrays = (function () {
+  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
+  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
+  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
+  // because we need to be able to add all the node Buffer API methods. This is an issue
+  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
+  try {
+    var buf = new ArrayBuffer(0)
+    var arr = new Uint8Array(buf)
+    arr.foo = function () { return 42 }
+    return 42 === arr.foo() &&
+        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
+  } catch (e) {
+    return false
+  }
+})()
+
+/**
+ * Class: Buffer
+ * =============
+ *
+ * The Buffer constructor returns instances of `Uint8Array` that are augmented
+ * with function properties for all the node `Buffer` API functions. We use
+ * `Uint8Array` so that square bracket notation works as expected -- it returns
+ * a single octet.
+ *
+ * By augmenting the instances, we can avoid modifying the `Uint8Array`
+ * prototype.
+ */
+function Buffer (subject, encoding, noZero) {
+  if (!(this instanceof Buffer))
+    return new Buffer(subject, encoding, noZero)
+
+  var type = typeof subject
+
+  // Workaround: node's base64 implementation allows for non-padded strings
+  // while base64-js does not.
+  if (encoding === 'base64' && type === 'string') {
+    subject = stringtrim(subject)
+    while (subject.length % 4 !== 0) {
+      subject = subject + '='
+    }
+  }
+
+  // Find the length
+  var length
+  if (type === 'number')
+    length = coerce(subject)
+  else if (type === 'string')
+    length = Buffer.byteLength(subject, encoding)
+  else if (type === 'object')
+    length = coerce(subject.length) // assume that object is array-like
+  else
+    throw new Error('First argument needs to be a number, array or string.')
+
+  var buf
+  if (Buffer._useTypedArrays) {
+    // Preferred: Return an augmented `Uint8Array` instance for best performance
+    buf = Buffer._augment(new Uint8Array(length))
+  } else {
+    // Fallback: Return THIS instance of Buffer (created by `new`)
+    buf = this
+    buf.length = length
+    buf._isBuffer = true
+  }
+
+  var i
+  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
+    // Speed optimization -- use set if we're copying from a typed array
+    buf._set(subject)
+  } else if (isArrayish(subject)) {
+    // Treat array-ish objects as a byte array
+    for (i = 0; i < length; i++) {
+      if (Buffer.isBuffer(subject))
+        buf[i] = subject.readUInt8(i)
+      else
+        buf[i] = subject[i]
+    }
+  } else if (type === 'string') {
+    buf.write(subject, 0, encoding)
+  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
+    for (i = 0; i < length; i++) {
+      buf[i] = 0
+    }
+  }
+
+  return buf
+}
+
+// STATIC METHODS
+// ==============
+
+Buffer.isEncoding = function (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'binary':
+    case 'base64':
+    case 'raw':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.isBuffer = function (b) {
+  return !!(b !== null && b !== undefined && b._isBuffer)
+}
+
+Buffer.byteLength = function (str, encoding) {
+  var ret
+  str = str + ''
+  switch (encoding || 'utf8') {
+    case 'hex':
+      ret = str.length / 2
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8ToBytes(str).length
+      break
+    case 'ascii':
+    case 'binary':
+    case 'raw':
+      ret = str.length
+      break
+    case 'base64':
+      ret = base64ToBytes(str).length
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = str.length * 2
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.concat = function (list, totalLength) {
+  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
+      'list should be an Array.')
+
+  if (list.length === 0) {
+    return new Buffer(0)
+  } else if (list.length === 1) {
+    return list[0]
+  }
+
+  var i
+  if (typeof totalLength !== 'number') {
+    totalLength = 0
+    for (i = 0; i < list.length; i++) {
+      totalLength += list[i].length
+    }
+  }
+
+  var buf = new Buffer(totalLength)
+  var pos = 0
+  for (i = 0; i < list.length; i++) {
+    var item = list[i]
+    item.copy(buf, pos)
+    pos += item.length
+  }
+  return buf
+}
+
+// BUFFER INSTANCE METHODS
+// =======================
+
+function _hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  assert(strLen % 2 === 0, 'Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; i++) {
+    var byte = parseInt(string.substr(i * 2, 2), 16)
+    assert(!isNaN(byte), 'Invalid hex string')
+    buf[offset + i] = byte
+  }
+  Buffer._charsWritten = i * 2
+  return i
+}
+
+function _utf8Write (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(utf8ToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _asciiWrite (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(asciiToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _binaryWrite (buf, string, offset, length) {
+  return _asciiWrite(buf, string, offset, length)
+}
+
+function _base64Write (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(base64ToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+function _utf16leWrite (buf, string, offset, length) {
+  var charsWritten = Buffer._charsWritten =
+    blitBuffer(utf16leToBytes(string), buf, offset, length)
+  return charsWritten
+}
+
+Buffer.prototype.write = function (string, offset, length, encoding) {
+  // Support both (string, offset, length, encoding)
+  // and the legacy (string, encoding, offset, length)
+  if (isFinite(offset)) {
+    if (!isFinite(length)) {
+      encoding = length
+      length = undefined
+    }
+  } else {  // legacy
+    var swap = encoding
+    encoding = offset
+    offset = length
+    length = swap
+  }
+
+  offset = Number(offset) || 0
+  var remaining = this.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+  encoding = String(encoding || 'utf8').toLowerCase()
+
+  var ret
+  switch (encoding) {
+    case 'hex':
+      ret = _hexWrite(this, string, offset, length)
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = _utf8Write(this, string, offset, length)
+      break
+    case 'ascii':
+      ret = _asciiWrite(this, string, offset, length)
+      break
+    case 'binary':
+      ret = _binaryWrite(this, string, offset, length)
+      break
+    case 'base64':
+      ret = _base64Write(this, string, offset, length)
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = _utf16leWrite(this, string, offset, length)
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.prototype.toString = function (encoding, start, end) {
+  var self = this
+
+  encoding = String(encoding || 'utf8').toLowerCase()
+  start = Number(start) || 0
+  end = (end !== undefined)
+    ? Number(end)
+    : end = self.length
+
+  // Fastpath empty strings
+  if (end === start)
+    return ''
+
+  var ret
+  switch (encoding) {
+    case 'hex':
+      ret = _hexSlice(self, start, end)
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = _utf8Slice(self, start, end)
+      break
+    case 'ascii':
+      ret = _asciiSlice(self, start, end)
+      break
+    case 'binary':
+      ret = _binarySlice(self, start, end)
+      break
+    case 'base64':
+      ret = _base64Slice(self, start, end)
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = _utf16leSlice(self, start, end)
+      break
+    default:
+      throw new Error('Unknown encoding')
+  }
+  return ret
+}
+
+Buffer.prototype.toJSON = function () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function (target, target_start, start, end) {
+  var source = this
+
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (!target_start) target_start = 0
+
+  // Copy 0 bytes; we're done
+  if (end === start) return
+  if (target.length === 0 || source.length === 0) return
+
+  // Fatal error conditions
+  assert(end >= start, 'sourceEnd < sourceStart')
+  assert(target_start >= 0 && target_start < target.length,
+      'targetStart out of bounds')
+  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
+  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length)
+    end = this.length
+  if (target.length - target_start < end - start)
+    end = target.length - target_start + start
+
+  var len = end - start
+
+  if (len < 100 || !Buffer._useTypedArrays) {
+    for (var i = 0; i < len; i++)
+      target[i + target_start] = this[i + start]
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
+}
+
+function _base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function _utf8Slice (buf, start, end) {
+  var res = ''
+  var tmp = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    if (buf[i] <= 0x7F) {
+      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
+      tmp = ''
+    } else {
+      tmp += '%' + buf[i].toString(16)
+    }
+  }
+
+  return res + decodeUtf8Char(tmp)
+}
+
+function _asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++)
+    ret += String.fromCharCode(buf[i])
+  return ret
+}
+
+function _binarySlice (buf, start, end) {
+  return _asciiSlice(buf, start, end)
+}
+
+function _hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; i++) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function _utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function (start, end) {
+  var len = this.length
+  start = clamp(start, len, 0)
+  end = clamp(end, len, len)
+
+  if (Buffer._useTypedArrays) {
+    return Buffer._augment(this.subarray(start, end))
+  } else {
+    var sliceLen = end - start
+    var newBuf = new Buffer(sliceLen, undefined, true)
+    for (var i = 0; i < sliceLen; i++) {
+      newBuf[i] = this[i + start]
+    }
+    return newBuf
+  }
+}
+
+// `get` will be removed in Node 0.13+
+Buffer.prototype.get = function (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` will be removed in Node 0.13+
+Buffer.prototype.set = function (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
+
+Buffer.prototype.readUInt8 = function (offset, noAssert) {
+  if (!noAssert) {
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'Trying to read beyond buffer length')
+  }
+
+  if (offset >= this.length)
+    return
+
+  return this[offset]
+}
+
+function _readUInt16 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val
+  if (littleEndian) {
+    val = buf[offset]
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
+  } else {
+    val = buf[offset] << 8
+    if (offset + 1 < len)
+      val |= buf[offset + 1]
+  }
+  return val
+}
+
+Buffer.prototype.readUInt16LE = function (offset, noAssert) {
+  return _readUInt16(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readUInt16BE = function (offset, noAssert) {
+  return _readUInt16(this, offset, false, noAssert)
+}
+
+function _readUInt32 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val
+  if (littleEndian) {
+    if (offset + 2 < len)
+      val = buf[offset + 2] << 16
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
+    val |= buf[offset]
+    if (offset + 3 < len)
+      val = val + (buf[offset + 3] << 24 >>> 0)
+  } else {
+    if (offset + 1 < len)
+      val = buf[offset + 1] << 16
+    if (offset + 2 < len)
+      val |= buf[offset + 2] << 8
+    if (offset + 3 < len)
+      val |= buf[offset + 3]
+    val = val + (buf[offset] << 24 >>> 0)
+  }
+  return val
+}
+
+Buffer.prototype.readUInt32LE = function (offset, noAssert) {
+  return _readUInt32(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readUInt32BE = function (offset, noAssert) {
+  return _readUInt32(this, offset, false, noAssert)
+}
+
+Buffer.prototype.readInt8 = function (offset, noAssert) {
+  if (!noAssert) {
+    assert(offset !== undefined && offset !== null,
+        'missing offset')
+    assert(offset < this.length, 'Trying to read beyond buffer length')
+  }
+
+  if (offset >= this.length)
+    return
+
+  var neg = this[offset] & 0x80
+  if (neg)
+    return (0xff - this[offset] + 1) * -1
+  else
+    return this[offset]
+}
+
+function _readInt16 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val = _readUInt16(buf, offset, littleEndian, true)
+  var neg = val & 0x8000
+  if (neg)
+    return (0xffff - val + 1) * -1
+  else
+    return val
+}
+
+Buffer.prototype.readInt16LE = function (offset, noAssert) {
+  return _readInt16(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readInt16BE = function (offset, noAssert) {
+  return _readInt16(this, offset, false, noAssert)
+}
+
+function _readInt32 (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  var val = _readUInt32(buf, offset, littleEndian, true)
+  var neg = val & 0x80000000
+  if (neg)
+    return (0xffffffff - val + 1) * -1
+  else
+    return val
+}
+
+Buffer.prototype.readInt32LE = function (offset, noAssert) {
+  return _readInt32(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readInt32BE = function (offset, noAssert) {
+  return _readInt32(this, offset, false, noAssert)
+}
+
+function _readFloat (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  return ieee754.read(buf, offset, littleEndian, 23, 4)
+}
+
+Buffer.prototype.readFloatLE = function (offset, noAssert) {
+  return _readFloat(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readFloatBE = function (offset, noAssert) {
+  return _readFloat(this, offset, false, noAssert)
+}
+
+function _readDouble (buf, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
+  }
+
+  return ieee754.read(buf, offset, littleEndian, 52, 8)
+}
+
+Buffer.prototype.readDoubleLE = function (offset, noAssert) {
+  return _readDouble(this, offset, true, noAssert)
+}
+
+Buffer.prototype.readDoubleBE = function (offset, noAssert) {
+  return _readDouble(this, offset, false, noAssert)
+}
+
+Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xff)
+  }
+
+  if (offset >= this.length) return
+
+  this[offset] = value
+}
+
+function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xffff)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
+    buf[offset + i] =
+        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+            (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
+  _writeUInt16(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+  _writeUInt16(this, value, offset, false, noAssert)
+}
+
+function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
+    verifuint(value, 0xffffffff)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
+    buf[offset + i] =
+        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+  _writeUInt32(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+  _writeUInt32(this, value, offset, false, noAssert)
+}
+
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset < this.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7f, -0x80)
+  }
+
+  if (offset >= this.length)
+    return
+
+  if (value >= 0)
+    this.writeUInt8(value, offset, noAssert)
+  else
+    this.writeUInt8(0xff + value + 1, offset, noAssert)
+}
+
+function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7fff, -0x8000)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  if (value >= 0)
+    _writeUInt16(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
+}
+
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+  _writeInt16(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+  _writeInt16(this, value, offset, false, noAssert)
+}
+
+function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
+    verifsint(value, 0x7fffffff, -0x80000000)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  if (value >= 0)
+    _writeUInt32(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
+}
+
+Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
+  _writeInt32(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
+  _writeInt32(this, value, offset, false, noAssert)
+}
+
+function _writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
+    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+}
+
+Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
+  _writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
+  _writeFloat(this, value, offset, false, noAssert)
+}
+
+function _writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    assert(value !== undefined && value !== null, 'missing value')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
+    assert(offset + 7 < buf.length,
+        'Trying to write beyond buffer length')
+    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+
+  var len = buf.length
+  if (offset >= len)
+    return
+
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+}
+
+Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
+  _writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
+  _writeDouble(this, value, offset, false, noAssert)
+}
+
+// fill(value, start=0, end=buffer.length)
+Buffer.prototype.fill = function (value, start, end) {
+  if (!value) value = 0
+  if (!start) start = 0
+  if (!end) end = this.length
+
+  if (typeof value === 'string') {
+    value = value.charCodeAt(0)
+  }
+
+  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
+  assert(end >= start, 'end < start')
+
+  // Fill 0 bytes; we're done
+  if (end === start) return
+  if (this.length === 0) return
+
+  assert(start >= 0 && start < this.length, 'start out of bounds')
+  assert(end >= 0 && end <= this.length, 'end out of bounds')
+
+  for (var i = start; i < end; i++) {
+    this[i] = value
+  }
+}
+
+Buffer.prototype.inspect = function () {
+  var out = []
+  var len = this.length
+  for (var i = 0; i < len; i++) {
+    out[i] = toHex(this[i])
+    if (i === exports.INSPECT_MAX_BYTES) {
+      out[i + 1] = '...'
+      break
+    }
+  }
+  return '<Buffer ' + out.join(' ') + '>'
+}
+
+/**
+ * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+ * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
+ */
+Buffer.prototype.toArrayBuffer = function () {
+  if (typeof Uint8Array !== 'undefined') {
+    if (Buffer._useTypedArrays) {
+      return (new Buffer(this)).buffer
+    } else {
+      var buf = new Uint8Array(this.length)
+      for (var i = 0, len = buf.length; i < len; i += 1)
+        buf[i] = this[i]
+      return buf.buffer
+    }
+  } else {
+    throw new Error('Buffer.toArrayBuffer not supported in this browser')
+  }
+}
+
+// HELPER FUNCTIONS
+// ================
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+var BP = Buffer.prototype
+
+/**
+ * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
+ */
+Buffer._augment = function (arr) {
+  arr._isBuffer = true
+
+  // save reference to original Uint8Array get/set methods before overwriting
+  arr._get = arr.get
+  arr._set = arr.set
+
+  // deprecated, will be removed in node 0.13+
+  arr.get = BP.get
+  arr.set = BP.set
+
+  arr.write = BP.write
+  arr.toString = BP.toString
+  arr.toLocaleString = BP.toString
+  arr.toJSON = BP.toJSON
+  arr.copy = BP.copy
+  arr.slice = BP.slice
+  arr.readUInt8 = BP.readUInt8
+  arr.readUInt16LE = BP.readUInt16LE
+  arr.readUInt16BE = BP.readUInt16BE
+  arr.readUInt32LE = BP.readUInt32LE
+  arr.readUInt32BE = BP.readUInt32BE
+  arr.readInt8 = BP.readInt8
+  arr.readInt16LE = BP.readInt16LE
+  arr.readInt16BE = BP.readInt16BE
+  arr.readInt32LE = BP.readInt32LE
+  arr.readInt32BE = BP.readInt32BE
+  arr.readFloatLE = BP.readFloatLE
+  arr.readFloatBE = BP.readFloatBE
+  arr.readDoubleLE = BP.readDoubleLE
+  arr.readDoubleBE = BP.readDoubleBE
+  arr.writeUInt8 = BP.writeUInt8
+  arr.writeUInt16LE = BP.writeUInt16LE
+  arr.writeUInt16BE = BP.writeUInt16BE
+  arr.writeUInt32LE = BP.writeUInt32LE
+  arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeInt8 = BP.writeInt8
+  arr.writeInt16LE = BP.writeInt16LE
+  arr.writeInt16BE = BP.writeInt16BE
+  arr.writeInt32LE = BP.writeInt32LE
+  arr.writeInt32BE = BP.writeInt32BE
+  arr.writeFloatLE = BP.writeFloatLE
+  arr.writeFloatBE = BP.writeFloatBE
+  arr.writeDoubleLE = BP.writeDoubleLE
+  arr.writeDoubleBE = BP.writeDoubleBE
+  arr.fill = BP.fill
+  arr.inspect = BP.inspect
+  arr.toArrayBuffer = BP.toArrayBuffer
+
+  return arr
+}
+
+// slice(start, end)
+function clamp (index, len, defaultValue) {
+  if (typeof index !== 'number') return defaultValue
+  index = ~~index;  // Coerce to integer.
+  if (index >= len) return len
+  if (index >= 0) return index
+  index += len
+  if (index >= 0) return index
+  return 0
+}
+
+function coerce (length) {
+  // Coerce length to a number (possibly NaN), round up
+  // in case it's fractional (e.g. 123.456) then do a
+  // double negate to coerce a NaN to 0. Easy, right?
+  length = ~~Math.ceil(+length)
+  return length < 0 ? 0 : length
+}
+
+function isArray (subject) {
+  return (Array.isArray || function (subject) {
+    return Object.prototype.toString.call(subject) === '[object Array]'
+  })(subject)
+}
+
+function isArrayish (subject) {
+  return isArray(subject) || Buffer.isBuffer(subject) ||
+      subject && typeof subject === 'object' &&
+      typeof subject.length === 'number'
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    var b = str.charCodeAt(i)
+    if (b <= 0x7F)
+      byteArray.push(str.charCodeAt(i))
+    else {
+      var start = i
+      if (b >= 0xD800 && b <= 0xDFFF) i++
+      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
+      for (var j = 0; j < h.length; j++)
+        byteArray.push(parseInt(h[j], 16))
+    }
+  }
+  return byteArray
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; i++) {
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(str)
+}
+
+function blitBuffer (src, dst, offset, length) {
+  var pos
+  for (var i = 0; i < length; i++) {
+    if ((i + offset >= dst.length) || (i >= src.length))
+      break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function decodeUtf8Char (str) {
+  try {
+    return decodeURIComponent(str)
+  } catch (err) {
+    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
+  }
+}
+
+/*
+ * We have to make sure that the value is a valid integer. This means that it
+ * is non-negative. It has no fractional component and that it does not
+ * exceed the maximum allowed value.
+ */
+function verifuint (value, max) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value >= 0, 'specified a negative value for writing an unsigned value')
+  assert(value <= max, 'value is larger than maximum value for type')
+  assert(Math.floor(value) === value, 'value has a fractional component')
+}
+
+function verifsint (value, max, min) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value <= max, 'value larger than maximum allowed value')
+  assert(value >= min, 'value smaller than minimum allowed value')
+  assert(Math.floor(value) === value, 'value has a fractional component')
+}
+
+function verifIEEE754 (value, max, min) {
+  assert(typeof value === 'number', 'cannot write a non-number as a number')
+  assert(value <= max, 'value larger than maximum allowed value')
+  assert(value >= min, 'value smaller than minimum allowed value')
+}
+
+function assert (test, message) {
+  if (!test) throw new Error(message || 'Failed assertion')
+}
+
+},{"base64-js":18,"ieee754":19}],18:[function(require,module,exports){
+var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+;(function (exports) {
+	'use strict';
+
+  var Arr = (typeof Uint8Array !== 'undefined')
+    ? Uint8Array
+    : Array
+
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
+
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
+			return 62 // '+'
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
+			return 63 // '/'
+		if (code < NUMBER)
+			return -1 //no match
+		if (code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if (code < UPPER + 26)
+			return code - UPPER
+		if (code < LOWER + 26)
+			return code - LOWER + 26
+	}
+
+	function b64ToByteArray (b64) {
+		var i, j, l, tmp, placeHolders, arr
+
+		if (b64.length % 4 > 0) {
+			throw new Error('Invalid string. Length must be a multiple of 4')
+		}
+
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+
+		// base64 is 4/3 + up to two characters of the original data
+		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length
+
+		var L = 0
+
+		function push (v) {
+			arr[L++] = v
+		}
+
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+			push((tmp & 0xFF0000) >> 16)
+			push((tmp & 0xFF00) >> 8)
+			push(tmp & 0xFF)
+		}
+
+		if (placeHolders === 2) {
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+			push(tmp & 0xFF)
+		} else if (placeHolders === 1) {
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+			push((tmp >> 8) & 0xFF)
+			push(tmp & 0xFF)
+		}
+
+		return arr
+	}
+
+	function uint8ToBase64 (uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length
+
+		function encode (num) {
+			return lookup.charAt(num)
+		}
+
+		function tripletToBase64 (num) {
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+		}
+
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+			output += tripletToBase64(temp)
+		}
+
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1]
+				output += encode(temp >> 2)
+				output += encode((temp << 4) & 0x3F)
+				output += '=='
+				break
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+				output += encode(temp >> 10)
+				output += encode((temp >> 4) & 0x3F)
+				output += encode((temp << 2) & 0x3F)
+				output += '='
+				break
+		}
+
+		return output
+	}
+
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
+}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
+
+},{}],19:[function(require,module,exports){
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+},{}],20:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require("oMfpAn"))
+},{"oMfpAn":21}],21:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],22:[function(require,module,exports){
+(function (global){
+/*! http://mths.be/punycode v1.2.4 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports = typeof exports == 'object' && exports;
+	var freeModule = typeof module == 'object' && module &&
+		module.exports == freeExports && module;
+	var freeGlobal = typeof global == 'object' && global;
+	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		while (length--) {
+			array[length] = fn(array[length]);
+		}
+		return array;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings.
+	 * @private
+	 * @param {String} domain The domain name.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		return map(string.split(regexSeparators), fn).join('.');
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name to Unicode. Only the
+	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it on a string that has already been converted to
+	 * Unicode.
+	 * @memberOf punycode
+	 * @param {String} domain The Punycode domain name to convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(domain) {
+		return mapDomain(domain, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name to Punycode. Only the
+	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it with a domain that's already in ASCII.
+	 * @memberOf punycode
+	 * @param {String} domain The domain name to convert, as a Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name.
+	 */
+	function toASCII(domain) {
+		return mapDomain(domain, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.2.4',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		typeof define == 'function' &&
+		typeof define.amd == 'object' &&
+		define.amd
+	) {
+		define('punycode', function() {
+			return punycode;
+		});
+	} else if (freeExports && !freeExports.nodeType) {
+		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+			freeModule.exports = punycode;
+		} else { // in Narwhal or RingoJS v0.7.0-
+			for (key in punycode) {
+				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+			}
+		}
+	} else { // in Rhino or a web browser
+		root.punycode = punycode;
+	}
+
+}(this));
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],23:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+},{}],24:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map(objectKeys(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray(obj[k])) {
+        return obj[k].map(function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+      }
+    }).join(sep);
+
+  }
+
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+function map (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
+
+var objectKeys = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
+  return res;
+};
+
+},{}],25:[function(require,module,exports){
+'use strict';
+
+exports.decode = exports.parse = require('./decode');
+exports.encode = exports.stringify = require('./encode');
+
+},{"./decode":23,"./encode":24}],26:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var punycode = require('punycode');
+
+exports.parse = urlParse;
+exports.resolve = urlResolve;
+exports.resolveObject = urlResolveObject;
+exports.format = urlFormat;
+
+exports.Url = Url;
+
+function Url() {
+  this.protocol = null;
+  this.slashes = null;
+  this.auth = null;
+  this.host = null;
+  this.port = null;
+  this.hostname = null;
+  this.hash = null;
+  this.search = null;
+  this.query = null;
+  this.pathname = null;
+  this.path = null;
+  this.href = null;
+}
+
+// Reference: RFC 3986, RFC 1808, RFC 2396
+
+// define these here so at least they only have to be
+// compiled once on the first module load.
+var protocolPattern = /^([a-z0-9.+-]+:)/i,
+    portPattern = /:[0-9]*$/,
+
+    // RFC 2396: characters reserved for delimiting URLs.
+    // We actually just auto-escape these.
+    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+    // RFC 2396: characters not allowed for various reasons.
+    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+
+    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+    autoEscape = ['\''].concat(unwise),
+    // Characters that are never ever allowed in a hostname.
+    // Note that any invalid chars are also handled, but these
+    // are the ones that are *expected* to be seen, so we fast-path
+    // them.
+    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+    hostEndingChars = ['/', '?', '#'],
+    hostnameMaxLen = 255,
+    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
+    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
+    // protocols that can allow "unsafe" and "unwise" chars.
+    unsafeProtocol = {
+      'javascript': true,
+      'javascript:': true
+    },
+    // protocols that never have a hostname.
+    hostlessProtocol = {
+      'javascript': true,
+      'javascript:': true
+    },
+    // protocols that always contain a // bit.
+    slashedProtocol = {
+      'http': true,
+      'https': true,
+      'ftp': true,
+      'gopher': true,
+      'file': true,
+      'http:': true,
+      'https:': true,
+      'ftp:': true,
+      'gopher:': true,
+      'file:': true
+    },
+    querystring = require('querystring');
+
+function urlParse(url, parseQueryString, slashesDenoteHost) {
+  if (url && isObject(url) && url instanceof Url) return url;
+
+  var u = new Url;
+  u.parse(url, parseQueryString, slashesDenoteHost);
+  return u;
+}
+
+Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+  if (!isString(url)) {
+    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
+  }
+
+  var rest = url;
+
+  // trim before proceeding.
+  // This is to support parse stuff like "  http://foo.com  \n"
+  rest = rest.trim();
+
+  var proto = protocolPattern.exec(rest);
+  if (proto) {
+    proto = proto[0];
+    var lowerProto = proto.toLowerCase();
+    this.protocol = lowerProto;
+    rest = rest.substr(proto.length);
+  }
+
+  // figure out if it's got a host
+  // user@server is *always* interpreted as a hostname, and url
+  // resolution will treat //foo/bar as host=foo,path=bar because that's
+  // how the browser resolves relative URLs.
+  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+    var slashes = rest.substr(0, 2) === '//';
+    if (slashes && !(proto && hostlessProtocol[proto])) {
+      rest = rest.substr(2);
+      this.slashes = true;
+    }
+  }
+
+  if (!hostlessProtocol[proto] &&
+      (slashes || (proto && !slashedProtocol[proto]))) {
+
+    // there's a hostname.
+    // the first instance of /, ?, ;, or # ends the host.
+    //
+    // If there is an @ in the hostname, then non-host chars *are* allowed
+    // to the left of the last @ sign, unless some host-ending character
+    // comes *before* the @-sign.
+    // URLs are obnoxious.
+    //
+    // ex:
+    // http://a@b@c/ => user:a@b host:c
+    // http://a@b?@c => user:a host:c path:/?@c
+
+    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+    // Review our test case against browsers more comprehensively.
+
+    // find the first instance of any hostEndingChars
+    var hostEnd = -1;
+    for (var i = 0; i < hostEndingChars.length; i++) {
+      var hec = rest.indexOf(hostEndingChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
+    }
+
+    // at this point, either we have an explicit point where the
+    // auth portion cannot go past, or the last @ char is the decider.
+    var auth, atSign;
+    if (hostEnd === -1) {
+      // atSign can be anywhere.
+      atSign = rest.lastIndexOf('@');
+    } else {
+      // atSign must be in auth portion.
+      // http://a@b/c@d => host:b auth:a path:/c@d
+      atSign = rest.lastIndexOf('@', hostEnd);
+    }
+
+    // Now we have a portion which is definitely the auth.
+    // Pull that off.
+    if (atSign !== -1) {
+      auth = rest.slice(0, atSign);
+      rest = rest.slice(atSign + 1);
+      this.auth = decodeURIComponent(auth);
+    }
+
+    // the host is the remaining to the left of the first non-host char
+    hostEnd = -1;
+    for (var i = 0; i < nonHostChars.length; i++) {
+      var hec = rest.indexOf(nonHostChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
+    }
+    // if we still have not hit it, then the entire thing is a host.
+    if (hostEnd === -1)
+      hostEnd = rest.length;
+
+    this.host = rest.slice(0, hostEnd);
+    rest = rest.slice(hostEnd);
+
+    // pull out port.
+    this.parseHost();
+
+    // we've indicated that there is a hostname,
+    // so even if it's empty, it has to be present.
+    this.hostname = this.hostname || '';
+
+    // if hostname begins with [ and ends with ]
+    // assume that it's an IPv6 address.
+    var ipv6Hostname = this.hostname[0] === '[' &&
+        this.hostname[this.hostname.length - 1] === ']';
+
+    // validate a little.
+    if (!ipv6Hostname) {
+      var hostparts = this.hostname.split(/\./);
+      for (var i = 0, l = hostparts.length; i < l; i++) {
+        var part = hostparts[i];
+        if (!part) continue;
+        if (!part.match(hostnamePartPattern)) {
+          var newpart = '';
+          for (var j = 0, k = part.length; j < k; j++) {
+            if (part.charCodeAt(j) > 127) {
+              // we replace non-ASCII char with a temporary placeholder
+              // we need this to make sure size of hostname is not
+              // broken by replacing non-ASCII by nothing
+              newpart += 'x';
+            } else {
+              newpart += part[j];
+            }
+          }
+          // we test again with ASCII char only
+          if (!newpart.match(hostnamePartPattern)) {
+            var validParts = hostparts.slice(0, i);
+            var notHost = hostparts.slice(i + 1);
+            var bit = part.match(hostnamePartStart);
+            if (bit) {
+              validParts.push(bit[1]);
+              notHost.unshift(bit[2]);
+            }
+            if (notHost.length) {
+              rest = '/' + notHost.join('.') + rest;
+            }
+            this.hostname = validParts.join('.');
+            break;
+          }
+        }
+      }
+    }
+
+    if (this.hostname.length > hostnameMaxLen) {
+      this.hostname = '';
+    } else {
+      // hostnames are always lower case.
+      this.hostname = this.hostname.toLowerCase();
+    }
+
+    if (!ipv6Hostname) {
+      // IDNA Support: Returns a puny coded representation of "domain".
+      // It only converts the part of the domain name that
+      // has non ASCII characters. I.e. it dosent matter if
+      // you call it with a domain that already is in ASCII.
+      var domainArray = this.hostname.split('.');
+      var newOut = [];
+      for (var i = 0; i < domainArray.length; ++i) {
+        var s = domainArray[i];
+        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
+            'xn--' + punycode.encode(s) : s);
+      }
+      this.hostname = newOut.join('.');
+    }
+
+    var p = this.port ? ':' + this.port : '';
+    var h = this.hostname || '';
+    this.host = h + p;
+    this.href += this.host;
+
+    // strip [ and ] from the hostname
+    // the host field still retains them, though
+    if (ipv6Hostname) {
+      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
+      if (rest[0] !== '/') {
+        rest = '/' + rest;
+      }
+    }
+  }
+
+  // now rest is set to the post-host stuff.
+  // chop off any delim chars.
+  if (!unsafeProtocol[lowerProto]) {
+
+    // First, make 100% sure that any "autoEscape" chars get
+    // escaped, even if encodeURIComponent doesn't think they
+    // need to be.
+    for (var i = 0, l = autoEscape.length; i < l; i++) {
+      var ae = autoEscape[i];
+      var esc = encodeURIComponent(ae);
+      if (esc === ae) {
+        esc = escape(ae);
+      }
+      rest = rest.split(ae).join(esc);
+    }
+  }
+
+
+  // chop off from the tail first.
+  var hash = rest.indexOf('#');
+  if (hash !== -1) {
+    // got a fragment string.
+    this.hash = rest.substr(hash);
+    rest = rest.slice(0, hash);
+  }
+  var qm = rest.indexOf('?');
+  if (qm !== -1) {
+    this.search = rest.substr(qm);
+    this.query = rest.substr(qm + 1);
+    if (parseQueryString) {
+      this.query = querystring.parse(this.query);
+    }
+    rest = rest.slice(0, qm);
+  } else if (parseQueryString) {
+    // no query string, but parseQueryString still requested
+    this.search = '';
+    this.query = {};
+  }
+  if (rest) this.pathname = rest;
+  if (slashedProtocol[lowerProto] &&
+      this.hostname && !this.pathname) {
+    this.pathname = '/';
+  }
+
+  //to support http.request
+  if (this.pathname || this.search) {
+    var p = this.pathname || '';
+    var s = this.search || '';
+    this.path = p + s;
+  }
+
+  // finally, reconstruct the href based on what has been validated.
+  this.href = this.format();
+  return this;
+};
+
+// format a parsed object into a url string
+function urlFormat(obj) {
+  // ensure it's an object, and not a string url.
+  // If it's an obj, this is a no-op.
+  // this way, you can call url_format() on strings
+  // to clean up potentially wonky urls.
+  if (isString(obj)) obj = urlParse(obj);
+  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
+  return obj.format();
+}
+
+Url.prototype.format = function() {
+  var auth = this.auth || '';
+  if (auth) {
+    auth = encodeURIComponent(auth);
+    auth = auth.replace(/%3A/i, ':');
+    auth += '@';
+  }
+
+  var protocol = this.protocol || '',
+      pathname = this.pathname || '',
+      hash = this.hash || '',
+      host = false,
+      query = '';
+
+  if (this.host) {
+    host = auth + this.host;
+  } else if (this.hostname) {
+    host = auth + (this.hostname.indexOf(':') === -1 ?
+        this.hostname :
+        '[' + this.hostname + ']');
+    if (this.port) {
+      host += ':' + this.port;
+    }
+  }
+
+  if (this.query &&
+      isObject(this.query) &&
+      Object.keys(this.query).length) {
+    query = querystring.stringify(this.query);
+  }
+
+  var search = this.search || (query && ('?' + query)) || '';
+
+  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+  // unless they had them to begin with.
+  if (this.slashes ||
+      (!protocol || slashedProtocol[protocol]) && host !== false) {
+    host = '//' + (host || '');
+    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+  } else if (!host) {
+    host = '';
+  }
+
+  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+  pathname = pathname.replace(/[?#]/g, function(match) {
+    return encodeURIComponent(match);
+  });
+  search = search.replace('#', '%23');
+
+  return protocol + host + pathname + search + hash;
+};
+
+function urlResolve(source, relative) {
+  return urlParse(source, false, true).resolve(relative);
+}
+
+Url.prototype.resolve = function(relative) {
+  return this.resolveObject(urlParse(relative, false, true)).format();
+};
+
+function urlResolveObject(source, relative) {
+  if (!source) return relative;
+  return urlParse(source, false, true).resolveObject(relative);
+}
+
+Url.prototype.resolveObject = function(relative) {
+  if (isString(relative)) {
+    var rel = new Url();
+    rel.parse(relative, false, true);
+    relative = rel;
+  }
+
+  var result = new Url();
+  Object.keys(this).forEach(function(k) {
+    result[k] = this[k];
+  }, this);
+
+  // hash is always overridden, no matter what.
+  // even href="" will remove it.
+  result.hash = relative.hash;
+
+  // if the relative url is empty, then there's nothing left to do here.
+  if (relative.href === '') {
+    result.href = result.format();
+    return result;
+  }
+
+  // hrefs like //foo/bar always cut to the protocol.
+  if (relative.slashes && !relative.protocol) {
+    // take everything except the protocol from relative
+    Object.keys(relative).forEach(function(k) {
+      if (k !== 'protocol')
+        result[k] = relative[k];
+    });
+
+    //urlParse appends trailing / to urls like http://www.example.com
+    if (slashedProtocol[result.protocol] &&
+        result.hostname && !result.pathname) {
+      result.path = result.pathname = '/';
+    }
+
+    result.href = result.format();
+    return result;
+  }
+
+  if (relative.protocol && relative.protocol !== result.protocol) {
+    // if it's a known url protocol, then changing
+    // the protocol does weird things
+    // first, if it's not file:, then we MUST have a host,
+    // and if there was a path
+    // to begin with, then we MUST have a path.
+    // if it is file:, then the host is dropped,
+    // because that's known to be hostless.
+    // anything else is assumed to be absolute.
+    if (!slashedProtocol[relative.protocol]) {
+      Object.keys(relative).forEach(function(k) {
+        result[k] = relative[k];
+      });
+      result.href = result.format();
+      return result;
+    }
+
+    result.protocol = relative.protocol;
+    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+      var relPath = (relative.pathname || '').split('/');
+      while (relPath.length && !(relative.host = relPath.shift()));
+      if (!relative.host) relative.host = '';
+      if (!relative.hostname) relative.hostname = '';
+      if (relPath[0] !== '') relPath.unshift('');
+      if (relPath.length < 2) relPath.unshift('');
+      result.pathname = relPath.join('/');
+    } else {
+      result.pathname = relative.pathname;
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    result.host = relative.host || '';
+    result.auth = relative.auth;
+    result.hostname = relative.hostname || relative.host;
+    result.port = relative.port;
+    // to support http.request
+    if (result.pathname || result.search) {
+      var p = result.pathname || '';
+      var s = result.search || '';
+      result.path = p + s;
+    }
+    result.slashes = result.slashes || relative.slashes;
+    result.href = result.format();
+    return result;
+  }
+
+  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
+      isRelAbs = (
+          relative.host ||
+          relative.pathname && relative.pathname.charAt(0) === '/'
+      ),
+      mustEndAbs = (isRelAbs || isSourceAbs ||
+                    (result.host && relative.pathname)),
+      removeAllDots = mustEndAbs,
+      srcPath = result.pathname && result.pathname.split('/') || [],
+      relPath = relative.pathname && relative.pathname.split('/') || [],
+      psychotic = result.protocol && !slashedProtocol[result.protocol];
+
+  // if the url is a non-slashed url, then relative
+  // links like ../.. should be able
+  // to crawl up to the hostname, as well.  This is strange.
+  // result.protocol has already been set by now.
+  // Later on, put the first path part into the host field.
+  if (psychotic) {
+    result.hostname = '';
+    result.port = null;
+    if (result.host) {
+      if (srcPath[0] === '') srcPath[0] = result.host;
+      else srcPath.unshift(result.host);
+    }
+    result.host = '';
+    if (relative.protocol) {
+      relative.hostname = null;
+      relative.port = null;
+      if (relative.host) {
+        if (relPath[0] === '') relPath[0] = relative.host;
+        else relPath.unshift(relative.host);
+      }
+      relative.host = null;
+    }
+    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+  }
+
+  if (isRelAbs) {
+    // it's absolute.
+    result.host = (relative.host || relative.host === '') ?
+                  relative.host : result.host;
+    result.hostname = (relative.hostname || relative.hostname === '') ?
+                      relative.hostname : result.hostname;
+    result.search = relative.search;
+    result.query = relative.query;
+    srcPath = relPath;
+    // fall through to the dot-handling below.
+  } else if (relPath.length) {
+    // it's relative
+    // throw away the existing file, and take the new path instead.
+    if (!srcPath) srcPath = [];
+    srcPath.pop();
+    srcPath = srcPath.concat(relPath);
+    result.search = relative.search;
+    result.query = relative.query;
+  } else if (!isNullOrUndefined(relative.search)) {
+    // just pull out the search.
+    // like href='?foo'.
+    // Put this after the other two cases because it simplifies the booleans
+    if (psychotic) {
+      result.hostname = result.host = srcPath.shift();
+      //occationaly the auth can get stuck only in host
+      //this especialy happens in cases like
+      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+      var authInHost = result.host && result.host.indexOf('@') > 0 ?
+                       result.host.split('@') : false;
+      if (authInHost) {
+        result.auth = authInHost.shift();
+        result.host = result.hostname = authInHost.shift();
+      }
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    //to support http.request
+    if (!isNull(result.pathname) || !isNull(result.search)) {
+      result.path = (result.pathname ? result.pathname : '') +
+                    (result.search ? result.search : '');
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  if (!srcPath.length) {
+    // no path at all.  easy.
+    // we've already handled the other stuff above.
+    result.pathname = null;
+    //to support http.request
+    if (result.search) {
+      result.path = '/' + result.search;
+    } else {
+      result.path = null;
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  // if a url ENDs in . or .., then it must get a trailing slash.
+  // however, if it ends in anything else non-slashy,
+  // then it must NOT get a trailing slash.
+  var last = srcPath.slice(-1)[0];
+  var hasTrailingSlash = (
+      (result.host || relative.host) && (last === '.' || last === '..') ||
+      last === '');
+
+  // strip single dots, resolve double dots to parent dir
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = srcPath.length; i >= 0; i--) {
+    last = srcPath[i];
+    if (last == '.') {
+      srcPath.splice(i, 1);
+    } else if (last === '..') {
+      srcPath.splice(i, 1);
+      up++;
+    } else if (up) {
+      srcPath.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (!mustEndAbs && !removeAllDots) {
+    for (; up--; up) {
+      srcPath.unshift('..');
+    }
+  }
+
+  if (mustEndAbs && srcPath[0] !== '' &&
+      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+    srcPath.unshift('');
+  }
+
+  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
+    srcPath.push('');
+  }
+
+  var isAbsolute = srcPath[0] === '' ||
+      (srcPath[0] && srcPath[0].charAt(0) === '/');
+
+  // put the host back
+  if (psychotic) {
+    result.hostname = result.host = isAbsolute ? '' :
+                                    srcPath.length ? srcPath.shift() : '';
+    //occationaly the auth can get stuck only in host
+    //this especialy happens in cases like
+    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+    var authInHost = result.host && result.host.indexOf('@') > 0 ?
+                     result.host.split('@') : false;
+    if (authInHost) {
+      result.auth = authInHost.shift();
+      result.host = result.hostname = authInHost.shift();
+    }
+  }
+
+  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
+
+  if (mustEndAbs && !isAbsolute) {
+    srcPath.unshift('');
+  }
+
+  if (!srcPath.length) {
+    result.pathname = null;
+    result.path = null;
+  } else {
+    result.pathname = srcPath.join('/');
+  }
+
+  //to support request.http
+  if (!isNull(result.pathname) || !isNull(result.search)) {
+    result.path = (result.pathname ? result.pathname : '') +
+                  (result.search ? result.search : '');
+  }
+  result.auth = relative.auth || result.auth;
+  result.slashes = result.slashes || relative.slashes;
+  result.href = result.format();
+  return result;
+};
+
+Url.prototype.parseHost = function() {
+  var host = this.host;
+  var port = portPattern.exec(host);
+  if (port) {
+    port = port[0];
+    if (port !== ':') {
+      this.port = port.substr(1);
+    }
+    host = host.substr(0, host.length - port.length);
+  }
+  if (host) this.hostname = host;
+};
+
+function isString(arg) {
+  return typeof arg === "string";
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isNull(arg) {
+  return arg === null;
+}
+function isNullOrUndefined(arg) {
+  return  arg == null;
+}
+
+},{"punycode":22,"querystring":25}],27:[function(require,module,exports){
+(function (process){
+// Haml - Copyright TJ Holowaychuk <tj@vision-media.ca> (MIT Licensed)
+
+var HAML = {};
+
+/**
+ * Version.
+ */
+
+HAML.version = '0.6.2'
+
+/**
+ * Haml template cache.
+ */
+
+HAML.cache = {}
+
+/**
+ * Default error context length.
+ */
+
+HAML.errorContextLength = 15
+
+/**
+ * Self closing tags.
+ */
+
+HAML.selfClosing = [
+    'meta',
+    'img',
+    'link',
+    'br',
+    'hr',
+    'input',
+    'area',
+    'base'
+  ]
+
+/**
+ * Default supported doctypes.
+ */
+
+HAML.doctypes = {
+  '5': '<!DOCTYPE html>',
+  'xml': '<?xml version="1.0" encoding="utf-8" ?>',
+  'default': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+  'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+  'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
+  '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
+  'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">',
+  'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
+}
+
+/**
+ * Default filters.
+ */
+
+HAML.filters = {
+
+  /**
+   * Return plain string.
+   */
+
+  plain: function(str, buf) {
+    buf.push(str)
+  },
+
+  /**
+   * Wrap with CDATA tags.
+   */
+
+  cdata: function(str, buf) {
+    buf.push('<![CDATA[\n' + str + '\n]]>')
+  },
+
+  /**
+   * Wrap with <script> and CDATA tags.
+   */
+
+  javascript: function(str, buf) {
+    buf.push('<script type="text/javascript">\n//<![CDATA[\n' + str + '\n//]]></script>')
+  }
+}
+
+/**
+ * HamlError.
+ */
+
+var HamlError = HAML.HamlError = function(msg) {
+    this.name = 'HamlError'
+    this.message = msg
+    Error.captureStackTrace(this, HAML.render)
+}
+
+/**
+ * HamlError inherits from Error.
+ */
+HamlError.super_ = Error;
+HamlError.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: HamlError,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
+});
+
+/**
+ * Lexing rules.
+ */
+
+var rules = {
+  indent: /^\n( *)(?! *-#)/,
+  conditionalComment: /^\/(\[[^\n]+\])/,
+  comment: /^\n? *\/ */,
+  silentComment: /^\n? *-#([^\n]*)/,
+  doctype: /^!!! *([^\n]*)/,
+  escape: /^\\(.)/,
+  filter: /^:(\w+) */,
+  each: /^\- *each *(\w+)(?: *, *(\w+))? * in ([^\n]+)/,
+  code: /^\-([^\n]+)/,
+  outputCode: /^!=([^\n]+)/,
+  escapeCode: /^=([^\n]+)/,
+  attrs: /^\{(.*?)\}/,
+  tag: /^%([-a-zA-Z][-a-zA-Z0-9:]*)/,
+  class: /^\.([\w\-]+)/,
+  id: /^\#([\w\-]+)/,
+  text: /^([^\n]+)/
+}
+
+/**
+ * Return error context _str_.
+ *
+ * @param  {string} str
+ * @return {string}
+ * @api private
+ */
+
+function context(str) {
+  return String(str)
+    .substr(0, HAML.errorContextLength)
+    .replace(/\n/g, '\\n')
+}
+
+/**
+ * Tokenize _str_.
+ *
+ * @param  {string} str
+ * @return {array}
+ * @api private
+ */
+
+function tokenize(str) {
+  var captures,
+      token,
+      tokens = [],
+      line = 1,
+      lastIndents = 0,
+      str = String(str).trim().replace(/\r\n|\r|\n *\n/g, '\n')
+  function error(msg){ throw new HamlError('(Haml):' + line + ' ' + msg) }
+  while (str.length) {
+    for (var type in rules)
+      if (captures = rules[type].exec(str)) {
+        token = {
+          type: type,
+          line: line,
+          match: captures[0],
+          val: captures.length > 2
+            ? captures.slice(1)
+            : captures[1]
+        }
+        str = str.substr(captures[0].length)
+        if (type === 'indent') ++line
+        else  break
+        var indents = token.val.length / 2
+        if (indents % 1)
+          error('invalid indentation; got ' + token.val.length + ' spaces, should be multiple of 2')
+        else if (indents - 1 > lastIndents)
+          error('invalid indentation; got ' + indents + ', when previous was ' + lastIndents)
+        else if (lastIndents > indents)
+          while (lastIndents-- > indents)
+            tokens.push({ type: 'outdent', line: line })
+        else if (lastIndents !== indents)
+          tokens.push({ type: 'indent', line: line })
+        else
+          tokens.push({ type: 'newline', line: line })
+        lastIndents = indents
+      }
+    if (token) {
+      if (token.type !== 'silentComment')
+        tokens.push(token)
+      token = null
+    } else
+      error('near "' + context(str) + '"')
+  }
+  return tokens.concat({ type: 'eof' })
+}
+
+// --- Parser
+
+/**
+ * Initialize parser with _str_ and _options_.
+ */
+
+var Parser = HAML.Parser = function (str, options) {
+  options = options || {}
+  this.tokens = tokenize(str)
+  this.xml = options.xml
+}
+
+Parser.prototype = {
+
+  /**
+   * Lookahead a single token.
+   *
+   * @return {object}
+   * @api private
+   */
+
+  get peek() {
+    return this.tokens[0]
+  },
+
+  /**
+   * Advance a single token.
+   *
+   * @return {object}
+   * @api private
+   */
+
+  get advance() {
+    return this.current = this.tokens.shift()
+  },
+
+  /**
+   *    outdent
+   *  | eof
+   */
+
+  get outdent() {
+    switch (this.peek.type) {
+      case 'eof':
+        return
+      case 'outdent':
+        return this.advance
+      default:
+        throw new HamlError('expected outdent, got ' + this.peek.type)
+    }
+  },
+
+  /**
+   * text
+   */
+
+  get text() {
+    var text = this.advance.val.trim();
+
+    // String interpolation
+    text = text.replace(/#\{(.*)\}/, '" + $1 + "')
+
+    this.buffer(text)
+  },
+
+  /**
+   * indent expr outdent
+   */
+
+  get block() {
+    this.advance
+    while (this.peek.type !== 'outdent' &&
+           this.peek.type !== 'eof')
+      this.expr
+    this.outdent
+  },
+
+  /**
+   * indent expr
+   */
+
+  get textBlock() {
+    var token,
+        indents = 1
+    this.advance
+    while (this.peek.type !== 'eof' && indents)
+      switch((token = this.advance).type) {
+        case 'newline':
+          this.buffer('\\n' + Array(indents).join('  ') + '')
+          break
+        case 'indent':
+          ++indents
+          this.buffer('\\n' + Array(indents).join('  ') + '')
+          break
+        case 'outdent':
+          --indents
+          if (indents === 1) this.buffer('\\n')
+          break
+        default:
+          this.buffer(token.match.replace(/"/g, '\\\"'))
+      }
+  },
+
+  /**
+   *  ( attrs | class | id )*
+   */
+
+  get attrs() {
+    var attrs = ['attrs', 'class', 'id'],
+        buf = []
+
+    while (attrs.indexOf(this.peek.type) !== -1)
+      switch (this.peek.type) {
+        case 'id':
+          buf.push('{ id: "' + this.advance.val + '" }')
+          break
+        case 'class':
+          buf.push('{ class: "' + this.advance.val + '" }');
+          break
+        case 'attrs':
+          buf.push('{ ' + this.advance.val.replace(/(for) *:/gi, '"$1":') + ' }')
+      }
+
+    return buf.length
+      ? ' " + attrs([' + buf.join(', ') + ']) + "'
+      : ''
+  },
+
+  /**
+   *   tag
+   * | tag text
+   * | tag conditionalComment
+   * | tag comment
+   * | tag outputCode
+   * | tag escapeCode
+   * | tag block
+   */
+
+  get tag() {
+    var tag = this.advance.val,
+        selfClosing = !this.xml && HAML.selfClosing.indexOf(tag) !== -1
+
+    this.buffer('\\n<' + tag + this.attrs + (selfClosing ? '/>' : '>'));
+    switch (this.peek.type) {
+      case 'text':
+        this.text
+        break
+      case 'conditionalComment':
+        this.conditionalComment
+        break;
+      case 'comment':
+        this.comment
+        break
+      case 'outputCode':
+        this.outputCode
+        break
+      case 'escapeCode':
+        this.escapeCode
+        break
+      case 'indent':
+        this.block
+    }
+    if (!selfClosing) this.buffer('</' + tag + '>')
+  },
+
+  /**
+   * outputCode
+   */
+
+  get outputCode() {
+    this.buffer(this.advance.val, false)
+  },
+
+  /**
+   * escapeCode
+   */
+
+  get escapeCode() {
+    this.buffer('escape(' + this.advance.val + ')', false)
+  },
+
+  /**
+   * doctype
+   */
+
+  get doctype() {
+    var doctype = this.advance.val.trim().toLowerCase() || 'default'
+    if (doctype in HAML.doctypes)
+      this.buffer(HAML.doctypes[doctype].replace(/"/g, '\\"'))
+    else
+      throw new HamlError("doctype `" + doctype + "' does not exist")
+  },
+
+  /**
+   * conditional comment expr
+   */
+
+  get conditionalComment() {
+    var condition= this.advance.val
+
+    this.buffer('<!--' + condition + '>')
+
+    this.peek.type === 'indent'
+      ? this.block
+      : this.expr
+
+    this.buffer('<![endif]-->')
+  },
+
+  /**
+   * comment expr
+   */
+
+  get comment() {
+    this.advance
+    this.buffer('<!-- ')
+    var buf = this.peek.type === 'indent'
+      ? this.block
+      : this.expr
+    this.buffer(' -->')
+  },
+
+  /**
+   *   code
+   * | code block
+   */
+
+  get code() {
+    var code = this.advance.val
+
+    if (this.peek.type === 'indent') {
+      this.buf.push(code)
+      this.buf.push('{')
+      this.block
+      this.buf.push('}')
+      return
+    }
+
+    this.buf.push(code)
+  },
+
+  /**
+   * filter textBlock
+   */
+
+  get filter() {
+    var filter = this.advance.val
+    if (!(filter in HAML.filters))
+      throw new HamlError("filter `" + filter + "' does not exist")
+    if (this.peek.type !== 'indent')
+      throw new HamlError("filter `" + filter + "' expects a text block")
+
+    this.buf.push('HAML.filters.' + filter + '(')
+    this.buf.push('(function(){')
+    this.buf.push('var buf = []')
+    this.textBlock
+    this.buf.push('return buf.join("")')
+    this.buf.push('}).call(this)')
+    this.buf.push(', buf)')
+  },
+
+  /**
+   * each block
+   */
+
+  get iterate() {
+    var each = this.advance,
+      key = each.val[1],
+      vals = each.val[2],
+      val = each.val[0]
+
+    if (this.peek.type !== 'indent')
+      throw new HamlError("'- each' expects a block, but got " + this.peek.type)
+
+    this.buf.push('for (var ' + (key || 'index') + ' in ' + vals + ') {')
+    this.buf.push('var ' + val + ' = ' + vals + '[' + (key || 'index') + '];')
+
+    this.block
+
+    this.buf.push('}')
+  },
+
+  /**
+   *   eof
+   * | tag
+   * | text*
+   * | each
+   * | code
+   * | escape
+   * | doctype
+   * | filter
+   * | comment
+   * | conditionalComment
+   * | escapeCode
+   * | outputCode
+   */
+
+  get expr() {
+    switch (this.peek.type) {
+      case 'id':
+      case 'class':
+        this.tokens.unshift({ type: 'tag', val: 'div' })
+        return this.tag
+      case 'tag':
+        return this.tag
+      case 'text':
+        var buf = []
+        while (this.peek.type === 'text') {
+          buf.push(this.advance.val.trim())
+          if (this.peek.type === 'newline')
+            this.advance
+        }
+        return this.buffer(buf.join(' '))
+      case 'each':
+        return this.iterate
+      case 'code':
+        return this.code
+      case 'escape':
+        return this.buffer(this.advance.val);
+      case 'doctype':
+        return this.doctype
+      case 'filter':
+        return this.filter
+      case 'conditionalComment':
+        return this.conditionalComment
+      case 'comment':
+        return this.comment
+      case 'escapeCode':
+        return this.escapeCode
+      case 'outputCode':
+        return this.outputCode
+      case 'newline':
+      case 'indent':
+      case 'outdent':
+        this.advance
+        return this.expr
+      default:
+        throw new HamlError('unexpected ' + this.peek.type)
+    }
+  },
+
+  /**
+   * expr*
+   */
+
+  get js() {
+    this.buf = [
+      'with (locals || {}) {',
+      '  var buf = [];'
+    ]
+
+    while (this.peek.type !== 'eof')
+      this.expr
+
+    this.buf.push('  return buf.join("")')
+    this.buf.push('}');
+
+    return this.buf.join('\n')
+  },
+
+  buffer: function (str, quoted) {
+    if (typeof quoted === 'undefined')
+      var quoted = true
+
+    if (quoted)
+      this.buf.push('  buf.push("' + str + '")')
+    else
+      this.buf.push('  buf.push(' + str + ')')
+  }
+}
+
+/**
+ * Escape html entities in _str_.
+ *
+ * @param  {string} str
+ * @return {string}
+ * @api private
+ */
+
+function escape(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/>/g, '&gt;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;')
+}
+
+/**
+ * Render _attrs_ to html escaped attributes.
+ *
+ * @param  {array} attrs
+ * @return {string}
+ * @api public
+ */
+
+function attrs(attrs) {
+  var finalAttrs = {}
+    , classes = []
+    , buf = []
+
+  for (var i = 0, len = attrs.length; i < len; i++)
+    for (var attrName in attrs[i])
+      if (attrName === 'class')
+        classes.push(attrs[i][attrName])
+      else
+        finalAttrs[attrName] = attrs[i][attrName]
+
+  if (classes.length)
+    finalAttrs['class'] = classes.join(' ')
+
+  for (var key in finalAttrs)
+    if (typeof finalAttrs[key] === 'boolean') {
+      if (finalAttrs[key] === true)
+        buf.push(key + '="' + key + '"')
+    } else if (finalAttrs[key])
+      buf.push(key + '="' + escape(finalAttrs[key]) + '"')
+  return buf.join(' ')
+}
+
+/**
+ * Compile a function from the given `str`.
+ *
+ * @param {String} str
+ * @return {Function}
+ * @api public
+ */
+
+HAML.compile = function(str, options){
+  var parser = new Parser(str, options);
+  var fn = new Function('locals, attrs, escape, HAML', parser.js);
+  return function(locals){
+    return fn.apply(this, [locals, attrs, escape, HAML]);
+  };
+};
+
+/**
+ * Render a _str_ of haml.
+ *
+ * Options:
+ *
+ *   - locals   Local variables available to the template
+ *   - context  Context in which the template is evaluated (becoming "this")
+ *   - filename Filename used to aid in error reporting
+ *   - cache    Cache compiled javascript, requires "filename"
+ *   - xml      Force xml support (no self-closing tags)
+ *
+ * @param  {string} str
+ * @param  {object} options
+ * @return {string}
+ * @api public
+ */
+
+HAML.render = function(str, options) {
+  var parser,
+      options = options || {}
+  if (options.cache && !options.filename)
+    throw new Error('filename option must be passed when cache is enabled')
+  return (function(){
+    try {
+      var fn
+      if (options.cache && HAML.cache[options.filename])
+        fn = HAML.cache[options.filename]
+      else {
+        parser = new Parser(str, options)
+        fn = Function('locals, attrs, escape, HAML', parser.js)
+      }
+      return (options.cache
+          ? HAML.cache[options.filename] = fn
+          : fn).call(options.context, options.locals, attrs, escape, HAML)
+    } catch (err) {
+      if (parser && err instanceof HamlError)
+        err.message = '(Haml):' + parser.peek.line + ' ' + err.message
+      else if (!(err instanceof HamlError))
+        err.message = '(Haml): ' + err.message
+      if (options.filename)
+        err.message = err.message.replace('Haml', options.filename)
+      throw err
+    }
+  }).call(options.context)
+}
+
+/**
+ * Render a file containing haml and cache the parser.
+ *
+ * @param  {string} filename
+ * @param  {string} encoding
+ * @param  {object} options
+ * @param  {function} callback
+ * @return {void}
+ * @api public
+ */
+
+HAML.renderFile = function(filename, encoding, options, callback) {
+  var fs = require('fs');
+  options = options || {}
+  options.filename = options.filename || filename
+  options.cache = options.hasOwnProperty('cache') ? options.cache : true
+
+  if (HAML.cache[filename]) {
+    process.nextTick(function() {
+      callback(null, HAML.render(null, options))
+    });
+  } else {
+    fs.readFile(filename, encoding, function(err, str) {
+      if (err) {
+        callback(err)
+      } else {
+        callback(null, HAML.render(str, options))
+      }
+    });
+  }
+}
+
+module.exports = HAML;
+
+}).call(this,require("oMfpAn"))
+},{"fs":15,"oMfpAn":21}],28:[function(require,module,exports){
+'use strict';
+
+var nodes = require('./nodes');
+var filters = require('./filters');
+var doctypes = require('./doctypes');
+var runtime = require('./runtime');
+var utils = require('./utils');
+var selfClosing = require('void-elements');
+var parseJSExpression = require('character-parser').parseMax;
+var constantinople = require('constantinople');
+
+function isConstant(src) {
+  return constantinople(src, {jade: runtime, 'jade_interp': undefined});
+}
+function toConstant(src) {
+  return constantinople.toConstant(src, {jade: runtime, 'jade_interp': undefined});
+}
+function errorAtNode(node, error) {
+  error.line = node.line;
+  error.filename = node.filename;
+  return error;
+}
+
+/**
+ * Initialize `Compiler` with the given `node`.
+ *
+ * @param {Node} node
+ * @param {Object} options
+ * @api public
+ */
+
+var Compiler = module.exports = function Compiler(node, options) {
+  this.options = options = options || {};
+  this.node = node;
+  this.hasCompiledDoctype = false;
+  this.hasCompiledTag = false;
+  this.pp = options.pretty || false;
+  if (this.pp && typeof this.pp !== 'string') {
+    this.pp = '  ';
+  }
+  this.debug = false !== options.compileDebug;
+  this.indents = 0;
+  this.parentIndents = 0;
+  this.terse = false;
+  this.mixins = {};
+  this.dynamicMixins = false;
+  if (options.doctype) this.setDoctype(options.doctype);
+};
+
+/**
+ * Compiler prototype.
+ */
+
+Compiler.prototype = {
+
+  /**
+   * Compile parse tree to JavaScript.
+   *
+   * @api public
+   */
+
+  compile: function(){
+    this.buf = [];
+    if (this.pp) this.buf.push("var jade_indent = [];");
+    this.lastBufferedIdx = -1;
+    this.visit(this.node);
+    if (!this.dynamicMixins) {
+      // if there are no dynamic mixins we can remove any un-used mixins
+      var mixinNames = Object.keys(this.mixins);
+      for (var i = 0; i < mixinNames.length; i++) {
+        var mixin = this.mixins[mixinNames[i]];
+        if (!mixin.used) {
+          for (var x = 0; x < mixin.instances.length; x++) {
+            for (var y = mixin.instances[x].start; y < mixin.instances[x].end; y++) {
+              this.buf[y] = '';
+            }
+          }
+        }
+      }
+    }
+    return this.buf.join('\n');
+  },
+
+  /**
+   * Sets the default doctype `name`. Sets terse mode to `true` when
+   * html 5 is used, causing self-closing tags to end with ">" vs "/>",
+   * and boolean attributes are not mirrored.
+   *
+   * @param {string} name
+   * @api public
+   */
+
+  setDoctype: function(name){
+    this.doctype = doctypes[name.toLowerCase()] || '<!DOCTYPE ' + name + '>';
+    this.terse = this.doctype.toLowerCase() == '<!doctype html>';
+    this.xml = 0 == this.doctype.indexOf('<?xml');
+  },
+
+  /**
+   * Buffer the given `str` exactly as is or with interpolation
+   *
+   * @param {String} str
+   * @param {Boolean} interpolate
+   * @api public
+   */
+
+  buffer: function (str, interpolate) {
+    var self = this;
+    if (interpolate) {
+      var match = /(\\)?([#!]){((?:.|\n)*)$/.exec(str);
+      if (match) {
+        this.buffer(str.substr(0, match.index), false);
+        if (match[1]) { // escape
+          this.buffer(match[2] + '{', false);
+          this.buffer(match[3], true);
+          return;
+        } else {
+          var rest = match[3];
+          var range = parseJSExpression(rest);
+          var code = ('!' == match[2] ? '' : 'jade.escape') + "((jade_interp = " + range.src + ") == null ? '' : jade_interp)";
+          this.bufferExpression(code);
+          this.buffer(rest.substr(range.end + 1), true);
+          return;
+        }
+      }
+    }
+
+    str = utils.stringify(str);
+    str = str.substr(1, str.length - 2);
+
+    if (this.lastBufferedIdx == this.buf.length) {
+      if (this.lastBufferedType === 'code') this.lastBuffered += ' + "';
+      this.lastBufferedType = 'text';
+      this.lastBuffered += str;
+      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + '");'
+    } else {
+      this.buf.push('buf.push("' + str + '");');
+      this.lastBufferedType = 'text';
+      this.bufferStartChar = '"';
+      this.lastBuffered = str;
+      this.lastBufferedIdx = this.buf.length;
+    }
+  },
+
+  /**
+   * Buffer the given `src` so it is evaluated at run time
+   *
+   * @param {String} src
+   * @api public
+   */
+
+  bufferExpression: function (src) {
+    if (isConstant(src)) {
+      return this.buffer(toConstant(src) + '', false)
+    }
+    if (this.lastBufferedIdx == this.buf.length) {
+      if (this.lastBufferedType === 'text') this.lastBuffered += '"';
+      this.lastBufferedType = 'code';
+      this.lastBuffered += ' + (' + src + ')';
+      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + ');'
+    } else {
+      this.buf.push('buf.push(' + src + ');');
+      this.lastBufferedType = 'code';
+      this.bufferStartChar = '';
+      this.lastBuffered = '(' + src + ')';
+      this.lastBufferedIdx = this.buf.length;
+    }
+  },
+
+  /**
+   * Buffer an indent based on the current `indent`
+   * property and an additional `offset`.
+   *
+   * @param {Number} offset
+   * @param {Boolean} newline
+   * @api public
+   */
+
+  prettyIndent: function(offset, newline){
+    offset = offset || 0;
+    newline = newline ? '\n' : '';
+    this.buffer(newline + Array(this.indents + offset).join(this.pp));
+    if (this.parentIndents)
+      this.buf.push("buf.push.apply(buf, jade_indent);");
+  },
+
+  /**
+   * Visit `node`.
+   *
+   * @param {Node} node
+   * @api public
+   */
+
+  visit: function(node){
+    var debug = this.debug;
+
+    if (debug) {
+      this.buf.push('jade_debug.unshift(new jade.DebugItem( ' + node.line
+        + ', ' + (node.filename
+          ? utils.stringify(node.filename)
+          : 'jade_debug[0].filename')
+        + ' ));');
+    }
+
+    // Massive hack to fix our context
+    // stack for - else[ if] etc
+    if (false === node.debug && this.debug) {
+      this.buf.pop();
+      this.buf.pop();
+    }
+
+    this.visitNode(node);
+
+    if (debug) this.buf.push('jade_debug.shift();');
+  },
+
+  /**
+   * Visit `node`.
+   *
+   * @param {Node} node
+   * @api public
+   */
+
+  visitNode: function(node){
+    return this['visit' + node.type](node);
+  },
+
+  /**
+   * Visit case `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitCase: function(node){
+    var _ = this.withinCase;
+    this.withinCase = true;
+    this.buf.push('switch (' + node.expr + '){');
+    this.visit(node.block);
+    this.buf.push('}');
+    this.withinCase = _;
+  },
+
+  /**
+   * Visit when `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitWhen: function(node){
+    if ('default' == node.expr) {
+      this.buf.push('default:');
+    } else {
+      this.buf.push('case ' + node.expr + ':');
+    }
+    if (node.block) {
+      this.visit(node.block);
+      this.buf.push('  break;');
+    }
+  },
+
+  /**
+   * Visit literal `node`.
+   *
+   * @param {Literal} node
+   * @api public
+   */
+
+  visitLiteral: function(node){
+    this.buffer(node.str);
+  },
+
+  /**
+   * Visit all nodes in `block`.
+   *
+   * @param {Block} block
+   * @api public
+   */
+
+  visitBlock: function(block){
+    var len = block.nodes.length
+      , escape = this.escape
+      , pp = this.pp
+
+    // Pretty print multi-line text
+    if (pp && len > 1 && !escape && block.nodes[0].isText && block.nodes[1].isText)
+      this.prettyIndent(1, true);
+
+    for (var i = 0; i < len; ++i) {
+      // Pretty print text
+      if (pp && i > 0 && !escape && block.nodes[i].isText && block.nodes[i-1].isText)
+        this.prettyIndent(1, false);
+
+      this.visit(block.nodes[i]);
+      // Multiple text nodes are separated by newlines
+      if (block.nodes[i+1] && block.nodes[i].isText && block.nodes[i+1].isText)
+        this.buffer('\n');
+    }
+  },
+
+  /**
+   * Visit a mixin's `block` keyword.
+   *
+   * @param {MixinBlock} block
+   * @api public
+   */
+
+  visitMixinBlock: function(block){
+    if (this.pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(this.pp) + "');");
+    this.buf.push('block && block();');
+    if (this.pp) this.buf.push("jade_indent.pop();");
+  },
+
+  /**
+   * Visit `doctype`. Sets terse mode to `true` when html 5
+   * is used, causing self-closing tags to end with ">" vs "/>",
+   * and boolean attributes are not mirrored.
+   *
+   * @param {Doctype} doctype
+   * @api public
+   */
+
+  visitDoctype: function(doctype){
+    if (doctype && (doctype.val || !this.doctype)) {
+      this.setDoctype(doctype.val || 'default');
+    }
+
+    if (this.doctype) this.buffer(this.doctype);
+    this.hasCompiledDoctype = true;
+  },
+
+  /**
+   * Visit `mixin`, generating a function that
+   * may be called within the template.
+   *
+   * @param {Mixin} mixin
+   * @api public
+   */
+
+  visitMixin: function(mixin){
+    var name = 'jade_mixins[';
+    var args = mixin.args || '';
+    var block = mixin.block;
+    var attrs = mixin.attrs;
+    var attrsBlocks = mixin.attributeBlocks.slice();
+    var pp = this.pp;
+    var dynamic = mixin.name[0]==='#';
+    var key = mixin.name;
+    if (dynamic) this.dynamicMixins = true;
+    name += (dynamic ? mixin.name.substr(2,mixin.name.length-3):'"'+mixin.name+'"')+']';
+
+    this.mixins[key] = this.mixins[key] || {used: false, instances: []};
+    if (mixin.call) {
+      this.mixins[key].used = true;
+      if (pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(pp) + "');")
+      if (block || attrs.length || attrsBlocks.length) {
+
+        this.buf.push(name + '.call({');
+
+        if (block) {
+          this.buf.push('block: function(){');
+
+          // Render block with no indents, dynamically added when rendered
+          this.parentIndents++;
+          var _indents = this.indents;
+          this.indents = 0;
+          this.visit(mixin.block);
+          this.indents = _indents;
+          this.parentIndents--;
+
+          if (attrs.length || attrsBlocks.length) {
+            this.buf.push('},');
+          } else {
+            this.buf.push('}');
+          }
+        }
+
+        if (attrsBlocks.length) {
+          if (attrs.length) {
+            var val = this.attrs(attrs);
+            attrsBlocks.unshift(val);
+          }
+          this.buf.push('attributes: jade.merge([' + attrsBlocks.join(',') + '])');
+        } else if (attrs.length) {
+          var val = this.attrs(attrs);
+          this.buf.push('attributes: ' + val);
+        }
+
+        if (args) {
+          this.buf.push('}, ' + args + ');');
+        } else {
+          this.buf.push('});');
+        }
+
+      } else {
+        this.buf.push(name + '(' + args + ');');
+      }
+      if (pp) this.buf.push("jade_indent.pop();")
+    } else {
+      var mixin_start = this.buf.length;
+      args = args ? args.split(',') : [];
+      var rest;
+      if (args.length && /^\.\.\./.test(args[args.length - 1].trim())) {
+        rest = args.pop().trim().replace(/^\.\.\./, '');
+      }
+      // we need use jade_interp here for v8: https://code.google.com/p/v8/issues/detail?id=4165
+      // once fixed, use this: this.buf.push(name + ' = function(' + args.join(',') + '){');
+      this.buf.push(name + ' = jade_interp = function(' + args.join(',') + '){');
+      this.buf.push('var block = (this && this.block), attributes = (this && this.attributes) || {};');
+      if (rest) {
+        this.buf.push('var ' + rest + ' = [];');
+        this.buf.push('for (jade_interp = ' + args.length + '; jade_interp < arguments.length; jade_interp++) {');
+        this.buf.push('  ' + rest + '.push(arguments[jade_interp]);');
+        this.buf.push('}');
+      }
+      this.parentIndents++;
+      this.visit(block);
+      this.parentIndents--;
+      this.buf.push('};');
+      var mixin_end = this.buf.length;
+      this.mixins[key].instances.push({start: mixin_start, end: mixin_end});
+    }
+  },
+
+  /**
+   * Visit `tag` buffering tag markup, generating
+   * attributes, visiting the `tag`'s code and block.
+   *
+   * @param {Tag} tag
+   * @api public
+   */
+
+  visitTag: function(tag){
+    this.indents++;
+    var name = tag.name
+      , pp = this.pp
+      , self = this;
+
+    function bufferName() {
+      if (tag.buffer) self.bufferExpression(name);
+      else self.buffer(name);
+    }
+
+    if ('pre' == tag.name) this.escape = true;
+
+    if (!this.hasCompiledTag) {
+      if (!this.hasCompiledDoctype && 'html' == name) {
+        this.visitDoctype();
+      }
+      this.hasCompiledTag = true;
+    }
+
+    // pretty print
+    if (pp && !tag.isInline())
+      this.prettyIndent(0, true);
+
+    if (tag.selfClosing || (!this.xml && selfClosing[tag.name])) {
+      this.buffer('<');
+      bufferName();
+      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
+      this.terse
+        ? this.buffer('>')
+        : this.buffer('/>');
+      // if it is non-empty throw an error
+      if (tag.block &&
+          !(tag.block.type === 'Block' && tag.block.nodes.length === 0) &&
+          tag.block.nodes.some(function (tag) {
+            return tag.type !== 'Text' || !/^\s*$/.test(tag.val)
+          })) {
+        throw errorAtNode(tag, new Error(name + ' is self closing and should not have content.'));
+      }
+    } else {
+      // Optimize attributes buffering
+      this.buffer('<');
+      bufferName();
+      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
+      this.buffer('>');
+      if (tag.code) this.visitCode(tag.code);
+      this.visit(tag.block);
+
+      // pretty print
+      if (pp && !tag.isInline() && 'pre' != tag.name && !tag.canInline())
+        this.prettyIndent(0, true);
+
+      this.buffer('</');
+      bufferName();
+      this.buffer('>');
+    }
+
+    if ('pre' == tag.name) this.escape = false;
+
+    this.indents--;
+  },
+
+  /**
+   * Visit `filter`, throwing when the filter does not exist.
+   *
+   * @param {Filter} filter
+   * @api public
+   */
+
+  visitFilter: function(filter){
+    var text = filter.block.nodes.map(
+      function(node){ return node.val; }
+    ).join('\n');
+    filter.attrs.filename = this.options.filename;
+    try {
+      this.buffer(filters(filter.name, text, filter.attrs), true);
+    } catch (err) {
+      throw errorAtNode(filter, err);
+    }
+  },
+
+  /**
+   * Visit `text` node.
+   *
+   * @param {Text} text
+   * @api public
+   */
+
+  visitText: function(text){
+    this.buffer(text.val, true);
+  },
+
+  /**
+   * Visit a `comment`, only buffering when the buffer flag is set.
+   *
+   * @param {Comment} comment
+   * @api public
+   */
+
+  visitComment: function(comment){
+    if (!comment.buffer) return;
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('<!--' + comment.val + '-->');
+  },
+
+  /**
+   * Visit a `BlockComment`.
+   *
+   * @param {Comment} comment
+   * @api public
+   */
+
+  visitBlockComment: function(comment){
+    if (!comment.buffer) return;
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('<!--' + comment.val);
+    this.visit(comment.block);
+    if (this.pp) this.prettyIndent(1, true);
+    this.buffer('-->');
+  },
+
+  /**
+   * Visit `code`, respecting buffer / escape flags.
+   * If the code is followed by a block, wrap it in
+   * a self-calling function.
+   *
+   * @param {Code} code
+   * @api public
+   */
+
+  visitCode: function(code){
+    // Wrap code blocks with {}.
+    // we only wrap unbuffered code blocks ATM
+    // since they are usually flow control
+
+    // Buffer code
+    if (code.buffer) {
+      var val = code.val.trim();
+      val = 'null == (jade_interp = '+val+') ? "" : jade_interp';
+      if (code.escape) val = 'jade.escape(' + val + ')';
+      this.bufferExpression(val);
+    } else {
+      this.buf.push(code.val);
+    }
+
+    // Block support
+    if (code.block) {
+      if (!code.buffer) this.buf.push('{');
+      this.visit(code.block);
+      if (!code.buffer) this.buf.push('}');
+    }
+  },
+
+  /**
+   * Visit `each` block.
+   *
+   * @param {Each} each
+   * @api public
+   */
+
+  visitEach: function(each){
+    this.buf.push(''
+      + '// iterate ' + each.obj + '\n'
+      + ';(function(){\n'
+      + '  var $$obj = ' + each.obj + ';\n'
+      + '  if (\'number\' == typeof $$obj.length) {\n');
+
+    if (each.alternative) {
+      this.buf.push('  if ($$obj.length) {');
+    }
+
+    this.buf.push(''
+      + '    for (var ' + each.key + ' = 0, $$l = $$obj.length; ' + each.key + ' < $$l; ' + each.key + '++) {\n'
+      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
+
+    this.visit(each.block);
+
+    this.buf.push('    }\n');
+
+    if (each.alternative) {
+      this.buf.push('  } else {');
+      this.visit(each.alternative);
+      this.buf.push('  }');
+    }
+
+    this.buf.push(''
+      + '  } else {\n'
+      + '    var $$l = 0;\n'
+      + '    for (var ' + each.key + ' in $$obj) {\n'
+      + '      $$l++;'
+      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
+
+    this.visit(each.block);
+
+    this.buf.push('    }\n');
+    if (each.alternative) {
+      this.buf.push('    if ($$l === 0) {');
+      this.visit(each.alternative);
+      this.buf.push('    }');
+    }
+    this.buf.push('  }\n}).call(this);\n');
+  },
+
+  /**
+   * Visit `attrs`.
+   *
+   * @param {Array} attrs
+   * @api public
+   */
+
+  visitAttributes: function(attrs, attributeBlocks){
+    if (attributeBlocks.length) {
+      if (attrs.length) {
+        var val = this.attrs(attrs);
+        attributeBlocks.unshift(val);
+      }
+      this.bufferExpression('jade.attrs(jade.merge([' + attributeBlocks.join(',') + ']), ' + utils.stringify(this.terse) + ')');
+    } else if (attrs.length) {
+      this.attrs(attrs, true);
+    }
+  },
+
+  /**
+   * Compile attributes.
+   */
+
+  attrs: function(attrs, buffer){
+    var buf = [];
+    var classes = [];
+    var classEscaping = [];
+
+    attrs.forEach(function(attr){
+      var key = attr.name;
+      var escaped = attr.escaped;
+
+      if (key === 'class') {
+        classes.push(attr.val);
+        classEscaping.push(attr.escaped);
+      } else if (isConstant(attr.val)) {
+        if (buffer) {
+          this.buffer(runtime.attr(key, toConstant(attr.val), escaped, this.terse));
+        } else {
+          var val = toConstant(attr.val);
+          if (key === 'style') val = runtime.style(val);
+          if (escaped && !(key.indexOf('data') === 0 && typeof val !== 'string')) {
+            val = runtime.escape(val);
+          }
+          buf.push(utils.stringify(key) + ': ' + utils.stringify(val));
+        }
+      } else {
+        if (buffer) {
+          this.bufferExpression('jade.attr("' + key + '", ' + attr.val + ', ' + utils.stringify(escaped) + ', ' + utils.stringify(this.terse) + ')');
+        } else {
+          var val = attr.val;
+          if (key === 'style') {
+            val = 'jade.style(' + val + ')';
+          }
+          if (escaped && !(key.indexOf('data') === 0)) {
+            val = 'jade.escape(' + val + ')';
+          } else if (escaped) {
+            val = '(typeof (jade_interp = ' + val + ') == "string" ? jade.escape(jade_interp) : jade_interp)';
+          }
+          buf.push(utils.stringify(key) + ': ' + val);
+        }
+      }
+    }.bind(this));
+    if (buffer) {
+      if (classes.every(isConstant)) {
+        this.buffer(runtime.cls(classes.map(toConstant), classEscaping));
+      } else {
+        this.bufferExpression('jade.cls([' + classes.join(',') + '], ' + utils.stringify(classEscaping) + ')');
+      }
+    } else if (classes.length) {
+      if (classes.every(isConstant)) {
+        classes = utils.stringify(runtime.joinClasses(classes.map(toConstant).map(runtime.joinClasses).map(function (cls, i) {
+          return classEscaping[i] ? runtime.escape(cls) : cls;
+        })));
+      } else {
+        classes = '(jade_interp = ' + utils.stringify(classEscaping) + ',' +
+          ' jade.joinClasses([' + classes.join(',') + '].map(jade.joinClasses).map(function (cls, i) {' +
+          '   return jade_interp[i] ? jade.escape(cls) : cls' +
+          ' }))' +
+          ')';
+      }
+      if (classes.length)
+        buf.push('"class": ' + classes);
+    }
+    return '{' + buf.join(',') + '}';
+  }
+};
+
+},{"./doctypes":29,"./filters":30,"./nodes":43,"./runtime":51,"./utils":52,"character-parser":53,"constantinople":54,"void-elements":57}],29:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+    'default': '<!DOCTYPE html>'
+  , 'xml': '<?xml version="1.0" encoding="utf-8" ?>'
+  , 'transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+  , 'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+  , 'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
+  , '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+  , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
+  , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
+};
+},{}],30:[function(require,module,exports){
+'use strict';
+
+module.exports = filter;
+function filter(name, str, options) {
+  if (typeof filter[name] === 'function') {
+    return filter[name](str, options);
+  } else {
+    throw new Error('unknown filter ":' + name + '"');
+  }
+}
+
+},{}],31:[function(require,module,exports){
+(function (process){
+'use strict';
+
+/*!
+ * Jade
+ * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
+ * MIT Licensed
+ */
+
+/**
+ * Module dependencies.
+ */
+
+var Parser = require('./parser')
+  , Lexer = require('./lexer')
+  , Compiler = require('./compiler')
+  , runtime = require('./runtime')
+  , addWith = require('with')
+  , fs = require('fs')
+  , utils = require('./utils');
+
+/**
+ * Expose self closing tags.
+ */
+
+// FIXME: either stop exporting selfClosing in v2 or export the new object
+// form
+exports.selfClosing = Object.keys(require('void-elements'));
+
+/**
+ * Default supported doctypes.
+ */
+
+exports.doctypes = require('./doctypes');
+
+/**
+ * Text filters.
+ */
+
+exports.filters = require('./filters');
+
+/**
+ * Utilities.
+ */
+
+exports.utils = utils;
+
+/**
+ * Expose `Compiler`.
+ */
+
+exports.Compiler = Compiler;
+
+/**
+ * Expose `Parser`.
+ */
+
+exports.Parser = Parser;
+
+/**
+ * Expose `Lexer`.
+ */
+
+exports.Lexer = Lexer;
+
+/**
+ * Nodes.
+ */
+
+exports.nodes = require('./nodes');
+
+/**
+ * Jade runtime helpers.
+ */
+
+exports.runtime = runtime;
+
+/**
+ * Template function cache.
+ */
+
+exports.cache = {};
+
+/**
+ * Parse the given `str` of jade and return a function body.
+ *
+ * @param {String} str
+ * @param {Object} options
+ * @return {Object}
+ * @api private
+ */
+
+function parse(str, options){
+
+  if (options.lexer) {
+    console.warn('Using `lexer` as a local in render() is deprecated and '
+               + 'will be interpreted as an option in Jade 2.0.0');
+  }
+
+  // Parse
+  var parser = new (options.parser || Parser)(str, options.filename, options);
+  var tokens;
+  try {
+    // Parse
+    tokens = parser.parse();
+  } catch (err) {
+    parser = parser.context();
+    runtime.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
+  }
+
+  // Compile
+  var compiler = new (options.compiler || Compiler)(tokens, options);
+  var js;
+  try {
+    js = compiler.compile();
+  } catch (err) {
+    if (err.line && (err.filename || !options.filename)) {
+      runtime.rethrow(err, err.filename, err.line, parser.input);
+    } else {
+      if (err instanceof Error) {
+        err.message += '\n\nPlease report this entire error and stack trace to https://github.com/jadejs/jade/issues';
+      }
+      throw err;
+    }
+  }
+
+  // Debug compiler
+  if (options.debug) {
+    console.error('\nCompiled Function:\n\n\u001b[90m%s\u001b[0m', js.replace(/^/gm, '  '));
+  }
+
+  var globals = [];
+
+  if (options.globals) {
+    globals = options.globals.slice();
+  }
+
+  globals.push('jade');
+  globals.push('jade_mixins');
+  globals.push('jade_interp');
+  globals.push('jade_debug');
+  globals.push('buf');
+
+  var body = ''
+    + 'var buf = [];\n'
+    + 'var jade_mixins = {};\n'
+    + 'var jade_interp;\n'
+    + (options.self
+      ? 'var self = locals || {};\n' + js
+      : addWith('locals || {}', '\n' + js, globals)) + ';'
+    + 'return buf.join("");';
+  return {body: body, dependencies: parser.dependencies};
+}
+
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `str` is not set, the file specified in `options.filename` will be read.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @param {Object} options
+ * @param {String=} str
+ * @return {Function}
+ * @api private
+ */
+function handleTemplateCache (options, str) {
+  var key = options.filename;
+  if (options.cache && exports.cache[key]) {
+    return exports.cache[key];
+  } else {
+    if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
+    var templ = exports.compile(str, options);
+    if (options.cache) exports.cache[key] = templ;
+    return templ;
+  }
+}
+
+/**
+ * Compile a `Function` representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` when `false` debugging code is stripped from the compiled
+       template, when it is explicitly `true`, the source code is included in
+       the compiled template for better accuracy.
+ *   - `filename` used to improve errors when `compileDebug` is not `false` and to resolve imports/extends
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {Function}
+ * @api public
+ */
+
+exports.compile = function(str, options){
+  var options = options || {}
+    , filename = options.filename
+      ? utils.stringify(options.filename)
+      : 'undefined'
+    , fn;
+
+  str = String(str);
+
+  var parsed = parse(str, options);
+  if (options.compileDebug !== false) {
+    fn = [
+        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
+      , 'try {'
+      , parsed.body
+      , '} catch (err) {'
+      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno' + (options.compileDebug === true ? ',' + utils.stringify(str) : '') + ');'
+      , '}'
+    ].join('\n');
+  } else {
+    fn = parsed.body;
+  }
+  fn = new Function('locals, jade', fn)
+  var res = function(locals){ return fn(locals, Object.create(runtime)) };
+  if (options.client) {
+    res.toString = function () {
+      var err = new Error('The `client` option is deprecated, use the `jade.compileClient` method instead');
+      err.name = 'Warning';
+      console.error(err.stack || /* istanbul ignore next */ err.message);
+      return exports.compileClient(str, options);
+    };
+  }
+  res.dependencies = parsed.dependencies;
+  return res;
+};
+
+/**
+ * Compile a JavaScript source representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` When it is `true`, the source code is included in
+ *     the compiled template for better error messages.
+ *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
+ *   - `name` the name of the resulting function (defaults to "template")
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {Object}
+ * @api public
+ */
+
+exports.compileClientWithDependenciesTracked = function(str, options){
+  var options = options || {};
+  var name = options.name || 'template';
+  var filename = options.filename ? utils.stringify(options.filename) : 'undefined';
+  var fn;
+
+  str = String(str);
+  options.compileDebug = options.compileDebug ? true : false;
+  var parsed = parse(str, options);
+  if (options.compileDebug) {
+    fn = [
+        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
+      , 'try {'
+      , parsed.body
+      , '} catch (err) {'
+      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno, ' + utils.stringify(str) + ');'
+      , '}'
+    ].join('\n');
+  } else {
+    fn = parsed.body;
+  }
+
+  return {body: 'function ' + name + '(locals) {\n' + fn + '\n}', dependencies: parsed.dependencies};
+};
+
+/**
+ * Compile a JavaScript source representation of the given jade `str`.
+ *
+ * Options:
+ *
+ *   - `compileDebug` When it is `true`, the source code is included in
+ *     the compiled template for better error messages.
+ *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
+ *   - `name` the name of the resulting function (defaults to "template")
+ *
+ * @param {String} str
+ * @param {Options} options
+ * @return {String}
+ * @api public
+ */
+exports.compileClient = function (str, options) {
+  return exports.compileClientWithDependenciesTracked(str, options).body;
+};
+
+/**
+ * Compile a `Function` representation of the given jade file.
+ *
+ * Options:
+ *
+ *   - `compileDebug` when `false` debugging code is stripped from the compiled
+       template, when it is explicitly `true`, the source code is included in
+       the compiled template for better accuracy.
+ *
+ * @param {String} path
+ * @param {Options} options
+ * @return {Function}
+ * @api public
+ */
+exports.compileFile = function (path, options) {
+  options = options || {};
+  options.filename = path;
+  return handleTemplateCache(options);
+};
+
+/**
+ * Render the given `str` of jade.
+ *
+ * Options:
+ *
+ *   - `cache` enable template caching
+ *   - `filename` filename required for `include` / `extends` and caching
+ *
+ * @param {String} str
+ * @param {Object|Function} options or fn
+ * @param {Function|undefined} fn
+ * @returns {String}
+ * @api public
+ */
+
+exports.render = function(str, options, fn){
+  // support callback API
+  if ('function' == typeof options) {
+    fn = options, options = undefined;
+  }
+  if (typeof fn === 'function') {
+    var res
+    try {
+      res = exports.render(str, options);
+    } catch (ex) {
+      return fn(ex);
+    }
+    return fn(null, res);
+  }
+
+  options = options || {};
+
+  // cache requires .filename
+  if (options.cache && !options.filename) {
+    throw new Error('the "filename" option is required for caching');
+  }
+
+  return handleTemplateCache(options, str)(options);
+};
+
+/**
+ * Render a Jade file at the given `path`.
+ *
+ * @param {String} path
+ * @param {Object|Function} options or callback
+ * @param {Function|undefined} fn
+ * @returns {String}
+ * @api public
+ */
+
+exports.renderFile = function(path, options, fn){
+  // support callback API
+  if ('function' == typeof options) {
+    fn = options, options = undefined;
+  }
+  if (typeof fn === 'function') {
+    var res
+    try {
+      res = exports.renderFile(path, options);
+    } catch (ex) {
+      return fn(ex);
+    }
+    return fn(null, res);
+  }
+
+  options = options || {};
+
+  options.filename = path;
+  return handleTemplateCache(options)(options);
+};
+
+
+/**
+ * Compile a Jade file at the given `path` for use on the client.
+ *
+ * @param {String} path
+ * @param {Object} options
+ * @returns {String}
+ * @api public
+ */
+
+exports.compileFileClient = function(path, options){
+  var key = path + ':client';
+  options = options || {};
+
+  options.filename = path;
+
+  if (options.cache && exports.cache[key]) {
+    return exports.cache[key];
+  }
+
+  var str = fs.readFileSync(options.filename, 'utf8');
+  var out = exports.compileClient(str, options);
+  if (options.cache) exports.cache[key] = out;
+  return out;
+};
+
+/**
+ * Express support.
+ */
+
+exports.__express = function(path, options, fn) {
+  if(options.compileDebug == undefined && process.env.NODE_ENV === 'production') {
+    options.compileDebug = false;
+  }
+  exports.renderFile(path, options, fn);
+}
+
+}).call(this,require("oMfpAn"))
+},{"./compiler":28,"./doctypes":29,"./filters":30,"./lexer":33,"./nodes":43,"./parser":50,"./runtime":51,"./utils":52,"fs":16,"oMfpAn":21,"void-elements":57,"with":58}],32:[function(require,module,exports){
+'use strict';
+
+module.exports = [
+    'a'
+  , 'abbr'
+  , 'acronym'
+  , 'b'
+  , 'br'
+  , 'code'
+  , 'em'
+  , 'font'
+  , 'i'
+  , 'img'
+  , 'ins'
+  , 'kbd'
+  , 'map'
+  , 'samp'
+  , 'small'
+  , 'span'
+  , 'strong'
+  , 'sub'
+  , 'sup'
+];
+},{}],33:[function(require,module,exports){
+'use strict';
+
+var utils = require('./utils');
+var characterParser = require('character-parser');
+
+
+/**
+ * Initialize `Lexer` with the given `str`.
+ *
+ * @param {String} str
+ * @param {String} filename
+ * @api private
+ */
+
+var Lexer = module.exports = function Lexer(str, filename) {
+  this.input = str.replace(/\r\n|\r/g, '\n');
+  this.filename = filename;
+  this.deferredTokens = [];
+  this.lastIndents = 0;
+  this.lineno = 1;
+  this.stash = [];
+  this.indentStack = [];
+  this.indentRe = null;
+  this.pipeless = false;
+};
+
+
+function assertExpression(exp) {
+  //this verifies that a JavaScript expression is valid
+  Function('', 'return (' + exp + ')');
+}
+function assertNestingCorrect(exp) {
+  //this verifies that code is properly nested, but allows
+  //invalid JavaScript such as the contents of `attributes`
+  var res = characterParser(exp)
+  if (res.isNesting()) {
+    throw new Error('Nesting must match on expression `' + exp + '`')
+  }
+}
+
+/**
+ * Lexer prototype.
+ */
+
+Lexer.prototype = {
+
+  /**
+   * Construct a token with the given `type` and `val`.
+   *
+   * @param {String} type
+   * @param {String} val
+   * @return {Object}
+   * @api private
+   */
+
+  tok: function(type, val){
+    return {
+        type: type
+      , line: this.lineno
+      , val: val
+    }
+  },
+
+  /**
+   * Consume the given `len` of input.
+   *
+   * @param {Number} len
+   * @api private
+   */
+
+  consume: function(len){
+    this.input = this.input.substr(len);
+  },
+
+  /**
+   * Scan for `type` with the given `regexp`.
+   *
+   * @param {String} type
+   * @param {RegExp} regexp
+   * @return {Object}
+   * @api private
+   */
+
+  scan: function(regexp, type){
+    var captures;
+    if (captures = regexp.exec(this.input)) {
+      this.consume(captures[0].length);
+      return this.tok(type, captures[1]);
+    }
+  },
+
+  /**
+   * Defer the given `tok`.
+   *
+   * @param {Object} tok
+   * @api private
+   */
+
+  defer: function(tok){
+    this.deferredTokens.push(tok);
+  },
+
+  /**
+   * Lookahead `n` tokens.
+   *
+   * @param {Number} n
+   * @return {Object}
+   * @api private
+   */
+
+  lookahead: function(n){
+    var fetch = n - this.stash.length;
+    while (fetch-- > 0) this.stash.push(this.next());
+    return this.stash[--n];
+  },
+
+  /**
+   * Return the indexOf `(` or `{` or `[` / `)` or `}` or `]` delimiters.
+   *
+   * @return {Number}
+   * @api private
+   */
+
+  bracketExpression: function(skip){
+    skip = skip || 0;
+    var start = this.input[skip];
+    if (start != '(' && start != '{' && start != '[') throw new Error('unrecognized start character');
+    var end = ({'(': ')', '{': '}', '[': ']'})[start];
+    var range = characterParser.parseMax(this.input, {start: skip + 1});
+    if (this.input[range.end] !== end) throw new Error('start character ' + start + ' does not match end character ' + this.input[range.end]);
+    return range;
+  },
+
+  /**
+   * Stashed token.
+   */
+
+  stashed: function() {
+    return this.stash.length
+      && this.stash.shift();
+  },
+
+  /**
+   * Deferred token.
+   */
+
+  deferred: function() {
+    return this.deferredTokens.length
+      && this.deferredTokens.shift();
+  },
+
+  /**
+   * end-of-source.
+   */
+
+  eos: function() {
+    if (this.input.length) return;
+    if (this.indentStack.length) {
+      this.indentStack.shift();
+      return this.tok('outdent');
+    } else {
+      return this.tok('eos');
+    }
+  },
+
+  /**
+   * Blank line.
+   */
+
+  blank: function() {
+    var captures;
+    if (captures = /^\n *\n/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      ++this.lineno;
+      if (this.pipeless) return this.tok('text', '');
+      return this.next();
+    }
+  },
+
+  /**
+   * Comment.
+   */
+
+  comment: function() {
+    var captures;
+    if (captures = /^\/\/(-)?([^\n]*)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('comment', captures[2]);
+      tok.buffer = '-' != captures[1];
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Interpolated tag.
+   */
+
+  interpolation: function() {
+    if (/^#\{/.test(this.input)) {
+      var match = this.bracketExpression(1);
+
+      this.consume(match.end + 1);
+      return this.tok('interpolation', match.src);
+    }
+  },
+
+  /**
+   * Tag.
+   */
+
+  tag: function() {
+    var captures;
+    if (captures = /^(\w[-:\w]*)(\/?)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok, name = captures[1];
+      if (':' == name[name.length - 1]) {
+        name = name.slice(0, -1);
+        tok = this.tok('tag', name);
+        this.defer(this.tok(':'));
+        if (this.input[0] !== ' ') {
+          console.warn('Warning: space required after `:` on line ' + this.lineno +
+              ' of jade file "' + this.filename + '"');
+        }
+        while (' ' == this.input[0]) this.input = this.input.substr(1);
+      } else {
+        tok = this.tok('tag', name);
+      }
+      tok.selfClosing = !!captures[2];
+      return tok;
+    }
+  },
+
+  /**
+   * Filter.
+   */
+
+  filter: function() {
+    var tok = this.scan(/^:([\w\-]+)/, 'filter');
+    if (tok) {
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Doctype.
+   */
+
+  doctype: function() {
+    if (this.scan(/^!!! *([^\n]+)?/, 'doctype')) {
+      throw new Error('`!!!` is deprecated, you must now use `doctype`');
+    }
+    var node = this.scan(/^(?:doctype) *([^\n]+)?/, 'doctype');
+    if (node && node.val && node.val.trim() === '5') {
+      throw new Error('`doctype 5` is deprecated, you must now use `doctype html`');
+    }
+    return node;
+  },
+
+  /**
+   * Id.
+   */
+
+  id: function() {
+    return this.scan(/^#([\w-]+)/, 'id');
+  },
+
+  /**
+   * Class.
+   */
+
+  className: function() {
+    return this.scan(/^\.([\w-]+)/, 'class');
+  },
+
+  /**
+   * Text.
+   */
+
+  text: function() {
+    return this.scan(/^(?:\| ?| )([^\n]+)/, 'text') ||
+      this.scan(/^\|?( )/, 'text') ||
+      this.scan(/^(<[^\n]*)/, 'text');
+  },
+
+  textFail: function () {
+    var tok;
+    if (tok = this.scan(/^([^\.\n][^\n]+)/, 'text')) {
+      console.warn('Warning: missing space before text for line ' + this.lineno +
+          ' of jade file "' + this.filename + '"');
+      return tok;
+    }
+  },
+
+  /**
+   * Dot.
+   */
+
+  dot: function() {
+    var match;
+    if (match = this.scan(/^\./, 'dot')) {
+      this.pipeless = true;
+      return match;
+    }
+  },
+
+  /**
+   * Extends.
+   */
+
+  "extends": function() {
+    return this.scan(/^extends? +([^\n]+)/, 'extends');
+  },
+
+  /**
+   * Block prepend.
+   */
+
+  prepend: function() {
+    var captures;
+    if (captures = /^prepend +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = 'prepend'
+        , name = captures[1]
+        , tok = this.tok('block', name);
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Block append.
+   */
+
+  append: function() {
+    var captures;
+    if (captures = /^append +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = 'append'
+        , name = captures[1]
+        , tok = this.tok('block', name);
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Block.
+   */
+
+  block: function() {
+    var captures;
+    if (captures = /^block\b *(?:(prepend|append) +)?([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var mode = captures[1] || 'replace'
+        , name = captures[2]
+        , tok = this.tok('block', name);
+
+      tok.mode = mode;
+      return tok;
+    }
+  },
+
+  /**
+   * Mixin Block.
+   */
+
+  mixinBlock: function() {
+    var captures;
+    if (captures = /^block[ \t]*(\n|$)/.exec(this.input)) {
+      this.consume(captures[0].length - captures[1].length);
+      return this.tok('mixin-block');
+    }
+  },
+
+  /**
+   * Yield.
+   */
+
+  'yield': function() {
+    return this.scan(/^yield */, 'yield');
+  },
+
+  /**
+   * Include.
+   */
+
+  include: function() {
+    return this.scan(/^include +([^\n]+)/, 'include');
+  },
+
+  /**
+   * Include with filter
+   */
+
+  includeFiltered: function() {
+    var captures;
+    if (captures = /^include:([\w\-]+)([\( ])/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      var filter = captures[1];
+      var attrs = captures[2] === '(' ? this.attrs() : null;
+      if (!(captures[2] === ' ' || this.input[0] === ' ')) {
+        throw new Error('expected space after include:filter but got ' + utils.stringify(this.input[0]));
+      }
+      captures = /^ *([^\n]+)/.exec(this.input);
+      if (!captures || captures[1].trim() === '') {
+        throw new Error('missing path for include:filter');
+      }
+      this.consume(captures[0].length);
+      var path = captures[1];
+      var tok = this.tok('include', path);
+      tok.filter = filter;
+      tok.attrs = attrs;
+      return tok;
+    }
+  },
+
+  /**
+   * Case.
+   */
+
+  "case": function() {
+    return this.scan(/^case +([^\n]+)/, 'case');
+  },
+
+  /**
+   * When.
+   */
+
+  when: function() {
+    return this.scan(/^when +([^:\n]+)/, 'when');
+  },
+
+  /**
+   * Default.
+   */
+
+  "default": function() {
+    return this.scan(/^default */, 'default');
+  },
+
+  /**
+   * Call mixin.
+   */
+
+  call: function(){
+
+    var tok, captures;
+    if (captures = /^\+(\s*)(([-\w]+)|(#\{))/.exec(this.input)) {
+      // try to consume simple or interpolated call
+      if (captures[3]) {
+        // simple call
+        this.consume(captures[0].length);
+        tok = this.tok('call', captures[3]);
+      } else {
+        // interpolated call
+        var match = this.bracketExpression(2 + captures[1].length);
+        this.consume(match.end + 1);
+        assertExpression(match.src);
+        tok = this.tok('call', '#{'+match.src+'}');
+      }
+
+      // Check for args (not attributes)
+      if (captures = /^ *\(/.exec(this.input)) {
+        var range = this.bracketExpression(captures[0].length - 1);
+        if (!/^\s*[-\w]+ *=/.test(range.src)) { // not attributes
+          this.consume(range.end + 1);
+          tok.args = range.src;
+        }
+        if (tok.args) {
+          assertExpression('[' + tok.args + ']');
+        }
+      }
+
+      return tok;
+    }
+  },
+
+  /**
+   * Mixin.
+   */
+
+  mixin: function(){
+    var captures;
+    if (captures = /^mixin +([-\w]+)(?: *\((.*)\))? */.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('mixin', captures[1]);
+      tok.args = captures[2];
+      return tok;
+    }
+  },
+
+  /**
+   * Conditional.
+   */
+
+  conditional: function() {
+    var captures;
+    if (captures = /^(if|unless|else if|else)\b([^\n]*)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var type = captures[1]
+      var js = captures[2];
+      var isIf = false;
+      var isElse = false;
+
+      switch (type) {
+        case 'if':
+          assertExpression(js)
+          js = 'if (' + js + ')';
+          isIf = true;
+          break;
+        case 'unless':
+          assertExpression(js)
+          js = 'if (!(' + js + '))';
+          isIf = true;
+          break;
+        case 'else if':
+          assertExpression(js)
+          js = 'else if (' + js + ')';
+          isIf = true;
+          isElse = true;
+          break;
+        case 'else':
+          if (js && js.trim()) {
+            throw new Error('`else` cannot have a condition, perhaps you meant `else if`');
+          }
+          js = 'else';
+          isElse = true;
+          break;
+      }
+      var tok = this.tok('code', js);
+      tok.isElse = isElse;
+      tok.isIf = isIf;
+      tok.requiresBlock = true;
+      return tok;
+    }
+  },
+
+  /**
+   * While.
+   */
+
+  "while": function() {
+    var captures;
+    if (captures = /^while +([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      assertExpression(captures[1])
+      var tok = this.tok('code', 'while (' + captures[1] + ')');
+      tok.requiresBlock = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Each.
+   */
+
+  each: function() {
+    var captures;
+    if (captures = /^(?:- *)?(?:each|for) +([a-zA-Z_$][\w$]*)(?: *, *([a-zA-Z_$][\w$]*))? * in *([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var tok = this.tok('each', captures[1]);
+      tok.key = captures[2] || '$index';
+      assertExpression(captures[3])
+      tok.code = captures[3];
+      return tok;
+    }
+  },
+
+  /**
+   * Code.
+   */
+
+  code: function() {
+    var captures;
+    if (captures = /^(!?=|-)[ \t]*([^\n]+)/.exec(this.input)) {
+      this.consume(captures[0].length);
+      var flags = captures[1];
+      captures[1] = captures[2];
+      var tok = this.tok('code', captures[1]);
+      tok.escape = flags.charAt(0) === '=';
+      tok.buffer = flags.charAt(0) === '=' || flags.charAt(1) === '=';
+      if (tok.buffer) assertExpression(captures[1])
+      return tok;
+    }
+  },
+
+
+  /**
+   * Block code.
+   */
+
+  blockCode: function() {
+    var captures;
+    if (captures = /^-\n/.exec(this.input)) {
+      this.consume(captures[0].length - 1);
+      var tok = this.tok('blockCode');
+      this.pipeless = true;
+      return tok;
+    }
+  },
+
+  /**
+   * Attributes.
+   */
+
+  attrs: function() {
+    if ('(' == this.input.charAt(0)) {
+      var index = this.bracketExpression().end
+        , str = this.input.substr(1, index-1)
+        , tok = this.tok('attrs');
+
+      assertNestingCorrect(str);
+
+      var quote = '';
+      var interpolate = function (attr) {
+        return attr.replace(/(\\)?#\{(.+)/g, function(_, escape, expr){
+          if (escape) return _;
+          try {
+            var range = characterParser.parseMax(expr);
+            if (expr[range.end] !== '}') return _.substr(0, 2) + interpolate(_.substr(2));
+            assertExpression(range.src)
+            return quote + " + (" + range.src + ") + " + quote + interpolate(expr.substr(range.end + 1));
+          } catch (ex) {
+            return _.substr(0, 2) + interpolate(_.substr(2));
+          }
+        });
+      }
+
+      this.consume(index + 1);
+      tok.attrs = [];
+
+      var escapedAttr = true
+      var key = '';
+      var val = '';
+      var interpolatable = '';
+      var state = characterParser.defaultState();
+      var loc = 'key';
+      var isEndOfAttribute = function (i) {
+        if (key.trim() === '') return false;
+        if (i === str.length) return true;
+        if (loc === 'key') {
+          if (str[i] === ' ' || str[i] === '\n') {
+            for (var x = i; x < str.length; x++) {
+              if (str[x] != ' ' && str[x] != '\n') {
+                if (str[x] === '=' || str[x] === '!' || str[x] === ',') return false;
+                else return true;
+              }
+            }
+          }
+          return str[i] === ','
+        } else if (loc === 'value' && !state.isNesting()) {
+          try {
+            assertExpression(val);
+            if (str[i] === ' ' || str[i] === '\n') {
+              for (var x = i; x < str.length; x++) {
+                if (str[x] != ' ' && str[x] != '\n') {
+                  if (characterParser.isPunctuator(str[x]) && str[x] != '"' && str[x] != "'") return false;
+                  else return true;
+                }
+              }
+            }
+            return str[i] === ',';
+          } catch (ex) {
+            return false;
+          }
+        }
+      }
+
+      this.lineno += str.split("\n").length - 1;
+
+      for (var i = 0; i <= str.length; i++) {
+        if (isEndOfAttribute(i)) {
+          val = val.trim();
+          if (val) assertExpression(val)
+          key = key.trim();
+          key = key.replace(/^['"]|['"]$/g, '');
+          tok.attrs.push({
+            name: key,
+            val: '' == val ? true : val,
+            escaped: escapedAttr
+          });
+          key = val = '';
+          loc = 'key';
+          escapedAttr = false;
+        } else {
+          switch (loc) {
+            case 'key-char':
+              if (str[i] === quote) {
+                loc = 'key';
+                if (i + 1 < str.length && [' ', ',', '!', '=', '\n'].indexOf(str[i + 1]) === -1)
+                  throw new Error('Unexpected character ' + str[i + 1] + ' expected ` `, `\\n`, `,`, `!` or `=`');
+              } else {
+                key += str[i];
+              }
+              break;
+            case 'key':
+              if (key === '' && (str[i] === '"' || str[i] === "'")) {
+                loc = 'key-char';
+                quote = str[i];
+              } else if (str[i] === '!' || str[i] === '=') {
+                escapedAttr = str[i] !== '!';
+                if (str[i] === '!') i++;
+                if (str[i] !== '=') throw new Error('Unexpected character ' + str[i] + ' expected `=`');
+                loc = 'value';
+                state = characterParser.defaultState();
+              } else {
+                key += str[i]
+              }
+              break;
+            case 'value':
+              state = characterParser.parseChar(str[i], state);
+              if (state.isString()) {
+                loc = 'string';
+                quote = str[i];
+                interpolatable = str[i];
+              } else {
+                val += str[i];
+              }
+              break;
+            case 'string':
+              state = characterParser.parseChar(str[i], state);
+              interpolatable += str[i];
+              if (!state.isString()) {
+                loc = 'value';
+                val += interpolate(interpolatable);
+              }
+              break;
+          }
+        }
+      }
+
+      if ('/' == this.input.charAt(0)) {
+        this.consume(1);
+        tok.selfClosing = true;
+      }
+
+      return tok;
+    }
+  },
+
+  /**
+   * &attributes block
+   */
+  attributesBlock: function () {
+    var captures;
+    if (/^&attributes\b/.test(this.input)) {
+      this.consume(11);
+      var args = this.bracketExpression();
+      this.consume(args.end + 1);
+      return this.tok('&attributes', args.src);
+    }
+  },
+
+  /**
+   * Indent | Outdent | Newline.
+   */
+
+  indent: function() {
+    var captures, re;
+
+    // established regexp
+    if (this.indentRe) {
+      captures = this.indentRe.exec(this.input);
+    // determine regexp
+    } else {
+      // tabs
+      re = /^\n(\t*) */;
+      captures = re.exec(this.input);
+
+      // spaces
+      if (captures && !captures[1].length) {
+        re = /^\n( *)/;
+        captures = re.exec(this.input);
+      }
+
+      // established
+      if (captures && captures[1].length) this.indentRe = re;
+    }
+
+    if (captures) {
+      var tok
+        , indents = captures[1].length;
+
+      ++this.lineno;
+      this.consume(indents + 1);
+
+      if (' ' == this.input[0] || '\t' == this.input[0]) {
+        throw new Error('Invalid indentation, you can use tabs or spaces but not both');
+      }
+
+      // blank line
+      if ('\n' == this.input[0]) {
+        this.pipeless = false;
+        return this.tok('newline');
+      }
+
+      // outdent
+      if (this.indentStack.length && indents < this.indentStack[0]) {
+        while (this.indentStack.length && this.indentStack[0] > indents) {
+          this.stash.push(this.tok('outdent'));
+          this.indentStack.shift();
+        }
+        tok = this.stash.pop();
+      // indent
+      } else if (indents && indents != this.indentStack[0]) {
+        this.indentStack.unshift(indents);
+        tok = this.tok('indent', indents);
+      // newline
+      } else {
+        tok = this.tok('newline');
+      }
+
+      this.pipeless = false;
+      return tok;
+    }
+  },
+
+  /**
+   * Pipe-less text consumed only when
+   * pipeless is true;
+   */
+
+  pipelessText: function() {
+    if (!this.pipeless) return;
+    var captures, re;
+
+    // established regexp
+    if (this.indentRe) {
+      captures = this.indentRe.exec(this.input);
+    // determine regexp
+    } else {
+      // tabs
+      re = /^\n(\t*) */;
+      captures = re.exec(this.input);
+
+      // spaces
+      if (captures && !captures[1].length) {
+        re = /^\n( *)/;
+        captures = re.exec(this.input);
+      }
+
+      // established
+      if (captures && captures[1].length) this.indentRe = re;
+    }
+
+    var indents = captures && captures[1].length;
+    if (indents && (this.indentStack.length === 0 || indents > this.indentStack[0])) {
+      var indent = captures[1];
+      var line;
+      var tokens = [];
+      var isMatch;
+      do {
+        // text has `\n` as a prefix
+        var i = this.input.substr(1).indexOf('\n');
+        if (-1 == i) i = this.input.length - 1;
+        var str = this.input.substr(1, i);
+        isMatch = str.substr(0, indent.length) === indent || !str.trim();
+        if (isMatch) {
+          // consume test along with `\n` prefix if match
+          this.consume(str.length + 1);
+          ++this.lineno;
+          tokens.push(str.substr(indent.length));
+        }
+      } while(this.input.length && isMatch);
+      while (this.input.length === 0 && tokens[tokens.length - 1] === '') tokens.pop();
+      return this.tok('pipeless-text', tokens);
+    }
+  },
+
+  /**
+   * ':'
+   */
+
+  colon: function() {
+    var good = /^: +/.test(this.input);
+    var res = this.scan(/^: */, ':');
+    if (res && !good) {
+      console.warn('Warning: space required after `:` on line ' + this.lineno +
+          ' of jade file "' + this.filename + '"');
+    }
+    return res;
+  },
+
+  fail: function () {
+    throw new Error('unexpected text ' + this.input.substr(0, 5));
+  },
+
+  /**
+   * Return the next token object, or those
+   * previously stashed by lookahead.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  advance: function(){
+    return this.stashed()
+      || this.next();
+  },
+
+  /**
+   * Return the next token object.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  next: function() {
+    return this.deferred()
+      || this.blank()
+      || this.eos()
+      || this.pipelessText()
+      || this.yield()
+      || this.doctype()
+      || this.interpolation()
+      || this["case"]()
+      || this.when()
+      || this["default"]()
+      || this["extends"]()
+      || this.append()
+      || this.prepend()
+      || this.block()
+      || this.mixinBlock()
+      || this.include()
+      || this.includeFiltered()
+      || this.mixin()
+      || this.call()
+      || this.conditional()
+      || this.each()
+      || this["while"]()
+      || this.tag()
+      || this.filter()
+      || this.blockCode()
+      || this.code()
+      || this.id()
+      || this.className()
+      || this.attrs()
+      || this.attributesBlock()
+      || this.indent()
+      || this.text()
+      || this.comment()
+      || this.colon()
+      || this.dot()
+      || this.textFail()
+      || this.fail();
+  }
+};
+
+},{"./utils":52,"character-parser":53}],34:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Attrs` node.
+ *
+ * @api public
+ */
+
+var Attrs = module.exports = function Attrs() {
+  this.attributeNames = [];
+  this.attrs = [];
+  this.attributeBlocks = [];
+};
+
+// Inherit from `Node`.
+Attrs.prototype = Object.create(Node.prototype);
+Attrs.prototype.constructor = Attrs;
+
+Attrs.prototype.type = 'Attrs';
+
+/**
+ * Set attribute `name` to `val`, keep in mind these become
+ * part of a raw js object literal, so to quote a value you must
+ * '"quote me"', otherwise or example 'user.name' is literal JavaScript.
+ *
+ * @param {String} name
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @return {Tag} for chaining
+ * @api public
+ */
+
+Attrs.prototype.setAttribute = function(name, val, escaped){
+  if (name !== 'class' && this.attributeNames.indexOf(name) !== -1) {
+    throw new Error('Duplicate attribute "' + name + '" is not allowed.');
+  }
+  this.attributeNames.push(name);
+  this.attrs.push({ name: name, val: val, escaped: escaped });
+  return this;
+};
+
+/**
+ * Remove attribute `name` when present.
+ *
+ * @param {String} name
+ * @api public
+ */
+
+Attrs.prototype.removeAttribute = function(name){
+  var err = new Error('attrs.removeAttribute is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  for (var i = 0, len = this.attrs.length; i < len; ++i) {
+    if (this.attrs[i] && this.attrs[i].name == name) {
+      delete this.attrs[i];
+    }
+  }
+};
+
+/**
+ * Get attribute value by `name`.
+ *
+ * @param {String} name
+ * @return {String}
+ * @api public
+ */
+
+Attrs.prototype.getAttribute = function(name){
+  var err = new Error('attrs.getAttribute is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  for (var i = 0, len = this.attrs.length; i < len; ++i) {
+    if (this.attrs[i] && this.attrs[i].name == name) {
+      return this.attrs[i].val;
+    }
+  }
+};
+
+Attrs.prototype.addAttributes = function (src) {
+  this.attributeBlocks.push(src);
+};
+
+},{"./node":47}],35:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `BlockComment` with the given `block`.
+ *
+ * @param {String} val
+ * @param {Block} block
+ * @param {Boolean} buffer
+ * @api public
+ */
+
+var BlockComment = module.exports = function BlockComment(val, block, buffer) {
+  this.block = block;
+  this.val = val;
+  this.buffer = buffer;
+};
+
+// Inherit from `Node`.
+BlockComment.prototype = Object.create(Node.prototype);
+BlockComment.prototype.constructor = BlockComment;
+
+BlockComment.prototype.type = 'BlockComment';
+
+},{"./node":47}],36:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Block` with an optional `node`.
+ *
+ * @param {Node} node
+ * @api public
+ */
+
+var Block = module.exports = function Block(node){
+  this.nodes = [];
+  if (node) this.push(node);
+};
+
+// Inherit from `Node`.
+Block.prototype = Object.create(Node.prototype);
+Block.prototype.constructor = Block;
+
+Block.prototype.type = 'Block';
+
+/**
+ * Block flag.
+ */
+
+Block.prototype.isBlock = true;
+
+/**
+ * Replace the nodes in `other` with the nodes
+ * in `this` block.
+ *
+ * @param {Block} other
+ * @api private
+ */
+
+Block.prototype.replace = function(other){
+  var err = new Error('block.replace is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  other.nodes = this.nodes;
+};
+
+/**
+ * Push the given `node`.
+ *
+ * @param {Node} node
+ * @return {Number}
+ * @api public
+ */
+
+Block.prototype.push = function(node){
+  return this.nodes.push(node);
+};
+
+/**
+ * Check if this block is empty.
+ *
+ * @return {Boolean}
+ * @api public
+ */
+
+Block.prototype.isEmpty = function(){
+  return 0 == this.nodes.length;
+};
+
+/**
+ * Unshift the given `node`.
+ *
+ * @param {Node} node
+ * @return {Number}
+ * @api public
+ */
+
+Block.prototype.unshift = function(node){
+  return this.nodes.unshift(node);
+};
+
+/**
+ * Return the "last" block, or the first `yield` node.
+ *
+ * @return {Block}
+ * @api private
+ */
+
+Block.prototype.includeBlock = function(){
+  var ret = this
+    , node;
+
+  for (var i = 0, len = this.nodes.length; i < len; ++i) {
+    node = this.nodes[i];
+    if (node.yield) return node;
+    else if (node.textOnly) continue;
+    else if (node.includeBlock) ret = node.includeBlock();
+    else if (node.block && !node.block.isEmpty()) ret = node.block.includeBlock();
+    if (ret.yield) return ret;
+  }
+
+  return ret;
+};
+
+/**
+ * Return a clone of this block.
+ *
+ * @return {Block}
+ * @api private
+ */
+
+Block.prototype.clone = function(){
+  var err = new Error('block.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  var clone = new Block;
+  for (var i = 0, len = this.nodes.length; i < len; ++i) {
+    clone.push(this.nodes[i].clone());
+  }
+  return clone;
+};
+
+},{"./node":47}],37:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Case` with `expr`.
+ *
+ * @param {String} expr
+ * @api public
+ */
+
+var Case = exports = module.exports = function Case(expr, block){
+  this.expr = expr;
+  this.block = block;
+};
+
+// Inherit from `Node`.
+Case.prototype = Object.create(Node.prototype);
+Case.prototype.constructor = Case;
+
+Case.prototype.type = 'Case';
+
+var When = exports.When = function When(expr, block){
+  this.expr = expr;
+  this.block = block;
+  this.debug = false;
+};
+
+// Inherit from `Node`.
+When.prototype = Object.create(Node.prototype);
+When.prototype.constructor = When;
+
+When.prototype.type = 'When';
+
+},{"./node":47}],38:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Code` node with the given code `val`.
+ * Code may also be optionally buffered and escaped.
+ *
+ * @param {String} val
+ * @param {Boolean} buffer
+ * @param {Boolean} escape
+ * @api public
+ */
+
+var Code = module.exports = function Code(val, buffer, escape) {
+  this.val = val;
+  this.buffer = buffer;
+  this.escape = escape;
+  if (val.match(/^ *else/)) this.debug = false;
+};
+
+// Inherit from `Node`.
+Code.prototype = Object.create(Node.prototype);
+Code.prototype.constructor = Code;
+
+Code.prototype.type = 'Code'; // prevent the minifiers removing this
+},{"./node":47}],39:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Comment` with the given `val`, optionally `buffer`,
+ * otherwise the comment may render in the output.
+ *
+ * @param {String} val
+ * @param {Boolean} buffer
+ * @api public
+ */
+
+var Comment = module.exports = function Comment(val, buffer) {
+  this.val = val;
+  this.buffer = buffer;
+};
+
+// Inherit from `Node`.
+Comment.prototype = Object.create(Node.prototype);
+Comment.prototype.constructor = Comment;
+
+Comment.prototype.type = 'Comment';
+
+},{"./node":47}],40:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Doctype` with the given `val`. 
+ *
+ * @param {String} val
+ * @api public
+ */
+
+var Doctype = module.exports = function Doctype(val) {
+  this.val = val;
+};
+
+// Inherit from `Node`.
+Doctype.prototype = Object.create(Node.prototype);
+Doctype.prototype.constructor = Doctype;
+
+Doctype.prototype.type = 'Doctype';
+
+},{"./node":47}],41:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize an `Each` node, representing iteration
+ *
+ * @param {String} obj
+ * @param {String} val
+ * @param {String} key
+ * @param {Block} block
+ * @api public
+ */
+
+var Each = module.exports = function Each(obj, val, key, block) {
+  this.obj = obj;
+  this.val = val;
+  this.key = key;
+  this.block = block;
+};
+
+// Inherit from `Node`.
+Each.prototype = Object.create(Node.prototype);
+Each.prototype.constructor = Each;
+
+Each.prototype.type = 'Each';
+
+},{"./node":47}],42:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Filter` node with the given
+ * filter `name` and `block`.
+ *
+ * @param {String} name
+ * @param {Block|Node} block
+ * @api public
+ */
+
+var Filter = module.exports = function Filter(name, block, attrs) {
+  this.name = name;
+  this.block = block;
+  this.attrs = attrs;
+};
+
+// Inherit from `Node`.
+Filter.prototype = Object.create(Node.prototype);
+Filter.prototype.constructor = Filter;
+
+Filter.prototype.type = 'Filter';
+
+},{"./node":47}],43:[function(require,module,exports){
+'use strict';
+
+exports.Node = require('./node');
+exports.Tag = require('./tag');
+exports.Code = require('./code');
+exports.Each = require('./each');
+exports.Case = require('./case');
+exports.Text = require('./text');
+exports.Block = require('./block');
+exports.MixinBlock = require('./mixin-block');
+exports.Mixin = require('./mixin');
+exports.Filter = require('./filter');
+exports.Comment = require('./comment');
+exports.Literal = require('./literal');
+exports.BlockComment = require('./block-comment');
+exports.Doctype = require('./doctype');
+
+},{"./block":36,"./block-comment":35,"./case":37,"./code":38,"./comment":39,"./doctype":40,"./each":41,"./filter":42,"./literal":44,"./mixin":46,"./mixin-block":45,"./node":47,"./tag":48,"./text":49}],44:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Literal` node with the given `str.
+ *
+ * @param {String} str
+ * @api public
+ */
+
+var Literal = module.exports = function Literal(str) {
+  this.str = str;
+};
+
+// Inherit from `Node`.
+Literal.prototype = Object.create(Node.prototype);
+Literal.prototype.constructor = Literal;
+
+Literal.prototype.type = 'Literal';
+
+},{"./node":47}],45:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a new `Block` with an optional `node`.
+ *
+ * @param {Node} node
+ * @api public
+ */
+
+var MixinBlock = module.exports = function MixinBlock(){};
+
+// Inherit from `Node`.
+MixinBlock.prototype = Object.create(Node.prototype);
+MixinBlock.prototype.constructor = MixinBlock;
+
+MixinBlock.prototype.type = 'MixinBlock';
+
+},{"./node":47}],46:[function(require,module,exports){
+'use strict';
+
+var Attrs = require('./attrs');
+
+/**
+ * Initialize a new `Mixin` with `name` and `block`.
+ *
+ * @param {String} name
+ * @param {String} args
+ * @param {Block} block
+ * @api public
+ */
+
+var Mixin = module.exports = function Mixin(name, args, block, call){
+  Attrs.call(this);
+  this.name = name;
+  this.args = args;
+  this.block = block;
+  this.call = call;
+};
+
+// Inherit from `Attrs`.
+Mixin.prototype = Object.create(Attrs.prototype);
+Mixin.prototype.constructor = Mixin;
+
+Mixin.prototype.type = 'Mixin';
+
+},{"./attrs":34}],47:[function(require,module,exports){
+'use strict';
+
+var Node = module.exports = function Node(){};
+
+/**
+ * Clone this node (return itself)
+ *
+ * @return {Node}
+ * @api private
+ */
+
+Node.prototype.clone = function(){
+  var err = new Error('node.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+  return this;
+};
+
+Node.prototype.type = '';
+
+},{}],48:[function(require,module,exports){
+'use strict';
+
+var Attrs = require('./attrs');
+var Block = require('./block');
+var inlineTags = require('../inline-tags');
+
+/**
+ * Initialize a `Tag` node with the given tag `name` and optional `block`.
+ *
+ * @param {String} name
+ * @param {Block} block
+ * @api public
+ */
+
+var Tag = module.exports = function Tag(name, block) {
+  Attrs.call(this);
+  this.name = name;
+  this.block = block || new Block;
+};
+
+// Inherit from `Attrs`.
+Tag.prototype = Object.create(Attrs.prototype);
+Tag.prototype.constructor = Tag;
+
+Tag.prototype.type = 'Tag';
+
+/**
+ * Clone this tag.
+ *
+ * @return {Tag}
+ * @api private
+ */
+
+Tag.prototype.clone = function(){
+  var err = new Error('tag.clone is deprecated and will be removed in v2.0.0');
+  console.warn(err.stack);
+
+  var clone = new Tag(this.name, this.block.clone());
+  clone.line = this.line;
+  clone.attrs = this.attrs;
+  clone.textOnly = this.textOnly;
+  return clone;
+};
+
+/**
+ * Check if this tag is an inline tag.
+ *
+ * @return {Boolean}
+ * @api private
+ */
+
+Tag.prototype.isInline = function(){
+  return ~inlineTags.indexOf(this.name);
+};
+
+/**
+ * Check if this tag's contents can be inlined.  Used for pretty printing.
+ *
+ * @return {Boolean}
+ * @api private
+ */
+
+Tag.prototype.canInline = function(){
+  var nodes = this.block.nodes;
+
+  function isInline(node){
+    // Recurse if the node is a block
+    if (node.isBlock) return node.nodes.every(isInline);
+    return node.isText || (node.isInline && node.isInline());
+  }
+
+  // Empty tag
+  if (!nodes.length) return true;
+
+  // Text-only or inline-only tag
+  if (1 == nodes.length) return isInline(nodes[0]);
+
+  // Multi-line inline-only tag
+  if (this.block.nodes.every(isInline)) {
+    for (var i = 1, len = nodes.length; i < len; ++i) {
+      if (nodes[i-1].isText && nodes[i].isText)
+        return false;
+    }
+    return true;
+  }
+
+  // Mixed tag
+  return false;
+};
+
+},{"../inline-tags":32,"./attrs":34,"./block":36}],49:[function(require,module,exports){
+'use strict';
+
+var Node = require('./node');
+
+/**
+ * Initialize a `Text` node with optional `line`.
+ *
+ * @param {String} line
+ * @api public
+ */
+
+var Text = module.exports = function Text(line) {
+  this.val = line;
+};
+
+// Inherit from `Node`.
+Text.prototype = Object.create(Node.prototype);
+Text.prototype.constructor = Text;
+
+Text.prototype.type = 'Text';
+
+/**
+ * Flag as text.
+ */
+
+Text.prototype.isText = true;
+},{"./node":47}],50:[function(require,module,exports){
+'use strict';
+
+var Lexer = require('./lexer');
+var nodes = require('./nodes');
+var utils = require('./utils');
+var filters = require('./filters');
+var path = require('path');
+var constantinople = require('constantinople');
+var parseJSExpression = require('character-parser').parseMax;
+var extname = path.extname;
+
+/**
+ * Initialize `Parser` with the given input `str` and `filename`.
+ *
+ * @param {String} str
+ * @param {String} filename
+ * @param {Object} options
+ * @api public
+ */
+
+var Parser = exports = module.exports = function Parser(str, filename, options){
+  //Strip any UTF-8 BOM off of the start of `str`, if it exists.
+  this.input = str.replace(/^\uFEFF/, '');
+  this.lexer = new Lexer(this.input, filename);
+  this.filename = filename;
+  this.blocks = {};
+  this.mixins = {};
+  this.options = options;
+  this.contexts = [this];
+  this.inMixin = 0;
+  this.dependencies = [];
+  this.inBlock = 0;
+};
+
+/**
+ * Parser prototype.
+ */
+
+Parser.prototype = {
+
+  /**
+   * Save original constructor
+   */
+
+  constructor: Parser,
+
+  /**
+   * Push `parser` onto the context stack,
+   * or pop and return a `Parser`.
+   */
+
+  context: function(parser){
+    if (parser) {
+      this.contexts.push(parser);
+    } else {
+      return this.contexts.pop();
+    }
+  },
+
+  /**
+   * Return the next token object.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  advance: function(){
+    return this.lexer.advance();
+  },
+
+  /**
+   * Single token lookahead.
+   *
+   * @return {Object}
+   * @api private
+   */
+
+  peek: function() {
+    return this.lookahead(1);
+  },
+
+  /**
+   * Return lexer lineno.
+   *
+   * @return {Number}
+   * @api private
+   */
+
+  line: function() {
+    return this.lexer.lineno;
+  },
+
+  /**
+   * `n` token lookahead.
+   *
+   * @param {Number} n
+   * @return {Object}
+   * @api private
+   */
+
+  lookahead: function(n){
+    return this.lexer.lookahead(n);
+  },
+
+  /**
+   * Parse input returning a string of js for evaluation.
+   *
+   * @return {String}
+   * @api public
+   */
+
+  parse: function(){
+    var block = new nodes.Block, parser;
+    block.line = 0;
+    block.filename = this.filename;
+
+    while ('eos' != this.peek().type) {
+      if ('newline' == this.peek().type) {
+        this.advance();
+      } else {
+        var next = this.peek();
+        var expr = this.parseExpr();
+        expr.filename = expr.filename || this.filename;
+        expr.line = next.line;
+        block.push(expr);
+      }
+    }
+
+    if (parser = this.extending) {
+      this.context(parser);
+      var ast = parser.parse();
+      this.context();
+
+      // hoist mixins
+      for (var name in this.mixins)
+        ast.unshift(this.mixins[name]);
+      return ast;
+    }
+
+    if (!this.extending && !this.included && Object.keys(this.blocks).length){
+      var blocks = [];
+      utils.walkAST(block, function (node) {
+        if (node.type === 'Block' && node.name) {
+          blocks.push(node.name);
+        }
+      });
+      Object.keys(this.blocks).forEach(function (name) {
+        if (blocks.indexOf(name) === -1 && !this.blocks[name].isSubBlock) {
+          console.warn('Warning: Unexpected block "'
+                       + name
+                       + '" '
+                       + ' on line '
+                       + this.blocks[name].line
+                       + ' of '
+                       + (this.blocks[name].filename)
+                       + '. This block is never used. This warning will be an error in v2.0.0');
+        }
+      }.bind(this));
+    }
+
+    return block;
+  },
+
+  /**
+   * Expect the given type, or throw an exception.
+   *
+   * @param {String} type
+   * @api private
+   */
+
+  expect: function(type){
+    if (this.peek().type === type) {
+      return this.advance();
+    } else {
+      throw new Error('expected "' + type + '", but got "' + this.peek().type + '"');
+    }
+  },
+
+  /**
+   * Accept the given `type`.
+   *
+   * @param {String} type
+   * @api private
+   */
+
+  accept: function(type){
+    if (this.peek().type === type) {
+      return this.advance();
+    }
+  },
+
+  /**
+   *   tag
+   * | doctype
+   * | mixin
+   * | include
+   * | filter
+   * | comment
+   * | text
+   * | each
+   * | code
+   * | yield
+   * | id
+   * | class
+   * | interpolation
+   */
+
+  parseExpr: function(){
+    switch (this.peek().type) {
+      case 'tag':
+        return this.parseTag();
+      case 'mixin':
+        return this.parseMixin();
+      case 'block':
+        return this.parseBlock();
+      case 'mixin-block':
+        return this.parseMixinBlock();
+      case 'case':
+        return this.parseCase();
+      case 'extends':
+        return this.parseExtends();
+      case 'include':
+        return this.parseInclude();
+      case 'doctype':
+        return this.parseDoctype();
+      case 'filter':
+        return this.parseFilter();
+      case 'comment':
+        return this.parseComment();
+      case 'text':
+        return this.parseText();
+      case 'each':
+        return this.parseEach();
+      case 'code':
+        return this.parseCode();
+      case 'blockCode':
+        return this.parseBlockCode();
+      case 'call':
+        return this.parseCall();
+      case 'interpolation':
+        return this.parseInterpolation();
+      case 'yield':
+        this.advance();
+        var block = new nodes.Block;
+        block.yield = true;
+        return block;
+      case 'id':
+      case 'class':
+        var tok = this.advance();
+        this.lexer.defer(this.lexer.tok('tag', 'div'));
+        this.lexer.defer(tok);
+        return this.parseExpr();
+      default:
+        throw new Error('unexpected token "' + this.peek().type + '"');
+    }
+  },
+
+  /**
+   * Text
+   */
+
+  parseText: function(){
+    var tok = this.expect('text');
+    var tokens = this.parseInlineTagsInText(tok.val);
+    if (tokens.length === 1) return tokens[0];
+    var node = new nodes.Block;
+    for (var i = 0; i < tokens.length; i++) {
+      node.push(tokens[i]);
+    };
+    return node;
+  },
+
+  /**
+   *   ':' expr
+   * | block
+   */
+
+  parseBlockExpansion: function(){
+    if (':' == this.peek().type) {
+      this.advance();
+      return new nodes.Block(this.parseExpr());
+    } else {
+      return this.block();
+    }
+  },
+
+  /**
+   * case
+   */
+
+  parseCase: function(){
+    var val = this.expect('case').val;
+    var node = new nodes.Case(val);
+    node.line = this.line();
+
+    var block = new nodes.Block;
+    block.line = this.line();
+    block.filename = this.filename;
+    this.expect('indent');
+    while ('outdent' != this.peek().type) {
+      switch (this.peek().type) {
+        case 'comment':
+        case 'newline':
+          this.advance();
+          break;
+        case 'when':
+          block.push(this.parseWhen());
+          break;
+        case 'default':
+          block.push(this.parseDefault());
+          break;
+        default:
+          throw new Error('Unexpected token "' + this.peek().type
+                          + '", expected "when", "default" or "newline"');
+      }
+    }
+    this.expect('outdent');
+
+    node.block = block;
+
+    return node;
+  },
+
+  /**
+   * when
+   */
+
+  parseWhen: function(){
+    var val = this.expect('when').val;
+    if (this.peek().type !== 'newline')
+      return new nodes.Case.When(val, this.parseBlockExpansion());
+    else
+      return new nodes.Case.When(val);
+  },
+
+  /**
+   * default
+   */
+
+  parseDefault: function(){
+    this.expect('default');
+    return new nodes.Case.When('default', this.parseBlockExpansion());
+  },
+
+  /**
+   * code
+   */
+
+  parseCode: function(afterIf){
+    var tok = this.expect('code');
+    var node = new nodes.Code(tok.val, tok.buffer, tok.escape);
+    var block;
+    node.line = this.line();
+
+    // throw an error if an else does not have an if
+    if (tok.isElse && !tok.hasIf) {
+      throw new Error('Unexpected else without if');
+    }
+
+    // handle block
+    block = 'indent' == this.peek().type;
+    if (block) {
+      node.block = this.block();
+    }
+
+    // handle missing block
+    if (tok.requiresBlock && !block) {
+      node.block = new nodes.Block();
+    }
+
+    // mark presense of if for future elses
+    if (tok.isIf && this.peek().isElse) {
+      this.peek().hasIf = true;
+    } else if (tok.isIf && this.peek().type === 'newline' && this.lookahead(2).isElse) {
+      this.lookahead(2).hasIf = true;
+    }
+
+    return node;
+  },
+
+  /**
+   * block code
+   */
+
+  parseBlockCode: function(){
+    var tok = this.expect('blockCode');
+    var node;
+    var body = this.peek();
+    var text;
+    if (body.type === 'pipeless-text') {
+      this.advance();
+      text = body.val.join('\n');
+    } else {
+      text = '';
+    }
+      node = new nodes.Code(text, false, false);
+      return node;
+  },
+
+  /**
+   * comment
+   */
+
+  parseComment: function(){
+    var tok = this.expect('comment');
+    var node;
+
+    var block;
+    if (block = this.parseTextBlock()) {
+      node = new nodes.BlockComment(tok.val, block, tok.buffer);
+    } else {
+      node = new nodes.Comment(tok.val, tok.buffer);
+    }
+
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * doctype
+   */
+
+  parseDoctype: function(){
+    var tok = this.expect('doctype');
+    var node = new nodes.Doctype(tok.val);
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * filter attrs? text-block
+   */
+
+  parseFilter: function(){
+    var tok = this.expect('filter');
+    var attrs = this.accept('attrs');
+    var block;
+
+    block = this.parseTextBlock() || new nodes.Block();
+
+    var options = {};
+    if (attrs) {
+      attrs.attrs.forEach(function (attribute) {
+        options[attribute.name] = constantinople.toConstant(attribute.val);
+      });
+    }
+
+    var node = new nodes.Filter(tok.val, block, options);
+    node.line = this.line();
+    return node;
+  },
+
+  /**
+   * each block
+   */
+
+  parseEach: function(){
+    var tok = this.expect('each');
+    var node = new nodes.Each(tok.code, tok.val, tok.key);
+    node.line = this.line();
+    node.block = this.block();
+    if (this.peek().type == 'code' && this.peek().val == 'else') {
+      this.advance();
+      node.alternative = this.block();
+    }
+    return node;
+  },
+
+  /**
+   * Resolves a path relative to the template for use in
+   * includes and extends
+   *
+   * @param {String}  path
+   * @param {String}  purpose  Used in error messages.
+   * @return {String}
+   * @api private
+   */
+
+  resolvePath: function (path, purpose) {
+    var p = require('path');
+    var dirname = p.dirname;
+    var basename = p.basename;
+    var join = p.join;
+
+    if (path[0] !== '/' && !this.filename)
+      throw new Error('the "filename" option is required to use "' + purpose + '" with "relative" paths');
+
+    if (path[0] === '/' && !this.options.basedir)
+      throw new Error('the "basedir" option is required to use "' + purpose + '" with "absolute" paths');
+
+    path = join(path[0] === '/' ? this.options.basedir : dirname(this.filename), path);
+
+    if (basename(path).indexOf('.') === -1) path += '.jade';
+
+    return path;
+  },
+
+  /**
+   * 'extends' name
+   */
+
+  parseExtends: function(){
+    var fs = require('fs');
+
+    var path = this.resolvePath(this.expect('extends').val.trim(), 'extends');
+    if ('.jade' != path.substr(-5)) path += '.jade';
+
+    this.dependencies.push(path);
+    var str = fs.readFileSync(path, 'utf8');
+    var parser = new this.constructor(str, path, this.options);
+    parser.dependencies = this.dependencies;
+
+    parser.blocks = this.blocks;
+    parser.included = this.included;
+    parser.contexts = this.contexts;
+    this.extending = parser;
+
+    // TODO: null node
+    return new nodes.Literal('');
+  },
+
+  /**
+   * 'block' name block
+   */
+
+  parseBlock: function(){
+    var block = this.expect('block');
+    var mode = block.mode;
+    var name = block.val.trim();
+
+    var line = block.line;
+
+    this.inBlock++;
+    block = 'indent' == this.peek().type
+      ? this.block()
+      : new nodes.Block(new nodes.Literal(''));
+    this.inBlock--;
+    block.name = name;
+    block.line = line;
+
+    var prev = this.blocks[name] || {prepended: [], appended: []}
+    if (prev.mode === 'replace') return this.blocks[name] = prev;
+
+    var allNodes = prev.prepended.concat(block.nodes).concat(prev.appended);
+
+    switch (mode) {
+      case 'append':
+        prev.appended = prev.parser === this ?
+                        prev.appended.concat(block.nodes) :
+                        block.nodes.concat(prev.appended);
+        break;
+      case 'prepend':
+        prev.prepended = prev.parser === this ?
+                         block.nodes.concat(prev.prepended) :
+                         prev.prepended.concat(block.nodes);
+        break;
+    }
+    block.nodes = allNodes;
+    block.appended = prev.appended;
+    block.prepended = prev.prepended;
+    block.mode = mode;
+    block.parser = this;
+
+    block.isSubBlock = this.inBlock > 0;
+
+    return this.blocks[name] = block;
+  },
+
+  parseMixinBlock: function () {
+    var block = this.expect('mixin-block');
+    if (!this.inMixin) {
+      throw new Error('Anonymous blocks are not allowed unless they are part of a mixin.');
+    }
+    return new nodes.MixinBlock();
+  },
+
+  /**
+   * include block?
+   */
+
+  parseInclude: function(){
+    var fs = require('fs');
+    var tok = this.expect('include');
+
+    var path = this.resolvePath(tok.val.trim(), 'include');
+    this.dependencies.push(path);
+    // has-filter
+    if (tok.filter) {
+      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
+      var options = {filename: path};
+      if (tok.attrs) {
+        tok.attrs.attrs.forEach(function (attribute) {
+          options[attribute.name] = constantinople.toConstant(attribute.val);
+        });
+      }
+      str = filters(tok.filter, str, options);
+      return new nodes.Literal(str);
+    }
+
+    // non-jade
+    if ('.jade' != path.substr(-5)) {
+      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
+      return new nodes.Literal(str);
+    }
+
+    var str = fs.readFileSync(path, 'utf8');
+    var parser = new this.constructor(str, path, this.options);
+    parser.dependencies = this.dependencies;
+
+    parser.blocks = utils.merge({}, this.blocks);
+    parser.included = true;
+
+    parser.mixins = this.mixins;
+
+    this.context(parser);
+    var ast = parser.parse();
+    this.context();
+    ast.filename = path;
+
+    if ('indent' == this.peek().type) {
+      ast.includeBlock().push(this.block());
+    }
+
+    return ast;
+  },
+
+  /**
+   * call ident block
+   */
+
+  parseCall: function(){
+    var tok = this.expect('call');
+    var name = tok.val;
+    var args = tok.args;
+    var mixin = new nodes.Mixin(name, args, new nodes.Block, true);
+
+    this.tag(mixin);
+    if (mixin.code) {
+      mixin.block.push(mixin.code);
+      mixin.code = null;
+    }
+    if (mixin.block.isEmpty()) mixin.block = null;
+    return mixin;
+  },
+
+  /**
+   * mixin block
+   */
+
+  parseMixin: function(){
+    var tok = this.expect('mixin');
+    var name = tok.val;
+    var args = tok.args;
+    var mixin;
+
+    // definition
+    if ('indent' == this.peek().type) {
+      this.inMixin++;
+      mixin = new nodes.Mixin(name, args, this.block(), false);
+      this.mixins[name] = mixin;
+      this.inMixin--;
+      return mixin;
+    // call
+    } else {
+      return new nodes.Mixin(name, args, null, true);
+    }
+  },
+
+  parseInlineTagsInText: function (str) {
+    var line = this.line();
+
+    var match = /(\\)?#\[((?:.|\n)*)$/.exec(str);
+    if (match) {
+      if (match[1]) { // escape
+        var text = new nodes.Text(str.substr(0, match.index) + '#[');
+        text.line = line;
+        var rest = this.parseInlineTagsInText(match[2]);
+        if (rest[0].type === 'Text') {
+          text.val += rest[0].val;
+          rest.shift();
+        }
+        return [text].concat(rest);
+      } else {
+        var text = new nodes.Text(str.substr(0, match.index));
+        text.line = line;
+        var buffer = [text];
+        var rest = match[2];
+        var range = parseJSExpression(rest);
+        var inner = new Parser(range.src, this.filename, this.options);
+        buffer.push(inner.parse());
+        return buffer.concat(this.parseInlineTagsInText(rest.substr(range.end + 1)));
+      }
+    } else {
+      var text = new nodes.Text(str);
+      text.line = line;
+      return [text];
+    }
+  },
+
+  /**
+   * indent (text | newline)* outdent
+   */
+
+  parseTextBlock: function(){
+    var block = new nodes.Block;
+    block.line = this.line();
+    var body = this.peek();
+    if (body.type !== 'pipeless-text') return;
+    this.advance();
+    block.nodes = body.val.reduce(function (accumulator, text) {
+      return accumulator.concat(this.parseInlineTagsInText(text));
+    }.bind(this), []);
+    return block;
+  },
+
+  /**
+   * indent expr* outdent
+   */
+
+  block: function(){
+    var block = new nodes.Block;
+    block.line = this.line();
+    block.filename = this.filename;
+    this.expect('indent');
+    while ('outdent' != this.peek().type) {
+      if ('newline' == this.peek().type) {
+        this.advance();
+      } else {
+        var expr = this.parseExpr();
+        expr.filename = this.filename;
+        block.push(expr);
+      }
+    }
+    this.expect('outdent');
+    return block;
+  },
+
+  /**
+   * interpolation (attrs | class | id)* (text | code | ':')? newline* block?
+   */
+
+  parseInterpolation: function(){
+    var tok = this.advance();
+    var tag = new nodes.Tag(tok.val);
+    tag.buffer = true;
+    return this.tag(tag);
+  },
+
+  /**
+   * tag (attrs | class | id)* (text | code | ':')? newline* block?
+   */
+
+  parseTag: function(){
+    var tok = this.advance();
+    var tag = new nodes.Tag(tok.val);
+
+    tag.selfClosing = tok.selfClosing;
+
+    return this.tag(tag);
+  },
+
+  /**
+   * Parse tag.
+   */
+
+  tag: function(tag){
+    tag.line = this.line();
+
+    var seenAttrs = false;
+    // (attrs | class | id)*
+    out:
+      while (true) {
+        switch (this.peek().type) {
+          case 'id':
+          case 'class':
+            var tok = this.advance();
+            tag.setAttribute(tok.type, "'" + tok.val + "'");
+            continue;
+          case 'attrs':
+            if (seenAttrs) {
+              console.warn(this.filename + ', line ' + this.peek().line + ':\nYou should not have jade tags with multiple attributes.');
+            }
+            seenAttrs = true;
+            var tok = this.advance();
+            var attrs = tok.attrs;
+
+            if (tok.selfClosing) tag.selfClosing = true;
+
+            for (var i = 0; i < attrs.length; i++) {
+              tag.setAttribute(attrs[i].name, attrs[i].val, attrs[i].escaped);
+            }
+            continue;
+          case '&attributes':
+            var tok = this.advance();
+            tag.addAttributes(tok.val);
+            break;
+          default:
+            break out;
+        }
+      }
+
+    // check immediate '.'
+    if ('dot' == this.peek().type) {
+      tag.textOnly = true;
+      this.advance();
+    }
+
+    // (text | code | ':')?
+    switch (this.peek().type) {
+      case 'text':
+        tag.block.push(this.parseText());
+        break;
+      case 'code':
+        tag.code = this.parseCode();
+        break;
+      case ':':
+        this.advance();
+        tag.block = new nodes.Block;
+        tag.block.push(this.parseExpr());
+        break;
+      case 'newline':
+      case 'indent':
+      case 'outdent':
+      case 'eos':
+      case 'pipeless-text':
+        break;
+      default:
+        throw new Error('Unexpected token `' + this.peek().type + '` expected `text`, `code`, `:`, `newline` or `eos`')
+    }
+
+    // newline*
+    while ('newline' == this.peek().type) this.advance();
+
+    // block?
+    if (tag.textOnly) {
+      tag.block = this.parseTextBlock() || new nodes.Block();
+    } else if ('indent' == this.peek().type) {
+      var block = this.block();
+      for (var i = 0, len = block.nodes.length; i < len; ++i) {
+        tag.block.push(block.nodes[i]);
+      }
+    }
+
+    return tag;
+  }
+};
+
+},{"./filters":30,"./lexer":33,"./nodes":43,"./utils":52,"character-parser":53,"constantinople":54,"fs":16,"path":20}],51:[function(require,module,exports){
+'use strict';
+
+/**
+ * Merge two attribute objects giving precedence
+ * to values in object `b`. Classes are special-cased
+ * allowing for arrays and merging/joining appropriately
+ * resulting in a string.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object} a
+ * @api private
+ */
+
+exports.merge = function merge(a, b) {
+  if (arguments.length === 1) {
+    var attrs = a[0];
+    for (var i = 1; i < a.length; i++) {
+      attrs = merge(attrs, a[i]);
+    }
+    return attrs;
+  }
+  var ac = a['class'];
+  var bc = b['class'];
+
+  if (ac || bc) {
+    ac = ac || [];
+    bc = bc || [];
+    if (!Array.isArray(ac)) ac = [ac];
+    if (!Array.isArray(bc)) bc = [bc];
+    a['class'] = ac.concat(bc).filter(nulls);
+  }
+
+  for (var key in b) {
+    if (key != 'class') {
+      a[key] = b[key];
+    }
+  }
+
+  return a;
+};
+
+/**
+ * Filter null `val`s.
+ *
+ * @param {*} val
+ * @return {Boolean}
+ * @api private
+ */
+
+function nulls(val) {
+  return val != null && val !== '';
+}
+
+/**
+ * join array as classes.
+ *
+ * @param {*} val
+ * @return {String}
+ */
+exports.joinClasses = joinClasses;
+function joinClasses(val) {
+  return (Array.isArray(val) ? val.map(joinClasses) :
+    (val && typeof val === 'object') ? Object.keys(val).filter(function (key) { return val[key]; }) :
+    [val]).filter(nulls).join(' ');
+}
+
+/**
+ * Render the given classes.
+ *
+ * @param {Array} classes
+ * @param {Array.<Boolean>} escaped
+ * @return {String}
+ */
+exports.cls = function cls(classes, escaped) {
+  var buf = [];
+  for (var i = 0; i < classes.length; i++) {
+    if (escaped && escaped[i]) {
+      buf.push(exports.escape(joinClasses([classes[i]])));
+    } else {
+      buf.push(joinClasses(classes[i]));
+    }
+  }
+  var text = joinClasses(buf);
+  if (text.length) {
+    return ' class="' + text + '"';
+  } else {
+    return '';
+  }
+};
+
+
+exports.style = function (val) {
+  if (val && typeof val === 'object') {
+    return Object.keys(val).map(function (style) {
+      return style + ':' + val[style];
+    }).join(';');
+  } else {
+    return val;
+  }
+};
+/**
+ * Render the given attribute.
+ *
+ * @param {String} key
+ * @param {String} val
+ * @param {Boolean} escaped
+ * @param {Boolean} terse
+ * @return {String}
+ */
+exports.attr = function attr(key, val, escaped, terse) {
+  if (key === 'style') {
+    val = exports.style(val);
+  }
+  if ('boolean' == typeof val || null == val) {
+    if (val) {
+      return ' ' + (terse ? key : key + '="' + key + '"');
+    } else {
+      return '';
+    }
+  } else if (0 == key.indexOf('data') && 'string' != typeof val) {
+    if (JSON.stringify(val).indexOf('&') !== -1) {
+      console.warn('Since Jade 2.0.0, ampersands (`&`) in data attributes ' +
+                   'will be escaped to `&amp;`');
+    };
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will eliminate the double quotes around dates in ' +
+                   'ISO form after 2.0.0');
+    }
+    return ' ' + key + "='" + JSON.stringify(val).replace(/'/g, '&apos;') + "'";
+  } else if (escaped) {
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will stringify dates in ISO form after 2.0.0');
+    }
+    return ' ' + key + '="' + exports.escape(val) + '"';
+  } else {
+    if (val && typeof val.toISOString === 'function') {
+      console.warn('Jade will stringify dates in ISO form after 2.0.0');
+    }
+    return ' ' + key + '="' + val + '"';
+  }
+};
+
+/**
+ * Render the given attributes object.
+ *
+ * @param {Object} obj
+ * @param {Object} escaped
+ * @return {String}
+ */
+exports.attrs = function attrs(obj, terse){
+  var buf = [];
+
+  var keys = Object.keys(obj);
+
+  if (keys.length) {
+    for (var i = 0; i < keys.length; ++i) {
+      var key = keys[i]
+        , val = obj[key];
+
+      if ('class' == key) {
+        if (val = joinClasses(val)) {
+          buf.push(' ' + key + '="' + val + '"');
+        }
+      } else {
+        buf.push(exports.attr(key, val, false, terse));
+      }
+    }
+  }
+
+  return buf.join('');
+};
+
+/**
+ * Escape the given string of `html`.
+ *
+ * @param {String} html
+ * @return {String}
+ * @api private
+ */
+
+var jade_encode_html_rules = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;'
+};
+var jade_match_html = /[&<>"]/g;
+
+function jade_encode_char(c) {
+  return jade_encode_html_rules[c] || c;
+}
+
+exports.escape = jade_escape;
+function jade_escape(html){
+  var result = String(html).replace(jade_match_html, jade_encode_char);
+  if (result === '' + html) return html;
+  else return result;
+};
+
+/**
+ * Re-throw the given `err` in context to the
+ * the jade in `filename` at the given `lineno`.
+ *
+ * @param {Error} err
+ * @param {String} filename
+ * @param {String} lineno
+ * @api private
+ */
+
+exports.rethrow = function rethrow(err, filename, lineno, str){
+  if (!(err instanceof Error)) throw err;
+  if ((typeof window != 'undefined' || !filename) && !str) {
+    err.message += ' on line ' + lineno;
+    throw err;
+  }
+  try {
+    str = str || require('fs').readFileSync(filename, 'utf8')
+  } catch (ex) {
+    rethrow(err, null, lineno)
+  }
+  var context = 3
+    , lines = str.split('\n')
+    , start = Math.max(lineno - context, 0)
+    , end = Math.min(lines.length, lineno + context);
+
+  // Error context
+  var context = lines.slice(start, end).map(function(line, i){
+    var curr = i + start + 1;
+    return (curr == lineno ? '  > ' : '    ')
+      + curr
+      + '| '
+      + line;
+  }).join('\n');
+
+  // Alter exception message
+  err.path = filename;
+  err.message = (filename || 'Jade') + ':' + lineno
+    + '\n' + context + '\n\n' + err.message;
+  throw err;
+};
+
+exports.DebugItem = function DebugItem(lineno, filename) {
+  this.lineno = lineno;
+  this.filename = filename;
+}
+
+},{"fs":16}],52:[function(require,module,exports){
+'use strict';
+
+/**
+ * Merge `b` into `a`.
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object}
+ * @api public
+ */
+
+exports.merge = function(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+};
+
+exports.stringify = function(str) {
+  return JSON.stringify(str)
+             .replace(/\u2028/g, '\\u2028')
+             .replace(/\u2029/g, '\\u2029');
+};
+
+exports.walkAST = function walkAST(ast, before, after) {
+  before && before(ast);
+  switch (ast.type) {
+    case 'Block':
+      ast.nodes.forEach(function (node) {
+        walkAST(node, before, after);
+      });
+      break;
+    case 'Case':
+    case 'Each':
+    case 'Mixin':
+    case 'Tag':
+    case 'When':
+    case 'Code':
+      ast.block && walkAST(ast.block, before, after);
+      break;
+    case 'Attrs':
+    case 'BlockComment':
+    case 'Comment':
+    case 'Doctype':
+    case 'Filter':
+    case 'Literal':
+    case 'MixinBlock':
+    case 'Text':
+      break;
+    default:
+      throw new Error('Unexpected node type ' + ast.type);
+      break;
+  }
+  after && after(ast);
+};
+
+},{}],53:[function(require,module,exports){
+exports = (module.exports = parse);
+exports.parse = parse;
+function parse(src, state, options) {
+  options = options || {};
+  state = state || exports.defaultState();
+  var start = options.start || 0;
+  var end = options.end || src.length;
+  var index = start;
+  while (index < end) {
+    if (state.roundDepth < 0 || state.curlyDepth < 0 || state.squareDepth < 0) {
+      throw new SyntaxError('Mismatched Bracket: ' + src[index - 1]);
+    }
+    exports.parseChar(src[index++], state);
+  }
+  return state;
+}
+
+exports.parseMax = parseMax;
+function parseMax(src, options) {
+  options = options || {};
+  var start = options.start || 0;
+  var index = start;
+  var state = exports.defaultState();
+  while (state.roundDepth >= 0 && state.curlyDepth >= 0 && state.squareDepth >= 0) {
+    if (index >= src.length) {
+      throw new Error('The end of the string was reached with no closing bracket found.');
+    }
+    exports.parseChar(src[index++], state);
+  }
+  var end = index - 1;
+  return {
+    start: start,
+    end: end,
+    src: src.substring(start, end)
+  };
+}
+
+exports.parseUntil = parseUntil;
+function parseUntil(src, delimiter, options) {
+  options = options || {};
+  var includeLineComment = options.includeLineComment || false;
+  var start = options.start || 0;
+  var index = start;
+  var state = exports.defaultState();
+  while (state.isString() || state.regexp || state.blockComment ||
+         (!includeLineComment && state.lineComment) || !startsWith(src, delimiter, index)) {
+    exports.parseChar(src[index++], state);
+  }
+  var end = index;
+  return {
+    start: start,
+    end: end,
+    src: src.substring(start, end)
+  };
+}
+
+
+exports.parseChar = parseChar;
+function parseChar(character, state) {
+  if (character.length !== 1) throw new Error('Character must be a string of length 1');
+  state = state || exports.defaultState();
+  state.src = state.src || '';
+  state.src += character;
+  var wasComment = state.blockComment || state.lineComment;
+  var lastChar = state.history ? state.history[0] : '';
+
+  if (state.regexpStart) {
+    if (character === '/' || character == '*') {
+      state.regexp = false;
+    }
+    state.regexpStart = false;
+  }
+  if (state.lineComment) {
+    if (character === '\n') {
+      state.lineComment = false;
+    }
+  } else if (state.blockComment) {
+    if (state.lastChar === '*' && character === '/') {
+      state.blockComment = false;
+    }
+  } else if (state.singleQuote) {
+    if (character === '\'' && !state.escaped) {
+      state.singleQuote = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (state.doubleQuote) {
+    if (character === '"' && !state.escaped) {
+      state.doubleQuote = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (state.regexp) {
+    if (character === '/' && !state.escaped) {
+      state.regexp = false;
+    } else if (character === '\\' && !state.escaped) {
+      state.escaped = true;
+    } else {
+      state.escaped = false;
+    }
+  } else if (lastChar === '/' && character === '/') {
+    state.history = state.history.substr(1);
+    state.lineComment = true;
+  } else if (lastChar === '/' && character === '*') {
+    state.history = state.history.substr(1);
+    state.blockComment = true;
+  } else if (character === '/' && isRegexp(state.history)) {
+    state.regexp = true;
+    state.regexpStart = true;
+  } else if (character === '\'') {
+    state.singleQuote = true;
+  } else if (character === '"') {
+    state.doubleQuote = true;
+  } else if (character === '(') {
+    state.roundDepth++;
+  } else if (character === ')') {
+    state.roundDepth--;
+  } else if (character === '{') {
+    state.curlyDepth++;
+  } else if (character === '}') {
+    state.curlyDepth--;
+  } else if (character === '[') {
+    state.squareDepth++;
+  } else if (character === ']') {
+    state.squareDepth--;
+  }
+  if (!state.blockComment && !state.lineComment && !wasComment) state.history = character + state.history;
+  state.lastChar = character; // store last character for ending block comments
+  return state;
+}
+
+exports.defaultState = function () { return new State() };
+function State() {
+  this.lineComment = false;
+  this.blockComment = false;
+
+  this.singleQuote = false;
+  this.doubleQuote = false;
+  this.regexp = false;
+
+  this.escaped = false;
+
+  this.roundDepth = 0;
+  this.curlyDepth = 0;
+  this.squareDepth = 0;
+
+  this.history = ''
+  this.lastChar = ''
+}
+State.prototype.isString = function () {
+  return this.singleQuote || this.doubleQuote;
+}
+State.prototype.isComment = function () {
+  return this.lineComment || this.blockComment;
+}
+State.prototype.isNesting = function () {
+  return this.isString() || this.isComment() || this.regexp || this.roundDepth > 0 || this.curlyDepth > 0 || this.squareDepth > 0
+}
+
+function startsWith(str, start, i) {
+  return str.substr(i || 0, start.length) === start;
+}
+
+exports.isPunctuator = isPunctuator
+function isPunctuator(c) {
+  if (!c) return true; // the start of a string is a punctuator
+  var code = c.charCodeAt(0)
+
+  switch (code) {
+    case 46:   // . dot
+    case 40:   // ( open bracket
+    case 41:   // ) close bracket
+    case 59:   // ; semicolon
+    case 44:   // , comma
+    case 123:  // { open curly brace
+    case 125:  // } close curly brace
+    case 91:   // [
+    case 93:   // ]
+    case 58:   // :
+    case 63:   // ?
+    case 126:  // ~
+    case 37:   // %
+    case 38:   // &
+    case 42:   // *:
+    case 43:   // +
+    case 45:   // -
+    case 47:   // /
+    case 60:   // <
+    case 62:   // >
+    case 94:   // ^
+    case 124:  // |
+    case 33:   // !
+    case 61:   // =
+      return true;
+    default:
+      return false;
+  }
+}
+exports.isKeyword = isKeyword
+function isKeyword(id) {
+  return (id === 'if') || (id === 'in') || (id === 'do') || (id === 'var') || (id === 'for') || (id === 'new') ||
+         (id === 'try') || (id === 'let') || (id === 'this') || (id === 'else') || (id === 'case') ||
+         (id === 'void') || (id === 'with') || (id === 'enum') || (id === 'while') || (id === 'break') || (id === 'catch') ||
+         (id === 'throw') || (id === 'const') || (id === 'yield') || (id === 'class') || (id === 'super') ||
+         (id === 'return') || (id === 'typeof') || (id === 'delete') || (id === 'switch') || (id === 'export') ||
+         (id === 'import') || (id === 'default') || (id === 'finally') || (id === 'extends') || (id === 'function') ||
+         (id === 'continue') || (id === 'debugger') || (id === 'package') || (id === 'private') || (id === 'interface') ||
+         (id === 'instanceof') || (id === 'implements') || (id === 'protected') || (id === 'public') || (id === 'static') ||
+         (id === 'yield') || (id === 'let');
+}
+
+function isRegexp(history) {
+  //could be start of regexp or divide sign
+
+  history = history.replace(/^\s*/, '');
+
+  //unless its an `if`, `while`, `for` or `with` it's a divide, so we assume it's a divide
+  if (history[0] === ')') return false;
+  //unless it's a function expression, it's a regexp, so we assume it's a regexp
+  if (history[0] === '}') return true;
+  //any punctuation means it's a regexp
+  if (isPunctuator(history[0])) return true;
+  //if the last thing was a keyword then it must be a regexp (e.g. `typeof /foo/`)
+  if (/^\w+\b/.test(history) && isKeyword(/^\w+\b/.exec(history)[0].split('').reverse().join(''))) return true;
+
+  return false;
+}
+
+},{}],54:[function(require,module,exports){
+'use strict'
 
 var acorn = require('acorn');
 var walk = require('acorn/dist/walk');
 
-function isScope(node) {
-  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration' || node.type === 'ArrowFunctionExpression' || node.type === 'Program';
-}
-function isBlockScope(node) {
-  return node.type === 'BlockStatement' || isScope(node);
-}
+var lastSRC = '(null)';
+var lastRes = true;
+var lastConstants = undefined;
 
-function declaresArguments(node) {
-  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
-}
-
-function declaresThis(node) {
-  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
-}
-
-function reallyParse(source) {
+var STATEMENT_WHITE_LIST = {
+  'EmptyStatement': true,
+  'ExpressionStatement': true,
+};
+var EXPRESSION_WHITE_LIST = {
+  'ParenthesizedExpression': true,
+  'ArrayExpression': true,
+  'ObjectExpression': true,
+  'SequenceExpression': true,
+  'TemplateLiteral': true,
+  'UnaryExpression': true,
+  'BinaryExpression': true,
+  'LogicalExpression': true,
+  'ConditionalExpression': true,
+  'Identifier': true,
+  'Literal': true,
+  'ComprehensionExpression': true,
+  'TaggedTemplateExpression': true,
+  'MemberExpression': true,
+  'CallExpression': true,
+  'NewExpression': true,
+};
+module.exports = isConstant;
+function isConstant(src, constants) {
+  src = '(' + src + ')';
+  if (lastSRC === src && lastConstants === constants) return lastRes;
+  lastSRC = src;
+  lastConstants = constants;
+  if (!isExpression(src)) return lastRes = false;
+  var ast;
   try {
-    return acorn.parse(source, {
+    ast = acorn.parse(src, {
       ecmaVersion: 6,
       allowReturnOutsideFunction: true,
       allowImportExportEverywhere: true,
       allowHashBang: true
     });
   } catch (ex) {
-    return acorn.parse(source, {
-      ecmaVersion: 5,
-      allowReturnOutsideFunction: true,
-      allowImportExportEverywhere: true,
-      allowHashBang: true
-    });
+    return lastRes = false;
   }
+  var isConstant = true;
+  walk.simple(ast, {
+    Statement: function (node) {
+      if (isConstant) {
+        if (STATEMENT_WHITE_LIST[node.type] !== true) {
+          isConstant = false;
+        }
+      }
+    },
+    Expression: function (node) {
+      if (isConstant) {
+        if (EXPRESSION_WHITE_LIST[node.type] !== true) {
+          isConstant = false;
+        }
+      }
+    },
+    MemberExpression: function (node) {
+      if (isConstant) {
+        if (node.computed) isConstant = false;
+        else if (node.property.name[0] === '_') isConstant = false;
+      }
+    },
+    Identifier: function (node) {
+      if (isConstant) {
+        if (!constants || !(node.name in constants)) {
+          isConstant = false;
+        }
+      }
+    },
+  });
+  return lastRes = isConstant;
 }
-module.exports = findGlobals;
-module.exports.parse = reallyParse;
-function findGlobals(source) {
-  var globals = [];
-  var ast;
-  // istanbul ignore else
-  if (typeof source === 'string') {
-    ast = reallyParse(source);
-  } else {
-    ast = source;
-  }
-  // istanbul ignore if
-  if (!(ast && typeof ast === 'object' && ast.type === 'Program')) {
-    throw new TypeError('Source must be either a string of JavaScript or an acorn AST');
-  }
-  var declareFunction = function (node) {
-    var fn = node;
-    fn.locals = fn.locals || {};
-    node.params.forEach(function (node) {
-      declarePattern(node, fn);
-    });
-    if (node.id) {
-      fn.locals[node.id.name] = true;
-    }
-  }
-  var declarePattern = function (node, parent) {
-    switch (node.type) {
-      case 'Identifier':
-        parent.locals[node.name] = true;
-        break;
-      case 'ObjectPattern':
-        node.properties.forEach(function (node) {
-          declarePattern(node.value, parent);
-        });
-        break;
-      case 'ArrayPattern':
-        node.elements.forEach(function (node) {
-          if (node) declarePattern(node, parent);
-        });
-        break;
-      case 'RestElement':
-        declarePattern(node.argument, parent);
-        break;
-      case 'AssignmentPattern':
-        declarePattern(node.left, parent);
-        break;
-      // istanbul ignore next
-      default:
-        throw new Error('Unrecognized pattern type: ' + node.type);
-    }
-  }
-  var declareModuleSpecifier = function (node, parents) {
-    ast.locals = ast.locals || {};
-    ast.locals[node.local.name] = true;
-  }
-  walk.ancestor(ast, {
-    'VariableDeclaration': function (node, parents) {
-      var parent = null;
-      for (var i = parents.length - 1; i >= 0 && parent === null; i--) {
-        if (node.kind === 'var' ? isScope(parents[i]) : isBlockScope(parents[i])) {
-          parent = parents[i];
-        }
-      }
-      parent.locals = parent.locals || {};
-      node.declarations.forEach(function (declaration) {
-        declarePattern(declaration.id, parent);
-      });
-    },
-    'FunctionDeclaration': function (node, parents) {
-      var parent = null;
-      for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
-        if (isScope(parents[i])) {
-          parent = parents[i];
-        }
-      }
-      parent.locals = parent.locals || {};
-      parent.locals[node.id.name] = true;
-      declareFunction(node);
-    },
-    'Function': declareFunction,
-    'ClassDeclaration': function (node, parents) {
-      var parent = null;
-      for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
-        if (isScope(parents[i])) {
-          parent = parents[i];
-        }
-      }
-      parent.locals = parent.locals || {};
-      parent.locals[node.id.name] = true;
-    },
-    'TryStatement': function (node) {
-      if (node.handler === null) return;
-      node.handler.body.locals = node.handler.body.locals || {};
-      node.handler.body.locals[node.handler.param.name] = true;
-    },
-    'ImportDefaultSpecifier': declareModuleSpecifier,
-    'ImportSpecifier': declareModuleSpecifier,
-    'ImportNamespaceSpecifier': declareModuleSpecifier
-  });
-  function identifier(node, parents) {
-    var name = node.name;
-    if (name === 'undefined') return;
-    for (var i = 0; i < parents.length; i++) {
-      if (name === 'arguments' && declaresArguments(parents[i])) {
-        return;
-      }
-      if (parents[i].locals && name in parents[i].locals) {
-        return;
-      }
-    }
-    if (
-      parents[parents.length - 2] &&
-      parents[parents.length - 2].type === 'TryStatement' &&
-      parents[parents.length - 2].handler &&
-      node === parents[parents.length - 2].handler.param
-    ) {
-      return;
-    }
-    node.parents = parents;
-    globals.push(node);
-  }
-  walk.ancestor(ast, {
-    'VariablePattern': identifier,
-    'Identifier': identifier,
-    'ThisExpression': function (node, parents) {
-      for (var i = 0; i < parents.length; i++) {
-        if (declaresThis(parents[i])) {
-          return;
-        }
-      }
-      node.parents = parents;
-      globals.push(node);
-    }
-  });
-  var groupedGlobals = {};
-  globals.forEach(function (node) {
-    groupedGlobals[node.name] = (groupedGlobals[node.name] || []);
-    groupedGlobals[node.name].push(node);
-  });
-  return Object.keys(groupedGlobals).sort().map(function (name) {
-    return {name: name, nodes: groupedGlobals[name]};
-  });
+isConstant.isConstant = isConstant;
+
+isConstant.toConstant = toConstant;
+function toConstant(src, constants) {
+  if (!isConstant(src, constants)) throw new Error(JSON.stringify(src) + ' is not constant.');
+  return Function(Object.keys(constants || {}).join(','), 'return (' + src + ')').apply(null, Object.keys(constants || {}).map(function (key) {
+    return constants[key];
+  }));
 }
 
-},{"acorn":13,"acorn/dist/walk":14}],13:[function(require,module,exports){
+function isExpression(src) {
+  try {
+    eval('throw "STOP"; (function () { return (' + src + '); })()');
+    return false;
+  }
+  catch (err) {
+    return err === 'STOP';
+  }
+}
+
+},{"acorn":55,"acorn/dist/walk":56}],55:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.acorn = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 // A recursive descent parser operates by defining functions for all
@@ -9190,7 +18029,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 },{}]},{},[3])(3)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],14:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.acorn || (g.acorn = {})).walk = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 // AST walker module for Mozilla Parser API compatible trees
@@ -9570,9008 +18409,7 @@ base.ComprehensionExpression = function (node, st, c) {
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],15:[function(require,module,exports){
-exports = (module.exports = parse);
-exports.parse = parse;
-function parse(src, state, options) {
-  options = options || {};
-  state = state || exports.defaultState();
-  var start = options.start || 0;
-  var end = options.end || src.length;
-  var index = start;
-  while (index < end) {
-    if (state.roundDepth < 0 || state.curlyDepth < 0 || state.squareDepth < 0) {
-      throw new SyntaxError('Mismatched Bracket: ' + src[index - 1]);
-    }
-    exports.parseChar(src[index++], state);
-  }
-  return state;
-}
-
-exports.parseMax = parseMax;
-function parseMax(src, options) {
-  options = options || {};
-  var start = options.start || 0;
-  var index = start;
-  var state = exports.defaultState();
-  while (state.roundDepth >= 0 && state.curlyDepth >= 0 && state.squareDepth >= 0) {
-    if (index >= src.length) {
-      throw new Error('The end of the string was reached with no closing bracket found.');
-    }
-    exports.parseChar(src[index++], state);
-  }
-  var end = index - 1;
-  return {
-    start: start,
-    end: end,
-    src: src.substring(start, end)
-  };
-}
-
-exports.parseUntil = parseUntil;
-function parseUntil(src, delimiter, options) {
-  options = options || {};
-  var includeLineComment = options.includeLineComment || false;
-  var start = options.start || 0;
-  var index = start;
-  var state = exports.defaultState();
-  while (state.isString() || state.regexp || state.blockComment ||
-         (!includeLineComment && state.lineComment) || !startsWith(src, delimiter, index)) {
-    exports.parseChar(src[index++], state);
-  }
-  var end = index;
-  return {
-    start: start,
-    end: end,
-    src: src.substring(start, end)
-  };
-}
-
-
-exports.parseChar = parseChar;
-function parseChar(character, state) {
-  if (character.length !== 1) throw new Error('Character must be a string of length 1');
-  state = state || exports.defaultState();
-  state.src = state.src || '';
-  state.src += character;
-  var wasComment = state.blockComment || state.lineComment;
-  var lastChar = state.history ? state.history[0] : '';
-
-  if (state.regexpStart) {
-    if (character === '/' || character == '*') {
-      state.regexp = false;
-    }
-    state.regexpStart = false;
-  }
-  if (state.lineComment) {
-    if (character === '\n') {
-      state.lineComment = false;
-    }
-  } else if (state.blockComment) {
-    if (state.lastChar === '*' && character === '/') {
-      state.blockComment = false;
-    }
-  } else if (state.singleQuote) {
-    if (character === '\'' && !state.escaped) {
-      state.singleQuote = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (state.doubleQuote) {
-    if (character === '"' && !state.escaped) {
-      state.doubleQuote = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (state.regexp) {
-    if (character === '/' && !state.escaped) {
-      state.regexp = false;
-    } else if (character === '\\' && !state.escaped) {
-      state.escaped = true;
-    } else {
-      state.escaped = false;
-    }
-  } else if (lastChar === '/' && character === '/') {
-    state.history = state.history.substr(1);
-    state.lineComment = true;
-  } else if (lastChar === '/' && character === '*') {
-    state.history = state.history.substr(1);
-    state.blockComment = true;
-  } else if (character === '/' && isRegexp(state.history)) {
-    state.regexp = true;
-    state.regexpStart = true;
-  } else if (character === '\'') {
-    state.singleQuote = true;
-  } else if (character === '"') {
-    state.doubleQuote = true;
-  } else if (character === '(') {
-    state.roundDepth++;
-  } else if (character === ')') {
-    state.roundDepth--;
-  } else if (character === '{') {
-    state.curlyDepth++;
-  } else if (character === '}') {
-    state.curlyDepth--;
-  } else if (character === '[') {
-    state.squareDepth++;
-  } else if (character === ']') {
-    state.squareDepth--;
-  }
-  if (!state.blockComment && !state.lineComment && !wasComment) state.history = character + state.history;
-  state.lastChar = character; // store last character for ending block comments
-  return state;
-}
-
-exports.defaultState = function () { return new State() };
-function State() {
-  this.lineComment = false;
-  this.blockComment = false;
-
-  this.singleQuote = false;
-  this.doubleQuote = false;
-  this.regexp = false;
-
-  this.escaped = false;
-
-  this.roundDepth = 0;
-  this.curlyDepth = 0;
-  this.squareDepth = 0;
-
-  this.history = ''
-  this.lastChar = ''
-}
-State.prototype.isString = function () {
-  return this.singleQuote || this.doubleQuote;
-}
-State.prototype.isComment = function () {
-  return this.lineComment || this.blockComment;
-}
-State.prototype.isNesting = function () {
-  return this.isString() || this.isComment() || this.regexp || this.roundDepth > 0 || this.curlyDepth > 0 || this.squareDepth > 0
-}
-
-function startsWith(str, start, i) {
-  return str.substr(i || 0, start.length) === start;
-}
-
-exports.isPunctuator = isPunctuator
-function isPunctuator(c) {
-  if (!c) return true; // the start of a string is a punctuator
-  var code = c.charCodeAt(0)
-
-  switch (code) {
-    case 46:   // . dot
-    case 40:   // ( open bracket
-    case 41:   // ) close bracket
-    case 59:   // ; semicolon
-    case 44:   // , comma
-    case 123:  // { open curly brace
-    case 125:  // } close curly brace
-    case 91:   // [
-    case 93:   // ]
-    case 58:   // :
-    case 63:   // ?
-    case 126:  // ~
-    case 37:   // %
-    case 38:   // &
-    case 42:   // *:
-    case 43:   // +
-    case 45:   // -
-    case 47:   // /
-    case 60:   // <
-    case 62:   // >
-    case 94:   // ^
-    case 124:  // |
-    case 33:   // !
-    case 61:   // =
-      return true;
-    default:
-      return false;
-  }
-}
-exports.isKeyword = isKeyword
-function isKeyword(id) {
-  return (id === 'if') || (id === 'in') || (id === 'do') || (id === 'var') || (id === 'for') || (id === 'new') ||
-         (id === 'try') || (id === 'let') || (id === 'this') || (id === 'else') || (id === 'case') ||
-         (id === 'void') || (id === 'with') || (id === 'enum') || (id === 'while') || (id === 'break') || (id === 'catch') ||
-         (id === 'throw') || (id === 'const') || (id === 'yield') || (id === 'class') || (id === 'super') ||
-         (id === 'return') || (id === 'typeof') || (id === 'delete') || (id === 'switch') || (id === 'export') ||
-         (id === 'import') || (id === 'default') || (id === 'finally') || (id === 'extends') || (id === 'function') ||
-         (id === 'continue') || (id === 'debugger') || (id === 'package') || (id === 'private') || (id === 'interface') ||
-         (id === 'instanceof') || (id === 'implements') || (id === 'protected') || (id === 'public') || (id === 'static') ||
-         (id === 'yield') || (id === 'let');
-}
-
-function isRegexp(history) {
-  //could be start of regexp or divide sign
-
-  history = history.replace(/^\s*/, '');
-
-  //unless its an `if`, `while`, `for` or `with` it's a divide, so we assume it's a divide
-  if (history[0] === ')') return false;
-  //unless it's a function expression, it's a regexp, so we assume it's a regexp
-  if (history[0] === '}') return true;
-  //any punctuation means it's a regexp
-  if (isPunctuator(history[0])) return true;
-  //if the last thing was a keyword then it must be a regexp (e.g. `typeof /foo/`)
-  if (/^\w+\b/.test(history) && isKeyword(/^\w+\b/.exec(history)[0].split('').reverse().join(''))) return true;
-
-  return false;
-}
-
-},{}],16:[function(require,module,exports){
-'use strict'
-
-var acorn = require('acorn');
-var walk = require('acorn/dist/walk');
-
-var lastSRC = '(null)';
-var lastRes = true;
-var lastConstants = undefined;
-
-var STATEMENT_WHITE_LIST = {
-  'EmptyStatement': true,
-  'ExpressionStatement': true,
-};
-var EXPRESSION_WHITE_LIST = {
-  'ParenthesizedExpression': true,
-  'ArrayExpression': true,
-  'ObjectExpression': true,
-  'SequenceExpression': true,
-  'TemplateLiteral': true,
-  'UnaryExpression': true,
-  'BinaryExpression': true,
-  'LogicalExpression': true,
-  'ConditionalExpression': true,
-  'Identifier': true,
-  'Literal': true,
-  'ComprehensionExpression': true,
-  'TaggedTemplateExpression': true,
-  'MemberExpression': true,
-  'CallExpression': true,
-  'NewExpression': true,
-};
-module.exports = isConstant;
-function isConstant(src, constants) {
-  src = '(' + src + ')';
-  if (lastSRC === src && lastConstants === constants) return lastRes;
-  lastSRC = src;
-  lastConstants = constants;
-  if (!isExpression(src)) return lastRes = false;
-  var ast;
-  try {
-    ast = acorn.parse(src, {
-      ecmaVersion: 6,
-      allowReturnOutsideFunction: true,
-      allowImportExportEverywhere: true,
-      allowHashBang: true
-    });
-  } catch (ex) {
-    return lastRes = false;
-  }
-  var isConstant = true;
-  walk.simple(ast, {
-    Statement: function (node) {
-      if (isConstant) {
-        if (STATEMENT_WHITE_LIST[node.type] !== true) {
-          isConstant = false;
-        }
-      }
-    },
-    Expression: function (node) {
-      if (isConstant) {
-        if (EXPRESSION_WHITE_LIST[node.type] !== true) {
-          isConstant = false;
-        }
-      }
-    },
-    MemberExpression: function (node) {
-      if (isConstant) {
-        if (node.computed) isConstant = false;
-        else if (node.property.name[0] === '_') isConstant = false;
-      }
-    },
-    Identifier: function (node) {
-      if (isConstant) {
-        if (!constants || !(node.name in constants)) {
-          isConstant = false;
-        }
-      }
-    },
-  });
-  return lastRes = isConstant;
-}
-isConstant.isConstant = isConstant;
-
-isConstant.toConstant = toConstant;
-function toConstant(src, constants) {
-  if (!isConstant(src, constants)) throw new Error(JSON.stringify(src) + ' is not constant.');
-  return Function(Object.keys(constants || {}).join(','), 'return (' + src + ')').apply(null, Object.keys(constants || {}).map(function (key) {
-    return constants[key];
-  }));
-}
-
-function isExpression(src) {
-  try {
-    eval('throw "STOP"; (function () { return (' + src + '); })()');
-    return false;
-  }
-  catch (err) {
-    return err === 'STOP';
-  }
-}
-
-},{"acorn":13,"acorn/dist/walk":14}],17:[function(require,module,exports){
-/*
- * EJS Embedded JavaScript templates
- * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-
-'use strict';
-
-/**
- * @file Embedded JavaScript templating engine.
- * @author Matthew Eernisse <mde@fleegix.org>
- * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
- * @project EJS
- * @license {@link http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0}
- */
-
-/**
- * EJS internal functions.
- *
- * Technically this "module" lies in the same file as {@link module:ejs}, for
- * the sake of organization all the private functions re grouped into this
- * module.
- *
- * @module ejs-internal
- * @private
- */
-
-/**
- * Embedded JavaScript templating engine.
- *
- * @module ejs
- * @public
- */
-
-var fs = require('fs')
-  , utils = require('./utils')
-  , scopeOptionWarned = false
-  , _VERSION_STRING = require('../package.json').version
-  , _DEFAULT_DELIMITER = '%'
-  , _DEFAULT_LOCALS_NAME = 'locals'
-  , _REGEX_STRING = '(<%%|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)'
-  , _OPTS = [ 'cache', 'filename', 'delimiter', 'scope', 'context'
-            , 'debug', 'compileDebug', 'client', '_with', 'rmWhitespace'
-            , 'strict', 'localsName'
-            ]
-  , _TRAILING_SEMCOL = /;\s*$/
-  , _BOM = /^\uFEFF/;
-
-/**
- * EJS template function cache. This can be a LRU object from lru-cache NPM
- * module. By default, it is {@link module:utils.cache}, a simple in-process
- * cache that grows continuously.
- *
- * @type {Cache}
- */
-
-exports.cache = utils.cache;
-
-/**
- * Name of the object containing the locals.
- *
- * This variable is overriden by {@link Options}`.localsName` if it is not
- * `undefined`.
- *
- * @type {String}
- * @public
- */
-
-exports.localsName = _DEFAULT_LOCALS_NAME;
-
-/**
- * Get the path to the included file from the parent file path and the
- * specified path.
- *
- * @param {String} name     specified path
- * @param {String} filename parent file path
- * @return {String}
- */
-
-exports.resolveInclude = function(name, filename) {
-  var path = require('path')
-    , dirname = path.dirname
-    , extname = path.extname
-    , resolve = path.resolve
-    , includePath = resolve(dirname(filename), name)
-    , ext = extname(name);
-  if (!ext) {
-    includePath += '.ejs';
-  }
-  return includePath;
-};
-
-/**
- * Get the template from a string or a file, either compiled on-the-fly or
- * read from cache (if enabled), and cache the template if needed.
- *
- * If `template` is not set, the file specified in `options.filename` will be
- * read.
- *
- * If `options.cache` is true, this function reads the file from
- * `options.filename` so it must be set prior to calling this function.
- *
- * @memberof module:ejs-internal
- * @param {Options} options   compilation options
- * @param {String} [template] template source
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned.
- * @static
- */
-
-function handleCache(options, template) {
-  var fn
-    , path = options.filename
-    , hasTemplate = arguments.length > 1;
-
-  if (options.cache) {
-    if (!path) {
-      throw new Error('cache option requires a filename');
-    }
-    fn = exports.cache.get(path);
-    if (fn) {
-      return fn;
-    }
-    if (!hasTemplate) {
-      template = fs.readFileSync(path).toString().replace(_BOM, '');
-    }
-  }
-  else if (!hasTemplate) {
-    // istanbul ignore if: should not happen at all
-    if (!path) {
-      throw new Error('Internal EJS error: no file name or template '
-                    + 'provided');
-    }
-    template = fs.readFileSync(path).toString().replace(_BOM, '');
-  }
-  fn = exports.compile(template, options);
-  if (options.cache) {
-    exports.cache.set(path, fn);
-  }
-  return fn;
-}
-
-/**
- * Get the template function.
- *
- * If `options.cache` is `true`, then the template is cached.
- *
- * @memberof module:ejs-internal
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned
- * @static
- */
-
-function includeFile(path, options) {
-  var opts = utils.shallowCopy({}, options);
-  if (!opts.filename) {
-    throw new Error('`include` requires the \'filename\' option.');
-  }
-  opts.filename = exports.resolveInclude(path, opts.filename);
-  return handleCache(opts);
-}
-
-/**
- * Get the JavaScript source of an included file.
- *
- * @memberof module:ejs-internal
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {String}
- * @static
- */
-
-function includeSource(path, options) {
-  var opts = utils.shallowCopy({}, options)
-    , includePath
-    , template;
-  if (!opts.filename) {
-    throw new Error('`include` requires the \'filename\' option.');
-  }
-  includePath = exports.resolveInclude(path, opts.filename);
-  template = fs.readFileSync(includePath).toString().replace(_BOM, '');
-
-  opts.filename = includePath;
-  var templ = new Template(template, opts);
-  templ.generateSource();
-  return templ.source;
-}
-
-/**
- * Re-throw the given `err` in context to the `str` of ejs, `filename`, and
- * `lineno`.
- *
- * @implements RethrowCallback
- * @memberof module:ejs-internal
- * @param {Error}  err      Error object
- * @param {String} str      EJS source
- * @param {String} filename file name of the EJS file
- * @param {String} lineno   line number of the error
- * @static
- */
-
-function rethrow(err, str, filename, lineno){
-  var lines = str.split('\n')
-    , start = Math.max(lineno - 3, 0)
-    , end = Math.min(lines.length, lineno + 3);
-
-  // Error context
-  var context = lines.slice(start, end).map(function (line, i){
-    var curr = i + start + 1;
-    return (curr == lineno ? ' >> ' : '    ')
-      + curr
-      + '| '
-      + line;
-  }).join('\n');
-
-  // Alter exception message
-  err.path = filename;
-  err.message = (filename || 'ejs') + ':'
-    + lineno + '\n'
-    + context + '\n\n'
-    + err.message;
-
-  throw err;
-}
-
-/**
- * Copy properties in data object that are recognized as options to an
- * options object.
- *
- * This is used for compatibility with earlier versions of EJS and Express.js.
- *
- * @memberof module:ejs-internal
- * @param {Object}  data data object
- * @param {Options} opts options object
- * @static
- */
-
-function cpOptsInData(data, opts) {
-  _OPTS.forEach(function (p) {
-    if (typeof data[p] != 'undefined') {
-      opts[p] = data[p];
-    }
-  });
-}
-
-/**
- * Compile the given `str` of ejs into a template function.
- *
- * @param {String}  template EJS template
- *
- * @param {Options} opts     compilation options
- *
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `opts.client`, either type might be returned.
- * @public
- */
-
-exports.compile = function compile(template, opts) {
-  var templ;
-
-  // v1 compat
-  // 'scope' is 'context'
-  // FIXME: Remove this in a future version
-  if (opts && opts.scope) {
-    if (!scopeOptionWarned){
-      console.warn('`scope` option is deprecated and will be removed in EJS 3');
-      scopeOptionWarned = true;
-    }
-    if (!opts.context) {
-      opts.context = opts.scope;
-    }
-    delete opts.scope;
-  }
-  templ = new Template(template, opts);
-  return templ.compile();
-};
-
-/**
- * Render the given `template` of ejs.
- *
- * If you would like to include options but not data, you need to explicitly
- * call this function with `data` being an empty object or `null`.
- *
- * @param {String}   template EJS template
- * @param {Object}  [data={}] template data
- * @param {Options} [opts={}] compilation and rendering options
- * @return {String}
- * @public
- */
-
-exports.render = function (template, data, opts) {
-  data = data || {};
-  opts = opts || {};
-  var fn;
-
-  // No options object -- if there are optiony names
-  // in the data, copy them to options
-  if (arguments.length == 2) {
-    cpOptsInData(data, opts);
-  }
-
-  return handleCache(opts, template)(data);
-};
-
-/**
- * Render an EJS file at the given `path` and callback `cb(err, str)`.
- *
- * If you would like to include options but not data, you need to explicitly
- * call this function with `data` being an empty object or `null`.
- *
- * @param {String}             path     path to the EJS file
- * @param {Object}            [data={}] template data
- * @param {Options}           [opts={}] compilation and rendering options
- * @param {RenderFileCallback} cb callback
- * @public
- */
-
-exports.renderFile = function () {
-  var args = Array.prototype.slice.call(arguments)
-    , path = args.shift()
-    , cb = args.pop()
-    , data = args.shift() || {}
-    , opts = args.pop() || {}
-    , result;
-
-  // Don't pollute passed in opts obj with new vals
-  opts = utils.shallowCopy({}, opts);
-
-  // No options object -- if there are optiony names
-  // in the data, copy them to options
-  if (arguments.length == 3) {
-    // Express 4
-    if (data.settings && data.settings['view options']) {
-      cpOptsInData(data.settings['view options'], opts);
-    }
-    // Express 3 and lower
-    else {
-      cpOptsInData(data, opts);
-    }
-  }
-  opts.filename = path;
-
-  try {
-    result = handleCache(opts)(data);
-  }
-  catch(err) {
-    return cb(err);
-  }
-  return cb(null, result);
-};
-
-/**
- * Clear intermediate JavaScript cache. Calls {@link Cache#reset}.
- * @public
- */
-
-exports.clearCache = function () {
-  exports.cache.reset();
-};
-
-function Template(text, opts) {
-  opts = opts || {};
-  var options = {};
-  this.templateText = text;
-  this.mode = null;
-  this.truncate = false;
-  this.currentLine = 1;
-  this.source = '';
-  this.dependencies = [];
-  options.client = opts.client || false;
-  options.escapeFunction = opts.escape || utils.escapeXML;
-  options.compileDebug = opts.compileDebug !== false;
-  options.debug = !!opts.debug;
-  options.filename = opts.filename;
-  options.delimiter = opts.delimiter || exports.delimiter || _DEFAULT_DELIMITER;
-  options.strict = opts.strict || false;
-  options.context = opts.context;
-  options.cache = opts.cache || false;
-  options.rmWhitespace = opts.rmWhitespace;
-  options.localsName = opts.localsName || exports.localsName || _DEFAULT_LOCALS_NAME;
-
-  if (options.strict) {
-    options._with = false;
-  }
-  else {
-    options._with = typeof opts._with != 'undefined' ? opts._with : true;
-  }
-
-  this.opts = options;
-
-  this.regex = this.createRegex();
-}
-
-Template.modes = {
-  EVAL: 'eval'
-, ESCAPED: 'escaped'
-, RAW: 'raw'
-, COMMENT: 'comment'
-, LITERAL: 'literal'
-};
-
-Template.prototype = {
-  createRegex: function () {
-    var str = _REGEX_STRING
-      , delim = utils.escapeRegExpChars(this.opts.delimiter);
-    str = str.replace(/%/g, delim);
-    return new RegExp(str);
-  }
-
-, compile: function () {
-    var src
-      , fn
-      , opts = this.opts
-      , prepended = ''
-      , appended = ''
-      , escape = opts.escapeFunction;
-
-    if (opts.rmWhitespace) {
-      // Have to use two separate replace here as `^` and `$` operators don't
-      // work well with `\r`.
-      this.templateText =
-        this.templateText.replace(/\r/g, '').replace(/^\s+|\s+$/gm, '');
-    }
-
-    // Slurp spaces and tabs before <%_ and after _%>
-    this.templateText =
-      this.templateText.replace(/[ \t]*<%_/gm, '<%_').replace(/_%>[ \t]*/gm, '_%>');
-
-    if (!this.source) {
-      this.generateSource();
-      prepended += '  var __output = [], __append = __output.push.bind(__output);' + '\n';
-      if (opts._with !== false) {
-        prepended +=  '  with (' + opts.localsName + ' || {}) {' + '\n';
-        appended += '  }' + '\n';
-      }
-      appended += '  return __output.join("");' + '\n';
-      this.source = prepended + this.source + appended;
-    }
-
-    if (opts.compileDebug) {
-      src = 'var __line = 1' + '\n'
-          + '  , __lines = ' + JSON.stringify(this.templateText) + '\n'
-          + '  , __filename = ' + (opts.filename ?
-                JSON.stringify(opts.filename) : 'undefined') + ';' + '\n'
-          + 'try {' + '\n'
-          + this.source
-          + '} catch (e) {' + '\n'
-          + '  rethrow(e, __lines, __filename, __line);' + '\n'
-          + '}' + '\n';
-    }
-    else {
-      src = this.source;
-    }
-
-    if (opts.debug) {
-      console.log(src);
-    }
-
-    if (opts.client) {
-      src = 'escape = escape || ' + escape.toString() + ';' + '\n' + src;
-      if (opts.compileDebug) {
-        src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
-      }
-    }
-
-    if (opts.strict) {
-      src = '"use strict";\n' + src;
-    }
-
-    try {
-      fn = new Function(opts.localsName + ', escape, include, rethrow', src);
-    }
-    catch(e) {
-      // istanbul ignore else
-      if (e instanceof SyntaxError) {
-        if (opts.filename) {
-          e.message += ' in ' + opts.filename;
-        }
-        e.message += ' while compiling ejs';
-      }
-      throw e;
-    }
-
-    if (opts.client) {
-      fn.dependencies = this.dependencies;
-      return fn;
-    }
-
-    // Return a callable function which will execute the function
-    // created by the source-code, with the passed data as locals
-    // Adds a local `include` function which allows full recursive include
-    var returnedFn = function (data) {
-      var include = function (path, includeData) {
-        var d = utils.shallowCopy({}, data);
-        if (includeData) {
-          d = utils.shallowCopy(d, includeData);
-        }
-        return includeFile(path, opts)(d);
-      };
-      return fn.apply(opts.context, [data || {}, escape, include, rethrow]);
-    };
-    returnedFn.dependencies = this.dependencies;
-    return returnedFn;
-  }
-
-, generateSource: function () {
-    var self = this
-      , matches = this.parseTemplateText()
-      , d = this.opts.delimiter;
-
-    if (matches && matches.length) {
-      if (this.opts.compileDebug && this.opts.filename) {
-        this.source =  '    ; __lines = ' + JSON.stringify(this.templateText) + '\n';
-        this.source += '    ; __filename = "' + this.opts.filename.replace(/\\/g,  '/') + '"\n';
-      }
-      matches.forEach(function (line, index) {
-        var opening
-          , closing
-          , include
-          , includeOpts
-          , includeSrc;
-        // If this is an opening tag, check for closing tags
-        // FIXME: May end up with some false positives here
-        // Better to store modes as k/v with '<' + delimiter as key
-        // Then this can simply check against the map
-        if ( line.indexOf('<' + d) === 0        // If it is a tag
-          && line.indexOf('<' + d + d) !== 0) { // and is not escaped
-          closing = matches[index + 2];
-          if (!(closing == d + '>' || closing == '-' + d + '>' || closing == '_' + d + '>')) {
-            throw new Error('Could not find matching close tag for "' + line + '".');
-          }
-        }
-        // HACK: backward-compat `include` preprocessor directives
-        if ((include = line.match(/^\s*include\s+(\S+)/))) {
-          opening = matches[index - 1];
-          // Must be in EVAL or RAW mode
-          if (opening && (opening == '<' + d || opening == '<' + d + '-' || opening == '<' + d + '_')) {
-            includeOpts = utils.shallowCopy({}, self.opts);
-            includeSrc = includeSource(include[1], includeOpts);
-            includeSrc = '    ; (function(){' + '\n' + includeSrc +
-                '    ; })()' + '\n';
-            self.source += includeSrc;
-            self.dependencies.push(exports.resolveInclude(include[1],
-                includeOpts.filename));
-            return;
-          }
-        }
-        self.scanLine(line);
-      });
-    }
-
-  }
-
-, parseTemplateText: function () {
-    var str = this.templateText
-      , pat = this.regex
-      , result = pat.exec(str)
-      , arr = []
-      , firstPos
-      , lastPos;
-
-    while (result) {
-      firstPos = result.index;
-      lastPos = pat.lastIndex;
-
-      if (firstPos !== 0) {
-        arr.push(str.substring(0, firstPos));
-        str = str.slice(firstPos);
-      }
-
-      arr.push(result[0]);
-      str = str.slice(result[0].length);
-      result = pat.exec(str);
-    }
-
-    if (str) {
-      arr.push(str);
-    }
-
-    return arr;
-  }
-
-, scanLine: function (line) {
-    var self = this
-      , d = this.opts.delimiter
-      , newLineCount = 0;
-
-    function _addOutput() {
-      if (self.truncate) {
-        // Only replace single leading linebreak in the line after
-        // -%> tag -- this is the single, trailing linebreak
-        // after the tag that the truncation mode replaces
-        // Handle Win / Unix / old Mac linebreaks -- do the \r\n
-        // combo first in the regex-or
-        line = line.replace(/^(?:\r\n|\r|\n)/, '')
-        self.truncate = false;
-      }
-      else if (self.opts.rmWhitespace) {
-        // Gotta be more careful here.
-        // .replace(/^(\s*)\n/, '$1') might be more appropriate here but as
-        // rmWhitespace already removes trailing spaces anyway so meh.
-        line = line.replace(/^\n/, '');
-      }
-      if (!line) {
-        return;
-      }
-
-      // Preserve literal slashes
-      line = line.replace(/\\/g, '\\\\');
-
-      // Convert linebreaks
-      line = line.replace(/\n/g, '\\n');
-      line = line.replace(/\r/g, '\\r');
-
-      // Escape double-quotes
-      // - this will be the delimiter during execution
-      line = line.replace(/"/g, '\\"');
-      self.source += '    ; __append("' + line + '")' + '\n';
-    }
-
-    newLineCount = (line.split('\n').length - 1);
-
-    switch (line) {
-      case '<' + d:
-      case '<' + d + '_':
-        this.mode = Template.modes.EVAL;
-        break;
-      case '<' + d + '=':
-        this.mode = Template.modes.ESCAPED;
-        break;
-      case '<' + d + '-':
-        this.mode = Template.modes.RAW;
-        break;
-      case '<' + d + '#':
-        this.mode = Template.modes.COMMENT;
-        break;
-      case '<' + d + d:
-        this.mode = Template.modes.LITERAL;
-        this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
-        break;
-      case d + '>':
-      case '-' + d + '>':
-      case '_' + d + '>':
-        if (this.mode == Template.modes.LITERAL) {
-          _addOutput();
-        }
-
-        this.mode = null;
-        this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
-        break;
-      default:
-        // In script mode, depends on type of tag
-        if (this.mode) {
-          // If '//' is found without a line break, add a line break.
-          switch (this.mode) {
-            case Template.modes.EVAL:
-            case Template.modes.ESCAPED:
-            case Template.modes.RAW:
-              if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
-                line += '\n';
-              }
-          }
-          switch (this.mode) {
-            // Just executing code
-            case Template.modes.EVAL:
-              this.source += '    ; ' + line + '\n';
-              break;
-            // Exec, esc, and output
-            case Template.modes.ESCAPED:
-              this.source += '    ; __append(escape(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + '))' + '\n';
-              break;
-            // Exec and output
-            case Template.modes.RAW:
-              this.source += '    ; __append(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + ')' + '\n';
-              break;
-            case Template.modes.COMMENT:
-              // Do nothing
-              break;
-            // Literal <%% mode, append as raw output
-            case Template.modes.LITERAL:
-              _addOutput();
-              break;
-          }
-        }
-        // In string mode, just add the output
-        else {
-          _addOutput();
-        }
-    }
-
-    if (self.opts.compileDebug && newLineCount) {
-      this.currentLine += newLineCount;
-      this.source += '    ; __line = ' + this.currentLine + '\n';
-    }
-  }
-};
-
-/*
- * Export the internal function for escaping XML so people
- * can use for manual escaping if needed
- * */
-exports.escapeXML = utils.escapeXML;
-
-/**
- * Express.js support.
- *
- * This is an alias for {@link module:ejs.renderFile}, in order to support
- * Express.js out-of-the-box.
- *
- * @func
- */
-
-exports.__express = exports.renderFile;
-
-// Add require support
-/* istanbul ignore else */
-if (require.extensions) {
-  require.extensions['.ejs'] = function (module, filename) {
-    filename = filename || /* istanbul ignore next */ module.filename;
-    var options = {
-          filename: filename
-        , client: true
-        }
-      , template = fs.readFileSync(filename).toString()
-      , fn = exports.compile(template, options);
-    module._compile('module.exports = ' + fn.toString() + ';', filename);
-  };
-}
-
-/**
- * Version of EJS.
- *
- * @readonly
- * @type {String}
- * @public
- */
-
-exports.VERSION = _VERSION_STRING;
-
-/* istanbul ignore if */
-if (typeof window != 'undefined') {
-  window.ejs = exports;
-}
-
-},{"../package.json":19,"./utils":18,"fs":20,"path":25}],18:[function(require,module,exports){
-/*
- * EJS Embedded JavaScript templates
- * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-
-/**
- * Private utility functions
- * @module utils
- * @private
- */
-
-'use strict';
-
-var regExpChars = /[|\\{}()[\]^$+*?.]/g;
-
-/**
- * Escape characters reserved in regular expressions.
- *
- * If `string` is `undefined` or `null`, the empty string is returned.
- *
- * @param {String} string Input string
- * @return {String} Escaped string
- * @static
- * @private
- */
-exports.escapeRegExpChars = function (string) {
-  // istanbul ignore if
-  if (!string) {
-    return '';
-  }
-  return String(string).replace(regExpChars, '\\$&');
-};
-
-var _ENCODE_HTML_RULES = {
-      '&': '&amp;'
-    , '<': '&lt;'
-    , '>': '&gt;'
-    , '"': '&#34;'
-    , "'": '&#39;'
-    }
-  , _MATCH_HTML = /[&<>\'"]/g;
-
-function encode_char(c) {
-  return _ENCODE_HTML_RULES[c] || c;
-};
-
-/**
- * Stringified version of constants used by {@link module:utils.escapeXML}.
- *
- * It is used in the process of generating {@link ClientFunction}s.
- *
- * @readonly
- * @type {String}
- */
-
-var escapeFuncStr =
-  'var _ENCODE_HTML_RULES = {\n'
-+ '      "&": "&amp;"\n'
-+ '    , "<": "&lt;"\n'
-+ '    , ">": "&gt;"\n'
-+ '    , \'"\': "&#34;"\n'
-+ '    , "\'": "&#39;"\n'
-+ '    }\n'
-+ '  , _MATCH_HTML = /[&<>\'"]/g;\n'
-+ 'function encode_char(c) {\n'
-+ '  return _ENCODE_HTML_RULES[c] || c;\n'
-+ '};\n';
-
-/**
- * Escape characters reserved in XML.
- *
- * If `markup` is `undefined` or `null`, the empty string is returned.
- *
- * @implements {EscapeCallback}
- * @param {String} markup Input string
- * @return {String} Escaped string
- * @static
- * @private
- */
-
-exports.escapeXML = function (markup) {
-  return markup == undefined
-    ? ''
-    : String(markup)
-        .replace(_MATCH_HTML, encode_char);
-};
-exports.escapeXML.toString = function () {
-  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr
-};
-
-/**
- * Copy all properties from one object to another, in a shallow fashion.
- *
- * @param  {Object} to   Destination object
- * @param  {Object} from Source object
- * @return {Object}      Destination object
- * @static
- * @private
- */
-exports.shallowCopy = function (to, from) {
-  from = from || {};
-  for (var p in from) {
-    to[p] = from[p];
-  }
-  return to;
-};
-
-/**
- * Simple in-process cache implementation. Does not implement limits of any
- * sort.
- *
- * @implements Cache
- * @static
- * @private
- */
-exports.cache = {
-  _data: {},
-  set: function (key, val) {
-    this._data[key] = val;
-  },
-  get: function (key) {
-    return this._data[key];
-  },
-  reset: function () {
-    this._data = {};
-  }
-};
-
-
-},{}],19:[function(require,module,exports){
-module.exports={
-  "_args": [
-    [
-      "ejs",
-      "/Users/daigo/Documents/atomic-lab/atomic-lab"
-    ]
-  ],
-  "_from": "ejs@latest",
-  "_id": "ejs@2.4.2",
-  "_inCache": true,
-  "_installable": true,
-  "_location": "/ejs",
-  "_nodeVersion": "4.4.4",
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/ejs-2.4.2.tgz_1464117640663_0.8193834638223052"
-  },
-  "_npmUser": {
-    "email": "mde@fleegix.org",
-    "name": "mde"
-  },
-  "_npmVersion": "2.15.1",
-  "_phantomChildren": {},
-  "_requested": {
-    "name": "ejs",
-    "raw": "ejs",
-    "rawSpec": "",
-    "scope": null,
-    "spec": "latest",
-    "type": "tag"
-  },
-  "_requiredBy": [
-    "#USER"
-  ],
-  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz",
-  "_shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
-  "_shrinkwrap": null,
-  "_spec": "ejs",
-  "_where": "/Users/daigo/Documents/atomic-lab/atomic-lab",
-  "author": {
-    "email": "mde@fleegix.org",
-    "name": "Matthew Eernisse",
-    "url": "http://fleegix.org"
-  },
-  "bugs": {
-    "url": "https://github.com/mde/ejs/issues"
-  },
-  "contributors": [
-    {
-      "email": "timothygu99@gmail.com",
-      "name": "Timothy Gu",
-      "url": "https://timothygu.github.io"
-    }
-  ],
-  "dependencies": {},
-  "description": "Embedded JavaScript templates",
-  "devDependencies": {
-    "browserify": "^8.0.3",
-    "istanbul": "~0.3.5",
-    "jake": "^8.0.0",
-    "jsdoc": "^3.3.0-beta1",
-    "lru-cache": "^2.5.0",
-    "mocha": "^2.1.0",
-    "rimraf": "^2.2.8",
-    "uglify-js": "^2.4.16"
-  },
-  "directories": {},
-  "dist": {
-    "shasum": "7057eb4812958fb731841cd9ca353343efe597b1",
-    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.4.2.tgz"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "homepage": "https://github.com/mde/ejs",
-  "keywords": [
-    "template",
-    "engine",
-    "ejs"
-  ],
-  "license": "Apache-2.0",
-  "main": "./lib/ejs.js",
-  "maintainers": [
-    {
-      "email": "tj@vision-media.ca",
-      "name": "tjholowaychuk"
-    },
-    {
-      "email": "mde@fleegix.org",
-      "name": "mde"
-    }
-  ],
-  "name": "ejs",
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/mde/ejs.git"
-  },
-  "scripts": {
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
-    "devdoc": "rimraf out && jsdoc -p -c jsdoc.json lib/* docs/jsdoc/*",
-    "doc": "rimraf out && jsdoc -c jsdoc.json lib/* docs/jsdoc/*",
-    "sample": "npm install express && node sample/index.js",
-    "test": "mocha"
-  },
-  "version": "2.4.2"
-}
-
-},{}],20:[function(require,module,exports){
-
-},{}],21:[function(require,module,exports){
-module.exports=require(20)
-},{}],22:[function(require,module,exports){
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-
-exports.Buffer = Buffer
-exports.SlowBuffer = Buffer
-exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
-
-/**
- * If `Buffer._useTypedArrays`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (compatible down to IE6)
- */
-Buffer._useTypedArrays = (function () {
-  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
-  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
-  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
-  // because we need to be able to add all the node Buffer API methods. This is an issue
-  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
-  try {
-    var buf = new ArrayBuffer(0)
-    var arr = new Uint8Array(buf)
-    arr.foo = function () { return 42 }
-    return 42 === arr.foo() &&
-        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
-  } catch (e) {
-    return false
-  }
-})()
-
-/**
- * Class: Buffer
- * =============
- *
- * The Buffer constructor returns instances of `Uint8Array` that are augmented
- * with function properties for all the node `Buffer` API functions. We use
- * `Uint8Array` so that square bracket notation works as expected -- it returns
- * a single octet.
- *
- * By augmenting the instances, we can avoid modifying the `Uint8Array`
- * prototype.
- */
-function Buffer (subject, encoding, noZero) {
-  if (!(this instanceof Buffer))
-    return new Buffer(subject, encoding, noZero)
-
-  var type = typeof subject
-
-  // Workaround: node's base64 implementation allows for non-padded strings
-  // while base64-js does not.
-  if (encoding === 'base64' && type === 'string') {
-    subject = stringtrim(subject)
-    while (subject.length % 4 !== 0) {
-      subject = subject + '='
-    }
-  }
-
-  // Find the length
-  var length
-  if (type === 'number')
-    length = coerce(subject)
-  else if (type === 'string')
-    length = Buffer.byteLength(subject, encoding)
-  else if (type === 'object')
-    length = coerce(subject.length) // assume that object is array-like
-  else
-    throw new Error('First argument needs to be a number, array or string.')
-
-  var buf
-  if (Buffer._useTypedArrays) {
-    // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = Buffer._augment(new Uint8Array(length))
-  } else {
-    // Fallback: Return THIS instance of Buffer (created by `new`)
-    buf = this
-    buf.length = length
-    buf._isBuffer = true
-  }
-
-  var i
-  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
-    // Speed optimization -- use set if we're copying from a typed array
-    buf._set(subject)
-  } else if (isArrayish(subject)) {
-    // Treat array-ish objects as a byte array
-    for (i = 0; i < length; i++) {
-      if (Buffer.isBuffer(subject))
-        buf[i] = subject.readUInt8(i)
-      else
-        buf[i] = subject[i]
-    }
-  } else if (type === 'string') {
-    buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
-    for (i = 0; i < length; i++) {
-      buf[i] = 0
-    }
-  }
-
-  return buf
-}
-
-// STATIC METHODS
-// ==============
-
-Buffer.isEncoding = function (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'binary':
-    case 'base64':
-    case 'raw':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.isBuffer = function (b) {
-  return !!(b !== null && b !== undefined && b._isBuffer)
-}
-
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str + ''
-  switch (encoding || 'utf8') {
-    case 'hex':
-      ret = str.length / 2
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
-      'list should be an Array.')
-
-  if (list.length === 0) {
-    return new Buffer(0)
-  } else if (list.length === 1) {
-    return list[0]
-  }
-
-  var i
-  if (typeof totalLength !== 'number') {
-    totalLength = 0
-    for (i = 0; i < list.length; i++) {
-      totalLength += list[i].length
-    }
-  }
-
-  var buf = new Buffer(totalLength)
-  var pos = 0
-  for (i = 0; i < list.length; i++) {
-    var item = list[i]
-    item.copy(buf, pos)
-    pos += item.length
-  }
-  return buf
-}
-
-// BUFFER INSTANCE METHODS
-// =======================
-
-function _hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; i++) {
-    var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
-    buf[offset + i] = byte
-  }
-  Buffer._charsWritten = i * 2
-  return i
-}
-
-function _utf8Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf8ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _asciiWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(asciiToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _binaryWrite (buf, string, offset, length) {
-  return _asciiWrite(buf, string, offset, length)
-}
-
-function _base64Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(base64ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _utf16leWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf16leToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-Buffer.prototype.write = function (string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
-      encoding = length
-      length = undefined
-    }
-  } else {  // legacy
-    var swap = encoding
-    encoding = offset
-    offset = length
-    length = swap
-  }
-
-  offset = Number(offset) || 0
-  var remaining = this.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-  encoding = String(encoding || 'utf8').toLowerCase()
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexWrite(this, string, offset, length)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Write(this, string, offset, length)
-      break
-    case 'ascii':
-      ret = _asciiWrite(this, string, offset, length)
-      break
-    case 'binary':
-      ret = _binaryWrite(this, string, offset, length)
-      break
-    case 'base64':
-      ret = _base64Write(this, string, offset, length)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leWrite(this, string, offset, length)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
-
-  encoding = String(encoding || 'utf8').toLowerCase()
-  start = Number(start) || 0
-  end = (end !== undefined)
-    ? Number(end)
-    : end = self.length
-
-  // Fastpath empty strings
-  if (end === start)
-    return ''
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexSlice(self, start, end)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Slice(self, start, end)
-      break
-    case 'ascii':
-      ret = _asciiSlice(self, start, end)
-      break
-    case 'binary':
-      ret = _binarySlice(self, start, end)
-      break
-    case 'base64':
-      ret = _base64Slice(self, start, end)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leSlice(self, start, end)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toJSON = function () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
-
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
-
-  // Copy 0 bytes; we're done
-  if (end === start) return
-  if (target.length === 0 || source.length === 0) return
-
-  // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
-
-  var len = end - start
-
-  if (len < 100 || !Buffer._useTypedArrays) {
-    for (var i = 0; i < len; i++)
-      target[i + target_start] = this[i + start]
-  } else {
-    target._set(this.subarray(start, start + len), target_start)
-  }
-}
-
-function _base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function _utf8Slice (buf, start, end) {
-  var res = ''
-  var tmp = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
-      tmp = ''
-    } else {
-      tmp += '%' + buf[i].toString(16)
-    }
-  }
-
-  return res + decodeUtf8Char(tmp)
-}
-
-function _asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++)
-    ret += String.fromCharCode(buf[i])
-  return ret
-}
-
-function _binarySlice (buf, start, end) {
-  return _asciiSlice(buf, start, end)
-}
-
-function _hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; i++) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function _utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function (start, end) {
-  var len = this.length
-  start = clamp(start, len, 0)
-  end = clamp(end, len, len)
-
-  if (Buffer._useTypedArrays) {
-    return Buffer._augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
-    }
-    return newBuf
-  }
-}
-
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
-}
-
-Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  return this[offset]
-}
-
-function _readUInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-  } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
-  }
-  return val
-}
-
-Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  return _readUInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  return _readUInt16(this, offset, false, noAssert)
-}
-
-function _readUInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
-  } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
-  }
-  return val
-}
-
-Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  return _readUInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  return _readUInt32(this, offset, false, noAssert)
-}
-
-Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  var neg = this[offset] & 0x80
-  if (neg)
-    return (0xff - this[offset] + 1) * -1
-  else
-    return this[offset]
-}
-
-function _readInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  return _readInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  return _readInt16(this, offset, false, noAssert)
-}
-
-function _readInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  return _readInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  return _readInt32(this, offset, false, noAssert)
-}
-
-function _readFloat (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  return _readFloat(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  return _readFloat(this, offset, false, noAssert)
-}
-
-function _readDouble (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  return _readDouble(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  return _readDouble(this, offset, false, noAssert)
-}
-
-Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xff)
-  }
-
-  if (offset >= this.length) return
-
-  this[offset] = value
-}
-
-function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, false, noAssert)
-}
-
-function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffffffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, false, noAssert)
-}
-
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7f, -0x80)
-  }
-
-  if (offset >= this.length)
-    return
-
-  if (value >= 0)
-    this.writeUInt8(value, offset, noAssert)
-  else
-    this.writeUInt8(0xff + value + 1, offset, noAssert)
-}
-
-function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fff, -0x8000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, false, noAssert)
-}
-
-function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fffffff, -0x80000000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, false, noAssert)
-}
-
-function _writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, false, noAssert)
-}
-
-function _writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, false, noAssert)
-}
-
-// fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function (value, start, end) {
-  if (!value) value = 0
-  if (!start) start = 0
-  if (!end) end = this.length
-
-  if (typeof value === 'string') {
-    value = value.charCodeAt(0)
-  }
-
-  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
-  assert(end >= start, 'end < start')
-
-  // Fill 0 bytes; we're done
-  if (end === start) return
-  if (this.length === 0) return
-
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
-
-  for (var i = start; i < end; i++) {
-    this[i] = value
-  }
-}
-
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
-    }
-  }
-  return '<Buffer ' + out.join(' ') + '>'
-}
-
-/**
- * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
- * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
- */
-Buffer.prototype.toArrayBuffer = function () {
-  if (typeof Uint8Array !== 'undefined') {
-    if (Buffer._useTypedArrays) {
-      return (new Buffer(this)).buffer
-    } else {
-      var buf = new Uint8Array(this.length)
-      for (var i = 0, len = buf.length; i < len; i += 1)
-        buf[i] = this[i]
-      return buf.buffer
-    }
-  } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
-  }
-}
-
-// HELPER FUNCTIONS
-// ================
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-var BP = Buffer.prototype
-
-/**
- * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
- */
-Buffer._augment = function (arr) {
-  arr._isBuffer = true
-
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
-  arr._set = arr.set
-
-  // deprecated, will be removed in node 0.13+
-  arr.get = BP.get
-  arr.set = BP.set
-
-  arr.write = BP.write
-  arr.toString = BP.toString
-  arr.toLocaleString = BP.toString
-  arr.toJSON = BP.toJSON
-  arr.copy = BP.copy
-  arr.slice = BP.slice
-  arr.readUInt8 = BP.readUInt8
-  arr.readUInt16LE = BP.readUInt16LE
-  arr.readUInt16BE = BP.readUInt16BE
-  arr.readUInt32LE = BP.readUInt32LE
-  arr.readUInt32BE = BP.readUInt32BE
-  arr.readInt8 = BP.readInt8
-  arr.readInt16LE = BP.readInt16LE
-  arr.readInt16BE = BP.readInt16BE
-  arr.readInt32LE = BP.readInt32LE
-  arr.readInt32BE = BP.readInt32BE
-  arr.readFloatLE = BP.readFloatLE
-  arr.readFloatBE = BP.readFloatBE
-  arr.readDoubleLE = BP.readDoubleLE
-  arr.readDoubleBE = BP.readDoubleBE
-  arr.writeUInt8 = BP.writeUInt8
-  arr.writeUInt16LE = BP.writeUInt16LE
-  arr.writeUInt16BE = BP.writeUInt16BE
-  arr.writeUInt32LE = BP.writeUInt32LE
-  arr.writeUInt32BE = BP.writeUInt32BE
-  arr.writeInt8 = BP.writeInt8
-  arr.writeInt16LE = BP.writeInt16LE
-  arr.writeInt16BE = BP.writeInt16BE
-  arr.writeInt32LE = BP.writeInt32LE
-  arr.writeInt32BE = BP.writeInt32BE
-  arr.writeFloatLE = BP.writeFloatLE
-  arr.writeFloatBE = BP.writeFloatBE
-  arr.writeDoubleLE = BP.writeDoubleLE
-  arr.writeDoubleBE = BP.writeDoubleBE
-  arr.fill = BP.fill
-  arr.inspect = BP.inspect
-  arr.toArrayBuffer = BP.toArrayBuffer
-
-  return arr
-}
-
-// slice(start, end)
-function clamp (index, len, defaultValue) {
-  if (typeof index !== 'number') return defaultValue
-  index = ~~index;  // Coerce to integer.
-  if (index >= len) return len
-  if (index >= 0) return index
-  index += len
-  if (index >= 0) return index
-  return 0
-}
-
-function coerce (length) {
-  // Coerce length to a number (possibly NaN), round up
-  // in case it's fractional (e.g. 123.456) then do a
-  // double negate to coerce a NaN to 0. Easy, right?
-  length = ~~Math.ceil(+length)
-  return length < 0 ? 0 : length
-}
-
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
-}
-
-function isArrayish (subject) {
-  return isArray(subject) || Buffer.isBuffer(subject) ||
-      subject && typeof subject === 'object' &&
-      typeof subject.length === 'number'
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    var b = str.charCodeAt(i)
-    if (b <= 0x7F)
-      byteArray.push(str.charCodeAt(i))
-    else {
-      var start = i
-      if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
-      for (var j = 0; j < h.length; j++)
-        byteArray.push(parseInt(h[j], 16))
-    }
-  }
-  return byteArray
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(str)
-}
-
-function blitBuffer (src, dst, offset, length) {
-  var pos
-  for (var i = 0; i < length; i++) {
-    if ((i + offset >= dst.length) || (i >= src.length))
-      break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function decodeUtf8Char (str) {
-  try {
-    return decodeURIComponent(str)
-  } catch (err) {
-    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
-  }
-}
-
-/*
- * We have to make sure that the value is a valid integer. This means that it
- * is non-negative. It has no fractional component and that it does not
- * exceed the maximum allowed value.
- */
-function verifuint (value, max) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0, 'specified a negative value for writing an unsigned value')
-  assert(value <= max, 'value is larger than maximum value for type')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifsint (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifIEEE754 (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-}
-
-function assert (test, message) {
-  if (!test) throw new Error(message || 'Failed assertion')
-}
-
-},{"base64-js":23,"ieee754":24}],23:[function(require,module,exports){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-;(function (exports) {
-	'use strict';
-
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
-
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-	var PLUS_URL_SAFE = '-'.charCodeAt(0)
-	var SLASH_URL_SAFE = '_'.charCodeAt(0)
-
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS ||
-		    code === PLUS_URL_SAFE)
-			return 62 // '+'
-		if (code === SLASH ||
-		    code === SLASH_URL_SAFE)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
-
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
-
-		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-		var L = 0
-
-		function push (v) {
-			arr[L++] = v
-		}
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
-		}
-
-		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
-		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
-		}
-
-		return arr
-	}
-
-	function uint8ToBase64 (uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length
-
-		function encode (num) {
-			return lookup.charAt(num)
-		}
-
-		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
-		}
-
-		return output
-	}
-
-	exports.toByteArray = b64ToByteArray
-	exports.fromByteArray = uint8ToBase64
-}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
-
-},{}],24:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],25:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require("oMfpAn"))
-},{"oMfpAn":26}],26:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],27:[function(require,module,exports){
-(function (global){
-/*! http://mths.be/punycode v1.2.4 by @mathias */
-;(function(root) {
-
-	/** Detect free variables */
-	var freeExports = typeof exports == 'object' && exports;
-	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
-	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-		root = freeGlobal;
-	}
-
-	/**
-	 * The `punycode` object.
-	 * @name punycode
-	 * @type Object
-	 */
-	var punycode,
-
-	/** Highest positive signed 32-bit float value */
-	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
-
-	/** Bootstring parameters */
-	base = 36,
-	tMin = 1,
-	tMax = 26,
-	skew = 38,
-	damp = 700,
-	initialBias = 72,
-	initialN = 128, // 0x80
-	delimiter = '-', // '\x2D'
-
-	/** Regular expressions */
-	regexPunycode = /^xn--/,
-	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
-
-	/** Error messages */
-	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
-		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
-		'invalid-input': 'Invalid input'
-	},
-
-	/** Convenience shortcuts */
-	baseMinusTMin = base - tMin,
-	floor = Math.floor,
-	stringFromCharCode = String.fromCharCode,
-
-	/** Temporary variable */
-	key;
-
-	/*--------------------------------------------------------------------------*/
-
-	/**
-	 * A generic error utility function.
-	 * @private
-	 * @param {String} type The error type.
-	 * @returns {Error} Throws a `RangeError` with the applicable error message.
-	 */
-	function error(type) {
-		throw RangeError(errors[type]);
-	}
-
-	/**
-	 * A generic `Array#map` utility function.
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} callback The function that gets called for every array
-	 * item.
-	 * @returns {Array} A new array of values returned by the callback function.
-	 */
-	function map(array, fn) {
-		var length = array.length;
-		while (length--) {
-			array[length] = fn(array[length]);
-		}
-		return array;
-	}
-
-	/**
-	 * A simple `Array#map`-like wrapper to work with domain name strings.
-	 * @private
-	 * @param {String} domain The domain name.
-	 * @param {Function} callback The function that gets called for every
-	 * character.
-	 * @returns {Array} A new string of characters returned by the callback
-	 * function.
-	 */
-	function mapDomain(string, fn) {
-		return map(string.split(regexSeparators), fn).join('.');
-	}
-
-	/**
-	 * Creates an array containing the numeric code points of each Unicode
-	 * character in the string. While JavaScript uses UCS-2 internally,
-	 * this function will convert a pair of surrogate halves (each of which
-	 * UCS-2 exposes as separate characters) into a single code point,
-	 * matching UTF-16.
-	 * @see `punycode.ucs2.encode`
-	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
-	 * @memberOf punycode.ucs2
-	 * @name decode
-	 * @param {String} string The Unicode input string (UCS-2).
-	 * @returns {Array} The new array of code points.
-	 */
-	function ucs2decode(string) {
-		var output = [],
-		    counter = 0,
-		    length = string.length,
-		    value,
-		    extra;
-		while (counter < length) {
-			value = string.charCodeAt(counter++);
-			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-				// high surrogate, and there is a next character
-				extra = string.charCodeAt(counter++);
-				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-				} else {
-					// unmatched surrogate; only append this code unit, in case the next
-					// code unit is the high surrogate of a surrogate pair
-					output.push(value);
-					counter--;
-				}
-			} else {
-				output.push(value);
-			}
-		}
-		return output;
-	}
-
-	/**
-	 * Creates a string based on an array of numeric code points.
-	 * @see `punycode.ucs2.decode`
-	 * @memberOf punycode.ucs2
-	 * @name encode
-	 * @param {Array} codePoints The array of numeric code points.
-	 * @returns {String} The new Unicode string (UCS-2).
-	 */
-	function ucs2encode(array) {
-		return map(array, function(value) {
-			var output = '';
-			if (value > 0xFFFF) {
-				value -= 0x10000;
-				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
-				value = 0xDC00 | value & 0x3FF;
-			}
-			output += stringFromCharCode(value);
-			return output;
-		}).join('');
-	}
-
-	/**
-	 * Converts a basic code point into a digit/integer.
-	 * @see `digitToBasic()`
-	 * @private
-	 * @param {Number} codePoint The basic numeric code point value.
-	 * @returns {Number} The numeric value of a basic code point (for use in
-	 * representing integers) in the range `0` to `base - 1`, or `base` if
-	 * the code point does not represent a value.
-	 */
-	function basicToDigit(codePoint) {
-		if (codePoint - 48 < 10) {
-			return codePoint - 22;
-		}
-		if (codePoint - 65 < 26) {
-			return codePoint - 65;
-		}
-		if (codePoint - 97 < 26) {
-			return codePoint - 97;
-		}
-		return base;
-	}
-
-	/**
-	 * Converts a digit/integer into a basic code point.
-	 * @see `basicToDigit()`
-	 * @private
-	 * @param {Number} digit The numeric value of a basic code point.
-	 * @returns {Number} The basic code point whose value (when used for
-	 * representing integers) is `digit`, which needs to be in the range
-	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
-	 * used; else, the lowercase form is used. The behavior is undefined
-	 * if `flag` is non-zero and `digit` has no uppercase form.
-	 */
-	function digitToBasic(digit, flag) {
-		//  0..25 map to ASCII a..z or A..Z
-		// 26..35 map to ASCII 0..9
-		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-	}
-
-	/**
-	 * Bias adaptation function as per section 3.4 of RFC 3492.
-	 * http://tools.ietf.org/html/rfc3492#section-3.4
-	 * @private
-	 */
-	function adapt(delta, numPoints, firstTime) {
-		var k = 0;
-		delta = firstTime ? floor(delta / damp) : delta >> 1;
-		delta += floor(delta / numPoints);
-		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
-			delta = floor(delta / baseMinusTMin);
-		}
-		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
-	}
-
-	/**
-	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The Punycode string of ASCII-only symbols.
-	 * @returns {String} The resulting string of Unicode symbols.
-	 */
-	function decode(input) {
-		// Don't use UCS-2
-		var output = [],
-		    inputLength = input.length,
-		    out,
-		    i = 0,
-		    n = initialN,
-		    bias = initialBias,
-		    basic,
-		    j,
-		    index,
-		    oldi,
-		    w,
-		    k,
-		    digit,
-		    t,
-		    /** Cached calculation results */
-		    baseMinusT;
-
-		// Handle the basic code points: let `basic` be the number of input code
-		// points before the last delimiter, or `0` if there is none, then copy
-		// the first basic code points to the output.
-
-		basic = input.lastIndexOf(delimiter);
-		if (basic < 0) {
-			basic = 0;
-		}
-
-		for (j = 0; j < basic; ++j) {
-			// if it's not a basic code point
-			if (input.charCodeAt(j) >= 0x80) {
-				error('not-basic');
-			}
-			output.push(input.charCodeAt(j));
-		}
-
-		// Main decoding loop: start just after the last delimiter if any basic code
-		// points were copied; start at the beginning otherwise.
-
-		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
-
-			// `index` is the index of the next character to be consumed.
-			// Decode a generalized variable-length integer into `delta`,
-			// which gets added to `i`. The overflow checking is easier
-			// if we increase `i` as we go, then subtract off its starting
-			// value at the end to obtain `delta`.
-			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
-
-				if (index >= inputLength) {
-					error('invalid-input');
-				}
-
-				digit = basicToDigit(input.charCodeAt(index++));
-
-				if (digit >= base || digit > floor((maxInt - i) / w)) {
-					error('overflow');
-				}
-
-				i += digit * w;
-				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-
-				if (digit < t) {
-					break;
-				}
-
-				baseMinusT = base - t;
-				if (w > floor(maxInt / baseMinusT)) {
-					error('overflow');
-				}
-
-				w *= baseMinusT;
-
-			}
-
-			out = output.length + 1;
-			bias = adapt(i - oldi, out, oldi == 0);
-
-			// `i` was supposed to wrap around from `out` to `0`,
-			// incrementing `n` each time, so we'll fix that now:
-			if (floor(i / out) > maxInt - n) {
-				error('overflow');
-			}
-
-			n += floor(i / out);
-			i %= out;
-
-			// Insert `n` at position `i` of the output
-			output.splice(i++, 0, n);
-
-		}
-
-		return ucs2encode(output);
-	}
-
-	/**
-	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
-	 * symbols.
-	 * @memberOf punycode
-	 * @param {String} input The string of Unicode symbols.
-	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
-	 */
-	function encode(input) {
-		var n,
-		    delta,
-		    handledCPCount,
-		    basicLength,
-		    bias,
-		    j,
-		    m,
-		    q,
-		    k,
-		    t,
-		    currentValue,
-		    output = [],
-		    /** `inputLength` will hold the number of code points in `input`. */
-		    inputLength,
-		    /** Cached calculation results */
-		    handledCPCountPlusOne,
-		    baseMinusT,
-		    qMinusT;
-
-		// Convert the input in UCS-2 to Unicode
-		input = ucs2decode(input);
-
-		// Cache the length
-		inputLength = input.length;
-
-		// Initialize the state
-		n = initialN;
-		delta = 0;
-		bias = initialBias;
-
-		// Handle the basic code points
-		for (j = 0; j < inputLength; ++j) {
-			currentValue = input[j];
-			if (currentValue < 0x80) {
-				output.push(stringFromCharCode(currentValue));
-			}
-		}
-
-		handledCPCount = basicLength = output.length;
-
-		// `handledCPCount` is the number of code points that have been handled;
-		// `basicLength` is the number of basic code points.
-
-		// Finish the basic string - if it is not empty - with a delimiter
-		if (basicLength) {
-			output.push(delimiter);
-		}
-
-		// Main encoding loop:
-		while (handledCPCount < inputLength) {
-
-			// All non-basic code points < n have been handled already. Find the next
-			// larger one:
-			for (m = maxInt, j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-				if (currentValue >= n && currentValue < m) {
-					m = currentValue;
-				}
-			}
-
-			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-			// but guard against overflow
-			handledCPCountPlusOne = handledCPCount + 1;
-			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
-				error('overflow');
-			}
-
-			delta += (m - n) * handledCPCountPlusOne;
-			n = m;
-
-			for (j = 0; j < inputLength; ++j) {
-				currentValue = input[j];
-
-				if (currentValue < n && ++delta > maxInt) {
-					error('overflow');
-				}
-
-				if (currentValue == n) {
-					// Represent delta as a generalized variable-length integer
-					for (q = delta, k = base; /* no condition */; k += base) {
-						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
-						if (q < t) {
-							break;
-						}
-						qMinusT = q - t;
-						baseMinusT = base - t;
-						output.push(
-							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
-						);
-						q = floor(qMinusT / baseMinusT);
-					}
-
-					output.push(stringFromCharCode(digitToBasic(q, 0)));
-					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
-					delta = 0;
-					++handledCPCount;
-				}
-			}
-
-			++delta;
-			++n;
-
-		}
-		return output.join('');
-	}
-
-	/**
-	 * Converts a Punycode string representing a domain name to Unicode. Only the
-	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it on a string that has already been converted to
-	 * Unicode.
-	 * @memberOf punycode
-	 * @param {String} domain The Punycode domain name to convert to Unicode.
-	 * @returns {String} The Unicode representation of the given Punycode
-	 * string.
-	 */
-	function toUnicode(domain) {
-		return mapDomain(domain, function(string) {
-			return regexPunycode.test(string)
-				? decode(string.slice(4).toLowerCase())
-				: string;
-		});
-	}
-
-	/**
-	 * Converts a Unicode string representing a domain name to Punycode. Only the
-	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
-	 * matter if you call it with a domain that's already in ASCII.
-	 * @memberOf punycode
-	 * @param {String} domain The domain name to convert, as a Unicode string.
-	 * @returns {String} The Punycode representation of the given domain name.
-	 */
-	function toASCII(domain) {
-		return mapDomain(domain, function(string) {
-			return regexNonASCII.test(string)
-				? 'xn--' + encode(string)
-				: string;
-		});
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	/** Define the public API */
-	punycode = {
-		/**
-		 * A string representing the current Punycode.js version number.
-		 * @memberOf punycode
-		 * @type String
-		 */
-		'version': '1.2.4',
-		/**
-		 * An object of methods to convert from JavaScript's internal character
-		 * representation (UCS-2) to Unicode code points, and back.
-		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
-		 * @memberOf punycode
-		 * @type Object
-		 */
-		'ucs2': {
-			'decode': ucs2decode,
-			'encode': ucs2encode
-		},
-		'decode': decode,
-		'encode': encode,
-		'toASCII': toASCII,
-		'toUnicode': toUnicode
-	};
-
-	/** Expose `punycode` */
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		typeof define == 'function' &&
-		typeof define.amd == 'object' &&
-		define.amd
-	) {
-		define('punycode', function() {
-			return punycode;
-		});
-	} else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
-			freeModule.exports = punycode;
-		} else { // in Narwhal or RingoJS v0.7.0-
-			for (key in punycode) {
-				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
-			}
-		}
-	} else { // in Rhino or a web browser
-		root.punycode = punycode;
-	}
-
-}(this));
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],28:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-'use strict';
-
-// If obj.hasOwnProperty has been overridden, then calling
-// obj.hasOwnProperty(prop) will break.
-// See: https://github.com/joyent/node/issues/1707
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-module.exports = function(qs, sep, eq, options) {
-  sep = sep || '&';
-  eq = eq || '=';
-  var obj = {};
-
-  if (typeof qs !== 'string' || qs.length === 0) {
-    return obj;
-  }
-
-  var regexp = /\+/g;
-  qs = qs.split(sep);
-
-  var maxKeys = 1000;
-  if (options && typeof options.maxKeys === 'number') {
-    maxKeys = options.maxKeys;
-  }
-
-  var len = qs.length;
-  // maxKeys <= 0 means that we should not limit keys count
-  if (maxKeys > 0 && len > maxKeys) {
-    len = maxKeys;
-  }
-
-  for (var i = 0; i < len; ++i) {
-    var x = qs[i].replace(regexp, '%20'),
-        idx = x.indexOf(eq),
-        kstr, vstr, k, v;
-
-    if (idx >= 0) {
-      kstr = x.substr(0, idx);
-      vstr = x.substr(idx + 1);
-    } else {
-      kstr = x;
-      vstr = '';
-    }
-
-    k = decodeURIComponent(kstr);
-    v = decodeURIComponent(vstr);
-
-    if (!hasOwnProperty(obj, k)) {
-      obj[k] = v;
-    } else if (isArray(obj[k])) {
-      obj[k].push(v);
-    } else {
-      obj[k] = [obj[k], v];
-    }
-  }
-
-  return obj;
-};
-
-var isArray = Array.isArray || function (xs) {
-  return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-},{}],29:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-'use strict';
-
-var stringifyPrimitive = function(v) {
-  switch (typeof v) {
-    case 'string':
-      return v;
-
-    case 'boolean':
-      return v ? 'true' : 'false';
-
-    case 'number':
-      return isFinite(v) ? v : '';
-
-    default:
-      return '';
-  }
-};
-
-module.exports = function(obj, sep, eq, name) {
-  sep = sep || '&';
-  eq = eq || '=';
-  if (obj === null) {
-    obj = undefined;
-  }
-
-  if (typeof obj === 'object') {
-    return map(objectKeys(obj), function(k) {
-      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
-      if (isArray(obj[k])) {
-        return obj[k].map(function(v) {
-          return ks + encodeURIComponent(stringifyPrimitive(v));
-        }).join(sep);
-      } else {
-        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
-      }
-    }).join(sep);
-
-  }
-
-  if (!name) return '';
-  return encodeURIComponent(stringifyPrimitive(name)) + eq +
-         encodeURIComponent(stringifyPrimitive(obj));
-};
-
-var isArray = Array.isArray || function (xs) {
-  return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-function map (xs, f) {
-  if (xs.map) return xs.map(f);
-  var res = [];
-  for (var i = 0; i < xs.length; i++) {
-    res.push(f(xs[i], i));
-  }
-  return res;
-}
-
-var objectKeys = Object.keys || function (obj) {
-  var res = [];
-  for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
-  }
-  return res;
-};
-
-},{}],30:[function(require,module,exports){
-'use strict';
-
-exports.decode = exports.parse = require('./decode');
-exports.encode = exports.stringify = require('./encode');
-
-},{"./decode":28,"./encode":29}],31:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var punycode = require('punycode');
-
-exports.parse = urlParse;
-exports.resolve = urlResolve;
-exports.resolveObject = urlResolveObject;
-exports.format = urlFormat;
-
-exports.Url = Url;
-
-function Url() {
-  this.protocol = null;
-  this.slashes = null;
-  this.auth = null;
-  this.host = null;
-  this.port = null;
-  this.hostname = null;
-  this.hash = null;
-  this.search = null;
-  this.query = null;
-  this.pathname = null;
-  this.path = null;
-  this.href = null;
-}
-
-// Reference: RFC 3986, RFC 1808, RFC 2396
-
-// define these here so at least they only have to be
-// compiled once on the first module load.
-var protocolPattern = /^([a-z0-9.+-]+:)/i,
-    portPattern = /:[0-9]*$/,
-
-    // RFC 2396: characters reserved for delimiting URLs.
-    // We actually just auto-escape these.
-    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
-
-    // RFC 2396: characters not allowed for various reasons.
-    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
-
-    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-    autoEscape = ['\''].concat(unwise),
-    // Characters that are never ever allowed in a hostname.
-    // Note that any invalid chars are also handled, but these
-    // are the ones that are *expected* to be seen, so we fast-path
-    // them.
-    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
-    hostEndingChars = ['/', '?', '#'],
-    hostnameMaxLen = 255,
-    hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
-    hostnamePartStart = /^([a-z0-9A-Z_-]{0,63})(.*)$/,
-    // protocols that can allow "unsafe" and "unwise" chars.
-    unsafeProtocol = {
-      'javascript': true,
-      'javascript:': true
-    },
-    // protocols that never have a hostname.
-    hostlessProtocol = {
-      'javascript': true,
-      'javascript:': true
-    },
-    // protocols that always contain a // bit.
-    slashedProtocol = {
-      'http': true,
-      'https': true,
-      'ftp': true,
-      'gopher': true,
-      'file': true,
-      'http:': true,
-      'https:': true,
-      'ftp:': true,
-      'gopher:': true,
-      'file:': true
-    },
-    querystring = require('querystring');
-
-function urlParse(url, parseQueryString, slashesDenoteHost) {
-  if (url && isObject(url) && url instanceof Url) return url;
-
-  var u = new Url;
-  u.parse(url, parseQueryString, slashesDenoteHost);
-  return u;
-}
-
-Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
-  if (!isString(url)) {
-    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
-  }
-
-  var rest = url;
-
-  // trim before proceeding.
-  // This is to support parse stuff like "  http://foo.com  \n"
-  rest = rest.trim();
-
-  var proto = protocolPattern.exec(rest);
-  if (proto) {
-    proto = proto[0];
-    var lowerProto = proto.toLowerCase();
-    this.protocol = lowerProto;
-    rest = rest.substr(proto.length);
-  }
-
-  // figure out if it's got a host
-  // user@server is *always* interpreted as a hostname, and url
-  // resolution will treat //foo/bar as host=foo,path=bar because that's
-  // how the browser resolves relative URLs.
-  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
-    var slashes = rest.substr(0, 2) === '//';
-    if (slashes && !(proto && hostlessProtocol[proto])) {
-      rest = rest.substr(2);
-      this.slashes = true;
-    }
-  }
-
-  if (!hostlessProtocol[proto] &&
-      (slashes || (proto && !slashedProtocol[proto]))) {
-
-    // there's a hostname.
-    // the first instance of /, ?, ;, or # ends the host.
-    //
-    // If there is an @ in the hostname, then non-host chars *are* allowed
-    // to the left of the last @ sign, unless some host-ending character
-    // comes *before* the @-sign.
-    // URLs are obnoxious.
-    //
-    // ex:
-    // http://a@b@c/ => user:a@b host:c
-    // http://a@b?@c => user:a host:c path:/?@c
-
-    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
-    // Review our test case against browsers more comprehensively.
-
-    // find the first instance of any hostEndingChars
-    var hostEnd = -1;
-    for (var i = 0; i < hostEndingChars.length; i++) {
-      var hec = rest.indexOf(hostEndingChars[i]);
-      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
-        hostEnd = hec;
-    }
-
-    // at this point, either we have an explicit point where the
-    // auth portion cannot go past, or the last @ char is the decider.
-    var auth, atSign;
-    if (hostEnd === -1) {
-      // atSign can be anywhere.
-      atSign = rest.lastIndexOf('@');
-    } else {
-      // atSign must be in auth portion.
-      // http://a@b/c@d => host:b auth:a path:/c@d
-      atSign = rest.lastIndexOf('@', hostEnd);
-    }
-
-    // Now we have a portion which is definitely the auth.
-    // Pull that off.
-    if (atSign !== -1) {
-      auth = rest.slice(0, atSign);
-      rest = rest.slice(atSign + 1);
-      this.auth = decodeURIComponent(auth);
-    }
-
-    // the host is the remaining to the left of the first non-host char
-    hostEnd = -1;
-    for (var i = 0; i < nonHostChars.length; i++) {
-      var hec = rest.indexOf(nonHostChars[i]);
-      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
-        hostEnd = hec;
-    }
-    // if we still have not hit it, then the entire thing is a host.
-    if (hostEnd === -1)
-      hostEnd = rest.length;
-
-    this.host = rest.slice(0, hostEnd);
-    rest = rest.slice(hostEnd);
-
-    // pull out port.
-    this.parseHost();
-
-    // we've indicated that there is a hostname,
-    // so even if it's empty, it has to be present.
-    this.hostname = this.hostname || '';
-
-    // if hostname begins with [ and ends with ]
-    // assume that it's an IPv6 address.
-    var ipv6Hostname = this.hostname[0] === '[' &&
-        this.hostname[this.hostname.length - 1] === ']';
-
-    // validate a little.
-    if (!ipv6Hostname) {
-      var hostparts = this.hostname.split(/\./);
-      for (var i = 0, l = hostparts.length; i < l; i++) {
-        var part = hostparts[i];
-        if (!part) continue;
-        if (!part.match(hostnamePartPattern)) {
-          var newpart = '';
-          for (var j = 0, k = part.length; j < k; j++) {
-            if (part.charCodeAt(j) > 127) {
-              // we replace non-ASCII char with a temporary placeholder
-              // we need this to make sure size of hostname is not
-              // broken by replacing non-ASCII by nothing
-              newpart += 'x';
-            } else {
-              newpart += part[j];
-            }
-          }
-          // we test again with ASCII char only
-          if (!newpart.match(hostnamePartPattern)) {
-            var validParts = hostparts.slice(0, i);
-            var notHost = hostparts.slice(i + 1);
-            var bit = part.match(hostnamePartStart);
-            if (bit) {
-              validParts.push(bit[1]);
-              notHost.unshift(bit[2]);
-            }
-            if (notHost.length) {
-              rest = '/' + notHost.join('.') + rest;
-            }
-            this.hostname = validParts.join('.');
-            break;
-          }
-        }
-      }
-    }
-
-    if (this.hostname.length > hostnameMaxLen) {
-      this.hostname = '';
-    } else {
-      // hostnames are always lower case.
-      this.hostname = this.hostname.toLowerCase();
-    }
-
-    if (!ipv6Hostname) {
-      // IDNA Support: Returns a puny coded representation of "domain".
-      // It only converts the part of the domain name that
-      // has non ASCII characters. I.e. it dosent matter if
-      // you call it with a domain that already is in ASCII.
-      var domainArray = this.hostname.split('.');
-      var newOut = [];
-      for (var i = 0; i < domainArray.length; ++i) {
-        var s = domainArray[i];
-        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
-            'xn--' + punycode.encode(s) : s);
-      }
-      this.hostname = newOut.join('.');
-    }
-
-    var p = this.port ? ':' + this.port : '';
-    var h = this.hostname || '';
-    this.host = h + p;
-    this.href += this.host;
-
-    // strip [ and ] from the hostname
-    // the host field still retains them, though
-    if (ipv6Hostname) {
-      this.hostname = this.hostname.substr(1, this.hostname.length - 2);
-      if (rest[0] !== '/') {
-        rest = '/' + rest;
-      }
-    }
-  }
-
-  // now rest is set to the post-host stuff.
-  // chop off any delim chars.
-  if (!unsafeProtocol[lowerProto]) {
-
-    // First, make 100% sure that any "autoEscape" chars get
-    // escaped, even if encodeURIComponent doesn't think they
-    // need to be.
-    for (var i = 0, l = autoEscape.length; i < l; i++) {
-      var ae = autoEscape[i];
-      var esc = encodeURIComponent(ae);
-      if (esc === ae) {
-        esc = escape(ae);
-      }
-      rest = rest.split(ae).join(esc);
-    }
-  }
-
-
-  // chop off from the tail first.
-  var hash = rest.indexOf('#');
-  if (hash !== -1) {
-    // got a fragment string.
-    this.hash = rest.substr(hash);
-    rest = rest.slice(0, hash);
-  }
-  var qm = rest.indexOf('?');
-  if (qm !== -1) {
-    this.search = rest.substr(qm);
-    this.query = rest.substr(qm + 1);
-    if (parseQueryString) {
-      this.query = querystring.parse(this.query);
-    }
-    rest = rest.slice(0, qm);
-  } else if (parseQueryString) {
-    // no query string, but parseQueryString still requested
-    this.search = '';
-    this.query = {};
-  }
-  if (rest) this.pathname = rest;
-  if (slashedProtocol[lowerProto] &&
-      this.hostname && !this.pathname) {
-    this.pathname = '/';
-  }
-
-  //to support http.request
-  if (this.pathname || this.search) {
-    var p = this.pathname || '';
-    var s = this.search || '';
-    this.path = p + s;
-  }
-
-  // finally, reconstruct the href based on what has been validated.
-  this.href = this.format();
-  return this;
-};
-
-// format a parsed object into a url string
-function urlFormat(obj) {
-  // ensure it's an object, and not a string url.
-  // If it's an obj, this is a no-op.
-  // this way, you can call url_format() on strings
-  // to clean up potentially wonky urls.
-  if (isString(obj)) obj = urlParse(obj);
-  if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
-  return obj.format();
-}
-
-Url.prototype.format = function() {
-  var auth = this.auth || '';
-  if (auth) {
-    auth = encodeURIComponent(auth);
-    auth = auth.replace(/%3A/i, ':');
-    auth += '@';
-  }
-
-  var protocol = this.protocol || '',
-      pathname = this.pathname || '',
-      hash = this.hash || '',
-      host = false,
-      query = '';
-
-  if (this.host) {
-    host = auth + this.host;
-  } else if (this.hostname) {
-    host = auth + (this.hostname.indexOf(':') === -1 ?
-        this.hostname :
-        '[' + this.hostname + ']');
-    if (this.port) {
-      host += ':' + this.port;
-    }
-  }
-
-  if (this.query &&
-      isObject(this.query) &&
-      Object.keys(this.query).length) {
-    query = querystring.stringify(this.query);
-  }
-
-  var search = this.search || (query && ('?' + query)) || '';
-
-  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
-
-  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
-  // unless they had them to begin with.
-  if (this.slashes ||
-      (!protocol || slashedProtocol[protocol]) && host !== false) {
-    host = '//' + (host || '');
-    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
-  } else if (!host) {
-    host = '';
-  }
-
-  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
-  if (search && search.charAt(0) !== '?') search = '?' + search;
-
-  pathname = pathname.replace(/[?#]/g, function(match) {
-    return encodeURIComponent(match);
-  });
-  search = search.replace('#', '%23');
-
-  return protocol + host + pathname + search + hash;
-};
-
-function urlResolve(source, relative) {
-  return urlParse(source, false, true).resolve(relative);
-}
-
-Url.prototype.resolve = function(relative) {
-  return this.resolveObject(urlParse(relative, false, true)).format();
-};
-
-function urlResolveObject(source, relative) {
-  if (!source) return relative;
-  return urlParse(source, false, true).resolveObject(relative);
-}
-
-Url.prototype.resolveObject = function(relative) {
-  if (isString(relative)) {
-    var rel = new Url();
-    rel.parse(relative, false, true);
-    relative = rel;
-  }
-
-  var result = new Url();
-  Object.keys(this).forEach(function(k) {
-    result[k] = this[k];
-  }, this);
-
-  // hash is always overridden, no matter what.
-  // even href="" will remove it.
-  result.hash = relative.hash;
-
-  // if the relative url is empty, then there's nothing left to do here.
-  if (relative.href === '') {
-    result.href = result.format();
-    return result;
-  }
-
-  // hrefs like //foo/bar always cut to the protocol.
-  if (relative.slashes && !relative.protocol) {
-    // take everything except the protocol from relative
-    Object.keys(relative).forEach(function(k) {
-      if (k !== 'protocol')
-        result[k] = relative[k];
-    });
-
-    //urlParse appends trailing / to urls like http://www.example.com
-    if (slashedProtocol[result.protocol] &&
-        result.hostname && !result.pathname) {
-      result.path = result.pathname = '/';
-    }
-
-    result.href = result.format();
-    return result;
-  }
-
-  if (relative.protocol && relative.protocol !== result.protocol) {
-    // if it's a known url protocol, then changing
-    // the protocol does weird things
-    // first, if it's not file:, then we MUST have a host,
-    // and if there was a path
-    // to begin with, then we MUST have a path.
-    // if it is file:, then the host is dropped,
-    // because that's known to be hostless.
-    // anything else is assumed to be absolute.
-    if (!slashedProtocol[relative.protocol]) {
-      Object.keys(relative).forEach(function(k) {
-        result[k] = relative[k];
-      });
-      result.href = result.format();
-      return result;
-    }
-
-    result.protocol = relative.protocol;
-    if (!relative.host && !hostlessProtocol[relative.protocol]) {
-      var relPath = (relative.pathname || '').split('/');
-      while (relPath.length && !(relative.host = relPath.shift()));
-      if (!relative.host) relative.host = '';
-      if (!relative.hostname) relative.hostname = '';
-      if (relPath[0] !== '') relPath.unshift('');
-      if (relPath.length < 2) relPath.unshift('');
-      result.pathname = relPath.join('/');
-    } else {
-      result.pathname = relative.pathname;
-    }
-    result.search = relative.search;
-    result.query = relative.query;
-    result.host = relative.host || '';
-    result.auth = relative.auth;
-    result.hostname = relative.hostname || relative.host;
-    result.port = relative.port;
-    // to support http.request
-    if (result.pathname || result.search) {
-      var p = result.pathname || '';
-      var s = result.search || '';
-      result.path = p + s;
-    }
-    result.slashes = result.slashes || relative.slashes;
-    result.href = result.format();
-    return result;
-  }
-
-  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
-      isRelAbs = (
-          relative.host ||
-          relative.pathname && relative.pathname.charAt(0) === '/'
-      ),
-      mustEndAbs = (isRelAbs || isSourceAbs ||
-                    (result.host && relative.pathname)),
-      removeAllDots = mustEndAbs,
-      srcPath = result.pathname && result.pathname.split('/') || [],
-      relPath = relative.pathname && relative.pathname.split('/') || [],
-      psychotic = result.protocol && !slashedProtocol[result.protocol];
-
-  // if the url is a non-slashed url, then relative
-  // links like ../.. should be able
-  // to crawl up to the hostname, as well.  This is strange.
-  // result.protocol has already been set by now.
-  // Later on, put the first path part into the host field.
-  if (psychotic) {
-    result.hostname = '';
-    result.port = null;
-    if (result.host) {
-      if (srcPath[0] === '') srcPath[0] = result.host;
-      else srcPath.unshift(result.host);
-    }
-    result.host = '';
-    if (relative.protocol) {
-      relative.hostname = null;
-      relative.port = null;
-      if (relative.host) {
-        if (relPath[0] === '') relPath[0] = relative.host;
-        else relPath.unshift(relative.host);
-      }
-      relative.host = null;
-    }
-    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
-  }
-
-  if (isRelAbs) {
-    // it's absolute.
-    result.host = (relative.host || relative.host === '') ?
-                  relative.host : result.host;
-    result.hostname = (relative.hostname || relative.hostname === '') ?
-                      relative.hostname : result.hostname;
-    result.search = relative.search;
-    result.query = relative.query;
-    srcPath = relPath;
-    // fall through to the dot-handling below.
-  } else if (relPath.length) {
-    // it's relative
-    // throw away the existing file, and take the new path instead.
-    if (!srcPath) srcPath = [];
-    srcPath.pop();
-    srcPath = srcPath.concat(relPath);
-    result.search = relative.search;
-    result.query = relative.query;
-  } else if (!isNullOrUndefined(relative.search)) {
-    // just pull out the search.
-    // like href='?foo'.
-    // Put this after the other two cases because it simplifies the booleans
-    if (psychotic) {
-      result.hostname = result.host = srcPath.shift();
-      //occationaly the auth can get stuck only in host
-      //this especialy happens in cases like
-      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-      var authInHost = result.host && result.host.indexOf('@') > 0 ?
-                       result.host.split('@') : false;
-      if (authInHost) {
-        result.auth = authInHost.shift();
-        result.host = result.hostname = authInHost.shift();
-      }
-    }
-    result.search = relative.search;
-    result.query = relative.query;
-    //to support http.request
-    if (!isNull(result.pathname) || !isNull(result.search)) {
-      result.path = (result.pathname ? result.pathname : '') +
-                    (result.search ? result.search : '');
-    }
-    result.href = result.format();
-    return result;
-  }
-
-  if (!srcPath.length) {
-    // no path at all.  easy.
-    // we've already handled the other stuff above.
-    result.pathname = null;
-    //to support http.request
-    if (result.search) {
-      result.path = '/' + result.search;
-    } else {
-      result.path = null;
-    }
-    result.href = result.format();
-    return result;
-  }
-
-  // if a url ENDs in . or .., then it must get a trailing slash.
-  // however, if it ends in anything else non-slashy,
-  // then it must NOT get a trailing slash.
-  var last = srcPath.slice(-1)[0];
-  var hasTrailingSlash = (
-      (result.host || relative.host) && (last === '.' || last === '..') ||
-      last === '');
-
-  // strip single dots, resolve double dots to parent dir
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = srcPath.length; i >= 0; i--) {
-    last = srcPath[i];
-    if (last == '.') {
-      srcPath.splice(i, 1);
-    } else if (last === '..') {
-      srcPath.splice(i, 1);
-      up++;
-    } else if (up) {
-      srcPath.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (!mustEndAbs && !removeAllDots) {
-    for (; up--; up) {
-      srcPath.unshift('..');
-    }
-  }
-
-  if (mustEndAbs && srcPath[0] !== '' &&
-      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
-    srcPath.unshift('');
-  }
-
-  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
-    srcPath.push('');
-  }
-
-  var isAbsolute = srcPath[0] === '' ||
-      (srcPath[0] && srcPath[0].charAt(0) === '/');
-
-  // put the host back
-  if (psychotic) {
-    result.hostname = result.host = isAbsolute ? '' :
-                                    srcPath.length ? srcPath.shift() : '';
-    //occationaly the auth can get stuck only in host
-    //this especialy happens in cases like
-    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-    var authInHost = result.host && result.host.indexOf('@') > 0 ?
-                     result.host.split('@') : false;
-    if (authInHost) {
-      result.auth = authInHost.shift();
-      result.host = result.hostname = authInHost.shift();
-    }
-  }
-
-  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
-
-  if (mustEndAbs && !isAbsolute) {
-    srcPath.unshift('');
-  }
-
-  if (!srcPath.length) {
-    result.pathname = null;
-    result.path = null;
-  } else {
-    result.pathname = srcPath.join('/');
-  }
-
-  //to support request.http
-  if (!isNull(result.pathname) || !isNull(result.search)) {
-    result.path = (result.pathname ? result.pathname : '') +
-                  (result.search ? result.search : '');
-  }
-  result.auth = relative.auth || result.auth;
-  result.slashes = result.slashes || relative.slashes;
-  result.href = result.format();
-  return result;
-};
-
-Url.prototype.parseHost = function() {
-  var host = this.host;
-  var port = portPattern.exec(host);
-  if (port) {
-    port = port[0];
-    if (port !== ':') {
-      this.port = port.substr(1);
-    }
-    host = host.substr(0, host.length - port.length);
-  }
-  if (host) this.hostname = host;
-};
-
-function isString(arg) {
-  return typeof arg === "string";
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isNull(arg) {
-  return arg === null;
-}
-function isNullOrUndefined(arg) {
-  return  arg == null;
-}
-
-},{"punycode":27,"querystring":30}],32:[function(require,module,exports){
-(function (process){
-// Haml - Copyright TJ Holowaychuk <tj@vision-media.ca> (MIT Licensed)
-
-var HAML = {};
-
-/**
- * Version.
- */
-
-HAML.version = '0.6.2'
-
-/**
- * Haml template cache.
- */
-
-HAML.cache = {}
-
-/**
- * Default error context length.
- */
-
-HAML.errorContextLength = 15
-
-/**
- * Self closing tags.
- */
-
-HAML.selfClosing = [
-    'meta',
-    'img',
-    'link',
-    'br',
-    'hr',
-    'input',
-    'area',
-    'base'
-  ]
-
-/**
- * Default supported doctypes.
- */
-
-HAML.doctypes = {
-  '5': '<!DOCTYPE html>',
-  'xml': '<?xml version="1.0" encoding="utf-8" ?>',
-  'default': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
-  'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
-  'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
-  '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
-  'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">',
-  'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
-}
-
-/**
- * Default filters.
- */
-
-HAML.filters = {
-
-  /**
-   * Return plain string.
-   */
-
-  plain: function(str, buf) {
-    buf.push(str)
-  },
-
-  /**
-   * Wrap with CDATA tags.
-   */
-
-  cdata: function(str, buf) {
-    buf.push('<![CDATA[\n' + str + '\n]]>')
-  },
-
-  /**
-   * Wrap with <script> and CDATA tags.
-   */
-
-  javascript: function(str, buf) {
-    buf.push('<script type="text/javascript">\n//<![CDATA[\n' + str + '\n//]]></script>')
-  }
-}
-
-/**
- * HamlError.
- */
-
-var HamlError = HAML.HamlError = function(msg) {
-    this.name = 'HamlError'
-    this.message = msg
-    Error.captureStackTrace(this, HAML.render)
-}
-
-/**
- * HamlError inherits from Error.
- */
-HamlError.super_ = Error;
-HamlError.prototype = Object.create(Error.prototype, {
-  constructor: {
-    value: HamlError,
-    enumerable: false,
-    writable: true,
-    configurable: true
-  }
-});
-
-/**
- * Lexing rules.
- */
-
-var rules = {
-  indent: /^\n( *)(?! *-#)/,
-  conditionalComment: /^\/(\[[^\n]+\])/,
-  comment: /^\n? *\/ */,
-  silentComment: /^\n? *-#([^\n]*)/,
-  doctype: /^!!! *([^\n]*)/,
-  escape: /^\\(.)/,
-  filter: /^:(\w+) */,
-  each: /^\- *each *(\w+)(?: *, *(\w+))? * in ([^\n]+)/,
-  code: /^\-([^\n]+)/,
-  outputCode: /^!=([^\n]+)/,
-  escapeCode: /^=([^\n]+)/,
-  attrs: /^\{(.*?)\}/,
-  tag: /^%([-a-zA-Z][-a-zA-Z0-9:]*)/,
-  class: /^\.([\w\-]+)/,
-  id: /^\#([\w\-]+)/,
-  text: /^([^\n]+)/
-}
-
-/**
- * Return error context _str_.
- *
- * @param  {string} str
- * @return {string}
- * @api private
- */
-
-function context(str) {
-  return String(str)
-    .substr(0, HAML.errorContextLength)
-    .replace(/\n/g, '\\n')
-}
-
-/**
- * Tokenize _str_.
- *
- * @param  {string} str
- * @return {array}
- * @api private
- */
-
-function tokenize(str) {
-  var captures,
-      token,
-      tokens = [],
-      line = 1,
-      lastIndents = 0,
-      str = String(str).trim().replace(/\r\n|\r|\n *\n/g, '\n')
-  function error(msg){ throw new HamlError('(Haml):' + line + ' ' + msg) }
-  while (str.length) {
-    for (var type in rules)
-      if (captures = rules[type].exec(str)) {
-        token = {
-          type: type,
-          line: line,
-          match: captures[0],
-          val: captures.length > 2
-            ? captures.slice(1)
-            : captures[1]
-        }
-        str = str.substr(captures[0].length)
-        if (type === 'indent') ++line
-        else  break
-        var indents = token.val.length / 2
-        if (indents % 1)
-          error('invalid indentation; got ' + token.val.length + ' spaces, should be multiple of 2')
-        else if (indents - 1 > lastIndents)
-          error('invalid indentation; got ' + indents + ', when previous was ' + lastIndents)
-        else if (lastIndents > indents)
-          while (lastIndents-- > indents)
-            tokens.push({ type: 'outdent', line: line })
-        else if (lastIndents !== indents)
-          tokens.push({ type: 'indent', line: line })
-        else
-          tokens.push({ type: 'newline', line: line })
-        lastIndents = indents
-      }
-    if (token) {
-      if (token.type !== 'silentComment')
-        tokens.push(token)
-      token = null
-    } else
-      error('near "' + context(str) + '"')
-  }
-  return tokens.concat({ type: 'eof' })
-}
-
-// --- Parser
-
-/**
- * Initialize parser with _str_ and _options_.
- */
-
-var Parser = HAML.Parser = function (str, options) {
-  options = options || {}
-  this.tokens = tokenize(str)
-  this.xml = options.xml
-}
-
-Parser.prototype = {
-
-  /**
-   * Lookahead a single token.
-   *
-   * @return {object}
-   * @api private
-   */
-
-  get peek() {
-    return this.tokens[0]
-  },
-
-  /**
-   * Advance a single token.
-   *
-   * @return {object}
-   * @api private
-   */
-
-  get advance() {
-    return this.current = this.tokens.shift()
-  },
-
-  /**
-   *    outdent
-   *  | eof
-   */
-
-  get outdent() {
-    switch (this.peek.type) {
-      case 'eof':
-        return
-      case 'outdent':
-        return this.advance
-      default:
-        throw new HamlError('expected outdent, got ' + this.peek.type)
-    }
-  },
-
-  /**
-   * text
-   */
-
-  get text() {
-    var text = this.advance.val.trim();
-
-    // String interpolation
-    text = text.replace(/#\{(.*)\}/, '" + $1 + "')
-
-    this.buffer(text)
-  },
-
-  /**
-   * indent expr outdent
-   */
-
-  get block() {
-    this.advance
-    while (this.peek.type !== 'outdent' &&
-           this.peek.type !== 'eof')
-      this.expr
-    this.outdent
-  },
-
-  /**
-   * indent expr
-   */
-
-  get textBlock() {
-    var token,
-        indents = 1
-    this.advance
-    while (this.peek.type !== 'eof' && indents)
-      switch((token = this.advance).type) {
-        case 'newline':
-          this.buffer('\\n' + Array(indents).join('  ') + '')
-          break
-        case 'indent':
-          ++indents
-          this.buffer('\\n' + Array(indents).join('  ') + '')
-          break
-        case 'outdent':
-          --indents
-          if (indents === 1) this.buffer('\\n')
-          break
-        default:
-          this.buffer(token.match.replace(/"/g, '\\\"'))
-      }
-  },
-
-  /**
-   *  ( attrs | class | id )*
-   */
-
-  get attrs() {
-    var attrs = ['attrs', 'class', 'id'],
-        buf = []
-
-    while (attrs.indexOf(this.peek.type) !== -1)
-      switch (this.peek.type) {
-        case 'id':
-          buf.push('{ id: "' + this.advance.val + '" }')
-          break
-        case 'class':
-          buf.push('{ class: "' + this.advance.val + '" }');
-          break
-        case 'attrs':
-          buf.push('{ ' + this.advance.val.replace(/(for) *:/gi, '"$1":') + ' }')
-      }
-
-    return buf.length
-      ? ' " + attrs([' + buf.join(', ') + ']) + "'
-      : ''
-  },
-
-  /**
-   *   tag
-   * | tag text
-   * | tag conditionalComment
-   * | tag comment
-   * | tag outputCode
-   * | tag escapeCode
-   * | tag block
-   */
-
-  get tag() {
-    var tag = this.advance.val,
-        selfClosing = !this.xml && HAML.selfClosing.indexOf(tag) !== -1
-
-    this.buffer('\\n<' + tag + this.attrs + (selfClosing ? '/>' : '>'));
-    switch (this.peek.type) {
-      case 'text':
-        this.text
-        break
-      case 'conditionalComment':
-        this.conditionalComment
-        break;
-      case 'comment':
-        this.comment
-        break
-      case 'outputCode':
-        this.outputCode
-        break
-      case 'escapeCode':
-        this.escapeCode
-        break
-      case 'indent':
-        this.block
-    }
-    if (!selfClosing) this.buffer('</' + tag + '>')
-  },
-
-  /**
-   * outputCode
-   */
-
-  get outputCode() {
-    this.buffer(this.advance.val, false)
-  },
-
-  /**
-   * escapeCode
-   */
-
-  get escapeCode() {
-    this.buffer('escape(' + this.advance.val + ')', false)
-  },
-
-  /**
-   * doctype
-   */
-
-  get doctype() {
-    var doctype = this.advance.val.trim().toLowerCase() || 'default'
-    if (doctype in HAML.doctypes)
-      this.buffer(HAML.doctypes[doctype].replace(/"/g, '\\"'))
-    else
-      throw new HamlError("doctype `" + doctype + "' does not exist")
-  },
-
-  /**
-   * conditional comment expr
-   */
-
-  get conditionalComment() {
-    var condition= this.advance.val
-
-    this.buffer('<!--' + condition + '>')
-
-    this.peek.type === 'indent'
-      ? this.block
-      : this.expr
-
-    this.buffer('<![endif]-->')
-  },
-
-  /**
-   * comment expr
-   */
-
-  get comment() {
-    this.advance
-    this.buffer('<!-- ')
-    var buf = this.peek.type === 'indent'
-      ? this.block
-      : this.expr
-    this.buffer(' -->')
-  },
-
-  /**
-   *   code
-   * | code block
-   */
-
-  get code() {
-    var code = this.advance.val
-
-    if (this.peek.type === 'indent') {
-      this.buf.push(code)
-      this.buf.push('{')
-      this.block
-      this.buf.push('}')
-      return
-    }
-
-    this.buf.push(code)
-  },
-
-  /**
-   * filter textBlock
-   */
-
-  get filter() {
-    var filter = this.advance.val
-    if (!(filter in HAML.filters))
-      throw new HamlError("filter `" + filter + "' does not exist")
-    if (this.peek.type !== 'indent')
-      throw new HamlError("filter `" + filter + "' expects a text block")
-
-    this.buf.push('HAML.filters.' + filter + '(')
-    this.buf.push('(function(){')
-    this.buf.push('var buf = []')
-    this.textBlock
-    this.buf.push('return buf.join("")')
-    this.buf.push('}).call(this)')
-    this.buf.push(', buf)')
-  },
-
-  /**
-   * each block
-   */
-
-  get iterate() {
-    var each = this.advance,
-      key = each.val[1],
-      vals = each.val[2],
-      val = each.val[0]
-
-    if (this.peek.type !== 'indent')
-      throw new HamlError("'- each' expects a block, but got " + this.peek.type)
-
-    this.buf.push('for (var ' + (key || 'index') + ' in ' + vals + ') {')
-    this.buf.push('var ' + val + ' = ' + vals + '[' + (key || 'index') + '];')
-
-    this.block
-
-    this.buf.push('}')
-  },
-
-  /**
-   *   eof
-   * | tag
-   * | text*
-   * | each
-   * | code
-   * | escape
-   * | doctype
-   * | filter
-   * | comment
-   * | conditionalComment
-   * | escapeCode
-   * | outputCode
-   */
-
-  get expr() {
-    switch (this.peek.type) {
-      case 'id':
-      case 'class':
-        this.tokens.unshift({ type: 'tag', val: 'div' })
-        return this.tag
-      case 'tag':
-        return this.tag
-      case 'text':
-        var buf = []
-        while (this.peek.type === 'text') {
-          buf.push(this.advance.val.trim())
-          if (this.peek.type === 'newline')
-            this.advance
-        }
-        return this.buffer(buf.join(' '))
-      case 'each':
-        return this.iterate
-      case 'code':
-        return this.code
-      case 'escape':
-        return this.buffer(this.advance.val);
-      case 'doctype':
-        return this.doctype
-      case 'filter':
-        return this.filter
-      case 'conditionalComment':
-        return this.conditionalComment
-      case 'comment':
-        return this.comment
-      case 'escapeCode':
-        return this.escapeCode
-      case 'outputCode':
-        return this.outputCode
-      case 'newline':
-      case 'indent':
-      case 'outdent':
-        this.advance
-        return this.expr
-      default:
-        throw new HamlError('unexpected ' + this.peek.type)
-    }
-  },
-
-  /**
-   * expr*
-   */
-
-  get js() {
-    this.buf = [
-      'with (locals || {}) {',
-      '  var buf = [];'
-    ]
-
-    while (this.peek.type !== 'eof')
-      this.expr
-
-    this.buf.push('  return buf.join("")')
-    this.buf.push('}');
-
-    return this.buf.join('\n')
-  },
-
-  buffer: function (str, quoted) {
-    if (typeof quoted === 'undefined')
-      var quoted = true
-
-    if (quoted)
-      this.buf.push('  buf.push("' + str + '")')
-    else
-      this.buf.push('  buf.push(' + str + ')')
-  }
-}
-
-/**
- * Escape html entities in _str_.
- *
- * @param  {string} str
- * @return {string}
- * @api private
- */
-
-function escape(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/>/g, '&gt;')
-    .replace(/</g, '&lt;')
-    .replace(/"/g, '&quot;')
-}
-
-/**
- * Render _attrs_ to html escaped attributes.
- *
- * @param  {array} attrs
- * @return {string}
- * @api public
- */
-
-function attrs(attrs) {
-  var finalAttrs = {}
-    , classes = []
-    , buf = []
-
-  for (var i = 0, len = attrs.length; i < len; i++)
-    for (var attrName in attrs[i])
-      if (attrName === 'class')
-        classes.push(attrs[i][attrName])
-      else
-        finalAttrs[attrName] = attrs[i][attrName]
-
-  if (classes.length)
-    finalAttrs['class'] = classes.join(' ')
-
-  for (var key in finalAttrs)
-    if (typeof finalAttrs[key] === 'boolean') {
-      if (finalAttrs[key] === true)
-        buf.push(key + '="' + key + '"')
-    } else if (finalAttrs[key])
-      buf.push(key + '="' + escape(finalAttrs[key]) + '"')
-  return buf.join(' ')
-}
-
-/**
- * Compile a function from the given `str`.
- *
- * @param {String} str
- * @return {Function}
- * @api public
- */
-
-HAML.compile = function(str, options){
-  var parser = new Parser(str, options);
-  var fn = new Function('locals, attrs, escape, HAML', parser.js);
-  return function(locals){
-    return fn.apply(this, [locals, attrs, escape, HAML]);
-  };
-};
-
-/**
- * Render a _str_ of haml.
- *
- * Options:
- *
- *   - locals   Local variables available to the template
- *   - context  Context in which the template is evaluated (becoming "this")
- *   - filename Filename used to aid in error reporting
- *   - cache    Cache compiled javascript, requires "filename"
- *   - xml      Force xml support (no self-closing tags)
- *
- * @param  {string} str
- * @param  {object} options
- * @return {string}
- * @api public
- */
-
-HAML.render = function(str, options) {
-  var parser,
-      options = options || {}
-  if (options.cache && !options.filename)
-    throw new Error('filename option must be passed when cache is enabled')
-  return (function(){
-    try {
-      var fn
-      if (options.cache && HAML.cache[options.filename])
-        fn = HAML.cache[options.filename]
-      else {
-        parser = new Parser(str, options)
-        fn = Function('locals, attrs, escape, HAML', parser.js)
-      }
-      return (options.cache
-          ? HAML.cache[options.filename] = fn
-          : fn).call(options.context, options.locals, attrs, escape, HAML)
-    } catch (err) {
-      if (parser && err instanceof HamlError)
-        err.message = '(Haml):' + parser.peek.line + ' ' + err.message
-      else if (!(err instanceof HamlError))
-        err.message = '(Haml): ' + err.message
-      if (options.filename)
-        err.message = err.message.replace('Haml', options.filename)
-      throw err
-    }
-  }).call(options.context)
-}
-
-/**
- * Render a file containing haml and cache the parser.
- *
- * @param  {string} filename
- * @param  {string} encoding
- * @param  {object} options
- * @param  {function} callback
- * @return {void}
- * @api public
- */
-
-HAML.renderFile = function(filename, encoding, options, callback) {
-  var fs = require('fs');
-  options = options || {}
-  options.filename = options.filename || filename
-  options.cache = options.hasOwnProperty('cache') ? options.cache : true
-
-  if (HAML.cache[filename]) {
-    process.nextTick(function() {
-      callback(null, HAML.render(null, options))
-    });
-  } else {
-    fs.readFile(filename, encoding, function(err, str) {
-      if (err) {
-        callback(err)
-      } else {
-        callback(null, HAML.render(str, options))
-      }
-    });
-  }
-}
-
-module.exports = HAML;
-
-}).call(this,require("oMfpAn"))
-},{"fs":20,"oMfpAn":26}],33:[function(require,module,exports){
-'use strict';
-
-var nodes = require('./nodes');
-var filters = require('./filters');
-var doctypes = require('./doctypes');
-var runtime = require('./runtime');
-var utils = require('./utils');
-var selfClosing = require('void-elements');
-var parseJSExpression = require('character-parser').parseMax;
-var constantinople = require('constantinople');
-
-function isConstant(src) {
-  return constantinople(src, {jade: runtime, 'jade_interp': undefined});
-}
-function toConstant(src) {
-  return constantinople.toConstant(src, {jade: runtime, 'jade_interp': undefined});
-}
-function errorAtNode(node, error) {
-  error.line = node.line;
-  error.filename = node.filename;
-  return error;
-}
-
-/**
- * Initialize `Compiler` with the given `node`.
- *
- * @param {Node} node
- * @param {Object} options
- * @api public
- */
-
-var Compiler = module.exports = function Compiler(node, options) {
-  this.options = options = options || {};
-  this.node = node;
-  this.hasCompiledDoctype = false;
-  this.hasCompiledTag = false;
-  this.pp = options.pretty || false;
-  if (this.pp && typeof this.pp !== 'string') {
-    this.pp = '  ';
-  }
-  this.debug = false !== options.compileDebug;
-  this.indents = 0;
-  this.parentIndents = 0;
-  this.terse = false;
-  this.mixins = {};
-  this.dynamicMixins = false;
-  if (options.doctype) this.setDoctype(options.doctype);
-};
-
-/**
- * Compiler prototype.
- */
-
-Compiler.prototype = {
-
-  /**
-   * Compile parse tree to JavaScript.
-   *
-   * @api public
-   */
-
-  compile: function(){
-    this.buf = [];
-    if (this.pp) this.buf.push("var jade_indent = [];");
-    this.lastBufferedIdx = -1;
-    this.visit(this.node);
-    if (!this.dynamicMixins) {
-      // if there are no dynamic mixins we can remove any un-used mixins
-      var mixinNames = Object.keys(this.mixins);
-      for (var i = 0; i < mixinNames.length; i++) {
-        var mixin = this.mixins[mixinNames[i]];
-        if (!mixin.used) {
-          for (var x = 0; x < mixin.instances.length; x++) {
-            for (var y = mixin.instances[x].start; y < mixin.instances[x].end; y++) {
-              this.buf[y] = '';
-            }
-          }
-        }
-      }
-    }
-    return this.buf.join('\n');
-  },
-
-  /**
-   * Sets the default doctype `name`. Sets terse mode to `true` when
-   * html 5 is used, causing self-closing tags to end with ">" vs "/>",
-   * and boolean attributes are not mirrored.
-   *
-   * @param {string} name
-   * @api public
-   */
-
-  setDoctype: function(name){
-    this.doctype = doctypes[name.toLowerCase()] || '<!DOCTYPE ' + name + '>';
-    this.terse = this.doctype.toLowerCase() == '<!doctype html>';
-    this.xml = 0 == this.doctype.indexOf('<?xml');
-  },
-
-  /**
-   * Buffer the given `str` exactly as is or with interpolation
-   *
-   * @param {String} str
-   * @param {Boolean} interpolate
-   * @api public
-   */
-
-  buffer: function (str, interpolate) {
-    var self = this;
-    if (interpolate) {
-      var match = /(\\)?([#!]){((?:.|\n)*)$/.exec(str);
-      if (match) {
-        this.buffer(str.substr(0, match.index), false);
-        if (match[1]) { // escape
-          this.buffer(match[2] + '{', false);
-          this.buffer(match[3], true);
-          return;
-        } else {
-          var rest = match[3];
-          var range = parseJSExpression(rest);
-          var code = ('!' == match[2] ? '' : 'jade.escape') + "((jade_interp = " + range.src + ") == null ? '' : jade_interp)";
-          this.bufferExpression(code);
-          this.buffer(rest.substr(range.end + 1), true);
-          return;
-        }
-      }
-    }
-
-    str = utils.stringify(str);
-    str = str.substr(1, str.length - 2);
-
-    if (this.lastBufferedIdx == this.buf.length) {
-      if (this.lastBufferedType === 'code') this.lastBuffered += ' + "';
-      this.lastBufferedType = 'text';
-      this.lastBuffered += str;
-      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + '");'
-    } else {
-      this.buf.push('buf.push("' + str + '");');
-      this.lastBufferedType = 'text';
-      this.bufferStartChar = '"';
-      this.lastBuffered = str;
-      this.lastBufferedIdx = this.buf.length;
-    }
-  },
-
-  /**
-   * Buffer the given `src` so it is evaluated at run time
-   *
-   * @param {String} src
-   * @api public
-   */
-
-  bufferExpression: function (src) {
-    if (isConstant(src)) {
-      return this.buffer(toConstant(src) + '', false)
-    }
-    if (this.lastBufferedIdx == this.buf.length) {
-      if (this.lastBufferedType === 'text') this.lastBuffered += '"';
-      this.lastBufferedType = 'code';
-      this.lastBuffered += ' + (' + src + ')';
-      this.buf[this.lastBufferedIdx - 1] = 'buf.push(' + this.bufferStartChar + this.lastBuffered + ');'
-    } else {
-      this.buf.push('buf.push(' + src + ');');
-      this.lastBufferedType = 'code';
-      this.bufferStartChar = '';
-      this.lastBuffered = '(' + src + ')';
-      this.lastBufferedIdx = this.buf.length;
-    }
-  },
-
-  /**
-   * Buffer an indent based on the current `indent`
-   * property and an additional `offset`.
-   *
-   * @param {Number} offset
-   * @param {Boolean} newline
-   * @api public
-   */
-
-  prettyIndent: function(offset, newline){
-    offset = offset || 0;
-    newline = newline ? '\n' : '';
-    this.buffer(newline + Array(this.indents + offset).join(this.pp));
-    if (this.parentIndents)
-      this.buf.push("buf.push.apply(buf, jade_indent);");
-  },
-
-  /**
-   * Visit `node`.
-   *
-   * @param {Node} node
-   * @api public
-   */
-
-  visit: function(node){
-    var debug = this.debug;
-
-    if (debug) {
-      this.buf.push('jade_debug.unshift(new jade.DebugItem( ' + node.line
-        + ', ' + (node.filename
-          ? utils.stringify(node.filename)
-          : 'jade_debug[0].filename')
-        + ' ));');
-    }
-
-    // Massive hack to fix our context
-    // stack for - else[ if] etc
-    if (false === node.debug && this.debug) {
-      this.buf.pop();
-      this.buf.pop();
-    }
-
-    this.visitNode(node);
-
-    if (debug) this.buf.push('jade_debug.shift();');
-  },
-
-  /**
-   * Visit `node`.
-   *
-   * @param {Node} node
-   * @api public
-   */
-
-  visitNode: function(node){
-    return this['visit' + node.type](node);
-  },
-
-  /**
-   * Visit case `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitCase: function(node){
-    var _ = this.withinCase;
-    this.withinCase = true;
-    this.buf.push('switch (' + node.expr + '){');
-    this.visit(node.block);
-    this.buf.push('}');
-    this.withinCase = _;
-  },
-
-  /**
-   * Visit when `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitWhen: function(node){
-    if ('default' == node.expr) {
-      this.buf.push('default:');
-    } else {
-      this.buf.push('case ' + node.expr + ':');
-    }
-    if (node.block) {
-      this.visit(node.block);
-      this.buf.push('  break;');
-    }
-  },
-
-  /**
-   * Visit literal `node`.
-   *
-   * @param {Literal} node
-   * @api public
-   */
-
-  visitLiteral: function(node){
-    this.buffer(node.str);
-  },
-
-  /**
-   * Visit all nodes in `block`.
-   *
-   * @param {Block} block
-   * @api public
-   */
-
-  visitBlock: function(block){
-    var len = block.nodes.length
-      , escape = this.escape
-      , pp = this.pp
-
-    // Pretty print multi-line text
-    if (pp && len > 1 && !escape && block.nodes[0].isText && block.nodes[1].isText)
-      this.prettyIndent(1, true);
-
-    for (var i = 0; i < len; ++i) {
-      // Pretty print text
-      if (pp && i > 0 && !escape && block.nodes[i].isText && block.nodes[i-1].isText)
-        this.prettyIndent(1, false);
-
-      this.visit(block.nodes[i]);
-      // Multiple text nodes are separated by newlines
-      if (block.nodes[i+1] && block.nodes[i].isText && block.nodes[i+1].isText)
-        this.buffer('\n');
-    }
-  },
-
-  /**
-   * Visit a mixin's `block` keyword.
-   *
-   * @param {MixinBlock} block
-   * @api public
-   */
-
-  visitMixinBlock: function(block){
-    if (this.pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(this.pp) + "');");
-    this.buf.push('block && block();');
-    if (this.pp) this.buf.push("jade_indent.pop();");
-  },
-
-  /**
-   * Visit `doctype`. Sets terse mode to `true` when html 5
-   * is used, causing self-closing tags to end with ">" vs "/>",
-   * and boolean attributes are not mirrored.
-   *
-   * @param {Doctype} doctype
-   * @api public
-   */
-
-  visitDoctype: function(doctype){
-    if (doctype && (doctype.val || !this.doctype)) {
-      this.setDoctype(doctype.val || 'default');
-    }
-
-    if (this.doctype) this.buffer(this.doctype);
-    this.hasCompiledDoctype = true;
-  },
-
-  /**
-   * Visit `mixin`, generating a function that
-   * may be called within the template.
-   *
-   * @param {Mixin} mixin
-   * @api public
-   */
-
-  visitMixin: function(mixin){
-    var name = 'jade_mixins[';
-    var args = mixin.args || '';
-    var block = mixin.block;
-    var attrs = mixin.attrs;
-    var attrsBlocks = mixin.attributeBlocks.slice();
-    var pp = this.pp;
-    var dynamic = mixin.name[0]==='#';
-    var key = mixin.name;
-    if (dynamic) this.dynamicMixins = true;
-    name += (dynamic ? mixin.name.substr(2,mixin.name.length-3):'"'+mixin.name+'"')+']';
-
-    this.mixins[key] = this.mixins[key] || {used: false, instances: []};
-    if (mixin.call) {
-      this.mixins[key].used = true;
-      if (pp) this.buf.push("jade_indent.push('" + Array(this.indents + 1).join(pp) + "');")
-      if (block || attrs.length || attrsBlocks.length) {
-
-        this.buf.push(name + '.call({');
-
-        if (block) {
-          this.buf.push('block: function(){');
-
-          // Render block with no indents, dynamically added when rendered
-          this.parentIndents++;
-          var _indents = this.indents;
-          this.indents = 0;
-          this.visit(mixin.block);
-          this.indents = _indents;
-          this.parentIndents--;
-
-          if (attrs.length || attrsBlocks.length) {
-            this.buf.push('},');
-          } else {
-            this.buf.push('}');
-          }
-        }
-
-        if (attrsBlocks.length) {
-          if (attrs.length) {
-            var val = this.attrs(attrs);
-            attrsBlocks.unshift(val);
-          }
-          this.buf.push('attributes: jade.merge([' + attrsBlocks.join(',') + '])');
-        } else if (attrs.length) {
-          var val = this.attrs(attrs);
-          this.buf.push('attributes: ' + val);
-        }
-
-        if (args) {
-          this.buf.push('}, ' + args + ');');
-        } else {
-          this.buf.push('});');
-        }
-
-      } else {
-        this.buf.push(name + '(' + args + ');');
-      }
-      if (pp) this.buf.push("jade_indent.pop();")
-    } else {
-      var mixin_start = this.buf.length;
-      args = args ? args.split(',') : [];
-      var rest;
-      if (args.length && /^\.\.\./.test(args[args.length - 1].trim())) {
-        rest = args.pop().trim().replace(/^\.\.\./, '');
-      }
-      // we need use jade_interp here for v8: https://code.google.com/p/v8/issues/detail?id=4165
-      // once fixed, use this: this.buf.push(name + ' = function(' + args.join(',') + '){');
-      this.buf.push(name + ' = jade_interp = function(' + args.join(',') + '){');
-      this.buf.push('var block = (this && this.block), attributes = (this && this.attributes) || {};');
-      if (rest) {
-        this.buf.push('var ' + rest + ' = [];');
-        this.buf.push('for (jade_interp = ' + args.length + '; jade_interp < arguments.length; jade_interp++) {');
-        this.buf.push('  ' + rest + '.push(arguments[jade_interp]);');
-        this.buf.push('}');
-      }
-      this.parentIndents++;
-      this.visit(block);
-      this.parentIndents--;
-      this.buf.push('};');
-      var mixin_end = this.buf.length;
-      this.mixins[key].instances.push({start: mixin_start, end: mixin_end});
-    }
-  },
-
-  /**
-   * Visit `tag` buffering tag markup, generating
-   * attributes, visiting the `tag`'s code and block.
-   *
-   * @param {Tag} tag
-   * @api public
-   */
-
-  visitTag: function(tag){
-    this.indents++;
-    var name = tag.name
-      , pp = this.pp
-      , self = this;
-
-    function bufferName() {
-      if (tag.buffer) self.bufferExpression(name);
-      else self.buffer(name);
-    }
-
-    if ('pre' == tag.name) this.escape = true;
-
-    if (!this.hasCompiledTag) {
-      if (!this.hasCompiledDoctype && 'html' == name) {
-        this.visitDoctype();
-      }
-      this.hasCompiledTag = true;
-    }
-
-    // pretty print
-    if (pp && !tag.isInline())
-      this.prettyIndent(0, true);
-
-    if (tag.selfClosing || (!this.xml && selfClosing[tag.name])) {
-      this.buffer('<');
-      bufferName();
-      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
-      this.terse
-        ? this.buffer('>')
-        : this.buffer('/>');
-      // if it is non-empty throw an error
-      if (tag.block &&
-          !(tag.block.type === 'Block' && tag.block.nodes.length === 0) &&
-          tag.block.nodes.some(function (tag) {
-            return tag.type !== 'Text' || !/^\s*$/.test(tag.val)
-          })) {
-        throw errorAtNode(tag, new Error(name + ' is self closing and should not have content.'));
-      }
-    } else {
-      // Optimize attributes buffering
-      this.buffer('<');
-      bufferName();
-      this.visitAttributes(tag.attrs, tag.attributeBlocks.slice());
-      this.buffer('>');
-      if (tag.code) this.visitCode(tag.code);
-      this.visit(tag.block);
-
-      // pretty print
-      if (pp && !tag.isInline() && 'pre' != tag.name && !tag.canInline())
-        this.prettyIndent(0, true);
-
-      this.buffer('</');
-      bufferName();
-      this.buffer('>');
-    }
-
-    if ('pre' == tag.name) this.escape = false;
-
-    this.indents--;
-  },
-
-  /**
-   * Visit `filter`, throwing when the filter does not exist.
-   *
-   * @param {Filter} filter
-   * @api public
-   */
-
-  visitFilter: function(filter){
-    var text = filter.block.nodes.map(
-      function(node){ return node.val; }
-    ).join('\n');
-    filter.attrs.filename = this.options.filename;
-    try {
-      this.buffer(filters(filter.name, text, filter.attrs), true);
-    } catch (err) {
-      throw errorAtNode(filter, err);
-    }
-  },
-
-  /**
-   * Visit `text` node.
-   *
-   * @param {Text} text
-   * @api public
-   */
-
-  visitText: function(text){
-    this.buffer(text.val, true);
-  },
-
-  /**
-   * Visit a `comment`, only buffering when the buffer flag is set.
-   *
-   * @param {Comment} comment
-   * @api public
-   */
-
-  visitComment: function(comment){
-    if (!comment.buffer) return;
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('<!--' + comment.val + '-->');
-  },
-
-  /**
-   * Visit a `BlockComment`.
-   *
-   * @param {Comment} comment
-   * @api public
-   */
-
-  visitBlockComment: function(comment){
-    if (!comment.buffer) return;
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('<!--' + comment.val);
-    this.visit(comment.block);
-    if (this.pp) this.prettyIndent(1, true);
-    this.buffer('-->');
-  },
-
-  /**
-   * Visit `code`, respecting buffer / escape flags.
-   * If the code is followed by a block, wrap it in
-   * a self-calling function.
-   *
-   * @param {Code} code
-   * @api public
-   */
-
-  visitCode: function(code){
-    // Wrap code blocks with {}.
-    // we only wrap unbuffered code blocks ATM
-    // since they are usually flow control
-
-    // Buffer code
-    if (code.buffer) {
-      var val = code.val.trim();
-      val = 'null == (jade_interp = '+val+') ? "" : jade_interp';
-      if (code.escape) val = 'jade.escape(' + val + ')';
-      this.bufferExpression(val);
-    } else {
-      this.buf.push(code.val);
-    }
-
-    // Block support
-    if (code.block) {
-      if (!code.buffer) this.buf.push('{');
-      this.visit(code.block);
-      if (!code.buffer) this.buf.push('}');
-    }
-  },
-
-  /**
-   * Visit `each` block.
-   *
-   * @param {Each} each
-   * @api public
-   */
-
-  visitEach: function(each){
-    this.buf.push(''
-      + '// iterate ' + each.obj + '\n'
-      + ';(function(){\n'
-      + '  var $$obj = ' + each.obj + ';\n'
-      + '  if (\'number\' == typeof $$obj.length) {\n');
-
-    if (each.alternative) {
-      this.buf.push('  if ($$obj.length) {');
-    }
-
-    this.buf.push(''
-      + '    for (var ' + each.key + ' = 0, $$l = $$obj.length; ' + each.key + ' < $$l; ' + each.key + '++) {\n'
-      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
-
-    this.visit(each.block);
-
-    this.buf.push('    }\n');
-
-    if (each.alternative) {
-      this.buf.push('  } else {');
-      this.visit(each.alternative);
-      this.buf.push('  }');
-    }
-
-    this.buf.push(''
-      + '  } else {\n'
-      + '    var $$l = 0;\n'
-      + '    for (var ' + each.key + ' in $$obj) {\n'
-      + '      $$l++;'
-      + '      var ' + each.val + ' = $$obj[' + each.key + '];\n');
-
-    this.visit(each.block);
-
-    this.buf.push('    }\n');
-    if (each.alternative) {
-      this.buf.push('    if ($$l === 0) {');
-      this.visit(each.alternative);
-      this.buf.push('    }');
-    }
-    this.buf.push('  }\n}).call(this);\n');
-  },
-
-  /**
-   * Visit `attrs`.
-   *
-   * @param {Array} attrs
-   * @api public
-   */
-
-  visitAttributes: function(attrs, attributeBlocks){
-    if (attributeBlocks.length) {
-      if (attrs.length) {
-        var val = this.attrs(attrs);
-        attributeBlocks.unshift(val);
-      }
-      this.bufferExpression('jade.attrs(jade.merge([' + attributeBlocks.join(',') + ']), ' + utils.stringify(this.terse) + ')');
-    } else if (attrs.length) {
-      this.attrs(attrs, true);
-    }
-  },
-
-  /**
-   * Compile attributes.
-   */
-
-  attrs: function(attrs, buffer){
-    var buf = [];
-    var classes = [];
-    var classEscaping = [];
-
-    attrs.forEach(function(attr){
-      var key = attr.name;
-      var escaped = attr.escaped;
-
-      if (key === 'class') {
-        classes.push(attr.val);
-        classEscaping.push(attr.escaped);
-      } else if (isConstant(attr.val)) {
-        if (buffer) {
-          this.buffer(runtime.attr(key, toConstant(attr.val), escaped, this.terse));
-        } else {
-          var val = toConstant(attr.val);
-          if (key === 'style') val = runtime.style(val);
-          if (escaped && !(key.indexOf('data') === 0 && typeof val !== 'string')) {
-            val = runtime.escape(val);
-          }
-          buf.push(utils.stringify(key) + ': ' + utils.stringify(val));
-        }
-      } else {
-        if (buffer) {
-          this.bufferExpression('jade.attr("' + key + '", ' + attr.val + ', ' + utils.stringify(escaped) + ', ' + utils.stringify(this.terse) + ')');
-        } else {
-          var val = attr.val;
-          if (key === 'style') {
-            val = 'jade.style(' + val + ')';
-          }
-          if (escaped && !(key.indexOf('data') === 0)) {
-            val = 'jade.escape(' + val + ')';
-          } else if (escaped) {
-            val = '(typeof (jade_interp = ' + val + ') == "string" ? jade.escape(jade_interp) : jade_interp)';
-          }
-          buf.push(utils.stringify(key) + ': ' + val);
-        }
-      }
-    }.bind(this));
-    if (buffer) {
-      if (classes.every(isConstant)) {
-        this.buffer(runtime.cls(classes.map(toConstant), classEscaping));
-      } else {
-        this.bufferExpression('jade.cls([' + classes.join(',') + '], ' + utils.stringify(classEscaping) + ')');
-      }
-    } else if (classes.length) {
-      if (classes.every(isConstant)) {
-        classes = utils.stringify(runtime.joinClasses(classes.map(toConstant).map(runtime.joinClasses).map(function (cls, i) {
-          return classEscaping[i] ? runtime.escape(cls) : cls;
-        })));
-      } else {
-        classes = '(jade_interp = ' + utils.stringify(classEscaping) + ',' +
-          ' jade.joinClasses([' + classes.join(',') + '].map(jade.joinClasses).map(function (cls, i) {' +
-          '   return jade_interp[i] ? jade.escape(cls) : cls' +
-          ' }))' +
-          ')';
-      }
-      if (classes.length)
-        buf.push('"class": ' + classes);
-    }
-    return '{' + buf.join(',') + '}';
-  }
-};
-
-},{"./doctypes":34,"./filters":35,"./nodes":48,"./runtime":56,"./utils":57,"character-parser":15,"constantinople":16,"void-elements":58}],34:[function(require,module,exports){
-'use strict';
-
-module.exports = {
-    'default': '<!DOCTYPE html>'
-  , 'xml': '<?xml version="1.0" encoding="utf-8" ?>'
-  , 'transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-  , 'strict': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-  , 'frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">'
-  , '1.1': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
-  , 'basic': '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">'
-  , 'mobile': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">'
-};
-},{}],35:[function(require,module,exports){
-'use strict';
-
-module.exports = filter;
-function filter(name, str, options) {
-  if (typeof filter[name] === 'function') {
-    return filter[name](str, options);
-  } else {
-    throw new Error('unknown filter ":' + name + '"');
-  }
-}
-
-},{}],36:[function(require,module,exports){
-(function (process){
-'use strict';
-
-/*!
- * Jade
- * Copyright(c) 2010 TJ Holowaychuk <tj@vision-media.ca>
- * MIT Licensed
- */
-
-/**
- * Module dependencies.
- */
-
-var Parser = require('./parser')
-  , Lexer = require('./lexer')
-  , Compiler = require('./compiler')
-  , runtime = require('./runtime')
-  , addWith = require('with')
-  , fs = require('fs')
-  , utils = require('./utils');
-
-/**
- * Expose self closing tags.
- */
-
-// FIXME: either stop exporting selfClosing in v2 or export the new object
-// form
-exports.selfClosing = Object.keys(require('void-elements'));
-
-/**
- * Default supported doctypes.
- */
-
-exports.doctypes = require('./doctypes');
-
-/**
- * Text filters.
- */
-
-exports.filters = require('./filters');
-
-/**
- * Utilities.
- */
-
-exports.utils = utils;
-
-/**
- * Expose `Compiler`.
- */
-
-exports.Compiler = Compiler;
-
-/**
- * Expose `Parser`.
- */
-
-exports.Parser = Parser;
-
-/**
- * Expose `Lexer`.
- */
-
-exports.Lexer = Lexer;
-
-/**
- * Nodes.
- */
-
-exports.nodes = require('./nodes');
-
-/**
- * Jade runtime helpers.
- */
-
-exports.runtime = runtime;
-
-/**
- * Template function cache.
- */
-
-exports.cache = {};
-
-/**
- * Parse the given `str` of jade and return a function body.
- *
- * @param {String} str
- * @param {Object} options
- * @return {Object}
- * @api private
- */
-
-function parse(str, options){
-
-  if (options.lexer) {
-    console.warn('Using `lexer` as a local in render() is deprecated and '
-               + 'will be interpreted as an option in Jade 2.0.0');
-  }
-
-  // Parse
-  var parser = new (options.parser || Parser)(str, options.filename, options);
-  var tokens;
-  try {
-    // Parse
-    tokens = parser.parse();
-  } catch (err) {
-    parser = parser.context();
-    runtime.rethrow(err, parser.filename, parser.lexer.lineno, parser.input);
-  }
-
-  // Compile
-  var compiler = new (options.compiler || Compiler)(tokens, options);
-  var js;
-  try {
-    js = compiler.compile();
-  } catch (err) {
-    if (err.line && (err.filename || !options.filename)) {
-      runtime.rethrow(err, err.filename, err.line, parser.input);
-    } else {
-      if (err instanceof Error) {
-        err.message += '\n\nPlease report this entire error and stack trace to https://github.com/jadejs/jade/issues';
-      }
-      throw err;
-    }
-  }
-
-  // Debug compiler
-  if (options.debug) {
-    console.error('\nCompiled Function:\n\n\u001b[90m%s\u001b[0m', js.replace(/^/gm, '  '));
-  }
-
-  var globals = [];
-
-  if (options.globals) {
-    globals = options.globals.slice();
-  }
-
-  globals.push('jade');
-  globals.push('jade_mixins');
-  globals.push('jade_interp');
-  globals.push('jade_debug');
-  globals.push('buf');
-
-  var body = ''
-    + 'var buf = [];\n'
-    + 'var jade_mixins = {};\n'
-    + 'var jade_interp;\n'
-    + (options.self
-      ? 'var self = locals || {};\n' + js
-      : addWith('locals || {}', '\n' + js, globals)) + ';'
-    + 'return buf.join("");';
-  return {body: body, dependencies: parser.dependencies};
-}
-
-/**
- * Get the template from a string or a file, either compiled on-the-fly or
- * read from cache (if enabled), and cache the template if needed.
- *
- * If `str` is not set, the file specified in `options.filename` will be read.
- *
- * If `options.cache` is true, this function reads the file from
- * `options.filename` so it must be set prior to calling this function.
- *
- * @param {Object} options
- * @param {String=} str
- * @return {Function}
- * @api private
- */
-function handleTemplateCache (options, str) {
-  var key = options.filename;
-  if (options.cache && exports.cache[key]) {
-    return exports.cache[key];
-  } else {
-    if (str === undefined) str = fs.readFileSync(options.filename, 'utf8');
-    var templ = exports.compile(str, options);
-    if (options.cache) exports.cache[key] = templ;
-    return templ;
-  }
-}
-
-/**
- * Compile a `Function` representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` when `false` debugging code is stripped from the compiled
-       template, when it is explicitly `true`, the source code is included in
-       the compiled template for better accuracy.
- *   - `filename` used to improve errors when `compileDebug` is not `false` and to resolve imports/extends
- *
- * @param {String} str
- * @param {Options} options
- * @return {Function}
- * @api public
- */
-
-exports.compile = function(str, options){
-  var options = options || {}
-    , filename = options.filename
-      ? utils.stringify(options.filename)
-      : 'undefined'
-    , fn;
-
-  str = String(str);
-
-  var parsed = parse(str, options);
-  if (options.compileDebug !== false) {
-    fn = [
-        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
-      , 'try {'
-      , parsed.body
-      , '} catch (err) {'
-      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno' + (options.compileDebug === true ? ',' + utils.stringify(str) : '') + ');'
-      , '}'
-    ].join('\n');
-  } else {
-    fn = parsed.body;
-  }
-  fn = new Function('locals, jade', fn)
-  var res = function(locals){ return fn(locals, Object.create(runtime)) };
-  if (options.client) {
-    res.toString = function () {
-      var err = new Error('The `client` option is deprecated, use the `jade.compileClient` method instead');
-      err.name = 'Warning';
-      console.error(err.stack || /* istanbul ignore next */ err.message);
-      return exports.compileClient(str, options);
-    };
-  }
-  res.dependencies = parsed.dependencies;
-  return res;
-};
-
-/**
- * Compile a JavaScript source representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` When it is `true`, the source code is included in
- *     the compiled template for better error messages.
- *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
- *   - `name` the name of the resulting function (defaults to "template")
- *
- * @param {String} str
- * @param {Options} options
- * @return {Object}
- * @api public
- */
-
-exports.compileClientWithDependenciesTracked = function(str, options){
-  var options = options || {};
-  var name = options.name || 'template';
-  var filename = options.filename ? utils.stringify(options.filename) : 'undefined';
-  var fn;
-
-  str = String(str);
-  options.compileDebug = options.compileDebug ? true : false;
-  var parsed = parse(str, options);
-  if (options.compileDebug) {
-    fn = [
-        'var jade_debug = [ new jade.DebugItem( 1, ' + filename + ' ) ];'
-      , 'try {'
-      , parsed.body
-      , '} catch (err) {'
-      , '  jade.rethrow(err, jade_debug[0].filename, jade_debug[0].lineno, ' + utils.stringify(str) + ');'
-      , '}'
-    ].join('\n');
-  } else {
-    fn = parsed.body;
-  }
-
-  return {body: 'function ' + name + '(locals) {\n' + fn + '\n}', dependencies: parsed.dependencies};
-};
-
-/**
- * Compile a JavaScript source representation of the given jade `str`.
- *
- * Options:
- *
- *   - `compileDebug` When it is `true`, the source code is included in
- *     the compiled template for better error messages.
- *   - `filename` used to improve errors when `compileDebug` is not `true` and to resolve imports/extends
- *   - `name` the name of the resulting function (defaults to "template")
- *
- * @param {String} str
- * @param {Options} options
- * @return {String}
- * @api public
- */
-exports.compileClient = function (str, options) {
-  return exports.compileClientWithDependenciesTracked(str, options).body;
-};
-
-/**
- * Compile a `Function` representation of the given jade file.
- *
- * Options:
- *
- *   - `compileDebug` when `false` debugging code is stripped from the compiled
-       template, when it is explicitly `true`, the source code is included in
-       the compiled template for better accuracy.
- *
- * @param {String} path
- * @param {Options} options
- * @return {Function}
- * @api public
- */
-exports.compileFile = function (path, options) {
-  options = options || {};
-  options.filename = path;
-  return handleTemplateCache(options);
-};
-
-/**
- * Render the given `str` of jade.
- *
- * Options:
- *
- *   - `cache` enable template caching
- *   - `filename` filename required for `include` / `extends` and caching
- *
- * @param {String} str
- * @param {Object|Function} options or fn
- * @param {Function|undefined} fn
- * @returns {String}
- * @api public
- */
-
-exports.render = function(str, options, fn){
-  // support callback API
-  if ('function' == typeof options) {
-    fn = options, options = undefined;
-  }
-  if (typeof fn === 'function') {
-    var res
-    try {
-      res = exports.render(str, options);
-    } catch (ex) {
-      return fn(ex);
-    }
-    return fn(null, res);
-  }
-
-  options = options || {};
-
-  // cache requires .filename
-  if (options.cache && !options.filename) {
-    throw new Error('the "filename" option is required for caching');
-  }
-
-  return handleTemplateCache(options, str)(options);
-};
-
-/**
- * Render a Jade file at the given `path`.
- *
- * @param {String} path
- * @param {Object|Function} options or callback
- * @param {Function|undefined} fn
- * @returns {String}
- * @api public
- */
-
-exports.renderFile = function(path, options, fn){
-  // support callback API
-  if ('function' == typeof options) {
-    fn = options, options = undefined;
-  }
-  if (typeof fn === 'function') {
-    var res
-    try {
-      res = exports.renderFile(path, options);
-    } catch (ex) {
-      return fn(ex);
-    }
-    return fn(null, res);
-  }
-
-  options = options || {};
-
-  options.filename = path;
-  return handleTemplateCache(options)(options);
-};
-
-
-/**
- * Compile a Jade file at the given `path` for use on the client.
- *
- * @param {String} path
- * @param {Object} options
- * @returns {String}
- * @api public
- */
-
-exports.compileFileClient = function(path, options){
-  var key = path + ':client';
-  options = options || {};
-
-  options.filename = path;
-
-  if (options.cache && exports.cache[key]) {
-    return exports.cache[key];
-  }
-
-  var str = fs.readFileSync(options.filename, 'utf8');
-  var out = exports.compileClient(str, options);
-  if (options.cache) exports.cache[key] = out;
-  return out;
-};
-
-/**
- * Express support.
- */
-
-exports.__express = function(path, options, fn) {
-  if(options.compileDebug == undefined && process.env.NODE_ENV === 'production') {
-    options.compileDebug = false;
-  }
-  exports.renderFile(path, options, fn);
-}
-
-}).call(this,require("oMfpAn"))
-},{"./compiler":33,"./doctypes":34,"./filters":35,"./lexer":38,"./nodes":48,"./parser":55,"./runtime":56,"./utils":57,"fs":21,"oMfpAn":26,"void-elements":58,"with":59}],37:[function(require,module,exports){
-'use strict';
-
-module.exports = [
-    'a'
-  , 'abbr'
-  , 'acronym'
-  , 'b'
-  , 'br'
-  , 'code'
-  , 'em'
-  , 'font'
-  , 'i'
-  , 'img'
-  , 'ins'
-  , 'kbd'
-  , 'map'
-  , 'samp'
-  , 'small'
-  , 'span'
-  , 'strong'
-  , 'sub'
-  , 'sup'
-];
-},{}],38:[function(require,module,exports){
-'use strict';
-
-var utils = require('./utils');
-var characterParser = require('character-parser');
-
-
-/**
- * Initialize `Lexer` with the given `str`.
- *
- * @param {String} str
- * @param {String} filename
- * @api private
- */
-
-var Lexer = module.exports = function Lexer(str, filename) {
-  this.input = str.replace(/\r\n|\r/g, '\n');
-  this.filename = filename;
-  this.deferredTokens = [];
-  this.lastIndents = 0;
-  this.lineno = 1;
-  this.stash = [];
-  this.indentStack = [];
-  this.indentRe = null;
-  this.pipeless = false;
-};
-
-
-function assertExpression(exp) {
-  //this verifies that a JavaScript expression is valid
-  Function('', 'return (' + exp + ')');
-}
-function assertNestingCorrect(exp) {
-  //this verifies that code is properly nested, but allows
-  //invalid JavaScript such as the contents of `attributes`
-  var res = characterParser(exp)
-  if (res.isNesting()) {
-    throw new Error('Nesting must match on expression `' + exp + '`')
-  }
-}
-
-/**
- * Lexer prototype.
- */
-
-Lexer.prototype = {
-
-  /**
-   * Construct a token with the given `type` and `val`.
-   *
-   * @param {String} type
-   * @param {String} val
-   * @return {Object}
-   * @api private
-   */
-
-  tok: function(type, val){
-    return {
-        type: type
-      , line: this.lineno
-      , val: val
-    }
-  },
-
-  /**
-   * Consume the given `len` of input.
-   *
-   * @param {Number} len
-   * @api private
-   */
-
-  consume: function(len){
-    this.input = this.input.substr(len);
-  },
-
-  /**
-   * Scan for `type` with the given `regexp`.
-   *
-   * @param {String} type
-   * @param {RegExp} regexp
-   * @return {Object}
-   * @api private
-   */
-
-  scan: function(regexp, type){
-    var captures;
-    if (captures = regexp.exec(this.input)) {
-      this.consume(captures[0].length);
-      return this.tok(type, captures[1]);
-    }
-  },
-
-  /**
-   * Defer the given `tok`.
-   *
-   * @param {Object} tok
-   * @api private
-   */
-
-  defer: function(tok){
-    this.deferredTokens.push(tok);
-  },
-
-  /**
-   * Lookahead `n` tokens.
-   *
-   * @param {Number} n
-   * @return {Object}
-   * @api private
-   */
-
-  lookahead: function(n){
-    var fetch = n - this.stash.length;
-    while (fetch-- > 0) this.stash.push(this.next());
-    return this.stash[--n];
-  },
-
-  /**
-   * Return the indexOf `(` or `{` or `[` / `)` or `}` or `]` delimiters.
-   *
-   * @return {Number}
-   * @api private
-   */
-
-  bracketExpression: function(skip){
-    skip = skip || 0;
-    var start = this.input[skip];
-    if (start != '(' && start != '{' && start != '[') throw new Error('unrecognized start character');
-    var end = ({'(': ')', '{': '}', '[': ']'})[start];
-    var range = characterParser.parseMax(this.input, {start: skip + 1});
-    if (this.input[range.end] !== end) throw new Error('start character ' + start + ' does not match end character ' + this.input[range.end]);
-    return range;
-  },
-
-  /**
-   * Stashed token.
-   */
-
-  stashed: function() {
-    return this.stash.length
-      && this.stash.shift();
-  },
-
-  /**
-   * Deferred token.
-   */
-
-  deferred: function() {
-    return this.deferredTokens.length
-      && this.deferredTokens.shift();
-  },
-
-  /**
-   * end-of-source.
-   */
-
-  eos: function() {
-    if (this.input.length) return;
-    if (this.indentStack.length) {
-      this.indentStack.shift();
-      return this.tok('outdent');
-    } else {
-      return this.tok('eos');
-    }
-  },
-
-  /**
-   * Blank line.
-   */
-
-  blank: function() {
-    var captures;
-    if (captures = /^\n *\n/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      ++this.lineno;
-      if (this.pipeless) return this.tok('text', '');
-      return this.next();
-    }
-  },
-
-  /**
-   * Comment.
-   */
-
-  comment: function() {
-    var captures;
-    if (captures = /^\/\/(-)?([^\n]*)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('comment', captures[2]);
-      tok.buffer = '-' != captures[1];
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Interpolated tag.
-   */
-
-  interpolation: function() {
-    if (/^#\{/.test(this.input)) {
-      var match = this.bracketExpression(1);
-
-      this.consume(match.end + 1);
-      return this.tok('interpolation', match.src);
-    }
-  },
-
-  /**
-   * Tag.
-   */
-
-  tag: function() {
-    var captures;
-    if (captures = /^(\w[-:\w]*)(\/?)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok, name = captures[1];
-      if (':' == name[name.length - 1]) {
-        name = name.slice(0, -1);
-        tok = this.tok('tag', name);
-        this.defer(this.tok(':'));
-        if (this.input[0] !== ' ') {
-          console.warn('Warning: space required after `:` on line ' + this.lineno +
-              ' of jade file "' + this.filename + '"');
-        }
-        while (' ' == this.input[0]) this.input = this.input.substr(1);
-      } else {
-        tok = this.tok('tag', name);
-      }
-      tok.selfClosing = !!captures[2];
-      return tok;
-    }
-  },
-
-  /**
-   * Filter.
-   */
-
-  filter: function() {
-    var tok = this.scan(/^:([\w\-]+)/, 'filter');
-    if (tok) {
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Doctype.
-   */
-
-  doctype: function() {
-    if (this.scan(/^!!! *([^\n]+)?/, 'doctype')) {
-      throw new Error('`!!!` is deprecated, you must now use `doctype`');
-    }
-    var node = this.scan(/^(?:doctype) *([^\n]+)?/, 'doctype');
-    if (node && node.val && node.val.trim() === '5') {
-      throw new Error('`doctype 5` is deprecated, you must now use `doctype html`');
-    }
-    return node;
-  },
-
-  /**
-   * Id.
-   */
-
-  id: function() {
-    return this.scan(/^#([\w-]+)/, 'id');
-  },
-
-  /**
-   * Class.
-   */
-
-  className: function() {
-    return this.scan(/^\.([\w-]+)/, 'class');
-  },
-
-  /**
-   * Text.
-   */
-
-  text: function() {
-    return this.scan(/^(?:\| ?| )([^\n]+)/, 'text') ||
-      this.scan(/^\|?( )/, 'text') ||
-      this.scan(/^(<[^\n]*)/, 'text');
-  },
-
-  textFail: function () {
-    var tok;
-    if (tok = this.scan(/^([^\.\n][^\n]+)/, 'text')) {
-      console.warn('Warning: missing space before text for line ' + this.lineno +
-          ' of jade file "' + this.filename + '"');
-      return tok;
-    }
-  },
-
-  /**
-   * Dot.
-   */
-
-  dot: function() {
-    var match;
-    if (match = this.scan(/^\./, 'dot')) {
-      this.pipeless = true;
-      return match;
-    }
-  },
-
-  /**
-   * Extends.
-   */
-
-  "extends": function() {
-    return this.scan(/^extends? +([^\n]+)/, 'extends');
-  },
-
-  /**
-   * Block prepend.
-   */
-
-  prepend: function() {
-    var captures;
-    if (captures = /^prepend +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = 'prepend'
-        , name = captures[1]
-        , tok = this.tok('block', name);
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Block append.
-   */
-
-  append: function() {
-    var captures;
-    if (captures = /^append +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = 'append'
-        , name = captures[1]
-        , tok = this.tok('block', name);
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Block.
-   */
-
-  block: function() {
-    var captures;
-    if (captures = /^block\b *(?:(prepend|append) +)?([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var mode = captures[1] || 'replace'
-        , name = captures[2]
-        , tok = this.tok('block', name);
-
-      tok.mode = mode;
-      return tok;
-    }
-  },
-
-  /**
-   * Mixin Block.
-   */
-
-  mixinBlock: function() {
-    var captures;
-    if (captures = /^block[ \t]*(\n|$)/.exec(this.input)) {
-      this.consume(captures[0].length - captures[1].length);
-      return this.tok('mixin-block');
-    }
-  },
-
-  /**
-   * Yield.
-   */
-
-  'yield': function() {
-    return this.scan(/^yield */, 'yield');
-  },
-
-  /**
-   * Include.
-   */
-
-  include: function() {
-    return this.scan(/^include +([^\n]+)/, 'include');
-  },
-
-  /**
-   * Include with filter
-   */
-
-  includeFiltered: function() {
-    var captures;
-    if (captures = /^include:([\w\-]+)([\( ])/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      var filter = captures[1];
-      var attrs = captures[2] === '(' ? this.attrs() : null;
-      if (!(captures[2] === ' ' || this.input[0] === ' ')) {
-        throw new Error('expected space after include:filter but got ' + utils.stringify(this.input[0]));
-      }
-      captures = /^ *([^\n]+)/.exec(this.input);
-      if (!captures || captures[1].trim() === '') {
-        throw new Error('missing path for include:filter');
-      }
-      this.consume(captures[0].length);
-      var path = captures[1];
-      var tok = this.tok('include', path);
-      tok.filter = filter;
-      tok.attrs = attrs;
-      return tok;
-    }
-  },
-
-  /**
-   * Case.
-   */
-
-  "case": function() {
-    return this.scan(/^case +([^\n]+)/, 'case');
-  },
-
-  /**
-   * When.
-   */
-
-  when: function() {
-    return this.scan(/^when +([^:\n]+)/, 'when');
-  },
-
-  /**
-   * Default.
-   */
-
-  "default": function() {
-    return this.scan(/^default */, 'default');
-  },
-
-  /**
-   * Call mixin.
-   */
-
-  call: function(){
-
-    var tok, captures;
-    if (captures = /^\+(\s*)(([-\w]+)|(#\{))/.exec(this.input)) {
-      // try to consume simple or interpolated call
-      if (captures[3]) {
-        // simple call
-        this.consume(captures[0].length);
-        tok = this.tok('call', captures[3]);
-      } else {
-        // interpolated call
-        var match = this.bracketExpression(2 + captures[1].length);
-        this.consume(match.end + 1);
-        assertExpression(match.src);
-        tok = this.tok('call', '#{'+match.src+'}');
-      }
-
-      // Check for args (not attributes)
-      if (captures = /^ *\(/.exec(this.input)) {
-        var range = this.bracketExpression(captures[0].length - 1);
-        if (!/^\s*[-\w]+ *=/.test(range.src)) { // not attributes
-          this.consume(range.end + 1);
-          tok.args = range.src;
-        }
-        if (tok.args) {
-          assertExpression('[' + tok.args + ']');
-        }
-      }
-
-      return tok;
-    }
-  },
-
-  /**
-   * Mixin.
-   */
-
-  mixin: function(){
-    var captures;
-    if (captures = /^mixin +([-\w]+)(?: *\((.*)\))? */.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('mixin', captures[1]);
-      tok.args = captures[2];
-      return tok;
-    }
-  },
-
-  /**
-   * Conditional.
-   */
-
-  conditional: function() {
-    var captures;
-    if (captures = /^(if|unless|else if|else)\b([^\n]*)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var type = captures[1]
-      var js = captures[2];
-      var isIf = false;
-      var isElse = false;
-
-      switch (type) {
-        case 'if':
-          assertExpression(js)
-          js = 'if (' + js + ')';
-          isIf = true;
-          break;
-        case 'unless':
-          assertExpression(js)
-          js = 'if (!(' + js + '))';
-          isIf = true;
-          break;
-        case 'else if':
-          assertExpression(js)
-          js = 'else if (' + js + ')';
-          isIf = true;
-          isElse = true;
-          break;
-        case 'else':
-          if (js && js.trim()) {
-            throw new Error('`else` cannot have a condition, perhaps you meant `else if`');
-          }
-          js = 'else';
-          isElse = true;
-          break;
-      }
-      var tok = this.tok('code', js);
-      tok.isElse = isElse;
-      tok.isIf = isIf;
-      tok.requiresBlock = true;
-      return tok;
-    }
-  },
-
-  /**
-   * While.
-   */
-
-  "while": function() {
-    var captures;
-    if (captures = /^while +([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      assertExpression(captures[1])
-      var tok = this.tok('code', 'while (' + captures[1] + ')');
-      tok.requiresBlock = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Each.
-   */
-
-  each: function() {
-    var captures;
-    if (captures = /^(?:- *)?(?:each|for) +([a-zA-Z_$][\w$]*)(?: *, *([a-zA-Z_$][\w$]*))? * in *([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var tok = this.tok('each', captures[1]);
-      tok.key = captures[2] || '$index';
-      assertExpression(captures[3])
-      tok.code = captures[3];
-      return tok;
-    }
-  },
-
-  /**
-   * Code.
-   */
-
-  code: function() {
-    var captures;
-    if (captures = /^(!?=|-)[ \t]*([^\n]+)/.exec(this.input)) {
-      this.consume(captures[0].length);
-      var flags = captures[1];
-      captures[1] = captures[2];
-      var tok = this.tok('code', captures[1]);
-      tok.escape = flags.charAt(0) === '=';
-      tok.buffer = flags.charAt(0) === '=' || flags.charAt(1) === '=';
-      if (tok.buffer) assertExpression(captures[1])
-      return tok;
-    }
-  },
-
-
-  /**
-   * Block code.
-   */
-
-  blockCode: function() {
-    var captures;
-    if (captures = /^-\n/.exec(this.input)) {
-      this.consume(captures[0].length - 1);
-      var tok = this.tok('blockCode');
-      this.pipeless = true;
-      return tok;
-    }
-  },
-
-  /**
-   * Attributes.
-   */
-
-  attrs: function() {
-    if ('(' == this.input.charAt(0)) {
-      var index = this.bracketExpression().end
-        , str = this.input.substr(1, index-1)
-        , tok = this.tok('attrs');
-
-      assertNestingCorrect(str);
-
-      var quote = '';
-      var interpolate = function (attr) {
-        return attr.replace(/(\\)?#\{(.+)/g, function(_, escape, expr){
-          if (escape) return _;
-          try {
-            var range = characterParser.parseMax(expr);
-            if (expr[range.end] !== '}') return _.substr(0, 2) + interpolate(_.substr(2));
-            assertExpression(range.src)
-            return quote + " + (" + range.src + ") + " + quote + interpolate(expr.substr(range.end + 1));
-          } catch (ex) {
-            return _.substr(0, 2) + interpolate(_.substr(2));
-          }
-        });
-      }
-
-      this.consume(index + 1);
-      tok.attrs = [];
-
-      var escapedAttr = true
-      var key = '';
-      var val = '';
-      var interpolatable = '';
-      var state = characterParser.defaultState();
-      var loc = 'key';
-      var isEndOfAttribute = function (i) {
-        if (key.trim() === '') return false;
-        if (i === str.length) return true;
-        if (loc === 'key') {
-          if (str[i] === ' ' || str[i] === '\n') {
-            for (var x = i; x < str.length; x++) {
-              if (str[x] != ' ' && str[x] != '\n') {
-                if (str[x] === '=' || str[x] === '!' || str[x] === ',') return false;
-                else return true;
-              }
-            }
-          }
-          return str[i] === ','
-        } else if (loc === 'value' && !state.isNesting()) {
-          try {
-            assertExpression(val);
-            if (str[i] === ' ' || str[i] === '\n') {
-              for (var x = i; x < str.length; x++) {
-                if (str[x] != ' ' && str[x] != '\n') {
-                  if (characterParser.isPunctuator(str[x]) && str[x] != '"' && str[x] != "'") return false;
-                  else return true;
-                }
-              }
-            }
-            return str[i] === ',';
-          } catch (ex) {
-            return false;
-          }
-        }
-      }
-
-      this.lineno += str.split("\n").length - 1;
-
-      for (var i = 0; i <= str.length; i++) {
-        if (isEndOfAttribute(i)) {
-          val = val.trim();
-          if (val) assertExpression(val)
-          key = key.trim();
-          key = key.replace(/^['"]|['"]$/g, '');
-          tok.attrs.push({
-            name: key,
-            val: '' == val ? true : val,
-            escaped: escapedAttr
-          });
-          key = val = '';
-          loc = 'key';
-          escapedAttr = false;
-        } else {
-          switch (loc) {
-            case 'key-char':
-              if (str[i] === quote) {
-                loc = 'key';
-                if (i + 1 < str.length && [' ', ',', '!', '=', '\n'].indexOf(str[i + 1]) === -1)
-                  throw new Error('Unexpected character ' + str[i + 1] + ' expected ` `, `\\n`, `,`, `!` or `=`');
-              } else {
-                key += str[i];
-              }
-              break;
-            case 'key':
-              if (key === '' && (str[i] === '"' || str[i] === "'")) {
-                loc = 'key-char';
-                quote = str[i];
-              } else if (str[i] === '!' || str[i] === '=') {
-                escapedAttr = str[i] !== '!';
-                if (str[i] === '!') i++;
-                if (str[i] !== '=') throw new Error('Unexpected character ' + str[i] + ' expected `=`');
-                loc = 'value';
-                state = characterParser.defaultState();
-              } else {
-                key += str[i]
-              }
-              break;
-            case 'value':
-              state = characterParser.parseChar(str[i], state);
-              if (state.isString()) {
-                loc = 'string';
-                quote = str[i];
-                interpolatable = str[i];
-              } else {
-                val += str[i];
-              }
-              break;
-            case 'string':
-              state = characterParser.parseChar(str[i], state);
-              interpolatable += str[i];
-              if (!state.isString()) {
-                loc = 'value';
-                val += interpolate(interpolatable);
-              }
-              break;
-          }
-        }
-      }
-
-      if ('/' == this.input.charAt(0)) {
-        this.consume(1);
-        tok.selfClosing = true;
-      }
-
-      return tok;
-    }
-  },
-
-  /**
-   * &attributes block
-   */
-  attributesBlock: function () {
-    var captures;
-    if (/^&attributes\b/.test(this.input)) {
-      this.consume(11);
-      var args = this.bracketExpression();
-      this.consume(args.end + 1);
-      return this.tok('&attributes', args.src);
-    }
-  },
-
-  /**
-   * Indent | Outdent | Newline.
-   */
-
-  indent: function() {
-    var captures, re;
-
-    // established regexp
-    if (this.indentRe) {
-      captures = this.indentRe.exec(this.input);
-    // determine regexp
-    } else {
-      // tabs
-      re = /^\n(\t*) */;
-      captures = re.exec(this.input);
-
-      // spaces
-      if (captures && !captures[1].length) {
-        re = /^\n( *)/;
-        captures = re.exec(this.input);
-      }
-
-      // established
-      if (captures && captures[1].length) this.indentRe = re;
-    }
-
-    if (captures) {
-      var tok
-        , indents = captures[1].length;
-
-      ++this.lineno;
-      this.consume(indents + 1);
-
-      if (' ' == this.input[0] || '\t' == this.input[0]) {
-        throw new Error('Invalid indentation, you can use tabs or spaces but not both');
-      }
-
-      // blank line
-      if ('\n' == this.input[0]) {
-        this.pipeless = false;
-        return this.tok('newline');
-      }
-
-      // outdent
-      if (this.indentStack.length && indents < this.indentStack[0]) {
-        while (this.indentStack.length && this.indentStack[0] > indents) {
-          this.stash.push(this.tok('outdent'));
-          this.indentStack.shift();
-        }
-        tok = this.stash.pop();
-      // indent
-      } else if (indents && indents != this.indentStack[0]) {
-        this.indentStack.unshift(indents);
-        tok = this.tok('indent', indents);
-      // newline
-      } else {
-        tok = this.tok('newline');
-      }
-
-      this.pipeless = false;
-      return tok;
-    }
-  },
-
-  /**
-   * Pipe-less text consumed only when
-   * pipeless is true;
-   */
-
-  pipelessText: function() {
-    if (!this.pipeless) return;
-    var captures, re;
-
-    // established regexp
-    if (this.indentRe) {
-      captures = this.indentRe.exec(this.input);
-    // determine regexp
-    } else {
-      // tabs
-      re = /^\n(\t*) */;
-      captures = re.exec(this.input);
-
-      // spaces
-      if (captures && !captures[1].length) {
-        re = /^\n( *)/;
-        captures = re.exec(this.input);
-      }
-
-      // established
-      if (captures && captures[1].length) this.indentRe = re;
-    }
-
-    var indents = captures && captures[1].length;
-    if (indents && (this.indentStack.length === 0 || indents > this.indentStack[0])) {
-      var indent = captures[1];
-      var line;
-      var tokens = [];
-      var isMatch;
-      do {
-        // text has `\n` as a prefix
-        var i = this.input.substr(1).indexOf('\n');
-        if (-1 == i) i = this.input.length - 1;
-        var str = this.input.substr(1, i);
-        isMatch = str.substr(0, indent.length) === indent || !str.trim();
-        if (isMatch) {
-          // consume test along with `\n` prefix if match
-          this.consume(str.length + 1);
-          ++this.lineno;
-          tokens.push(str.substr(indent.length));
-        }
-      } while(this.input.length && isMatch);
-      while (this.input.length === 0 && tokens[tokens.length - 1] === '') tokens.pop();
-      return this.tok('pipeless-text', tokens);
-    }
-  },
-
-  /**
-   * ':'
-   */
-
-  colon: function() {
-    var good = /^: +/.test(this.input);
-    var res = this.scan(/^: */, ':');
-    if (res && !good) {
-      console.warn('Warning: space required after `:` on line ' + this.lineno +
-          ' of jade file "' + this.filename + '"');
-    }
-    return res;
-  },
-
-  fail: function () {
-    throw new Error('unexpected text ' + this.input.substr(0, 5));
-  },
-
-  /**
-   * Return the next token object, or those
-   * previously stashed by lookahead.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  advance: function(){
-    return this.stashed()
-      || this.next();
-  },
-
-  /**
-   * Return the next token object.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  next: function() {
-    return this.deferred()
-      || this.blank()
-      || this.eos()
-      || this.pipelessText()
-      || this.yield()
-      || this.doctype()
-      || this.interpolation()
-      || this["case"]()
-      || this.when()
-      || this["default"]()
-      || this["extends"]()
-      || this.append()
-      || this.prepend()
-      || this.block()
-      || this.mixinBlock()
-      || this.include()
-      || this.includeFiltered()
-      || this.mixin()
-      || this.call()
-      || this.conditional()
-      || this.each()
-      || this["while"]()
-      || this.tag()
-      || this.filter()
-      || this.blockCode()
-      || this.code()
-      || this.id()
-      || this.className()
-      || this.attrs()
-      || this.attributesBlock()
-      || this.indent()
-      || this.text()
-      || this.comment()
-      || this.colon()
-      || this.dot()
-      || this.textFail()
-      || this.fail();
-  }
-};
-
-},{"./utils":57,"character-parser":15}],39:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Attrs` node.
- *
- * @api public
- */
-
-var Attrs = module.exports = function Attrs() {
-  this.attributeNames = [];
-  this.attrs = [];
-  this.attributeBlocks = [];
-};
-
-// Inherit from `Node`.
-Attrs.prototype = Object.create(Node.prototype);
-Attrs.prototype.constructor = Attrs;
-
-Attrs.prototype.type = 'Attrs';
-
-/**
- * Set attribute `name` to `val`, keep in mind these become
- * part of a raw js object literal, so to quote a value you must
- * '"quote me"', otherwise or example 'user.name' is literal JavaScript.
- *
- * @param {String} name
- * @param {String} val
- * @param {Boolean} escaped
- * @return {Tag} for chaining
- * @api public
- */
-
-Attrs.prototype.setAttribute = function(name, val, escaped){
-  if (name !== 'class' && this.attributeNames.indexOf(name) !== -1) {
-    throw new Error('Duplicate attribute "' + name + '" is not allowed.');
-  }
-  this.attributeNames.push(name);
-  this.attrs.push({ name: name, val: val, escaped: escaped });
-  return this;
-};
-
-/**
- * Remove attribute `name` when present.
- *
- * @param {String} name
- * @api public
- */
-
-Attrs.prototype.removeAttribute = function(name){
-  var err = new Error('attrs.removeAttribute is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  for (var i = 0, len = this.attrs.length; i < len; ++i) {
-    if (this.attrs[i] && this.attrs[i].name == name) {
-      delete this.attrs[i];
-    }
-  }
-};
-
-/**
- * Get attribute value by `name`.
- *
- * @param {String} name
- * @return {String}
- * @api public
- */
-
-Attrs.prototype.getAttribute = function(name){
-  var err = new Error('attrs.getAttribute is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  for (var i = 0, len = this.attrs.length; i < len; ++i) {
-    if (this.attrs[i] && this.attrs[i].name == name) {
-      return this.attrs[i].val;
-    }
-  }
-};
-
-Attrs.prototype.addAttributes = function (src) {
-  this.attributeBlocks.push(src);
-};
-
-},{"./node":52}],40:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `BlockComment` with the given `block`.
- *
- * @param {String} val
- * @param {Block} block
- * @param {Boolean} buffer
- * @api public
- */
-
-var BlockComment = module.exports = function BlockComment(val, block, buffer) {
-  this.block = block;
-  this.val = val;
-  this.buffer = buffer;
-};
-
-// Inherit from `Node`.
-BlockComment.prototype = Object.create(Node.prototype);
-BlockComment.prototype.constructor = BlockComment;
-
-BlockComment.prototype.type = 'BlockComment';
-
-},{"./node":52}],41:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Block` with an optional `node`.
- *
- * @param {Node} node
- * @api public
- */
-
-var Block = module.exports = function Block(node){
-  this.nodes = [];
-  if (node) this.push(node);
-};
-
-// Inherit from `Node`.
-Block.prototype = Object.create(Node.prototype);
-Block.prototype.constructor = Block;
-
-Block.prototype.type = 'Block';
-
-/**
- * Block flag.
- */
-
-Block.prototype.isBlock = true;
-
-/**
- * Replace the nodes in `other` with the nodes
- * in `this` block.
- *
- * @param {Block} other
- * @api private
- */
-
-Block.prototype.replace = function(other){
-  var err = new Error('block.replace is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  other.nodes = this.nodes;
-};
-
-/**
- * Push the given `node`.
- *
- * @param {Node} node
- * @return {Number}
- * @api public
- */
-
-Block.prototype.push = function(node){
-  return this.nodes.push(node);
-};
-
-/**
- * Check if this block is empty.
- *
- * @return {Boolean}
- * @api public
- */
-
-Block.prototype.isEmpty = function(){
-  return 0 == this.nodes.length;
-};
-
-/**
- * Unshift the given `node`.
- *
- * @param {Node} node
- * @return {Number}
- * @api public
- */
-
-Block.prototype.unshift = function(node){
-  return this.nodes.unshift(node);
-};
-
-/**
- * Return the "last" block, or the first `yield` node.
- *
- * @return {Block}
- * @api private
- */
-
-Block.prototype.includeBlock = function(){
-  var ret = this
-    , node;
-
-  for (var i = 0, len = this.nodes.length; i < len; ++i) {
-    node = this.nodes[i];
-    if (node.yield) return node;
-    else if (node.textOnly) continue;
-    else if (node.includeBlock) ret = node.includeBlock();
-    else if (node.block && !node.block.isEmpty()) ret = node.block.includeBlock();
-    if (ret.yield) return ret;
-  }
-
-  return ret;
-};
-
-/**
- * Return a clone of this block.
- *
- * @return {Block}
- * @api private
- */
-
-Block.prototype.clone = function(){
-  var err = new Error('block.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  var clone = new Block;
-  for (var i = 0, len = this.nodes.length; i < len; ++i) {
-    clone.push(this.nodes[i].clone());
-  }
-  return clone;
-};
-
-},{"./node":52}],42:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Case` with `expr`.
- *
- * @param {String} expr
- * @api public
- */
-
-var Case = exports = module.exports = function Case(expr, block){
-  this.expr = expr;
-  this.block = block;
-};
-
-// Inherit from `Node`.
-Case.prototype = Object.create(Node.prototype);
-Case.prototype.constructor = Case;
-
-Case.prototype.type = 'Case';
-
-var When = exports.When = function When(expr, block){
-  this.expr = expr;
-  this.block = block;
-  this.debug = false;
-};
-
-// Inherit from `Node`.
-When.prototype = Object.create(Node.prototype);
-When.prototype.constructor = When;
-
-When.prototype.type = 'When';
-
-},{"./node":52}],43:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Code` node with the given code `val`.
- * Code may also be optionally buffered and escaped.
- *
- * @param {String} val
- * @param {Boolean} buffer
- * @param {Boolean} escape
- * @api public
- */
-
-var Code = module.exports = function Code(val, buffer, escape) {
-  this.val = val;
-  this.buffer = buffer;
-  this.escape = escape;
-  if (val.match(/^ *else/)) this.debug = false;
-};
-
-// Inherit from `Node`.
-Code.prototype = Object.create(Node.prototype);
-Code.prototype.constructor = Code;
-
-Code.prototype.type = 'Code'; // prevent the minifiers removing this
-},{"./node":52}],44:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Comment` with the given `val`, optionally `buffer`,
- * otherwise the comment may render in the output.
- *
- * @param {String} val
- * @param {Boolean} buffer
- * @api public
- */
-
-var Comment = module.exports = function Comment(val, buffer) {
-  this.val = val;
-  this.buffer = buffer;
-};
-
-// Inherit from `Node`.
-Comment.prototype = Object.create(Node.prototype);
-Comment.prototype.constructor = Comment;
-
-Comment.prototype.type = 'Comment';
-
-},{"./node":52}],45:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Doctype` with the given `val`. 
- *
- * @param {String} val
- * @api public
- */
-
-var Doctype = module.exports = function Doctype(val) {
-  this.val = val;
-};
-
-// Inherit from `Node`.
-Doctype.prototype = Object.create(Node.prototype);
-Doctype.prototype.constructor = Doctype;
-
-Doctype.prototype.type = 'Doctype';
-
-},{"./node":52}],46:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize an `Each` node, representing iteration
- *
- * @param {String} obj
- * @param {String} val
- * @param {String} key
- * @param {Block} block
- * @api public
- */
-
-var Each = module.exports = function Each(obj, val, key, block) {
-  this.obj = obj;
-  this.val = val;
-  this.key = key;
-  this.block = block;
-};
-
-// Inherit from `Node`.
-Each.prototype = Object.create(Node.prototype);
-Each.prototype.constructor = Each;
-
-Each.prototype.type = 'Each';
-
-},{"./node":52}],47:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Filter` node with the given
- * filter `name` and `block`.
- *
- * @param {String} name
- * @param {Block|Node} block
- * @api public
- */
-
-var Filter = module.exports = function Filter(name, block, attrs) {
-  this.name = name;
-  this.block = block;
-  this.attrs = attrs;
-};
-
-// Inherit from `Node`.
-Filter.prototype = Object.create(Node.prototype);
-Filter.prototype.constructor = Filter;
-
-Filter.prototype.type = 'Filter';
-
-},{"./node":52}],48:[function(require,module,exports){
-'use strict';
-
-exports.Node = require('./node');
-exports.Tag = require('./tag');
-exports.Code = require('./code');
-exports.Each = require('./each');
-exports.Case = require('./case');
-exports.Text = require('./text');
-exports.Block = require('./block');
-exports.MixinBlock = require('./mixin-block');
-exports.Mixin = require('./mixin');
-exports.Filter = require('./filter');
-exports.Comment = require('./comment');
-exports.Literal = require('./literal');
-exports.BlockComment = require('./block-comment');
-exports.Doctype = require('./doctype');
-
-},{"./block":41,"./block-comment":40,"./case":42,"./code":43,"./comment":44,"./doctype":45,"./each":46,"./filter":47,"./literal":49,"./mixin":51,"./mixin-block":50,"./node":52,"./tag":53,"./text":54}],49:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Literal` node with the given `str.
- *
- * @param {String} str
- * @api public
- */
-
-var Literal = module.exports = function Literal(str) {
-  this.str = str;
-};
-
-// Inherit from `Node`.
-Literal.prototype = Object.create(Node.prototype);
-Literal.prototype.constructor = Literal;
-
-Literal.prototype.type = 'Literal';
-
-},{"./node":52}],50:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a new `Block` with an optional `node`.
- *
- * @param {Node} node
- * @api public
- */
-
-var MixinBlock = module.exports = function MixinBlock(){};
-
-// Inherit from `Node`.
-MixinBlock.prototype = Object.create(Node.prototype);
-MixinBlock.prototype.constructor = MixinBlock;
-
-MixinBlock.prototype.type = 'MixinBlock';
-
-},{"./node":52}],51:[function(require,module,exports){
-'use strict';
-
-var Attrs = require('./attrs');
-
-/**
- * Initialize a new `Mixin` with `name` and `block`.
- *
- * @param {String} name
- * @param {String} args
- * @param {Block} block
- * @api public
- */
-
-var Mixin = module.exports = function Mixin(name, args, block, call){
-  Attrs.call(this);
-  this.name = name;
-  this.args = args;
-  this.block = block;
-  this.call = call;
-};
-
-// Inherit from `Attrs`.
-Mixin.prototype = Object.create(Attrs.prototype);
-Mixin.prototype.constructor = Mixin;
-
-Mixin.prototype.type = 'Mixin';
-
-},{"./attrs":39}],52:[function(require,module,exports){
-'use strict';
-
-var Node = module.exports = function Node(){};
-
-/**
- * Clone this node (return itself)
- *
- * @return {Node}
- * @api private
- */
-
-Node.prototype.clone = function(){
-  var err = new Error('node.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-  return this;
-};
-
-Node.prototype.type = '';
-
-},{}],53:[function(require,module,exports){
-'use strict';
-
-var Attrs = require('./attrs');
-var Block = require('./block');
-var inlineTags = require('../inline-tags');
-
-/**
- * Initialize a `Tag` node with the given tag `name` and optional `block`.
- *
- * @param {String} name
- * @param {Block} block
- * @api public
- */
-
-var Tag = module.exports = function Tag(name, block) {
-  Attrs.call(this);
-  this.name = name;
-  this.block = block || new Block;
-};
-
-// Inherit from `Attrs`.
-Tag.prototype = Object.create(Attrs.prototype);
-Tag.prototype.constructor = Tag;
-
-Tag.prototype.type = 'Tag';
-
-/**
- * Clone this tag.
- *
- * @return {Tag}
- * @api private
- */
-
-Tag.prototype.clone = function(){
-  var err = new Error('tag.clone is deprecated and will be removed in v2.0.0');
-  console.warn(err.stack);
-
-  var clone = new Tag(this.name, this.block.clone());
-  clone.line = this.line;
-  clone.attrs = this.attrs;
-  clone.textOnly = this.textOnly;
-  return clone;
-};
-
-/**
- * Check if this tag is an inline tag.
- *
- * @return {Boolean}
- * @api private
- */
-
-Tag.prototype.isInline = function(){
-  return ~inlineTags.indexOf(this.name);
-};
-
-/**
- * Check if this tag's contents can be inlined.  Used for pretty printing.
- *
- * @return {Boolean}
- * @api private
- */
-
-Tag.prototype.canInline = function(){
-  var nodes = this.block.nodes;
-
-  function isInline(node){
-    // Recurse if the node is a block
-    if (node.isBlock) return node.nodes.every(isInline);
-    return node.isText || (node.isInline && node.isInline());
-  }
-
-  // Empty tag
-  if (!nodes.length) return true;
-
-  // Text-only or inline-only tag
-  if (1 == nodes.length) return isInline(nodes[0]);
-
-  // Multi-line inline-only tag
-  if (this.block.nodes.every(isInline)) {
-    for (var i = 1, len = nodes.length; i < len; ++i) {
-      if (nodes[i-1].isText && nodes[i].isText)
-        return false;
-    }
-    return true;
-  }
-
-  // Mixed tag
-  return false;
-};
-
-},{"../inline-tags":37,"./attrs":39,"./block":41}],54:[function(require,module,exports){
-'use strict';
-
-var Node = require('./node');
-
-/**
- * Initialize a `Text` node with optional `line`.
- *
- * @param {String} line
- * @api public
- */
-
-var Text = module.exports = function Text(line) {
-  this.val = line;
-};
-
-// Inherit from `Node`.
-Text.prototype = Object.create(Node.prototype);
-Text.prototype.constructor = Text;
-
-Text.prototype.type = 'Text';
-
-/**
- * Flag as text.
- */
-
-Text.prototype.isText = true;
-},{"./node":52}],55:[function(require,module,exports){
-'use strict';
-
-var Lexer = require('./lexer');
-var nodes = require('./nodes');
-var utils = require('./utils');
-var filters = require('./filters');
-var path = require('path');
-var constantinople = require('constantinople');
-var parseJSExpression = require('character-parser').parseMax;
-var extname = path.extname;
-
-/**
- * Initialize `Parser` with the given input `str` and `filename`.
- *
- * @param {String} str
- * @param {String} filename
- * @param {Object} options
- * @api public
- */
-
-var Parser = exports = module.exports = function Parser(str, filename, options){
-  //Strip any UTF-8 BOM off of the start of `str`, if it exists.
-  this.input = str.replace(/^\uFEFF/, '');
-  this.lexer = new Lexer(this.input, filename);
-  this.filename = filename;
-  this.blocks = {};
-  this.mixins = {};
-  this.options = options;
-  this.contexts = [this];
-  this.inMixin = 0;
-  this.dependencies = [];
-  this.inBlock = 0;
-};
-
-/**
- * Parser prototype.
- */
-
-Parser.prototype = {
-
-  /**
-   * Save original constructor
-   */
-
-  constructor: Parser,
-
-  /**
-   * Push `parser` onto the context stack,
-   * or pop and return a `Parser`.
-   */
-
-  context: function(parser){
-    if (parser) {
-      this.contexts.push(parser);
-    } else {
-      return this.contexts.pop();
-    }
-  },
-
-  /**
-   * Return the next token object.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  advance: function(){
-    return this.lexer.advance();
-  },
-
-  /**
-   * Single token lookahead.
-   *
-   * @return {Object}
-   * @api private
-   */
-
-  peek: function() {
-    return this.lookahead(1);
-  },
-
-  /**
-   * Return lexer lineno.
-   *
-   * @return {Number}
-   * @api private
-   */
-
-  line: function() {
-    return this.lexer.lineno;
-  },
-
-  /**
-   * `n` token lookahead.
-   *
-   * @param {Number} n
-   * @return {Object}
-   * @api private
-   */
-
-  lookahead: function(n){
-    return this.lexer.lookahead(n);
-  },
-
-  /**
-   * Parse input returning a string of js for evaluation.
-   *
-   * @return {String}
-   * @api public
-   */
-
-  parse: function(){
-    var block = new nodes.Block, parser;
-    block.line = 0;
-    block.filename = this.filename;
-
-    while ('eos' != this.peek().type) {
-      if ('newline' == this.peek().type) {
-        this.advance();
-      } else {
-        var next = this.peek();
-        var expr = this.parseExpr();
-        expr.filename = expr.filename || this.filename;
-        expr.line = next.line;
-        block.push(expr);
-      }
-    }
-
-    if (parser = this.extending) {
-      this.context(parser);
-      var ast = parser.parse();
-      this.context();
-
-      // hoist mixins
-      for (var name in this.mixins)
-        ast.unshift(this.mixins[name]);
-      return ast;
-    }
-
-    if (!this.extending && !this.included && Object.keys(this.blocks).length){
-      var blocks = [];
-      utils.walkAST(block, function (node) {
-        if (node.type === 'Block' && node.name) {
-          blocks.push(node.name);
-        }
-      });
-      Object.keys(this.blocks).forEach(function (name) {
-        if (blocks.indexOf(name) === -1 && !this.blocks[name].isSubBlock) {
-          console.warn('Warning: Unexpected block "'
-                       + name
-                       + '" '
-                       + ' on line '
-                       + this.blocks[name].line
-                       + ' of '
-                       + (this.blocks[name].filename)
-                       + '. This block is never used. This warning will be an error in v2.0.0');
-        }
-      }.bind(this));
-    }
-
-    return block;
-  },
-
-  /**
-   * Expect the given type, or throw an exception.
-   *
-   * @param {String} type
-   * @api private
-   */
-
-  expect: function(type){
-    if (this.peek().type === type) {
-      return this.advance();
-    } else {
-      throw new Error('expected "' + type + '", but got "' + this.peek().type + '"');
-    }
-  },
-
-  /**
-   * Accept the given `type`.
-   *
-   * @param {String} type
-   * @api private
-   */
-
-  accept: function(type){
-    if (this.peek().type === type) {
-      return this.advance();
-    }
-  },
-
-  /**
-   *   tag
-   * | doctype
-   * | mixin
-   * | include
-   * | filter
-   * | comment
-   * | text
-   * | each
-   * | code
-   * | yield
-   * | id
-   * | class
-   * | interpolation
-   */
-
-  parseExpr: function(){
-    switch (this.peek().type) {
-      case 'tag':
-        return this.parseTag();
-      case 'mixin':
-        return this.parseMixin();
-      case 'block':
-        return this.parseBlock();
-      case 'mixin-block':
-        return this.parseMixinBlock();
-      case 'case':
-        return this.parseCase();
-      case 'extends':
-        return this.parseExtends();
-      case 'include':
-        return this.parseInclude();
-      case 'doctype':
-        return this.parseDoctype();
-      case 'filter':
-        return this.parseFilter();
-      case 'comment':
-        return this.parseComment();
-      case 'text':
-        return this.parseText();
-      case 'each':
-        return this.parseEach();
-      case 'code':
-        return this.parseCode();
-      case 'blockCode':
-        return this.parseBlockCode();
-      case 'call':
-        return this.parseCall();
-      case 'interpolation':
-        return this.parseInterpolation();
-      case 'yield':
-        this.advance();
-        var block = new nodes.Block;
-        block.yield = true;
-        return block;
-      case 'id':
-      case 'class':
-        var tok = this.advance();
-        this.lexer.defer(this.lexer.tok('tag', 'div'));
-        this.lexer.defer(tok);
-        return this.parseExpr();
-      default:
-        throw new Error('unexpected token "' + this.peek().type + '"');
-    }
-  },
-
-  /**
-   * Text
-   */
-
-  parseText: function(){
-    var tok = this.expect('text');
-    var tokens = this.parseInlineTagsInText(tok.val);
-    if (tokens.length === 1) return tokens[0];
-    var node = new nodes.Block;
-    for (var i = 0; i < tokens.length; i++) {
-      node.push(tokens[i]);
-    };
-    return node;
-  },
-
-  /**
-   *   ':' expr
-   * | block
-   */
-
-  parseBlockExpansion: function(){
-    if (':' == this.peek().type) {
-      this.advance();
-      return new nodes.Block(this.parseExpr());
-    } else {
-      return this.block();
-    }
-  },
-
-  /**
-   * case
-   */
-
-  parseCase: function(){
-    var val = this.expect('case').val;
-    var node = new nodes.Case(val);
-    node.line = this.line();
-
-    var block = new nodes.Block;
-    block.line = this.line();
-    block.filename = this.filename;
-    this.expect('indent');
-    while ('outdent' != this.peek().type) {
-      switch (this.peek().type) {
-        case 'comment':
-        case 'newline':
-          this.advance();
-          break;
-        case 'when':
-          block.push(this.parseWhen());
-          break;
-        case 'default':
-          block.push(this.parseDefault());
-          break;
-        default:
-          throw new Error('Unexpected token "' + this.peek().type
-                          + '", expected "when", "default" or "newline"');
-      }
-    }
-    this.expect('outdent');
-
-    node.block = block;
-
-    return node;
-  },
-
-  /**
-   * when
-   */
-
-  parseWhen: function(){
-    var val = this.expect('when').val;
-    if (this.peek().type !== 'newline')
-      return new nodes.Case.When(val, this.parseBlockExpansion());
-    else
-      return new nodes.Case.When(val);
-  },
-
-  /**
-   * default
-   */
-
-  parseDefault: function(){
-    this.expect('default');
-    return new nodes.Case.When('default', this.parseBlockExpansion());
-  },
-
-  /**
-   * code
-   */
-
-  parseCode: function(afterIf){
-    var tok = this.expect('code');
-    var node = new nodes.Code(tok.val, tok.buffer, tok.escape);
-    var block;
-    node.line = this.line();
-
-    // throw an error if an else does not have an if
-    if (tok.isElse && !tok.hasIf) {
-      throw new Error('Unexpected else without if');
-    }
-
-    // handle block
-    block = 'indent' == this.peek().type;
-    if (block) {
-      node.block = this.block();
-    }
-
-    // handle missing block
-    if (tok.requiresBlock && !block) {
-      node.block = new nodes.Block();
-    }
-
-    // mark presense of if for future elses
-    if (tok.isIf && this.peek().isElse) {
-      this.peek().hasIf = true;
-    } else if (tok.isIf && this.peek().type === 'newline' && this.lookahead(2).isElse) {
-      this.lookahead(2).hasIf = true;
-    }
-
-    return node;
-  },
-
-  /**
-   * block code
-   */
-
-  parseBlockCode: function(){
-    var tok = this.expect('blockCode');
-    var node;
-    var body = this.peek();
-    var text;
-    if (body.type === 'pipeless-text') {
-      this.advance();
-      text = body.val.join('\n');
-    } else {
-      text = '';
-    }
-      node = new nodes.Code(text, false, false);
-      return node;
-  },
-
-  /**
-   * comment
-   */
-
-  parseComment: function(){
-    var tok = this.expect('comment');
-    var node;
-
-    var block;
-    if (block = this.parseTextBlock()) {
-      node = new nodes.BlockComment(tok.val, block, tok.buffer);
-    } else {
-      node = new nodes.Comment(tok.val, tok.buffer);
-    }
-
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * doctype
-   */
-
-  parseDoctype: function(){
-    var tok = this.expect('doctype');
-    var node = new nodes.Doctype(tok.val);
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * filter attrs? text-block
-   */
-
-  parseFilter: function(){
-    var tok = this.expect('filter');
-    var attrs = this.accept('attrs');
-    var block;
-
-    block = this.parseTextBlock() || new nodes.Block();
-
-    var options = {};
-    if (attrs) {
-      attrs.attrs.forEach(function (attribute) {
-        options[attribute.name] = constantinople.toConstant(attribute.val);
-      });
-    }
-
-    var node = new nodes.Filter(tok.val, block, options);
-    node.line = this.line();
-    return node;
-  },
-
-  /**
-   * each block
-   */
-
-  parseEach: function(){
-    var tok = this.expect('each');
-    var node = new nodes.Each(tok.code, tok.val, tok.key);
-    node.line = this.line();
-    node.block = this.block();
-    if (this.peek().type == 'code' && this.peek().val == 'else') {
-      this.advance();
-      node.alternative = this.block();
-    }
-    return node;
-  },
-
-  /**
-   * Resolves a path relative to the template for use in
-   * includes and extends
-   *
-   * @param {String}  path
-   * @param {String}  purpose  Used in error messages.
-   * @return {String}
-   * @api private
-   */
-
-  resolvePath: function (path, purpose) {
-    var p = require('path');
-    var dirname = p.dirname;
-    var basename = p.basename;
-    var join = p.join;
-
-    if (path[0] !== '/' && !this.filename)
-      throw new Error('the "filename" option is required to use "' + purpose + '" with "relative" paths');
-
-    if (path[0] === '/' && !this.options.basedir)
-      throw new Error('the "basedir" option is required to use "' + purpose + '" with "absolute" paths');
-
-    path = join(path[0] === '/' ? this.options.basedir : dirname(this.filename), path);
-
-    if (basename(path).indexOf('.') === -1) path += '.jade';
-
-    return path;
-  },
-
-  /**
-   * 'extends' name
-   */
-
-  parseExtends: function(){
-    var fs = require('fs');
-
-    var path = this.resolvePath(this.expect('extends').val.trim(), 'extends');
-    if ('.jade' != path.substr(-5)) path += '.jade';
-
-    this.dependencies.push(path);
-    var str = fs.readFileSync(path, 'utf8');
-    var parser = new this.constructor(str, path, this.options);
-    parser.dependencies = this.dependencies;
-
-    parser.blocks = this.blocks;
-    parser.included = this.included;
-    parser.contexts = this.contexts;
-    this.extending = parser;
-
-    // TODO: null node
-    return new nodes.Literal('');
-  },
-
-  /**
-   * 'block' name block
-   */
-
-  parseBlock: function(){
-    var block = this.expect('block');
-    var mode = block.mode;
-    var name = block.val.trim();
-
-    var line = block.line;
-
-    this.inBlock++;
-    block = 'indent' == this.peek().type
-      ? this.block()
-      : new nodes.Block(new nodes.Literal(''));
-    this.inBlock--;
-    block.name = name;
-    block.line = line;
-
-    var prev = this.blocks[name] || {prepended: [], appended: []}
-    if (prev.mode === 'replace') return this.blocks[name] = prev;
-
-    var allNodes = prev.prepended.concat(block.nodes).concat(prev.appended);
-
-    switch (mode) {
-      case 'append':
-        prev.appended = prev.parser === this ?
-                        prev.appended.concat(block.nodes) :
-                        block.nodes.concat(prev.appended);
-        break;
-      case 'prepend':
-        prev.prepended = prev.parser === this ?
-                         block.nodes.concat(prev.prepended) :
-                         prev.prepended.concat(block.nodes);
-        break;
-    }
-    block.nodes = allNodes;
-    block.appended = prev.appended;
-    block.prepended = prev.prepended;
-    block.mode = mode;
-    block.parser = this;
-
-    block.isSubBlock = this.inBlock > 0;
-
-    return this.blocks[name] = block;
-  },
-
-  parseMixinBlock: function () {
-    var block = this.expect('mixin-block');
-    if (!this.inMixin) {
-      throw new Error('Anonymous blocks are not allowed unless they are part of a mixin.');
-    }
-    return new nodes.MixinBlock();
-  },
-
-  /**
-   * include block?
-   */
-
-  parseInclude: function(){
-    var fs = require('fs');
-    var tok = this.expect('include');
-
-    var path = this.resolvePath(tok.val.trim(), 'include');
-    this.dependencies.push(path);
-    // has-filter
-    if (tok.filter) {
-      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
-      var options = {filename: path};
-      if (tok.attrs) {
-        tok.attrs.attrs.forEach(function (attribute) {
-          options[attribute.name] = constantinople.toConstant(attribute.val);
-        });
-      }
-      str = filters(tok.filter, str, options);
-      return new nodes.Literal(str);
-    }
-
-    // non-jade
-    if ('.jade' != path.substr(-5)) {
-      var str = fs.readFileSync(path, 'utf8').replace(/\r/g, '');
-      return new nodes.Literal(str);
-    }
-
-    var str = fs.readFileSync(path, 'utf8');
-    var parser = new this.constructor(str, path, this.options);
-    parser.dependencies = this.dependencies;
-
-    parser.blocks = utils.merge({}, this.blocks);
-    parser.included = true;
-
-    parser.mixins = this.mixins;
-
-    this.context(parser);
-    var ast = parser.parse();
-    this.context();
-    ast.filename = path;
-
-    if ('indent' == this.peek().type) {
-      ast.includeBlock().push(this.block());
-    }
-
-    return ast;
-  },
-
-  /**
-   * call ident block
-   */
-
-  parseCall: function(){
-    var tok = this.expect('call');
-    var name = tok.val;
-    var args = tok.args;
-    var mixin = new nodes.Mixin(name, args, new nodes.Block, true);
-
-    this.tag(mixin);
-    if (mixin.code) {
-      mixin.block.push(mixin.code);
-      mixin.code = null;
-    }
-    if (mixin.block.isEmpty()) mixin.block = null;
-    return mixin;
-  },
-
-  /**
-   * mixin block
-   */
-
-  parseMixin: function(){
-    var tok = this.expect('mixin');
-    var name = tok.val;
-    var args = tok.args;
-    var mixin;
-
-    // definition
-    if ('indent' == this.peek().type) {
-      this.inMixin++;
-      mixin = new nodes.Mixin(name, args, this.block(), false);
-      this.mixins[name] = mixin;
-      this.inMixin--;
-      return mixin;
-    // call
-    } else {
-      return new nodes.Mixin(name, args, null, true);
-    }
-  },
-
-  parseInlineTagsInText: function (str) {
-    var line = this.line();
-
-    var match = /(\\)?#\[((?:.|\n)*)$/.exec(str);
-    if (match) {
-      if (match[1]) { // escape
-        var text = new nodes.Text(str.substr(0, match.index) + '#[');
-        text.line = line;
-        var rest = this.parseInlineTagsInText(match[2]);
-        if (rest[0].type === 'Text') {
-          text.val += rest[0].val;
-          rest.shift();
-        }
-        return [text].concat(rest);
-      } else {
-        var text = new nodes.Text(str.substr(0, match.index));
-        text.line = line;
-        var buffer = [text];
-        var rest = match[2];
-        var range = parseJSExpression(rest);
-        var inner = new Parser(range.src, this.filename, this.options);
-        buffer.push(inner.parse());
-        return buffer.concat(this.parseInlineTagsInText(rest.substr(range.end + 1)));
-      }
-    } else {
-      var text = new nodes.Text(str);
-      text.line = line;
-      return [text];
-    }
-  },
-
-  /**
-   * indent (text | newline)* outdent
-   */
-
-  parseTextBlock: function(){
-    var block = new nodes.Block;
-    block.line = this.line();
-    var body = this.peek();
-    if (body.type !== 'pipeless-text') return;
-    this.advance();
-    block.nodes = body.val.reduce(function (accumulator, text) {
-      return accumulator.concat(this.parseInlineTagsInText(text));
-    }.bind(this), []);
-    return block;
-  },
-
-  /**
-   * indent expr* outdent
-   */
-
-  block: function(){
-    var block = new nodes.Block;
-    block.line = this.line();
-    block.filename = this.filename;
-    this.expect('indent');
-    while ('outdent' != this.peek().type) {
-      if ('newline' == this.peek().type) {
-        this.advance();
-      } else {
-        var expr = this.parseExpr();
-        expr.filename = this.filename;
-        block.push(expr);
-      }
-    }
-    this.expect('outdent');
-    return block;
-  },
-
-  /**
-   * interpolation (attrs | class | id)* (text | code | ':')? newline* block?
-   */
-
-  parseInterpolation: function(){
-    var tok = this.advance();
-    var tag = new nodes.Tag(tok.val);
-    tag.buffer = true;
-    return this.tag(tag);
-  },
-
-  /**
-   * tag (attrs | class | id)* (text | code | ':')? newline* block?
-   */
-
-  parseTag: function(){
-    var tok = this.advance();
-    var tag = new nodes.Tag(tok.val);
-
-    tag.selfClosing = tok.selfClosing;
-
-    return this.tag(tag);
-  },
-
-  /**
-   * Parse tag.
-   */
-
-  tag: function(tag){
-    tag.line = this.line();
-
-    var seenAttrs = false;
-    // (attrs | class | id)*
-    out:
-      while (true) {
-        switch (this.peek().type) {
-          case 'id':
-          case 'class':
-            var tok = this.advance();
-            tag.setAttribute(tok.type, "'" + tok.val + "'");
-            continue;
-          case 'attrs':
-            if (seenAttrs) {
-              console.warn(this.filename + ', line ' + this.peek().line + ':\nYou should not have jade tags with multiple attributes.');
-            }
-            seenAttrs = true;
-            var tok = this.advance();
-            var attrs = tok.attrs;
-
-            if (tok.selfClosing) tag.selfClosing = true;
-
-            for (var i = 0; i < attrs.length; i++) {
-              tag.setAttribute(attrs[i].name, attrs[i].val, attrs[i].escaped);
-            }
-            continue;
-          case '&attributes':
-            var tok = this.advance();
-            tag.addAttributes(tok.val);
-            break;
-          default:
-            break out;
-        }
-      }
-
-    // check immediate '.'
-    if ('dot' == this.peek().type) {
-      tag.textOnly = true;
-      this.advance();
-    }
-
-    // (text | code | ':')?
-    switch (this.peek().type) {
-      case 'text':
-        tag.block.push(this.parseText());
-        break;
-      case 'code':
-        tag.code = this.parseCode();
-        break;
-      case ':':
-        this.advance();
-        tag.block = new nodes.Block;
-        tag.block.push(this.parseExpr());
-        break;
-      case 'newline':
-      case 'indent':
-      case 'outdent':
-      case 'eos':
-      case 'pipeless-text':
-        break;
-      default:
-        throw new Error('Unexpected token `' + this.peek().type + '` expected `text`, `code`, `:`, `newline` or `eos`')
-    }
-
-    // newline*
-    while ('newline' == this.peek().type) this.advance();
-
-    // block?
-    if (tag.textOnly) {
-      tag.block = this.parseTextBlock() || new nodes.Block();
-    } else if ('indent' == this.peek().type) {
-      var block = this.block();
-      for (var i = 0, len = block.nodes.length; i < len; ++i) {
-        tag.block.push(block.nodes[i]);
-      }
-    }
-
-    return tag;
-  }
-};
-
-},{"./filters":35,"./lexer":38,"./nodes":48,"./utils":57,"character-parser":15,"constantinople":16,"fs":21,"path":25}],56:[function(require,module,exports){
-'use strict';
-
-/**
- * Merge two attribute objects giving precedence
- * to values in object `b`. Classes are special-cased
- * allowing for arrays and merging/joining appropriately
- * resulting in a string.
- *
- * @param {Object} a
- * @param {Object} b
- * @return {Object} a
- * @api private
- */
-
-exports.merge = function merge(a, b) {
-  if (arguments.length === 1) {
-    var attrs = a[0];
-    for (var i = 1; i < a.length; i++) {
-      attrs = merge(attrs, a[i]);
-    }
-    return attrs;
-  }
-  var ac = a['class'];
-  var bc = b['class'];
-
-  if (ac || bc) {
-    ac = ac || [];
-    bc = bc || [];
-    if (!Array.isArray(ac)) ac = [ac];
-    if (!Array.isArray(bc)) bc = [bc];
-    a['class'] = ac.concat(bc).filter(nulls);
-  }
-
-  for (var key in b) {
-    if (key != 'class') {
-      a[key] = b[key];
-    }
-  }
-
-  return a;
-};
-
-/**
- * Filter null `val`s.
- *
- * @param {*} val
- * @return {Boolean}
- * @api private
- */
-
-function nulls(val) {
-  return val != null && val !== '';
-}
-
-/**
- * join array as classes.
- *
- * @param {*} val
- * @return {String}
- */
-exports.joinClasses = joinClasses;
-function joinClasses(val) {
-  return (Array.isArray(val) ? val.map(joinClasses) :
-    (val && typeof val === 'object') ? Object.keys(val).filter(function (key) { return val[key]; }) :
-    [val]).filter(nulls).join(' ');
-}
-
-/**
- * Render the given classes.
- *
- * @param {Array} classes
- * @param {Array.<Boolean>} escaped
- * @return {String}
- */
-exports.cls = function cls(classes, escaped) {
-  var buf = [];
-  for (var i = 0; i < classes.length; i++) {
-    if (escaped && escaped[i]) {
-      buf.push(exports.escape(joinClasses([classes[i]])));
-    } else {
-      buf.push(joinClasses(classes[i]));
-    }
-  }
-  var text = joinClasses(buf);
-  if (text.length) {
-    return ' class="' + text + '"';
-  } else {
-    return '';
-  }
-};
-
-
-exports.style = function (val) {
-  if (val && typeof val === 'object') {
-    return Object.keys(val).map(function (style) {
-      return style + ':' + val[style];
-    }).join(';');
-  } else {
-    return val;
-  }
-};
-/**
- * Render the given attribute.
- *
- * @param {String} key
- * @param {String} val
- * @param {Boolean} escaped
- * @param {Boolean} terse
- * @return {String}
- */
-exports.attr = function attr(key, val, escaped, terse) {
-  if (key === 'style') {
-    val = exports.style(val);
-  }
-  if ('boolean' == typeof val || null == val) {
-    if (val) {
-      return ' ' + (terse ? key : key + '="' + key + '"');
-    } else {
-      return '';
-    }
-  } else if (0 == key.indexOf('data') && 'string' != typeof val) {
-    if (JSON.stringify(val).indexOf('&') !== -1) {
-      console.warn('Since Jade 2.0.0, ampersands (`&`) in data attributes ' +
-                   'will be escaped to `&amp;`');
-    };
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will eliminate the double quotes around dates in ' +
-                   'ISO form after 2.0.0');
-    }
-    return ' ' + key + "='" + JSON.stringify(val).replace(/'/g, '&apos;') + "'";
-  } else if (escaped) {
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will stringify dates in ISO form after 2.0.0');
-    }
-    return ' ' + key + '="' + exports.escape(val) + '"';
-  } else {
-    if (val && typeof val.toISOString === 'function') {
-      console.warn('Jade will stringify dates in ISO form after 2.0.0');
-    }
-    return ' ' + key + '="' + val + '"';
-  }
-};
-
-/**
- * Render the given attributes object.
- *
- * @param {Object} obj
- * @param {Object} escaped
- * @return {String}
- */
-exports.attrs = function attrs(obj, terse){
-  var buf = [];
-
-  var keys = Object.keys(obj);
-
-  if (keys.length) {
-    for (var i = 0; i < keys.length; ++i) {
-      var key = keys[i]
-        , val = obj[key];
-
-      if ('class' == key) {
-        if (val = joinClasses(val)) {
-          buf.push(' ' + key + '="' + val + '"');
-        }
-      } else {
-        buf.push(exports.attr(key, val, false, terse));
-      }
-    }
-  }
-
-  return buf.join('');
-};
-
-/**
- * Escape the given string of `html`.
- *
- * @param {String} html
- * @return {String}
- * @api private
- */
-
-var jade_encode_html_rules = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;'
-};
-var jade_match_html = /[&<>"]/g;
-
-function jade_encode_char(c) {
-  return jade_encode_html_rules[c] || c;
-}
-
-exports.escape = jade_escape;
-function jade_escape(html){
-  var result = String(html).replace(jade_match_html, jade_encode_char);
-  if (result === '' + html) return html;
-  else return result;
-};
-
-/**
- * Re-throw the given `err` in context to the
- * the jade in `filename` at the given `lineno`.
- *
- * @param {Error} err
- * @param {String} filename
- * @param {String} lineno
- * @api private
- */
-
-exports.rethrow = function rethrow(err, filename, lineno, str){
-  if (!(err instanceof Error)) throw err;
-  if ((typeof window != 'undefined' || !filename) && !str) {
-    err.message += ' on line ' + lineno;
-    throw err;
-  }
-  try {
-    str = str || require('fs').readFileSync(filename, 'utf8')
-  } catch (ex) {
-    rethrow(err, null, lineno)
-  }
-  var context = 3
-    , lines = str.split('\n')
-    , start = Math.max(lineno - context, 0)
-    , end = Math.min(lines.length, lineno + context);
-
-  // Error context
-  var context = lines.slice(start, end).map(function(line, i){
-    var curr = i + start + 1;
-    return (curr == lineno ? '  > ' : '    ')
-      + curr
-      + '| '
-      + line;
-  }).join('\n');
-
-  // Alter exception message
-  err.path = filename;
-  err.message = (filename || 'Jade') + ':' + lineno
-    + '\n' + context + '\n\n' + err.message;
-  throw err;
-};
-
-exports.DebugItem = function DebugItem(lineno, filename) {
-  this.lineno = lineno;
-  this.filename = filename;
-}
-
-},{"fs":21}],57:[function(require,module,exports){
-'use strict';
-
-/**
- * Merge `b` into `a`.
- *
- * @param {Object} a
- * @param {Object} b
- * @return {Object}
- * @api public
- */
-
-exports.merge = function(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-};
-
-exports.stringify = function(str) {
-  return JSON.stringify(str)
-             .replace(/\u2028/g, '\\u2028')
-             .replace(/\u2029/g, '\\u2029');
-};
-
-exports.walkAST = function walkAST(ast, before, after) {
-  before && before(ast);
-  switch (ast.type) {
-    case 'Block':
-      ast.nodes.forEach(function (node) {
-        walkAST(node, before, after);
-      });
-      break;
-    case 'Case':
-    case 'Each':
-    case 'Mixin':
-    case 'Tag':
-    case 'When':
-    case 'Code':
-      ast.block && walkAST(ast.block, before, after);
-      break;
-    case 'Attrs':
-    case 'BlockComment':
-    case 'Comment':
-    case 'Doctype':
-    case 'Filter':
-    case 'Literal':
-    case 'MixinBlock':
-    case 'Text':
-      break;
-    default:
-      throw new Error('Unexpected node type ' + ast.type);
-      break;
-  }
-  after && after(ast);
-};
-
-},{}],58:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /**
  * This file automatically generated from `pre-publish.js`.
  * Do not manually edit.
@@ -18596,7 +18434,7 @@ module.exports = {
   "wbr": true
 };
 
-},{}],59:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 'use strict';
 
 var detect = require('acorn-globals');
@@ -18723,7 +18561,193 @@ function unwrapReturns(src, result) {
   else return 'var ' + result + '=' + src.join('') + ';if (' + result + ') return ' + result + '.value'
 }
 
-},{"acorn":60,"acorn-globals":12,"acorn/dist/walk":61}],60:[function(require,module,exports){
+},{"acorn":62,"acorn-globals":59,"acorn/dist/walk":63}],59:[function(require,module,exports){
+'use strict';
+
+var acorn = require('acorn');
+var walk = require('acorn/dist/walk');
+
+function isScope(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration' || node.type === 'ArrowFunctionExpression' || node.type === 'Program';
+}
+function isBlockScope(node) {
+  return node.type === 'BlockStatement' || isScope(node);
+}
+
+function declaresArguments(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+}
+
+function declaresThis(node) {
+  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration';
+}
+
+function reallyParse(source) {
+  try {
+    return acorn.parse(source, {
+      ecmaVersion: 6,
+      allowReturnOutsideFunction: true,
+      allowImportExportEverywhere: true,
+      allowHashBang: true
+    });
+  } catch (ex) {
+    return acorn.parse(source, {
+      ecmaVersion: 5,
+      allowReturnOutsideFunction: true,
+      allowImportExportEverywhere: true,
+      allowHashBang: true
+    });
+  }
+}
+module.exports = findGlobals;
+module.exports.parse = reallyParse;
+function findGlobals(source) {
+  var globals = [];
+  var ast;
+  // istanbul ignore else
+  if (typeof source === 'string') {
+    ast = reallyParse(source);
+  } else {
+    ast = source;
+  }
+  // istanbul ignore if
+  if (!(ast && typeof ast === 'object' && ast.type === 'Program')) {
+    throw new TypeError('Source must be either a string of JavaScript or an acorn AST');
+  }
+  var declareFunction = function (node) {
+    var fn = node;
+    fn.locals = fn.locals || {};
+    node.params.forEach(function (node) {
+      declarePattern(node, fn);
+    });
+    if (node.id) {
+      fn.locals[node.id.name] = true;
+    }
+  }
+  var declarePattern = function (node, parent) {
+    switch (node.type) {
+      case 'Identifier':
+        parent.locals[node.name] = true;
+        break;
+      case 'ObjectPattern':
+        node.properties.forEach(function (node) {
+          declarePattern(node.value, parent);
+        });
+        break;
+      case 'ArrayPattern':
+        node.elements.forEach(function (node) {
+          if (node) declarePattern(node, parent);
+        });
+        break;
+      case 'RestElement':
+        declarePattern(node.argument, parent);
+        break;
+      case 'AssignmentPattern':
+        declarePattern(node.left, parent);
+        break;
+      // istanbul ignore next
+      default:
+        throw new Error('Unrecognized pattern type: ' + node.type);
+    }
+  }
+  var declareModuleSpecifier = function (node, parents) {
+    ast.locals = ast.locals || {};
+    ast.locals[node.local.name] = true;
+  }
+  walk.ancestor(ast, {
+    'VariableDeclaration': function (node, parents) {
+      var parent = null;
+      for (var i = parents.length - 1; i >= 0 && parent === null; i--) {
+        if (node.kind === 'var' ? isScope(parents[i]) : isBlockScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      node.declarations.forEach(function (declaration) {
+        declarePattern(declaration.id, parent);
+      });
+    },
+    'FunctionDeclaration': function (node, parents) {
+      var parent = null;
+      for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
+        if (isScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      parent.locals[node.id.name] = true;
+      declareFunction(node);
+    },
+    'Function': declareFunction,
+    'ClassDeclaration': function (node, parents) {
+      var parent = null;
+      for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
+        if (isScope(parents[i])) {
+          parent = parents[i];
+        }
+      }
+      parent.locals = parent.locals || {};
+      parent.locals[node.id.name] = true;
+    },
+    'TryStatement': function (node) {
+      if (node.handler === null) return;
+      node.handler.body.locals = node.handler.body.locals || {};
+      node.handler.body.locals[node.handler.param.name] = true;
+    },
+    'ImportDefaultSpecifier': declareModuleSpecifier,
+    'ImportSpecifier': declareModuleSpecifier,
+    'ImportNamespaceSpecifier': declareModuleSpecifier
+  });
+  function identifier(node, parents) {
+    var name = node.name;
+    if (name === 'undefined') return;
+    for (var i = 0; i < parents.length; i++) {
+      if (name === 'arguments' && declaresArguments(parents[i])) {
+        return;
+      }
+      if (parents[i].locals && name in parents[i].locals) {
+        return;
+      }
+    }
+    if (
+      parents[parents.length - 2] &&
+      parents[parents.length - 2].type === 'TryStatement' &&
+      parents[parents.length - 2].handler &&
+      node === parents[parents.length - 2].handler.param
+    ) {
+      return;
+    }
+    node.parents = parents;
+    globals.push(node);
+  }
+  walk.ancestor(ast, {
+    'VariablePattern': identifier,
+    'Identifier': identifier,
+    'ThisExpression': function (node, parents) {
+      for (var i = 0; i < parents.length; i++) {
+        if (declaresThis(parents[i])) {
+          return;
+        }
+      }
+      node.parents = parents;
+      globals.push(node);
+    }
+  });
+  var groupedGlobals = {};
+  globals.forEach(function (node) {
+    groupedGlobals[node.name] = (groupedGlobals[node.name] || []);
+    groupedGlobals[node.name].push(node);
+  });
+  return Object.keys(groupedGlobals).sort().map(function (name) {
+    return {name: name, nodes: groupedGlobals[name]};
+  });
+}
+
+},{"acorn":60,"acorn/dist/walk":61}],60:[function(require,module,exports){
+module.exports=require(55)
+},{}],61:[function(require,module,exports){
+module.exports=require(56)
+},{}],62:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.acorn = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
@@ -22740,7 +22764,7 @@ exports.nonASCIIwhitespace = nonASCIIwhitespace;
 },{}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (global){
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}(g.acorn || (g.acorn = {})).walk = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
