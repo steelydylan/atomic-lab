@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <dialog class="mdl-dialog js-setting-dialog atomicLabProjectsDialog">
+    <dialog class="mdl-dialog js-setting-dialog">
             <script id="css_setting" type="text/template">
             <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
                     <div class="mdl-dialog__content">
@@ -63,24 +63,43 @@
     </dialog>
     <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog atomicLabProjectsDialog">
             <script id="css_collections" type="text/template">
-            <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクト<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects<!-- END lang:touch#en --></h4>
+            <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクトコレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects collection<!-- END lang:touch#en --></h4>
             <div class="mdl-dialog__content">
+
                     <i class="atomicLabProjectsDialog-close material-icons" data-action="closeCollectionsDialog">close</i>
-                    <div class="mdl-grid">
-                            <div class="mdl-cell mdl-cell--6-col">
-                                                <input type="text" data-bind="projectName" class="mdl-textfield__input" id="search" placeholder="Project Name">
-                        </div>
-                        <div class="mdl-cell mdl-cell--6-col">
-                                        <button class="cssLabSocialBtn" data-action="addToCollection">
-                                <!-- BEGIN lang:touch#ja -->
-                                add current project to my collections
-                                                <!-- END lang:touch#ja -->
-                                                <!-- BEGIN lang:touch#en -->
-                                                現在のプロジェクトを一覧に追加
-                                                <!-- END lang:touch#en -->
-                                </button>
+
+                    <div class="atomicLabProjectsDialog-addProjectForm">
+                        <span class="atomicLabProjectsDialog-heading">
+                        <!-- BEGIN lang:touch#ja -->
+                        現在のプロジェクトをコレクションに新規追加
+                        <!-- END lang:touch#ja -->
+                        <!-- BEGIN lang:touch#en -->
+                        Add current project to my collections
+                        <!-- END lang:touch#en -->
+                        </span>
+
+                        <div classx="mdl-textfield mdl-js-textfield">
+                            <input type="text" data-bind="projectName" class="mdl-textfield__input atomicLabProjectsDialog-input" placeholder="Project Name">
+                        <button class="mdl-button mdl-button--raised mdl-button--accent" data-action="addToCollection">
+                            <!-- BEGIN lang:touch#ja -->
+                            追加
+                            <!-- END lang:touch#ja -->
+                            <!-- BEGIN lang:touch#en -->
+                            Add
+                            <!-- END lang:touch#en -->
+                        </button>
                         </div>
                     </div>
+
+
+                    <span class="atomicLabProjectsDialog-heading">
+                    <!-- BEGIN lang:touch#ja -->
+                    コレクション一覧
+                    <!-- END lang:touch#ja -->
+                    <!-- BEGIN lang:touch#en -->
+                    My collections
+                    <!-- END lang:touch#en -->
+                    </span>
                     <table class="atomicLabProjectsDialog-table _header">
                                 <tbody>
                                         <tr>
@@ -91,7 +110,7 @@
                                                 <th class="atomicLabProjectsDialog-icon"></th>
                                         </tr>
                                 </tbody>
-                        </table>
+                     </table>
                     <div class="atomicLabProjectsDialog-projectsContainer">
                                 <table class="atomicLabProjectsDialog-table _projects">
                                         <tbody>
@@ -123,10 +142,14 @@
                                         </tbody>
                                 </table>
                         </div>
+
+
+                        </div>
+                        <div class="mdl-dialog__actions">
+                            <button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+                        </div>
+
             </div>
-                <div class="mdl-dialog__actions">
-                                <button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-                </div>
                 </script>
         </dialog>
     <dialog class="mdl-dialog js-remove-dialog">
@@ -228,8 +251,8 @@
                                 </div>
                         </div>
                         <div class="mdl-dialog__actions">
-                                <button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
                                 <button class="mdl-button mdl-button--accent" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
+                                <button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
                         </div>
                 </script>
         </dialog>

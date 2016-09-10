@@ -21,6 +21,9 @@ body {
   height: 100%;
   display: flex; }
 
+.mdl-dialog {
+  width: 600px; }
+
 .atomicLabSideMenu {
   box-sizing: border-box;
   width: 310px;
@@ -287,35 +290,6 @@ body {
     height: 100%;
     border-radius: 5px; }
 
-.ace_editor {
-  height: 100%;
-  margin-top: 0; }
-
-#mask-search-cancel {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 8000;
-  display: none; }
-
-.sourceCopied {
-  position: fixed;
-  z-index: 1000;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  -webkit-transition: background-color .2s ease-in;
-  transition: background-color .2s ease-in;
-  text-align: center;
-  color: #fff;
-  background-color: transparent; }
-
-.sourceCopied.active {
-  background-color: rgba(0, 0, 0, 0.9); }
-
 .atomicLabProjectsDialog {
   width: 750px; }
   .atomicLabProjectsDialog-title {
@@ -323,6 +297,19 @@ body {
     margin: 0;
     font-size: 24px;
     color: #009688; }
+  .atomicLabProjectsDialog-addProjectForm {
+    margin: 10px 0 50px 0; }
+  .atomicLabProjectsDialog-heading {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 17px;
+    color: #454545; }
+  .atomicLabProjectsDialog-input {
+    display: inline-block;
+    width: 500px;
+    font-size: 19px;
+    vertical-align: bottom;
+    margin-right: 10px; }
   .atomicLabProjectsDialog-table {
     width: 100%;
     border-collapse: collapse; }
@@ -372,11 +359,37 @@ body {
       .atomicLabProjectsDialog-projectsContainer tr:hover .atomicLabProjectsDialog-delete {
         display: inline-block; }
 
+.ace_editor {
+  height: 100%;
+  margin-top: 0; }
+
+#mask-search-cancel {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 8000;
+  display: none; }
+
+.sourceCopied {
+  position: fixed;
+  z-index: 1000;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  -webkit-transition: background-color .2s ease-in;
+  transition: background-color .2s ease-in;
+  text-align: center;
+  color: #fff;
+  background-color: transparent; }
+
+.sourceCopied.active {
+  background-color: rgba(0, 0, 0, 0.9); }
+
 .material-icons._danger:hover {
   color: #ed3838; }
-
-.mdl-dialog {
-  width: 750px; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {
