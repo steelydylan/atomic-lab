@@ -1238,27 +1238,27 @@ jQuery(function($){
                 var strings = JSON.stringify(data);
                 var hash = encodeURI(strings);
                 hash = JSZip.compressions.DEFLATE.compress(hash);
-            hash = JSZip.base64.encode(hash);
+                hash = JSZip.base64.encode(hash);
                 var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
                 location.hash = hash;
                 var url = location.href;
                 var obj = urlParser.parse(url);
                 //remove query
-              obj.search = obj.query = "";
-              url = urlParser.format(obj);
+                obj.search = obj.query = "";
+                url = urlParser.format(obj);
                 location.hash = "";
                 $.ajax({
                     url: "https://www.googleapis.com/urlshortener/v1/url?key=" + key,
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-              longUrl: url,
-            }),
-            dataType: "json",
-            success: function(res) {
-                that.data.shortenedUrl = res.id;
-                d.resolve();
-            },
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                      longUrl: url,
+                    }),
+                    dataType: "json",
+                    success: function(res) {
+                        that.data.shortenedUrl = res.id;
+                        d.resolve();
+                    },
                 })
                 return d.promise();
             },
@@ -1395,6 +1395,8 @@ jQuery(function($){
                 }
                 this.applyMethod("showAlert","コンポーネントを保存しました。");
                 this.update("html","css_search_result");
+                this.update("html","css_edit");
+                this.update("html","css_preview");
                 componentHandler.upgradeDom();
                 this.saveData(storageName);
             },
@@ -1409,7 +1411,8 @@ jQuery(function($){
                 this.data.newName = "";
                 this.applyMethod("showAlert","コンポーネントを追加しました。");
                 this.update("html","css_search_result");
-                this.update("html","css_new");
+                this.update("html","css_edit");
+                this.update("html","css_preview");
                 componentHandler.upgradeDom();
                 this.saveData(storageName);
             },
@@ -1617,16 +1620,27 @@ jQuery(function($){
                 project.onEdit = "true";
                 this.update("html","css_collections");
             },
-      editProjectName:function(i){
-          this.data.projectOnEdit = "true";
-          this.update("html","css_project");
-          this.update("html","css_collections");
-      },
-      changeProjectName:function(i){
-          this.data.projectOnEdit = "false";
-          this.update("html","css_project");
-          this.update("html","css_collections");
-      }
+          editProjectName:function(i){
+              this.data.projectOnEdit = "true";
+              this.update("html","css_project");
+              this.update("html","css_collections");
+          },
+          changeProjectName:function(i){
+              this.data.projectOnEdit = "false";
+              this.update("html","css_project");
+              this.update("html","css_collections");
+          },
+            shareToSlack:function(i){
+                var self = this;
+                self.applyMethod("getShortenedUrl")
+                    .then(function(){
+                        var obj = {
+                            projectName:self.data.projectName,
+                            shortenedUrl:self.data.shortenedUrl
+                        }
+                        window.open('http://s7.addthis.com/static/slack.html?shareURL='+ obj.shortenedUrl +'&shareTitle=' + encodeURI(obj.projectName) , 'Share a project to your Slack', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes');
+                    });
+            }
         },
         convert:{
             preview:function(text){
