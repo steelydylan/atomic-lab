@@ -91,6 +91,33 @@ body {
 }
 
 
+
+.atomicLabCard{
+    width: 95%;
+    margin: 25px auto;
+    padding: 20px;
+
+
+    h1{
+        font-size: 40px;
+    }
+    h2{
+        font-size: 38px;
+    }
+
+    &-title{
+        font-size: 24px;
+        margin: 5px 0 20px 0;
+        color: #{$text-color-light};
+
+        > i{
+            vertical-align: bottom;
+        }
+    }
+
+}
+
+
 // Dialog title style
 .mdl-dialog__title{
     padding: 15px 24px 0;
