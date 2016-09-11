@@ -1574,8 +1574,12 @@ jQuery(function($){
                     that.data[name] = editor.getSession().getValue();
                 });
             },
+
+
             /*
-                feature collection
+
+            Projects Collection
+
             */
             openCollectionsDialog:function(){
                 var dialog = document.querySelector(".js-collections-dialog");
@@ -1620,27 +1624,41 @@ jQuery(function($){
                 project.onEdit = "true";
                 this.update("html","css_collections");
             },
-          editProjectName:function(i){
-              this.data.projectOnEdit = "true";
-              this.update("html","css_project");
-              this.update("html","css_collections");
-          },
-          changeProjectName:function(i){
-              this.data.projectOnEdit = "false";
-              this.update("html","css_project");
-              this.update("html","css_collections");
-          },
-            shareToSlack:function(i){
+             /*
+
+             Project Contorl
+
+             */
+              editProjectName:function(i){
+                  this.data.projectOnEdit = "true";
+                  this.update("html","css_project");
+                  this.update("html","css_collections");
+              },
+              changeProjectName:function(i){
+                  this.data.projectOnEdit = "false";
+                  this.update("html","css_project");
+                  this.update("html","css_collections");
+              },
+              shareCurrentProject:function(dist){
                 var self = this;
                 self.applyMethod("getShortenedUrl")
                     .then(function(){
+
                         var obj = {
-                            projectName:self.data.projectName,
-                            shortenedUrl:self.data.shortenedUrl
+                            shareText:self.data.projectName + " #atomiclab", // current project name
+                            shortenedUrl:self.data.shortenedUrl // generated URL of current project
                         }
-                        window.open('http://s7.addthis.com/static/slack.html?shareURL='+ obj.shortenedUrl +'&shareTitle=' + encodeURI(obj.projectName) , 'Share a project to your Slack', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes');
+
+                        switch (dist){
+                            case "slack":
+                                window.open('http://s7.addthis.com/static/slack.html?shareURL='+ obj.shortenedUrl +'&shareTitle=' + encodeURIComponent(obj.shareText) , 'Share a project to your Slack team', 'width=600, height=700, menubar=no, toolbar=no, scrollbars=yes');
+                                break;
+                            case "twitter":
+                                window.open('https://twitter.com/share?url='+ obj.shortenedUrl +'&text=' + encodeURIComponent(obj.shareText) , 'Share a project to Twitter', 'width=600, height=290, menubar=no, toolbar=no, scrollbars=yes');
+                                break;
+                        }
                     });
-            }
+              }
         },
         convert:{
             preview:function(text){
