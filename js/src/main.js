@@ -121,6 +121,7 @@ jQuery(function($){
                     this.data.css = comp.css;
                     this.data.category = comp.category;
                     this.data.name = comp.name;
+                    this.data.description = comp.description;
                 }
                 this.update();
                 if(this.data.editMode != "preview" && this.data.editMode != "about"){
@@ -214,6 +215,7 @@ jQuery(function($){
                 }
                 this.data.css = comp.css;
                 this.data.name = comp.name;
+                this.data.description = comp.description;
                 this.data.html = comp.html;
                 this.data.category = comp.category;
                 this.data.about = comp.about;
@@ -305,6 +307,7 @@ jQuery(function($){
                         comp.html = data.html;
                         comp.css = data.css;
                         comp.name = data.name;
+                        comp.description = data.description;
                         comp.id = data.id;
                         comp.category = data.category;
                         comp.about = data.about;
