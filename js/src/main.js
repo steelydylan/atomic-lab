@@ -124,7 +124,7 @@ jQuery(function($) {
                     this.data.description = comp.description;
                 }
                 this.update();
-                if (this.data.editMode != "preview" && this.data.editMode != "about") {
+                if (this.data.editMode != "preview") {
                     this.applyMethod("runEditor", this.data.editMode);
                 }
                 return this;
@@ -342,7 +342,7 @@ jQuery(function($) {
                 }
                 this.applyMethod("showAlert", "コンポーネントを保存しました。");
                 this.update("html", "css_search_result");
-                this.update("html", "css_edit");
+                // this.update("html", "css_edit");
                 this.update("html", "css_preview");
                 componentHandler.upgradeDom();
                 this.saveData(storageName);
@@ -457,6 +457,9 @@ jQuery(function($) {
                 this.applyMethod("closeEditDialog");
                 this.applyMethod("saveComponent");
                 this.update("html", "css_edit");
+                if (this.data.editMode != "preview") {
+                    this.applyMethod("runEditor", this.data.editMode);
+                }
             },
             clearEditor: function() {
                 this.removeData(['name', 'html', 'css']);
