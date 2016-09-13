@@ -24,6 +24,6 @@
     "atomic-generator": "*"
   },
   "dependencies": {
-    "atomic-generator": "^1.0.1"
+    "atomic-generator": "^1.1.4"
   }
 }
