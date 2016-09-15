@@ -1300,12 +1300,12 @@ jQuery(function($) {
 			},
 			copyToClipBoard:function(msg){
 				var copyArea = $("<textarea/>");
-							$("body").append(copyArea);
-							copyArea.text(msg);
-							copyArea.select();
-							document.execCommand("copy");
-							copyArea.remove();
-							return this;
+				$("body").append(copyArea);
+				copyArea.text(msg);
+				copyArea.select();
+				document.execCommand("copy");
+				copyArea.remove();
+				return this;
 			},
 			copySnippet: function(id){
 				var comp = this.applyMethod("getCompById",id);
