@@ -595,6 +595,16 @@ jQuery(function($) {
 				this.update("html", "css_project");
 				this.update("html", "css_collections");
 			},
+			editProjectDesc: function(i) {
+				this.data.projectDescOnEdit = "true";
+				this.update("html", "css_project");
+				this.update("html", "css_collections");
+			},
+			changeProjectDesc: function(i) {
+				this.data.projectDescOnEdit = "false";
+				this.update("html", "css_project");
+				this.update("html", "css_collections");
+			},
 			shareCurrentProject: function(dist) {
 				var self = this;
 				self.applyMethod("getShortenedUrl")

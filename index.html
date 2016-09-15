@@ -277,7 +277,14 @@
 						<i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
 					</div>
 					<p class="atomicLabProjectControl-shotDescription">
-						Keep your eyes on the stars, and your feet on the ground.
+						<!-- BEGIN projectDescOnEdit:touchnot#true -->
+						<span data-action="editProjectDesc()">
+						{projectDescription}
+						<!-- BEGIN projectDescription:empty -->
+						You can write description here
+						<!-- END projectDescription:empty -->
+						</span><!-- END projectDescOnEdit:touchnot#true -->
+						<!-- BEGIN projectDescOnEdit:touch#true --><textarea data-bind="projectDescription" rows="3"></textarea> <button data-action="changeProjectDesc()">保存</button><!-- END projectDescOnEdit:touch#true -->
 					</p>
 					<!-- Project actions -->
 					<nav class="atomicLabProjectControl-actions">
