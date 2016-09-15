@@ -278,15 +278,18 @@ body {
   right: 50px;
   top: 25px;
   color: #848484; }
-  .atomicLabComponentControl-actions ul, .atomicLabComponentControl-actions li {
+  .atomicLabComponentControl-actions nav > ul,
+  .atomicLabComponentControl-actions nav > ul > li {
     margin: 0;
     padding: 0;
     display: inline-block; }
-  .atomicLabComponentControl-actions i {
-    padding: 5px;
-    cursor: pointer; }
-    .atomicLabComponentControl-actions i:hover {
-      color: #454545; }
+    .atomicLabComponentControl-actions nav > ul i,
+    .atomicLabComponentControl-actions nav > ul > li i {
+      padding: 5px;
+      cursor: pointer; }
+      .atomicLabComponentControl-actions nav > ul i:hover,
+      .atomicLabComponentControl-actions nav > ul > li i:hover {
+        color: #454545; }
 
 .atomicLabTabs-panel {
   height: 450px; }
@@ -363,7 +366,8 @@ body {
     .atomicLabProjectsDialog-projectsContainer tr:hover {
       background-color: #e2e2e2; }
       .atomicLabProjectsDialog-projectsContainer tr:hover .atomicLabProjectsDialog-delete {
-        display: inline-block; }
+        display: block;
+        position: relative; }
 
 .ace_editor {
   height: 100%;
@@ -415,8 +419,9 @@ body {
   font-size: 24px;
   color: #009688; }
 
-.material-icons._danger:hover {
-  color: #ed3838; }
+.material-icons._danger:hover,
+.mdl-menu__item._danger {
+  color: #d82727; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {
