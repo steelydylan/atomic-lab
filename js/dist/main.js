@@ -1315,6 +1315,8 @@ jQuery(function($) {
 				var inner = parser.getInnerHtmlFromTemplate(snippet);
 				snippet = snippet.replace(inner,"");
 				snippet = snippet.replace(/template/g,comp.name);
+				snippet = snippet.replace(/<!--@/g,"<");
+				snippet = snippet.replace(/-->/g,">");
 				this.applyMethod("copyToClipBoard",snippet);
 			},
 			editComp: function(id) {
