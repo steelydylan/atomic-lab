@@ -14,5 +14,6 @@ var config = {
 	/*
 		used for Google URL shortener
 	*/
+	use_url_shortener:true,
 	key:"AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA"
 }

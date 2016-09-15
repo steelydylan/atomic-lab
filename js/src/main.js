@@ -85,6 +85,7 @@ jQuery(function($) {
 				var self = this;
 				var query = urlParser.parse(location.href, true).query;
 				this.loadData(storageName);
+				this.data.use_url_shortener = config.use_url_shortener;
 					//ハッシュタグがあればハッシュタグからデータを復元
 				if (location.hash) {
 					var zip = new JSZip();

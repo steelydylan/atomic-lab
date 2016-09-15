@@ -252,7 +252,9 @@
 				<nav class="mdl-navigation">
 					<!-- Place this tag where you want the button to render. -->
 					<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+					<!-- BEGIN use_url_shortener:exist -->
 					<a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+					<!-- END use_url_shortener:exist -->
 					<a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
 					<div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
 					<br>exported JSON</div>
@@ -289,6 +291,7 @@
 					<!-- Project actions -->
 					<nav class="atomicLabProjectControl-actions">
 						<ul>
+							<!-- BEGIN use_url_shortener:exist -->
 							<li>
 								<i id="projectAction-share" class="material-icons">share</i>
 								<div class="mdl-tooltip" data-mdl-for="projectAction-share">Share this project</div>
@@ -302,6 +305,7 @@
 								<i id="projectAction-save" class="material-icons" data-action="addToCollection">save</i>
 								<div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
 							</li>
+							<!-- END use_url_shortener:exist -->
 							<li data-action="outputComp">
 								<i id="projectAction-download" class="material-icons">file_download</i>
 								<div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
