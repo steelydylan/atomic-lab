@@ -5,6 +5,9 @@ var config = {
 	*/
 	read_from_local_file:true,
 	/*
+	*/
+	local_file_path:"./resources/setting.json",
+	/*
 		run js on preview mode
 	*/
 	run_script:true,

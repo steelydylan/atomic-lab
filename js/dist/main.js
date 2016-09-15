@@ -1183,7 +1183,7 @@ jQuery(function($) {
 					this.applyMethod("applyData");
 					//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
 				} else if (config.read_from_local_file) {
-					$.getJSON('./resources/setting.json')
+					$.getJSON(config.local_file_path)
 						.success(function(data) {
 							self.setData(data);
 							self.applyMethod("applyData");
