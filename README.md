@@ -14,30 +14,56 @@ Template sharing and coding environment based on atomic design
 
 ### preview
 ```html
+<<<<<<< .merge_file_GjyYT8
 <!-- preview -->
 code here
 <!-- /preview -->
+=======
+<!--@preview
+code here
+-->
+```
+
+### note
+```html
+<!--@note
+markdown here
+-->
+>>>>>>> .merge_file_nEQmSE
 ```
 
 ### make template
 
 define template
 ```html
+<<<<<<< .merge_file_GjyYT8
 <!-- template -->
 code here
 <!-- /template -->
+=======
+<!--@template -->
+code here
+<!--@/template -->
+>>>>>>> .merge_file_nEQmSE
 ```
 
 set default variable
 ```html
+<<<<<<< .merge_file_GjyYT8
 <!-- template text="hoge" -->
 <p>{text}</p>
 <!-- /template -->
+=======
+<!--@template text="hoge" -->
+<p>{text}</p>
+<!--@/template -->
+>>>>>>> .merge_file_nEQmSE
 ```
 
 ### use template
 supporse that component's name is "main-visual"
 ```html
+<<<<<<< .merge_file_GjyYT8
 <!-- import="main-visual,button" -->
 <!-- main-visual image="hoge.png" -->
 <!-- button -->
@@ -50,5 +76,13 @@ We use these icons created by http://patternlab.io/
 <img src="https://raw.github.com/steelydylan/atomic-lab/master/images/molucule.svg">
 <img src="https://raw.github.com/steelydylan/atomic-lab/master/images/organism.svg">
 <img src="https://raw.github.com/steelydylan/atomic-lab/master/images/template.svg">
+=======
+<!--@import parts="main-visual" -->
+<main-visual image="hoge.png"></main-visual>
+```
+
+## Attribution
+We use some icons created by http://patternlab.io/
+>>>>>>> .merge_file_nEQmSE
 ## License
 MIT License
