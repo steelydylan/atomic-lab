@@ -24,7 +24,7 @@ var getPreview = function(text){
 }
 
 var getNote = function(text){
-	var preview = text.match(/<!--@note(([\n\r\t]|.)*?)-->/g);
+	var note = text.match(/<!--@note(([\n\r\t]|.)*?)-->/g);
 	if(!note){
 		return "";
 	}
