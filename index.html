@@ -1,390 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>AtomicLab</title>
-		<meta name="author" content="steelaxe (steelydylan and okajax)">
-		<meta name="description" content="Atomic Lab is where you can make components based on Atomic design.">
-		<meta name="version" content="1.0.0">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link rel="stylesheet" href="./css/material-customized.css" />
-		<link rel="stylesheet" href="./css/atomic-lab.css">
-		<script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
-	</head>
-	<body>
-		<dialog class="mdl-dialog js-setting-dialog">
-		<script id="css_setting" type="text/template">
-		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
-		<div class="mdl-dialog__content">
-			<p>Markup</p>
-			<p>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="html">
-					<input type="radio" id="html" class="mdl-radio__button" name="markup" value="html" data-bind="markup">
-					<span class="mdl-radio__label">HTML</span>
-				</label>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="haml">
-					<input type="radio" id="haml" class="mdl-radio__button" name="markup" value="haml" data-bind="markup">
-					<span class="mdl-radio__label">Haml</span>
-				</label>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="jade">
-					<input type="radio" id="jade" class="mdl-radio__button" name="markup" value="jade" data-bind="markup">
-					<span class="mdl-radio__label">Jade</span>
-				</label>
-				<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="ejs">
-					<input type="radio" id="ejs" class="mdl-radio__button" name="markup" value="ejs" data-bind="markup">
-					<span class="mdl-radio__label">EJS</span>
-				</label>
-			</p>
-			<p>Styling</p>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="css">
-				<input type="radio" id="css" class="mdl-radio__button" name="styling" value="css" data-bind="styling">
-				<span class="mdl-radio__label">CSS</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="sass">
-				<input type="radio" id="sass" class="mdl-radio__button" name="styling" value="sass" data-bind="styling">
-				<span class="mdl-radio__label">SASS(SCSS)</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="less">
-				<input type="radio" id="less" class="mdl-radio__button" name="styling" value="less" data-bind="styling">
-				<span class="mdl-radio__label">LESS</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="stylus">
-				<input type="radio" id="stylus" class="mdl-radio__button" name="styling" value="stylus" data-bind="styling">
-				<span class="mdl-radio__label">Stylus</span>
-			</label>
-		</div>
-		<div class="mdl-dialog__actions">
-			<button class="mdl-button close" data-action="closeSettingDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-		</div>
-		</script>
-		</dialog>
-		<dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog atomicLabProjectsDialog">
-		<script id="css_collections" type="text/template">
-		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクトコレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects collection<!-- END lang:touch#en --></h4>
-		<div class="mdl-dialog__content">
-			<i class="atomicLabProjectsDialog-close material-icons" data-action="closeCollectionsDialog">close</i>
-			<div class="atomicLabProjectsDialog-addProjectForm">
-				<span class="atomicLabProjectsDialog-heading">
-					<!-- BEGIN lang:touch#ja -->
-					現在のプロジェクトをコレクションに新規追加
-					<!-- END lang:touch#ja -->
-					<!-- BEGIN lang:touch#en -->
-					Add current project to my collections
-					<!-- END lang:touch#en -->
-				</span>
-				<div classx="mdl-textfield mdl-js-textfield">
-					<input type="text" data-bind="projectName" class="mdl-textfield__input atomicLabProjectsDialog-input" placeholder="Project Name">
-					<button class="mdl-button mdl-button--raised mdl-button--accent" data-action="addToCollection">
-					<!-- BEGIN lang:touch#ja -->
-					追加
-					<!-- END lang:touch#ja -->
-					<!-- BEGIN lang:touch#en -->
-					Add
-					<!-- END lang:touch#en -->
-					</button>
-				</div>
-			</div>
-			<span class="atomicLabProjectsDialog-heading">
-				<!-- BEGIN lang:touch#ja -->
-				コレクション一覧
-				<!-- END lang:touch#ja -->
-				<!-- BEGIN lang:touch#en -->
-				My collections
-				<!-- END lang:touch#en -->
-			</span>
-			<table class="atomicLabProjectsDialog-table _header">
-				<tbody>
-					<tr>
-						<th class="atomicLabProjectsDialog-icon"></th>
-						<th class="atomicLabProjectsDialog-name">Name</th>
-						<th class="atomicLabProjectsDialog-url">URL</th>
-						<th class="atomicLabProjectsDialog-share">Share</th>
-						<th class="atomicLabProjectsDialog-icon"></th>
-					</tr>
-				</tbody>
-			</table>
-			<div class="atomicLabProjectsDialog-projectsContainer">
-				<table class="atomicLabProjectsDialog-table _projects">
-					<tbody>
-						<!-- BEGIN collectionsReverse:loop -->
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								<!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})">{projectName}</span><!-- END onEdit:touchnot#true --><!-- BEGIN onEdit:touch#true --><input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;"><button data-action="updateCollection({i})" class="cssLabRenameBtn">
-								<!-- \BEGIN lang:touch#ja -->変更<!-- \END lang:touch#ja -->
-								<!-- \BEGIN lang:touch#en -->Update<!-- \END lang:touch#en -->
-								</button><!-- END onEdit:touch#true -->
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="{shortenedUrl}">{shortenedUrl}</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconSlack-s.png" alt=""></i>
-								<a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
-									<i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconTwitter-s.png" alt=""></i>
-								</a>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons _danger" data-action="removeCollection({i})">delete</i>
-							</td>
-						</tr>
-						<!-- END collectionsReverse:loop -->
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="mdl-dialog__actions">
-			<button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-		</div>
-	</div>
-	</script>
-	</dialog>
-	<dialog class="mdl-dialog js-remove-dialog">
-	<script id="css_remove" type="text/template">
-	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
-	<div class="mdl-dialog__content">
-		<p>Delete All Components</p>
-	</div>
-	<div class="mdl-dialog__actions">
-		<button class="mdl-button" data-action="removeAllComponent"><!-- BEGIN lang:touch#ja -->削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete<!-- END lang:touch#en --></button>
-		<button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-	</div>
-	</script>
-	</dialog>
-	<dialog class="mdl-dialog js-cheat-dialog">
-	<script id="css_cheat" type="text/template">
-	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
-	<div class="mdl-dialog__content">
-		<div class="cssLabAbout">
-			<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{cheatName}</p>
-			<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{cheatCategory}</p>
-			<p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About this component<!-- END lang:touch#en --></span></p>
-			<div class="cssLabExpArea">
-				{cheatAbout}[markdown]
-			</div>
-		</div>
-	</div>
-	<div class="mdl-dialog__actions">
-		<button class="mdl-button close" data-action="closeCheatDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-	</div>
-	</script>
-	</dialog>
-	<dialog class="mdl-dialog js-new-dialog">
-	<script id="css_new" type="text/template">
-	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
-	<div class="mdl-dialog__content">
-		<p><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></p>
-		<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
-			<input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" data-bind="newCategory">
-			<span class="mdl-radio__label">Atom</span>
-		</label>
-		<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molecule">
-			<input type="radio" id="molecule" class="mdl-radio__button" name="newCategory" value="molecule" data-bind="newCategory">
-			<span class="mdl-radio__label">Molecule</span>
-		</label>
-		<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
-			<input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
-			<span class="mdl-radio__label">Organism</span>
-		</label>
-		<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="template">
-			<input type="radio" id="template" class="mdl-radio__button" name="newCategory" value="template" data-bind="newCategory">
-			<span class="mdl-radio__label">Template</span>
-		</label>
-		<div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
-			<input type="text" data-bind="newName" class="mdl-textfield__input" id="search">
-			<label class="mdl-textfield__label" for="search">Component Name...</label>
-		</div>
-	</div>
-	<div class="mdl-dialog__actions">
-		<button class="mdl-button" data-action="addComponent"><!-- BEGIN lang:touch#ja -->追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add<!-- END lang:touch#en --></button>
-		<button class="mdl-button close" data-action="closeDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-	</div>
-	</script>
-	</dialog>
-	<dialog class="mdl-dialog js-edit-dialog">
-	<script id="css_about" type="text/template">
-	<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
-	<div class="mdl-dialog__content">
-		<div>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
-				<input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" data-bind="category">
-				<span class="mdl-radio__label">Atom</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molecule">
-				<input type="radio" id="to-molecule" class="mdl-radio__button" name="category" value="molecule" data-bind="category">
-				<span class="mdl-radio__label">Molecule</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
-				<input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
-				<span class="mdl-radio__label">Organism</span>
-			</label>
-			<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-template">
-				<input type="radio" id="to-template" class="mdl-radio__button" name="category" value="template" data-bind="category">
-				<span class="mdl-radio__label">Template</span>
-			</label>
-		</div>
-		<div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
-			<input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
-			<label class="mdl-textfield__label" for="update-name">Component Name...</label>
-		</div>
-		<div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
-			<input type="text" data-bind="description" class="mdl-textfield__input" id="update-description">
-			<label class="mdl-textfield__label" for="update-description">Short description...</label>
-		</div>
-		<div class="mdl-textfield mdl-textfield--large mdl-js-textfield">
-			<textarea class="mdl-textfield__input" type="text" rows= "8" id="about-textarea" data-bind="about"></textarea>
-			<label class="mdl-textfield__label" for="about-textarea">About...</label>
-		</div>
-	</div>
-	<div class="mdl-dialog__actions">
-		<button class="mdl-button mdl-button--accent" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
-		<button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
-	</div>
-	</script>
-	</dialog>
-	<!-- /Dialogs -->
-	<div class="mdl-layout">
-		<header class="mdl-layout__header atomicLabHeader">
-			<div class="mdl-layout__header-row atomicLabHeader-row">
-				<!-- Title -->
-				<span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
-				<!-- Add spacer, to align navigation to the right -->
-				<div class="mdl-layout-spacer"></div>
-				<!-- Navigation -->
-				<script id="css_io" type="text/template">
-				<nav class="mdl-navigation">
-					<!-- Place this tag where you want the button to render. -->
-					<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
-					<a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
-					<a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
-					<div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
-					<br>exported JSON</div>
-					<a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="./images/githubMark.png" alt="GitHub">
-					</a>
-					<div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
-					<br>Please star on GitHub! ;D</div>
-				</nav>
-				</script>
-			</div>
-		</header>
-		<div class="mdl-layout__content atomicLabContent">
-			<!-- Side Menu -->
-			<div class="atomicLabSideMenu">
-				<script type="text/template" id="css_project">
-				<div class="atomicLabProjectControl">
-					<!-- Project title -->
-					<div class="atomicLabProjectControl-title">
-						<i class="material-icons">folder</i>
-						<!-- BEGIN projectOnEdit:touchnot#true --><span data-action="editProjectName()">{projectName}</span><!-- END projectOnEdit:touchnot#true -->
-						<!-- BEGIN projectOnEdit:touch#true --><input type="text" data-bind="projectName" placeholder="Project Name"> <button data-action="changeProjectName()">保存</button><!-- END projectOnEdit:touch#true -->
-						<i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
-					</div>
-					<p class="atomicLabProjectControl-shotDescription">
-						Keep your eyes on the stars, and your feet on the ground.
-					</p>
-					<!-- Project actions -->
-					<nav class="atomicLabProjectControl-actions">
-						<ul>
-							<li>
-								<i id="projectAction-share" class="material-icons">share</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-share">Share this project</div>
-								<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
-									for="projectAction-share">
-									<li class="mdl-menu__item" data-action="shareCurrentProject(slack)">Slack</li>
-									<li class="mdl-menu__item" data-action="shareCurrentProject(twitter)">Twitter</li>
-								</ul>
-							</li>
-							<li>
-								<i id="projectAction-save" class="material-icons" data-action="addToCollection">save</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
-							</li>
-							<li data-action="outputComp">
-								<i id="projectAction-download" class="material-icons">file_download</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
-								<br>(included Export JSON data)</div>
-							</li>
-							<li data-action="openSettingDialog">
-								<i id="projectAction-settings" class="material-icons">settings</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
-							</li>
-						</ul>
-					</nav>
-				</div>
-				</script>
-				<!-- Component list -->
-				<div class="atomicLabComponentList">
-					<script id="css_search_result" type="text/template">
-					<ul>
-						<li class="atomicLabComponentList-category _atom">
-							<span><img class="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="">Atom</span>
-							<ul>
-								<!-- BEGIN atomSearchResults:loop -->
-								<li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
-								<span><i class="material-icons">insert_drive_file</i>
-									{name}
-									<i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
-								</span>
-							</li>
-							<!-- END atomSearchResults:loop -->
-						</ul>
-					</li>
-					<li class="atomicLabComponentList-category _molecule">
-						<span><img class="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="">Molecule</span>
-						<ul>
-							<!-- BEGIN moleculeSearchResults:loop -->
-							<li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
-							<span><i class="material-icons">insert_drive_file</i>
-								{name}
-								<i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
-								<div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
-							</span>
-						</li>
-						<!-- END atomSearchResults:loop -->
-					</ul>
-				</li>
-				<li class="atomicLabComponentList-category _organism">
-					<span><img class="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="">Organism</span>
-					<ul>
-						<!-- BEGIN organismSearchResults:loop -->
-						<li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
-						<span><i class="material-icons">insert_drive_file</i>
-							{name}
-							<i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
-							<div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
-						</span>
-					</li>
-					<!-- END organismSearchResults:loop -->
-				</ul>
-			</li>
-			<li class="atomicLabComponentList-category _template">
-				<span><img class="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="">Template</span>
-				<ul>
-					<!-- BEGIN templateSearchResults:loop -->
-					<li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
-					<span><i class="material-icons">insert_drive_file</i>
-						{name}
-						<i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
-						<div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
-					</span>
-				</li>
-				<!-- END templateSearchResults:loop -->
-			</ul>
-		</li>
-	</ul>
-	</script>
+    <head>
+        <meta charset="UTF-8">
+        <title>AtomicLab</title>
+        <meta name="author" content="steelaxe (steelydylan and okajax)">
+        <meta name="description" content="Atomic Lab is where you can make components based on Atomic design.">
+        <meta name="version" content="1.0.0">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="./css/material-customized.css" />
+        <link rel="stylesheet" href="./css/atomic-lab.css">
+        <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+    </head>
+    <body>
+        <dialog class="mdl-dialog js-setting-dialog">
+        <script id="css_setting" type="text/template">
+        <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
+        <div class="mdl-dialog__content">
+            <p>Markup</p>
+            <p>
+                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="html">
+                    <input type="radio" id="html" class="mdl-radio__button" name="markup" value="html" data-bind="markup">
+                    <span class="mdl-radio__label">HTML</span>
+                </label>
+                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="haml">
+                    <input type="radio" id="haml" class="mdl-radio__button" name="markup" value="haml" data-bind="markup">
+                    <span class="mdl-radio__label">Haml</span>
+                </label>
+                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="jade">
+                    <input type="radio" id="jade" class="mdl-radio__button" name="markup" value="jade" data-bind="markup">
+                    <span class="mdl-radio__label">Jade</span>
+                </label>
+                <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="ejs">
+                    <input type="radio" id="ejs" class="mdl-radio__button" name="markup" value="ejs" data-bind="markup">
+                    <span class="mdl-radio__label">EJS</span>
+                </label>
+            </p>
+            <p>Styling</p>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="css">
+                <input type="radio" id="css" class="mdl-radio__button" name="styling" value="css" data-bind="styling">
+                <span class="mdl-radio__label">CSS</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="sass">
+                <input type="radio" id="sass" class="mdl-radio__button" name="styling" value="sass" data-bind="styling">
+                <span class="mdl-radio__label">SASS(SCSS)</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="less">
+                <input type="radio" id="less" class="mdl-radio__button" name="styling" value="less" data-bind="styling">
+                <span class="mdl-radio__label">LESS</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="stylus">
+                <input type="radio" id="stylus" class="mdl-radio__button" name="styling" value="stylus" data-bind="styling">
+                <span class="mdl-radio__label">Stylus</span>
+            </label>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button class="mdl-button close" data-action="closeSettingDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+        </div>
+        </script>
+        </dialog>
+        <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog atomicLabProjectsDialog">
+        <script id="css_collections" type="text/template">
+        <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクトコレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects collection<!-- END lang:touch#en --></h4>
+        <div class="mdl-dialog__content">
+            <i class="atomicLabProjectsDialog-close material-icons" data-action="closeCollectionsDialog">close</i>
+            <div class="atomicLabProjectsDialog-addProjectForm">
+                <span class="atomicLabProjectsDialog-heading">
+                    <!-- BEGIN lang:touch#ja -->
+                    現在のプロジェクトをコレクションに新規追加
+                    <!-- END lang:touch#ja -->
+                    <!-- BEGIN lang:touch#en -->
+                    Add current project to my collections
+                    <!-- END lang:touch#en -->
+                </span>
+                <div classx="mdl-textfield mdl-js-textfield">
+                    <input type="text" data-bind="projectName" class="mdl-textfield__input atomicLabProjectsDialog-input" placeholder="Project Name">
+                    <button class="mdl-button mdl-button--raised mdl-button--accent" data-action="addToCollection">
+                    <!-- BEGIN lang:touch#ja -->
+                    追加
+                    <!-- END lang:touch#ja -->
+                    <!-- BEGIN lang:touch#en -->
+                    Add
+                    <!-- END lang:touch#en -->
+                    </button>
+                </div>
+            </div>
+            <span class="atomicLabProjectsDialog-heading">
+                <!-- BEGIN lang:touch#ja -->
+                コレクション一覧
+                <!-- END lang:touch#ja -->
+                <!-- BEGIN lang:touch#en -->
+                My collections
+                <!-- END lang:touch#en -->
+            </span>
+            <table class="atomicLabProjectsDialog-table _header">
+                <tbody>
+                    <tr>
+                        <th class="atomicLabProjectsDialog-icon"></th>
+                        <th class="atomicLabProjectsDialog-name">Name</th>
+                        <th class="atomicLabProjectsDialog-url">URL</th>
+                        <th class="atomicLabProjectsDialog-share">Share</th>
+                        <th class="atomicLabProjectsDialog-icon"></th>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="atomicLabProjectsDialog-projectsContainer">
+                <table class="atomicLabProjectsDialog-table _projects">
+                    <tbody>
+                        <!-- BEGIN collectionsReverse:loop -->
+                        <tr>
+                            <td class="atomicLabProjectsDialog-icon">
+                                <i class="material-icons">folder</i>
+                            </td>
+                            <td class="atomicLabProjectsDialog-name">
+                                <!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})">{projectName}</span><!-- END onEdit:touchnot#true -->
+                                <!-- BEGIN onEdit:touch#true -->
+                                <input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;">
+
+                                <button data-action="updateCollection({i})" class="cssLabRenameBtn">
+                                <!-- \BEGIN lang:touch#ja -->変更<!-- \END lang:touch#ja -->
+                                <!-- \BEGIN lang:touch#en -->Update<!-- \END lang:touch#en -->
+                                </button>
+                                <!-- END onEdit:touch#true -->
+
+                            </td>
+                            <td class="atomicLabProjectsDialog-url">
+                                <a href="{shortenedUrl}">{shortenedUrl}</a>
+                            </td>
+                            <td class="atomicLabProjectsDialog-share">
+                                <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconSlack-s.png" alt=""></i>
+                                <a href="https://twitter.com/intent/tweet?url={shortenedUrl}&hashtags=atomiclab" class="cssLabSocialBtn twitter" target="_blank">
+                                    <i class="atomicLabProjectsDialog-shareIcon"><img src="./images/iconTwitter-s.png" alt=""></i>
+                                </a>
+                            </td>
+                            <td class="atomicLabProjectsDialog-icon">
+                                <i id="removeCollection{i}" class="atomicLabProjectsDialog-delete material-icons _danger" >delete</i>
+                                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                                    for="removeCollection{i}">
+                                  <li disabled class="mdl-menu__item">Do you really want?</li>
+                                  <li class="mdl-menu__item">Cancel</li>
+                                  <li class="mdl-menu__item _danger" data-action="removeCollection({i})">DELETE</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <!-- END collectionsReverse:loop -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button class="mdl-button close" data-action="closeCollectionsDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+        </div>
+    </div>
+    </script>
+    </dialog>
+    <dialog class="mdl-dialog js-remove-dialog">
+    <script id="css_remove" type="text/template">
+    <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネントの削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete Components<!-- END lang:touch#en --></h4>
+    <div class="mdl-dialog__content">
+        <p>Delete All Components</p>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button class="mdl-button" data-action="removeAllComponent"><!-- BEGIN lang:touch#ja -->削除<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Delete<!-- END lang:touch#en --></button>
+        <button class="mdl-button close" data-action="closeRemoveDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+    </div>
+    </script>
+    </dialog>
+    <dialog class="mdl-dialog js-cheat-dialog">
+    <script id="css_cheat" type="text/template">
+    <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント情報<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Component Information<!-- END lang:touch#en --></h4>
+    <div class="mdl-dialog__content">
+        <div class="cssLabAbout">
+            <p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->名前<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Name<!-- END lang:touch#en --></span>{cheatName}</p>
+            <p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></span>{cheatCategory}</p>
+            <p><span class="cssLabLabel"><!-- BEGIN lang:touch#ja -->このコンポーネントについて<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->About this component<!-- END lang:touch#en --></span></p>
+            <div class="cssLabExpArea">
+                {cheatAbout}[markdown]
+            </div>
+        </div>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button class="mdl-button close" data-action="closeCheatDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+    </div>
+    </script>
+    </dialog>
+    <dialog class="mdl-dialog js-new-dialog">
+    <script id="css_new" type="text/template">
+    <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->新規コンポーネント追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add New Component<!-- END lang:touch#en --></h4>
+    <div class="mdl-dialog__content">
+        <p><!-- BEGIN lang:touch#ja -->カテゴリー<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Category<!-- END lang:touch#en --></p>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="atom">
+            <input type="radio" id="atom" class="mdl-radio__button" name="newCategory" value="atom" data-bind="newCategory">
+            <span class="mdl-radio__label">Atom</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="molecule">
+            <input type="radio" id="molecule" class="mdl-radio__button" name="newCategory" value="molecule" data-bind="newCategory">
+            <span class="mdl-radio__label">Molecule</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="organism">
+            <input type="radio" id="organism" class="mdl-radio__button" name="newCategory" value="organism" data-bind="newCategory">
+            <span class="mdl-radio__label">Organism</span>
+        </label>
+        <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="template">
+            <input type="radio" id="template" class="mdl-radio__button" name="newCategory" value="template" data-bind="newCategory">
+            <span class="mdl-radio__label">Template</span>
+        </label>
+        <div class="mdl-textfield mdl-textfield--search mdl-js-textfield">
+            <input type="text" data-bind="newName" class="mdl-textfield__input" id="search">
+            <label class="mdl-textfield__label" for="search">Component Name...</label>
+        </div>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button class="mdl-button" data-action="addComponent"><!-- BEGIN lang:touch#ja -->追加<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Add<!-- END lang:touch#en --></button>
+        <button class="mdl-button close" data-action="closeDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+    </div>
+    </script>
+    </dialog>
+    <dialog class="mdl-dialog js-edit-dialog">
+    <script id="css_about" type="text/template">
+    <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->コンポーネント編集<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Edit Component<!-- END lang:touch#en --></h4>
+    <div class="mdl-dialog__content">
+        <div>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-atom">
+                <input type="radio" id="to-atom" class="mdl-radio__button" name="category" value="atom" data-bind="category">
+                <span class="mdl-radio__label">Atom</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-molecule">
+                <input type="radio" id="to-molecule" class="mdl-radio__button" name="category" value="molecule" data-bind="category">
+                <span class="mdl-radio__label">Molecule</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-organism">
+                <input type="radio" id="to-organism" class="mdl-radio__button" name="category" value="organism" data-bind="category">
+                <span class="mdl-radio__label">Organism</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="to-template">
+                <input type="radio" id="to-template" class="mdl-radio__button" name="category" value="template" data-bind="category">
+                <span class="mdl-radio__label">Template</span>
+            </label>
+        </div>
+        <div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
+            <input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
+            <label class="mdl-textfield__label" for="update-name">Component Name...</label>
+        </div>
+        <div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
+            <input type="text" data-bind="description" class="mdl-textfield__input" id="update-description">
+            <label class="mdl-textfield__label" for="update-description">Short description...</label>
+        </div>
+        <div class="mdl-textfield mdl-textfield--large mdl-js-textfield">
+            <textarea class="mdl-textfield__input" type="text" rows= "8" id="about-textarea" data-bind="about"></textarea>
+            <label class="mdl-textfield__label" for="about-textarea">About...</label>
+        </div>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button class="mdl-button mdl-button--accent" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
+        <button class="mdl-button close" data-action="closeEditDialog"><!-- BEGIN lang:touch#ja -->閉じる<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Close<!-- END lang:touch#en --></button>
+    </div>
+    </script>
+    </dialog>
+    <!-- /Dialogs -->
+    <div class="mdl-layout">
+        <header class="mdl-layout__header atomicLabHeader">
+            <div class="mdl-layout__header-row atomicLabHeader-row">
+                <!-- Title -->
+                <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+                <!-- Add spacer, to align navigation to the right -->
+                <div class="mdl-layout-spacer"></div>
+                <!-- Navigation -->
+                <script id="css_io" type="text/template">
+                <nav class="mdl-navigation">
+                    <!-- Place this tag where you want the button to render. -->
+                    <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+                    <a class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+                    <a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
+                    <br>exported JSON</div>
+                    <a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="./images/githubMark.png" alt="GitHub">
+                    </a>
+                    <div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
+                    <br>Please star on GitHub! ;D</div>
+                </nav>
+                </script>
+            </div>
+        </header>
+        <div class="mdl-layout__content atomicLabContent">
+            <!-- Side Menu -->
+            <div class="atomicLabSideMenu">
+                <script type="text/template" id="css_project">
+                <div class="atomicLabProjectControl">
+                    <!-- Project title -->
+                    <div class="atomicLabProjectControl-title">
+                        <i class="material-icons">folder</i>
+                        <!-- BEGIN projectOnEdit:touchnot#true --><span data-action="editProjectName()">{projectName}</span><!-- END projectOnEdit:touchnot#true -->
+                        <!-- BEGIN projectOnEdit:touch#true --><input type="text" data-bind="projectName" placeholder="Project Name"> <button data-action="changeProjectName()">保存</button><!-- END projectOnEdit:touch#true -->
+                        <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+                    </div>
+                    <p class="atomicLabProjectControl-shotDescription">
+                        Keep your eyes on the stars, and your feet on the ground.
+                    </p>
+                    <!-- Project actions -->
+                    <nav class="atomicLabProjectControl-actions">
+                        <ul>
+                            <li>
+                                <i id="projectAction-share" class="material-icons">share</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share this project</div>
+                                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                                    for="projectAction-share">
+                                    <li class="mdl-menu__item" data-action="shareCurrentProject(slack)">Slack</li>
+                                    <li class="mdl-menu__item" data-action="shareCurrentProject(twitter)">Twitter</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <i id="projectAction-save" class="material-icons" data-action="addToCollection">save</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+                            </li>
+                            <li data-action="outputComp">
+                                <i id="projectAction-download" class="material-icons">file_download</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
+                                <br>(included Export JSON data)</div>
+                            </li>
+                            <li data-action="openSettingDialog">
+                                <i id="projectAction-settings" class="material-icons">settings</i>
+                                <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                </script>
+                <!-- Component list -->
+                <div class="atomicLabComponentList">
+                    <script id="css_search_result" type="text/template">
+                    <ul>
+                        <li class="atomicLabComponentList-category _atom">
+                            <span><img class="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="">Atom</span>
+                            <ul>
+                                <!-- BEGIN atomSearchResults:loop -->
+                                <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                                <span><i class="material-icons">insert_drive_file</i>
+                                    {name}
+                                    <i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
+                                    <div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
+                                </span>
+                            </li>
+                            <!-- END atomSearchResults:loop -->
+                        </ul>
+                    </li>
+                    <li class="atomicLabComponentList-category _molecule">
+                        <span><img class="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="">Molecule</span>
+                        <ul>
+                            <!-- BEGIN moleculeSearchResults:loop -->
+                            <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                            <span><i class="material-icons">insert_drive_file</i>
+                                {name}
+                                <i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
+                                <div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
+                            </span>
+                        </li>
+                        <!-- END atomSearchResults:loop -->
+                    </ul>
+                </li>
+                <li class="atomicLabComponentList-category _organism">
+                    <span><img class="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="">Organism</span>
+                    <ul>
+                        <!-- BEGIN organismSearchResults:loop -->
+                        <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                        <span><i class="material-icons">insert_drive_file</i>
+                            {name}
+                            <i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
+                            <div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
+                        </span>
+                    </li>
+                    <!-- END organismSearchResults:loop -->
+                </ul>
+            </li>
+            <li class="atomicLabComponentList-category _template">
+                <span><img class="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="">Template</span>
+                <ul>
+                    <!-- BEGIN templateSearchResults:loop -->
+                    <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
+                    <span><i class="material-icons">insert_drive_file</i>
+                        {name}
+                        <i id="copySnippet{id}" class="atomicLabComponentList-item-subAction material-icons" data-action="copySnippet({id})">code</i>
+                        <div class="mdl-tooltip" data-mdl-for="copySnippet{id}">Copy snippet</div>
+                    </span>
+                </li>
+                <!-- END templateSearchResults:loop -->
+            </ul>
+        </li>
+    </ul>
+    </script>
 </div>
 <script id="css_search" type="text/template">
 <div id="mask-search-cancel"></div>
 <div class="atomicLabSearchBox">
-	<div class="atomicLabSearchBox-floatingCard">
-		<div class="atomicLabSearchBox-main">
-			<i class="material-icons">search</i>
-			<input class="atomicLabSearchBox-input" type="text" placeholder="Search" data-action="searchComponents" data-bind="search">
-		</div>
-	</div>
+    <div class="atomicLabSearchBox-floatingCard">
+        <div class="atomicLabSearchBox-main">
+            <i class="material-icons">search</i>
+            <input class="atomicLabSearchBox-input" type="text" placeholder="Search" data-action="searchComponents" data-bind="search">
+        </div>
+    </div>
 </div>
 </script>
 </div>
@@ -394,100 +406,106 @@
 <script id="css_edit" type="text/template">
 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 <div class="atomicLabComponentControl mdl-shadow--2dp">
-	<!-- Actions -->
-	<div class="atomicLabComponentControl-actions">
-		<nav>
-			<ul>
-				<li>
-					<i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
-					<div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
-				</li>
-				<li>
-					<i id="componentAction-delete" class="material-icons _danger" data-action="deleteComp()">delete</i>
-					<div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
-				</li>
-			</ul>
-		</nav>
-	</div>
-	<!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
-	<div class="atomicLabComponentControl-icon">
-		<img src="./images/icon{category}-l.png" alt="">
-	</div>
-	<!-- Component title -->
-	<div class="atomicLabComponentControl-texts">
-		<div class="atomicLabComponentControl-title">
-			{name}
-		</div>
-		<p class="atomicLabComponentControl-description">
-			{description}
-		</p>
-	</div>
-	<!-- Tabs -->
-	<div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-		<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
-		<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
-		<a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
-	</div>
+    <!-- Actions -->
+    <div class="atomicLabComponentControl-actions">
+        <nav>
+            <ul>
+                <li>
+                    <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
+                </li>
+                <li>
+                    <i id="componentAction-delete" class="material-icons _danger">delete</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Delete</div>
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                        for="componentAction-delete">
+                      <li disabled class="mdl-menu__item">Do you really want?</li>
+                      <li class="mdl-menu__item">Cancel</li>
+                      <li class="mdl-menu__item _danger" data-action="deleteComp()">DELETE</li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
+    <div class="atomicLabComponentControl-icon">
+        <img src="./images/icon{category}-l.png" alt="">
+    </div>
+    <!-- Component title -->
+    <div class="atomicLabComponentControl-texts">
+        <div class="atomicLabComponentControl-title">
+            {name}
+        </div>
+        <p class="atomicLabComponentControl-description">
+            {description}
+        </p>
+    </div>
+    <!-- Tabs -->
+    <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
+        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
+        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
+        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
+    </div>
 </div>
 <!-- Tab panels -->
 <!-- BEGIN editMode:touch#css -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-	<textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
+    <textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
 </div>
 <!-- END editMode:touch#css -->
 <!-- BEGIN editMode:touch#html -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-	<textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
+    <textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
 </div>
 <!-- END editMode:touch#html -->
 <!-- BEGIN editMode:touch#preview -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-	<div class="atomicLabPreview">
-		<div class="atomicLabCard mdl-card mdl-shadow--2dp">
-			<div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
-			<div>
-				{html}[preview]
-			</div>
-		</div>
-		<div class="atomicLabCard mdl-card mdl-shadow--2dp">
-			<div class="atomicLabCard-title"><i class="material-icons">insert_drive_file</i> Note</div>
-			{about}[markdown]
-		</div>
-	</div>
-	<!-- END editMode:touch#preview -->
+    <div class="atomicLabPreview">
+        <div class="atomicLabCard mdl-card mdl-shadow--2dp">
+            <div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
+            <div>
+                {html}[preview]
+            </div>
+        </div>
+        <div class="atomicLabCard mdl-card mdl-shadow--2dp">
+            <div class="atomicLabCard-title"><i class="material-icons">insert_drive_file</i> Note</div>
+            {about}[markdown]
+        </div>
+    </div>
+    <!-- END editMode:touch#preview -->
 </div>
 </script>
 </main>
 <!-- Floating Action Button -->
 <div class="AtomicLabFAB">
-	<button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-	<i class="material-icons">add</i>
-	</button>
-	<div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
-	<!-- sub actions -->
-	<ul class="AtomicLabFAB-subActionsList">
-		<li>
-			<button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="atom">
-			<img src="./images/iconAtom-s.png" alt="Add Atom">
-			</button>
-			<div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
-		</li>
-		<li>
-			<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="molecule">
-			<img src="./images/iconMolecule-s.png" alt="Add Molecules">
-			</button>
-		</li>
-		<li>
-			<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="organism">
-			<img src="./images/iconOrganism-s.png" alt="Add Organism">
-			</button>
-		</li>
-		<li>
-			<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="template">
-			<img src="./images/iconTemplate-s.png" alt="Add Template">
-			</button>
-		</li>
-	</ul>
+    <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+    <i class="material-icons">add</i>
+    </button>
+    <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
+    <!-- sub actions -->
+    <ul class="AtomicLabFAB-subActionsList">
+        <li>
+            <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="atom">
+            <img src="./images/iconAtom-s.png" alt="Add Atom">
+            </button>
+            <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
+        </li>
+        <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="molecule">
+            <img src="./images/iconMolecule-s.png" alt="Add Molecules">
+            </button>
+        </li>
+        <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="organism">
+            <img src="./images/iconOrganism-s.png" alt="Add Organism">
+            </button>
+        </li>
+        <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="template">
+            <img src="./images/iconTemplate-s.png" alt="Add Template">
+            </button>
+        </li>
+    </ul>
 </div>
 <!--/ Floating Action Button-->
 </div>

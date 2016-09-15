@@ -104,7 +104,8 @@
             background-color: #e2e2e2;
 
             #{$this}-delete{
-                display: inline-block;
+                display: block;
+                position: relative;
             }
         }
     }

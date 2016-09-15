@@ -100,20 +100,23 @@
     right: 50px;
     top: 25px;
     color: #{$text-color-light};
-    ul,li{
+    nav > ul,
+    nav > ul > li{
         margin: 0;
         padding: 0;
         display: inline-block;
-    }
-    i{
-        padding: 5px;
-        cursor: pointer;
 
-        &:hover{
-            color: #{$text-color-dark};
+
+        i{
+            padding: 5px;
+            cursor: pointer;
+            &:hover{
+                color: #{$text-color-dark};
+            }
         }
 
     }
+
 }
 
 .atomicLabTabs-panel{

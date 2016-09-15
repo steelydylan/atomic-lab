@@ -12,6 +12,8 @@ $line-color-light: #efefef;
 $color-primary: rgb(120,144,156);
 $color-accent: rgb(0,150,136);
 
+
+
 html,
 body {
     min-width: 1040px;
@@ -127,8 +129,9 @@ body {
 }
 
 // Delete action hover behavior
-.material-icons._danger:hover{
-    color: #ed3838;
+.material-icons._danger:hover,
+.mdl-menu__item._danger{
+    color: #d82727;
 }
 
 // Header style for small screen
