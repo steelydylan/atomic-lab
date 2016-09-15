@@ -85,18 +85,8 @@ jQuery(function($) {
 				var self = this;
 				var query = urlParser.parse(location.href, true).query;
 				this.loadData(storageName);
-				//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
-				if (config.read_from_local_file) {
-					$.getJSON('./resources/setting.json')
-						.success(function(data) {
-							self.setData(data);
-							self.applyMethod("applyData");
-						}).error(function(err) {
-							console.log(err);
-							self.applyMethod("applyData");
-						});
 					//ハッシュタグがあればハッシュタグからデータを復元
-				} else if (location.hash) {
+				if (location.hash) {
 					var zip = new JSZip();
 					var hash = location.hash
 					var strings = JSZip.base64.decode(hash);
@@ -108,6 +98,16 @@ jQuery(function($) {
 					this.data.markup = data.markup;
 					location.hash = "";
 					this.applyMethod("applyData");
+					//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
+				} else if (config.read_from_local_file) {
+					$.getJSON('./resources/setting.json')
+						.success(function(data) {
+							self.setData(data);
+							self.applyMethod("applyData");
+						}).error(function(err) {
+							console.log(err);
+							self.applyMethod("applyData");
+						});
 				} else {
 					this.applyMethod("applyData");
 				}
