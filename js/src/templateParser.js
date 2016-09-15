@@ -61,7 +61,7 @@ var getComponentName = function(text){
 }
 
 var getTemplate = function(text){
-	var template = text.match(/<template(.*?)>(([\n\r\t]|.)*?)<\/template>/g);
+	var template = text.match(/<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->/g);
 	if(!template){
 		return "";
 	}
@@ -70,12 +70,12 @@ var getTemplate = function(text){
 }
 
 var getInnerHtmlFromTemplate = function(template){
-	return template.replace(/<(\/)?template(.*?)>/g,"");
+	return template.replace(/<!--@(\/)?template(.*?)-->/g,"");
 }
 
 var getVarsFromTemplate = function(template){
 	var templateInside = getInnerHtmlFromTemplate(template);
-	var templateFirst = template.replace(templateInside,"").replace("<!-- /template -->","");
+	var templateFirst = template.replace(templateInside,"").replace("<!--@/template(.*?)-->","");
 	return getVars(templateFirst);
 }
 
@@ -96,7 +96,7 @@ var removeSelf = function(text,self){
 }
 
 var getImports = function(text){
-	var match = text.match(/<!-- import="(.*?)" -->/);
+	var match = text.match(/<!--@import items="(.*?)" -->/);
 	if(!match){
 		return "";
 	}

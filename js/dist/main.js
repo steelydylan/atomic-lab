@@ -1169,7 +1169,7 @@ jQuery(function($) {
 				var query = urlParser.parse(location.href, true).query;
 				this.loadData(storageName);
 				//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
-				if (query && query.json_enable) {
+				if (config.read_from_local_file) {
 					$.getJSON('./resources/setting.json')
 						.success(function(data) {
 							self.setData(data);
@@ -1240,7 +1240,7 @@ jQuery(function($) {
 				var hash = encodeURI(strings);
 				hash = JSZip.compressions.DEFLATE.compress(hash);
 				hash = JSZip.base64.encode(hash);
-				var key = "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA";
+				var key = config.key;
 				location.hash = hash;
 				var url = location.href;
 				var obj = urlParser.parse(url);
@@ -1761,7 +1761,11 @@ jQuery(function($) {
 				return marked(note);
 			},
 			deleteScriptTag: function(data) {
-				return parser.removeScript(data);
+				if(config.run_script){
+					return data;
+				}else{
+					return parser.removeScript(data);
+				}
 			},
 			reversedIndex: function(i) {
 				return this.data.collections.length - i - 1;
@@ -5689,7 +5693,7 @@ var getComponentName = function(text){
 }
 
 var getTemplate = function(text){
-	var template = text.match(/<template(.*?)>(([\n\r\t]|.)*?)<\/template>/g);
+	var template = text.match(/<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->/g);
 	if(!template){
 		return "";
 	}
@@ -5698,12 +5702,12 @@ var getTemplate = function(text){
 }
 
 var getInnerHtmlFromTemplate = function(template){
-	return template.replace(/<(\/)?template(.*?)>/g,"");
+	return template.replace(/<!--@(\/)?template(.*?)-->/g,"");
 }
 
 var getVarsFromTemplate = function(template){
 	var templateInside = getInnerHtmlFromTemplate(template);
-	var templateFirst = template.replace(templateInside,"").replace("<!-- /template -->","");
+	var templateFirst = template.replace(templateInside,"").replace("<!--@/template(.*?)-->","");
 	return getVars(templateFirst);
 }
 
@@ -5724,7 +5728,7 @@ var removeSelf = function(text,self){
 }
 
 var getImports = function(text){
-	var match = text.match(/<!-- import="(.*?)" -->/);
+	var match = text.match(/<!--@import items="(.*?)" -->/);
 	if(!match){
 		return "";
 	}

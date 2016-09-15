@@ -14,41 +14,42 @@ Template sharing and coding environment based on atomic design
 
 ### preview
 ```html
-<!-- preview -->
+<!--@preview
 code here
-<!-- /preview -->
+-->
+```
+
+### note
+```html
+<!--@note
+markdown here
+-->
 ```
 
 ### make template
 
 define template
 ```html
-<!-- template -->
+<!--@template -->
 code here
-<!-- /template -->
+<!--@/template -->
 ```
 
 set default variable
 ```html
-<!-- template text="hoge" -->
+<!--@template text="hoge" -->
 <p>{text}</p>
-<!-- /template -->
+<!--@/template -->
 ```
 
 ### use template
 supporse that component's name is "main-visual"
 ```html
-<!-- import="main-visual,button" -->
-<!-- main-visual image="hoge.png" -->
-<!-- button -->
+<!--@import parts="main-visual" -->
+<main-visual image="hoge.png"></main-visual>
 ```
 
 ## Attribution
-We use these icons created by http://patternlab.io/
-
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/atom.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/molucule.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/organism.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/template.svg">
+We use some icons created by http://patternlab.io/
 ## License
 MIT License
