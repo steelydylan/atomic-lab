@@ -13,16 +13,26 @@ var getVars = function(text){
 }
 
 var getPreview = function(text){
-	var preview = text.match(/<!-- preview(([\n\r\t]|.)*?)\/preview -->/g);
+	var preview = text.match(/<!--@preview(([\n\r\t]|.)*?)-->/g);
 	if(!preview){
 		return "";
 	}
 	preview = preview[0];
 	return preview
-		.replace(/<!-- preview/g,"")
-		.replace(/\/preview -->/g,"");
+		.replace(/<!--@preview/g,"")
+		.replace(/-->/g,"");
 }
 
+var getNote = function(text){
+	var preview = text.match(/<!--@note(([\n\r\t]|.)*?)-->/g);
+	if(!note){
+		return "";
+	}
+	note = note[0];
+	return note
+		.replace(/<!--@note/g,"")
+		.replace(/-->/g,"");
+}
 
 var getTag = function(text,components){
 	var ret = text.match(/<(.*?)>/g);
@@ -98,6 +108,7 @@ var getImports = function(text){
 module.exports = {
 	getTag:getTag,
 	getPreview:getPreview,
+	getNote:getNote,
 	getComponentName:getComponentName,
 	getVars:getVars,
 	getTemplate:getTemplate,

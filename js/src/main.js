@@ -676,6 +676,10 @@ jQuery(function($) {
                 //todo delete
                 return parser.removeScript(preview);
             },
+            note: function(text){
+            	var note = parser.getNote(text);
+            	return note;
+            },
             deleteScriptTag: function(data) {
                 return parser.removeScript(data);
             },
