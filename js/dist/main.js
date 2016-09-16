@@ -1123,7 +1123,8 @@ jQuery(function($) {
 			"css_exp",
 			"css_collections",
 			"css_project",
-			"css_fab"
+			"css_fab",
+			"css_dependencies"
 		],
 		data: {
 			lang: lang,
@@ -1169,6 +1170,8 @@ jQuery(function($) {
 				var query = urlParser.parse(location.href, true).query;
 				this.loadData(storageName);
 				this.data.use_url_shortener = config.use_url_shortener;
+				this.data.title = config.title;
+				this.data.css_dependencies = config.css_dependencies;
 					//ハッシュタグがあればハッシュタグからデータを復元
 				if (location.hash) {
 					var zip = new JSZip();
@@ -1763,11 +1766,16 @@ jQuery(function($) {
 				for (var i = 0, n = components.length; i < n; i++) {
 					var comp = components[i];
 					if (imports.indexOf(comp.name) !== -1 || this.data.id == comp.id) {
-						preview += "<style>" + compiler.styling[this.data.styling](comp.css) + "</style>";
+						var css = compiler.styling[this.data.styling](comp.css);
+						preview += "<style>" + css + "</style>";
 					}
 				}
 				//todo delete
-				return parser.removeScript(preview);
+				if(config.run_script){
+					return preview;
+				}else{
+					return parser.removeScript(preview);
+				}
 			},
 			note: function(text){
 				var note = parser.getNote(text);

@@ -16,35 +16,35 @@ $color-accent: rgb(0,150,136);
 
 html,
 body {
-    min-width: 1040px;
-    height: 100%;
-    color: #{$text-color-default};
-    position: relative;
+	min-width: 1040px;
+	height: 100%;
+	color: #{$text-color-default};
+	position: relative;
 }
 
 *,
 *::after,
 *::before {
-    box-sizing: inherit;
+	box-sizing: inherit;
 }
 
 .atomicLabHeader {
-    box-shadow: none;
-    &-row {
-        padding-left: 40px;
-    }
-    &-gitHubMark {
-        width: 34px;
-    }
+	box-shadow: none;
+	&-row {
+		padding-left: 40px;
+	}
+	&-gitHubMark {
+		width: 34px;
+	}
 }
 .atomicLabContent{
-    height: 100%;
-    display: flex;
+	height: 100%;
+	display: flex;
 }
 
 // Common dialog width
 .mdl-dialog{
-    width: 600px;
+	width: 600px;
 }
 
 
@@ -60,83 +60,84 @@ body {
 
 
 .ace_editor {
-    height: 100%;
-    margin-top: 0;
+	height: 100%;
+	margin-top: 0;
 }
 
 #mask-search-cancel{
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 8000;
-    display: none;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 8000;
+	display: none;
 }
 
 .sourceCopied {
-    position: fixed;
-    z-index: 1000;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    -webkit-transition: background-color .2s ease-in;
-    transition: background-color .2s ease-in;
-    text-align: center;
-    color: #fff;
-    background-color: transparent;
+	position: fixed;
+	z-index: 1000;
+	top: 50%;
+	left: 0;
+	width: 100%;
+	padding: 10px;
+	-webkit-transition: background-color .2s ease-in;
+	transition: background-color .2s ease-in;
+	text-align: center;
+	color: #fff;
+	background-color: transparent;
 }
 
 .sourceCopied.active {
-    background-color: rgba(0, 0, 0, .9);
+	background-color: rgba(0, 0, 0, .9);
 }
 
 
 
 .atomicLabCard{
-    width: 95%;
-    margin: 25px auto;
-    padding: 20px;
+	width: 95%;
+	margin: 25px auto;
+	padding: 20px;
 
 
-    h1{
-        font-size: 40px;
-    }
-    h2{
-        font-size: 38px;
-    }
+	// h1{
+	// 	font-size: 40px;
+	// }
+	// h2{
+	// 	font-size: 38px;
+	// }
 
-    &-title{
-        font-size: 24px;
-        margin: 5px 0 20px 0;
-        color: #{$text-color-light};
+	&-title{
+		font-size: 24px;
+		margin: 5px 0 20px 0;
+		color: #{$text-color-light};
 
-        > i{
-            vertical-align: bottom;
-        }
-    }
+		> i{
+			vertical-align: bottom;
+		}
+	}
 
 }
 
 
+
 // Dialog title style
 .mdl-dialog__title{
-    padding: 15px 24px 0;
-    margin: 0;
-    font-size: 24px;
-    color: #{$text-color-accent};
+	padding: 15px 24px 0;
+	margin: 0;
+	font-size: 24px;
+	color: #{$text-color-accent};
 }
 
 // Delete action hover behavior
 .material-icons._danger:hover,
 .mdl-menu__item._danger{
-    color: #d82727;
+	color: #d82727;
 }
 
 // Header style for small screen
 @media screen and (max-width: 1024px) {
-    .mdl-layout__header {
-        display: block;
-    }
+	.mdl-layout__header {
+		display: block;
+	}
 }

@@ -1,4 +1,5 @@
 var config = {
+	title:"MBA Styleguide",
 	/*
 		read data from jsonfile
 		instead of localstorage
@@ -15,5 +16,7 @@ var config = {
 		used for Google URL shortener
 	*/
 	use_url_shortener:true,
-	key:"AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA"
+	key:"AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA",
+	css_dependencies:[
+	]
 }

@@ -12,6 +12,11 @@
 		<script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
 	</head>
 	<body>
+		<script id="css_dependencies" type="text/template">
+		<!-- BEGIN css_dependencies:loop -->
+		<link rel="stylesheet" href="{css}">
+		<!-- END css_dependencies:loop -->
+		</script>
 		<dialog class="mdl-dialog js-setting-dialog">
 		<script id="css_setting" type="text/template">
 		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->設定<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Setting<!-- END lang:touch#en --></h4>
@@ -243,12 +248,12 @@
 	<!-- /Dialogs -->
 	<div class="mdl-layout">
 		<header class="mdl-layout__header atomicLabHeader">
+			<script id="css_io" type="text/template">
 			<div class="mdl-layout__header-row atomicLabHeader-row">
-				<span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+				<span class="mdl-layout-title mdl-layout-logo">{title}</span>
 				<!-- Add spacer, to align navigation to the right -->
 				<div class="mdl-layout-spacer"></div>
 				<!-- Navigation -->
-				<script id="css_io" type="text/template">
 				<nav class="mdl-navigation">
 					<!-- Place this tag where you want the button to render. -->
 					<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
@@ -263,8 +268,9 @@
 					<div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
 					<br>Please star on GitHub! ;D</div>
 				</nav>
-				</script>
+
 			</div>
+			</script>
 		</header>
 		<div class="mdl-layout__content atomicLabContent">
 			<!-- Side Menu -->
@@ -451,7 +457,7 @@
 	<div class="atomicLabPreview">
 		<div class="atomicLabCard mdl-card mdl-shadow--2dp">
 			<div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
-			<div>
+			<div class="js-preview">
 				{html}[preview]
 			</div>
 		</div>
