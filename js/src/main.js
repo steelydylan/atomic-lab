@@ -675,6 +675,7 @@ jQuery(function($) {
 					var comp = components[i];
 					if (imports.indexOf(comp.name) !== -1 || this.data.id == comp.id) {
 						var css = compiler.styling[this.data.styling](comp.css);
+						css = compiler.util.addNormalizeCss(css);
 						css = compiler.util.addParentSelectorToAll(css,".js-preview");
 						preview += "<style>" + css + "</style>";
 					}

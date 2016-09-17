@@ -2,16 +2,31 @@ var ejs = require("ejs");
 var jade = require("jade");
 var haml = require("hamljs");
 var css = require("css");
+var normalize = require("./normalize.js");
 module.exports = {
 	util:{
+		addNormalizeCss:function(source){
+			console.log(normalize);
+			return normalize+source;
+		},
 		addParentSelectorToAll:function(source,addClass){
 			var parse = css.parse(source);
 			var rules = parse.stylesheet.rules;
+			if(!rules){
+				return source;
+			}
 			for(var i = 0,n = rules.length; i < n; i++){
 				var rule = rules[i];
-				var selectors = rule.selectors
-				for(var j= 0,m = selectors.length; j < m; j++){
-					selectors[j] = addClass+" "+selectors[j];
+				var selectors = rule.selectors;
+				if(!selectors){
+					continue;
+				}
+				for(var j= 0, m = selectors.length; j < m; j++){
+					if(selectors[j] === "body" || selectors[j] === "html"){
+						selectors[j] = addClass;
+					}else{
+						selectors[j] = addClass+" "+selectors[j];
+					}
 				}
 			}
 			source = css.stringify(parse);
