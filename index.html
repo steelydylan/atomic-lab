@@ -420,18 +420,25 @@
 <div class="atomicLabComponentControl mdl-shadow--2dp">
   <!-- Actions -->
   <div class="atomicLabComponentControl-actions">
-    <nav>
-      <ul>
-        <li>
-          <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
-          <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
-        </li>
-        <li>
-          <i id="componentAction-delete" class="material-icons _danger" data-action="deleteComp()">delete</i>
-          <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
-        </li>
-      </ul>
-    </nav>
+        <nav>
+            <ul>
+                <li>
+                    <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
+                </li>
+                <li>
+                    <i id="componentAction-delete" class="material-icons _danger">delete</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Delete</div>
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                        for="componentAction-delete">
+                      <li disabled class="mdl-menu__item">Do you really want?</li>
+                      <li class="mdl-menu__item">Cancel</li>
+                      <li class="mdl-menu__item _danger" data-action="deleteComp()">DELETE</li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
   </div>
   <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
   <div class="atomicLabComponentControl-icon">
