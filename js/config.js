@@ -1,5 +1,5 @@
 var config = {
-	title:"MBA Styleguide",
+	title:"Atomic Lab.",
 	/*
 		read data from jsonfile
 		instead of localstorage
@@ -18,5 +18,6 @@ var config = {
 	use_url_shortener:true,
 	key:"AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA",
 	css_dependencies:[
+
 	]
 }
