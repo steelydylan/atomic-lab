@@ -21,9 +21,7 @@
     "hamljs": "*",
     "jade": "*",
     "url": "*",
-    "atomic-generator": "*"
-  },
-  "dependencies": {
+    "css": "*",
     "atomic-generator": "^1.1.4"
   }
 }

@@ -59,6 +59,17 @@ gulp.task('default', function () {
     gulp.watch('css/src/**/*.scss', ['sass']);
     gulp.watch('components/**',['atomic']);
 });
+
 gulp.task('sass-watch', function () {
+		bs.init({
+        server: "./"
+    });
     gulp.watch('css/src/**/*.scss', ['sass']);
+});
+
+gulp.task('js-watch', function () {
+    bs.init({
+        server: "./"
+    });
+    gulp.watch('js/src/**/*.js', ['js']);
 });

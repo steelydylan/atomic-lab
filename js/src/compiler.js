@@ -1,7 +1,23 @@
 var ejs = require("ejs");
 var jade = require("jade");
 var haml = require("hamljs");
+var css = require("css");
 module.exports = {
+	util:{
+		addParentSelectorToAll:function(source,addClass){
+			var parse = css.parse(source);
+			var rules = parse.stylesheet.rules;
+			for(var i = 0,n = rules.length; i < n; i++){
+				var rule = rules[i];
+				var selectors = rule.selectors
+				for(var j= 0,m = selectors.length; j < m; j++){
+					selectors[j] = addClass+" "+selectors[j];
+				}
+			}
+			source = css.stringify(parse);
+			return source;
+		}
+	},
 	styling:{
 		sass:function(txt){
 			return Sass.compile(txt);
