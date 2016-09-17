@@ -65,6 +65,7 @@
     </dialog>
     <dialog class="mdl-dialog mdl-dialog--superwide js-collections-dialog atomicLabProjectsDialog">
     <script id="css_collections" type="text/template">
+        <script id="css_collections" type="text/template">
         <h4 class="atomicLabProjectsDialog-title mdl-dialog__title"><!-- BEGIN lang:touch#ja -->プロジェクトコレクション<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Projects collection<!-- END lang:touch#en --></h4>
         <div class="mdl-dialog__content">
             <i class="atomicLabProjectsDialog-close material-icons" data-action="closeCollectionsDialog">close</i>
@@ -418,56 +419,50 @@
 <script id="css_edit" type="text/template">
 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 <div class="atomicLabComponentControl mdl-shadow--2dp">
-    <!-- Actions -->
-    <div class="atomicLabComponentControl-actions">
-        <nav>
-            <ul>
-                <li>
-                    <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
-                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
-                </li>
-                <li>
-                    <i id="componentAction-delete" class="material-icons _danger">delete</i>
-                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Delete</div>
-                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                        for="componentAction-delete">
-                      <li disabled class="mdl-menu__item">Do you really want?</li>
-                      <li class="mdl-menu__item">Cancel</li>
-                      <li class="mdl-menu__item _danger" data-action="deleteComp()">DELETE</li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+  <!-- Actions -->
+  <div class="atomicLabComponentControl-actions">
+    <nav>
+      <ul>
+        <li>
+          <i id="componentAction-settings" class="material-icons" data-action="openEditDialog">edit</i>
+          <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Edit component settings</div>
+        </li>
+        <li>
+          <i id="componentAction-delete" class="material-icons _danger" data-action="deleteComp()">delete</i>
+          <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
+  <div class="atomicLabComponentControl-icon">
+    <img src="./images/icon{category}-l.png" alt="">
+  </div>
+  <!-- Component title -->
+  <div class="atomicLabComponentControl-texts">
+    <div class="atomicLabComponentControl-title">
+      {name}
     </div>
-    <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
-    <div class="atomicLabComponentControl-icon">
-        <img src="./images/icon{category}-l.png" alt="">
-    </div>
-    <!-- Component title -->
-    <div class="atomicLabComponentControl-texts">
-        <div class="atomicLabComponentControl-title">
-            {name}
-        </div>
-        <p class="atomicLabComponentControl-description">
-            {description}
-        </p>
-    </div>
-    <!-- Tabs -->
-    <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
-        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
-        <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
-    </div>
+    <p class="atomicLabComponentControl-description">
+      {description}
+    </p>
+  </div>
+  <!-- Tabs -->
+  <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
+    <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
+    <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
+    <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
+  </div>
 </div>
 <!-- Tab panels -->
 <!-- BEGIN editMode:touch#css -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-    <textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
+  <textarea data-bind="css" data-action="changeStyle(css)" class="atomicLabTabs-panel-editArea" id="js-css"></textarea>
 </div>
 <!-- END editMode:touch#css -->
 <!-- BEGIN editMode:touch#html -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
-    <textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
+  <textarea data-bind="html" data-action="changeStyle(html)" class="atomicLabTabs-panel-editArea" id="js-html"></textarea>
 </div>
 <!-- END editMode:touch#html -->
 <!-- BEGIN editMode:touch#preview -->
@@ -475,7 +470,7 @@
   <div class="atomicLabPreview">
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
-      <div>
+      <div class="js-preview">
         {html}[preview]
       </div>
     </div>
