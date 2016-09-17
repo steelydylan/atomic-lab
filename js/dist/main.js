@@ -1286,6 +1286,7 @@ jQuery(function($) {
 			//after updated
 			onUpdated: function() {
 				this.saveData(storageName);
+				componentHandler.upgradeDom();
 			},
 			showAlert: function(msg) {
 				var $alert = $("<div class='sourceCopied'>" + msg + "</div>");
@@ -1353,7 +1354,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				componentHandler.upgradeDom();
 				if (this.data.editMode != "preview") {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
@@ -1375,7 +1375,6 @@ jQuery(function($) {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
 				this.saveData(storageName);
-				componentHandler.upgradeDom();
 			},
 			outputComp: function() {
 				var zip = new JSZip();
@@ -1400,7 +1399,6 @@ jQuery(function($) {
 			searchComponents: function() {
 				this.data.searchStatus = "active";
 				this.update("html", "css_search_result");
-				componentHandler.upgradeDom();
 			},
 			convertCompToHtml: function(word) {
 				var data = this.data.components;
@@ -1447,7 +1445,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				// this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				componentHandler.upgradeDom();
 				this.saveData(storageName);
 			},
 			addComponent: function() {
@@ -1469,7 +1466,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				componentHandler.upgradeDom();
 				this.saveData(storageName);
 			},
 			readSetting: function() {
@@ -1494,7 +1490,6 @@ jQuery(function($) {
 				}
 				this.data.editMode = mode;
 				this.update();
-				componentHandler.upgradeDom();
 				if (this.data.editMode != "preview") {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
@@ -1517,7 +1512,6 @@ jQuery(function($) {
 			openDialog: function(category) {
 				this.data.newCategory = category;
 				this.update("html", "css_new");
-				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-new-dialog");
 				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
@@ -1528,7 +1522,6 @@ jQuery(function($) {
 			},
 			openEditDialog: function() {
 				this.update("html", "css_about");
-				componentHandler.upgradeDom();
 				var dialog = document.querySelector(".js-edit-dialog");
 				dialogPolyfill.registerDialog(dialog);
 				dialog.showModal();
@@ -1553,7 +1546,6 @@ jQuery(function($) {
 				this.saveData(storageName);
 				this.applyMethod("showAlert", "すべてのコンポーネントを削除しました。");
 				this.update("html", "css_search_result");
-				componentHandler.upgradeDom();
 			},
 			doneEditDialog: function() {
 				this.applyMethod("closeEditDialog");
@@ -1570,7 +1562,6 @@ jQuery(function($) {
 				if (this.data.editMode != "preview") {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
-				componentHandler.upgradeDom();
 			},
 			openSettingDialog: function() {
 				var dialog = document.querySelector(".js-setting-dialog");
