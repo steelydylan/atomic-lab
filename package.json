@@ -22,6 +22,6 @@
     "jade": "*",
     "url": "*",
     "css": "*",
-    "atomic-generator": "^1.1.4"
+    "atomic-generator": "^1.1.5"
   }
 }
