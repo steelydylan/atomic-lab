@@ -41,7 +41,8 @@ jQuery(function($) {
 			"css_collections",
 			"css_project",
 			"css_fab",
-			"css_dependencies"
+			"css_dependencies",
+			"css_template"
 		],
 		data: {
 			lang: lang,
@@ -345,8 +346,9 @@ jQuery(function($) {
 			addComponent: function() {
 				var data = this.data;
 				var id = this.applyMethod("getUniqueId");
+				var html = this.getHtml("#css_template");
 				var obj = {
-					html: "",
+					html: html,
 					css: "",
 					name: data.newName,
 					id: id,
