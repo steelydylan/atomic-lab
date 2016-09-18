@@ -1242,9 +1242,6 @@ jQuery(function($) {
 					this.data.description = comp.description;
 				}
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 				return this;
 			},
 			getSearchResults: function(category) {
@@ -1302,6 +1299,9 @@ jQuery(function($) {
 			onUpdated: function() {
 				this.saveData(storageName);
 				componentHandler.upgradeDom();
+				if (this.data.editMode != "preview") {
+					this.applyMethod("runEditor", this.data.editMode);
+				}
 			},
 			showAlert: function(msg) {
 				var $alert = $("<div class='sourceCopied'>" + msg + "</div>");
@@ -1369,9 +1369,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			deleteComp: function() {
 				var id = this.data.id;
@@ -1386,9 +1383,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 				this.saveData(storageName);
 			},
 			outputComp: function() {
@@ -1505,9 +1499,6 @@ jQuery(function($) {
 				}
 				this.data.editMode = mode;
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			openCheatDialog: function(i) {
 				this.e.stopPropagation();
@@ -1566,17 +1557,11 @@ jQuery(function($) {
 				this.applyMethod("closeEditDialog");
 				this.applyMethod("saveComponent");
 				this.update("html", "css_edit");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			clearEditor: function() {
 				this.removeData(['name', 'html', 'css']);
 				this.saveData(storageName);
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			openSettingDialog: function() {
 				var dialog = document.querySelector(".js-setting-dialog");
@@ -1611,6 +1596,9 @@ jQuery(function($) {
 					mode = this.data.markup;
 				} else if (name == "css") {
 					mode = this.data.styling;
+				}
+				if($("#js-"+name).length == 0){
+					return;
 				}
 				editor = ace.edit("js-" + name);
 				editor.setTheme("ace/theme/monokai");
