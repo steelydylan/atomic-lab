@@ -5,8 +5,8 @@ var css = require("css");
 var normalize = require("./normalize.js");
 module.exports = {
 	util:{
-		addNormalizeCss:function(source){
-			return normalize+source;
+		addNormalizeCss:function(){
+			return normalize;
 		},
 		addParentSelectorToAll:function(source,addClass){
 			var parse = css.parse(source);
