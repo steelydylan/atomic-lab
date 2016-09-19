@@ -1,0 +1,22 @@
+.Hero{
+  padding: 40px;
+  background-color: #78909C;
+}
+
+.Hero-copy{
+  text-align: right;
+  color: #fff;
+}
+.Hero-copy-main{
+  font-size: 40px;
+
+}
+.Hero-copy-sub{
+  font-size: 30px;
+  line-height: 1.6em;
+}
+
+.wrapper{
+  width: 800px;
+  margin: 0 auto;
+}
