@@ -80,6 +80,12 @@
         }
     }
 
+    &-update{
+    	display: inline-block;
+    	cursor: pointer;
+    	vertical-align: middle;
+    }
+
     // Icons
     &-close{
         position: absolute;

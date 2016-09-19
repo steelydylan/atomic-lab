@@ -45,9 +45,8 @@ gulp.task('js', function () {
 gulp.task('atomic', function(){
 		atomic.build({
 			src:"components/",
-			dist:"resources/",
-			markup:"ejs",
-			styling:"sass"
+			dist:"resources/setting.json",
+			markup:"ejs"
 		}).then(bs.reload());
 });
 

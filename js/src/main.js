@@ -10,6 +10,7 @@ jQuery(function($) {
 	var parser = require("./templateParser.js");
 	var compiler = require("./compiler.js");
 	var slackWidget = require("./slack-widget.js");
+	var Prism = require("./prism.js");
 	var editor = {};
 	var i18n = jQuery.i18n.browserLang();
 	var lang;
@@ -41,7 +42,8 @@ jQuery(function($) {
 			"css_collections",
 			"css_project",
 			"css_fab",
-			"css_dependencies"
+			"css_dependencies",
+			"css_template"
 		],
 		data: {
 			lang: lang,
@@ -93,14 +95,18 @@ jQuery(function($) {
 				if (location.hash) {
 					var zip = new JSZip();
 					var hash = location.hash
-					var strings = JSZip.base64.decode(hash);
-					strings = JSZip.compressions.DEFLATE.uncompress(strings);
-					strings = decodeURI(strings);
-					var data = JSON.parse(strings);
-					this.data.components = data.components;
-					this.data.styling = data.styling;
-					this.data.markup = data.markup;
-					location.hash = "";
+					try{
+						var strings = JSZip.base64.decode(hash);
+						strings = JSZip.compressions.DEFLATE.uncompress(strings);
+						strings = decodeURI(strings);
+						var data = JSON.parse(strings);
+						this.data.components = data.components;
+						this.data.styling = data.styling;
+						this.data.markup = data.markup;
+						location.hash = "";
+					}catch(err){
+						console.log(err);
+					}
 					this.applyMethod("applyData");
 					//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
 				} else if (config.read_from_local_file) {
@@ -128,9 +134,6 @@ jQuery(function($) {
 					this.data.description = comp.description;
 				}
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 				return this;
 			},
 			getSearchResults: function(category) {
@@ -188,6 +191,13 @@ jQuery(function($) {
 			onUpdated: function() {
 				this.saveData(storageName);
 				componentHandler.upgradeDom();
+				if (this.data.editMode != "preview") {
+					this.applyMethod("runEditor", this.data.editMode);
+				}
+				$(".js-note code").each(function(){
+					console.log($(this)[0]);
+					Prism.highlightElement($(this)[0]);
+				});
 			},
 			showAlert: function(msg) {
 				var $alert = $("<div class='sourceCopied'>" + msg + "</div>");
@@ -255,9 +265,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			deleteComp: function() {
 				var id = this.data.id;
@@ -272,9 +279,6 @@ jQuery(function($) {
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 				this.saveData(storageName);
 			},
 			outputComp: function() {
@@ -351,8 +355,9 @@ jQuery(function($) {
 			addComponent: function() {
 				var data = this.data;
 				var id = this.applyMethod("getUniqueId");
+				var html = this.getHtml("#css_template");
 				var obj = {
-					html: "",
+					html: html,
 					css: "",
 					name: data.newName,
 					id: id,
@@ -391,9 +396,6 @@ jQuery(function($) {
 				}
 				this.data.editMode = mode;
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			openCheatDialog: function(i) {
 				this.e.stopPropagation();
@@ -452,17 +454,11 @@ jQuery(function($) {
 				this.applyMethod("closeEditDialog");
 				this.applyMethod("saveComponent");
 				this.update("html", "css_edit");
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			clearEditor: function() {
 				this.removeData(['name', 'html', 'css']);
 				this.saveData(storageName);
 				this.update();
-				if (this.data.editMode != "preview") {
-					this.applyMethod("runEditor", this.data.editMode);
-				}
 			},
 			openSettingDialog: function() {
 				var dialog = document.querySelector(".js-setting-dialog");
@@ -497,6 +493,9 @@ jQuery(function($) {
 					mode = this.data.markup;
 				} else if (name == "css") {
 					mode = this.data.styling;
+				}
+				if($("#js-"+name).length == 0){
+					return;
 				}
 				editor = ace.edit("js-" + name);
 				editor.setTheme("ace/theme/monokai");
@@ -576,6 +575,17 @@ jQuery(function($) {
 				var project = collections[index];
 				project.onEdit = "true";
 				this.update("html", "css_collections");
+			},
+			updateProjectUrl: function(i) {
+				var self = this;
+				var collections = this.data.collections
+				var index = collections.length - i - 1;
+				var project = collections[index];
+				self.applyMethod("getShortenedUrl")
+					.then(function(){
+						project.shortenedUrl = self.data.shortenedUrl;
+						self.update("html","css_collections");
+					});
 			},
 			/*
 
@@ -671,15 +681,15 @@ jQuery(function($) {
 					}
 				}
 				//スタイルシート取得
+				var css = compiler.util.addNormalizeCss();;
 				for (var i = 0, n = components.length; i < n; i++) {
 					var comp = components[i];
 					if (imports.indexOf(comp.name) !== -1 || this.data.id == comp.id) {
-						var css = compiler.styling[this.data.styling](comp.css);
-						css = compiler.util.addNormalizeCss(css);
-						css = compiler.util.addParentSelectorToAll(css,".js-preview");
-						preview += "<style>" + css + "</style>";
+						css += compiler.styling[this.data.styling](comp.css);
 					}
 				}
+				css = compiler.util.addParentSelectorToAll(css,".js-preview");
+				preview += "<style>" + css + "</style>";
 				//todo delete
 				if(config.run_script){
 					return preview;

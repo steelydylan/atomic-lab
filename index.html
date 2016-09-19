@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="./css/material-customized.css" />
     <link rel="stylesheet" href="./css/atomic-lab.css">
+    <link rel="stylesheet" href="./css/prism.css">
+    <link rel="stylesheet" href="./css/dialog-polyfill.css">
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
   </head>
   <body>
@@ -117,7 +119,7 @@
                                 <i class="material-icons">folder</i>
                             </td>
                             <td class="atomicLabProjectsDialog-name">
-                                <!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})">{projectName}</span><!-- END onEdit:touchnot#true -->
+                                <!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})" style="cursor:pointer">{projectName}</span><!-- END onEdit:touchnot#true -->
                                 <!-- BEGIN onEdit:touch#true -->
                                 <input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;">
 
@@ -129,6 +131,7 @@
 
                             </td>
                             <td class="atomicLabProjectsDialog-url">
+                            		<i data-action="updateProjectUrl({i})" class="material-icons atomicLabProjectsDialog-update">update</i>
                                 <a href="{shortenedUrl}">{shortenedUrl}</a>
                             </td>
                             <td class="atomicLabProjectsDialog-share">
@@ -442,7 +445,18 @@
 
   <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
   <div class="atomicLabComponentControl-icon">
-    <img src="./images/icon{category}-l.png" alt="">
+  	<!-- BEGIN category:touch#atom -->
+    <img src="./images/iconAtom-l.png" alt="">
+    <!-- END category:touch#atom -->
+    <!-- BEGIN category:touch#molecule -->
+    <img src="./images/iconMolecule-l.png" alt="">
+    <!-- END category:touch#molecule -->
+    <!-- BEGIN category:touch#organism -->
+    <img src="./images/iconOrganism-l.png" alt="">
+    <!-- END category:touch#organism -->
+    <!-- BEGIN category:touch#template -->
+    <img src="./images/iconTemplate-l.png" alt="">
+		<!-- END category:touch#template -->
   </div>
   <!-- Component title -->
   <div class="atomicLabComponentControl-texts">
@@ -482,7 +496,9 @@
     </div>
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">insert_drive_file</i> Note</div>
-      {html}[note]
+				<div class="atomicLabNote js-note">
+      		{html}[note]
+      	</div>
     </div>
   </div>
   <!-- END editMode:touch#preview -->
@@ -523,8 +539,24 @@
 <!--/ Floating Action Button-->
 </div>
 </div>
-<!--        <script async defer src="https://buttons.github.io/buttons.js"></script>-->
-<!--        <script src="http://slackbutton.herokuapp.com/widget.js" type="text/javascript"></script>-->
+<script type="text/template" id="css_template">
+<!--@doc
+# @category {newCategory}
+# @name {newName}
+# @css ./{newName}.{styling}
+-->
+
+<!--@template-->
+
+<!--@/template-->
+
+<!--@preview
+
+-->
+<!--@note
+# About {newName}
+-->
+</script>
 <script src="./js/config.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/sass.js/0.4.0/sass.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js"></script>

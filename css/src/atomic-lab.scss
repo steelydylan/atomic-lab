@@ -47,6 +47,10 @@ body {
 	width: 600px;
 }
 
+.mdl-radio{
+	margin-right: 15px;
+}
+
 
 // Parts
 
@@ -117,6 +121,38 @@ body {
 		}
 	}
 
+}
+
+.atomicLabNote{
+	& h1{
+    	font-size: 32px;
+    	border-bottom: 1px solid #eee;
+    	margin-bottom: 16px;
+	}
+	& h2{
+		font-size: 24px;
+		border-bottom: 1px solid #eee;
+		margin-bottom: 16px;
+	}
+
+	& ul{
+		margin-top: 0;
+    	margin-bottom: 16px;
+	}
+
+	& pre{
+		padding: 16px;
+	    overflow: auto;
+	    font-size: 85%;
+	    line-height: 1.45;
+	    background-color: #f7f7f7;
+	    border-radius: 3px;
+	    margin-bottom: 16px;
+	}
+
+	& p{
+		margin-bottom: 16px;
+	}
 }
 
 
