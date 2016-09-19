@@ -25,6 +25,9 @@ body {
 .mdl-dialog {
   width: 600px; }
 
+.mdl-radio {
+  margin-right: 15px; }
+
 .atomicLabSideMenu {
   box-sizing: border-box;
   width: 310px;
