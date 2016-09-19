@@ -1,0 +1,179 @@
+@charset "utf-8";
+
+
+$text-color-default: #454545;
+$text-color-light: #848484;
+$text-color-dark: #454545;
+$text-color-accent: rgb(0,150,136);
+
+$line-color-default: #D7D7D7;
+$line-color-light: #efefef;
+
+$color-primary: rgb(120,144,156);
+$color-accent: rgb(0,150,136);
+
+
+
+html,
+body {
+	min-width: 1040px;
+	height: 100%;
+	color: #{$text-color-default};
+	position: relative;
+}
+
+*,
+*::after,
+*::before {
+	box-sizing: inherit;
+}
+
+.atomicLabHeader {
+	box-shadow: none;
+	&-row {
+		padding-left: 40px;
+	}
+	&-gitHubMark {
+		width: 34px;
+	}
+}
+.atomicLabContent{
+	height: 100%;
+	display: flex;
+}
+
+// Common dialog width
+.mdl-dialog{
+	width: 600px;
+}
+
+.mdl-radio{
+	margin-right: 15px;
+}
+
+
+// Parts
+
+@import "submenu";
+
+@import "FAB";
+
+@import "mainpanel";
+
+@import "projects";
+
+
+.ace_editor {
+	height: 100%;
+	margin-top: 0;
+}
+
+#mask-search-cancel{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 8000;
+	display: none;
+}
+
+.sourceCopied {
+	position: fixed;
+	z-index: 1000;
+	top: 50%;
+	left: 0;
+	width: 100%;
+	padding: 10px;
+	-webkit-transition: background-color .2s ease-in;
+	transition: background-color .2s ease-in;
+	text-align: center;
+	color: #fff;
+	background-color: transparent;
+}
+
+.sourceCopied.active {
+	background-color: rgba(0, 0, 0, .9);
+}
+
+
+
+.atomicLabCard{
+	width: 95%;
+	margin: 25px auto;
+	padding: 20px;
+
+
+	// h1{
+	// 	font-size: 40px;
+	// }
+	// h2{
+	// 	font-size: 38px;
+	// }
+
+	&-title{
+		font-size: 24px;
+		margin: 5px 0 20px 0;
+		color: #{$text-color-light};
+
+		> i{
+			vertical-align: bottom;
+		}
+	}
+
+}
+
+.atomicLabNote{
+	& h1{
+    	font-size: 32px;
+    	border-bottom: 1px solid #eee;
+    	margin-bottom: 16px;
+	}
+	& h2{
+		font-size: 24px;
+		border-bottom: 1px solid #eee;
+		margin-bottom: 16px;
+	}
+
+	& ul{
+		margin-top: 0;
+    	margin-bottom: 16px;
+	}
+
+	& pre{
+		padding: 16px;
+	    overflow: auto;
+	    font-size: 85%;
+	    line-height: 1.45;
+	    background-color: #f7f7f7;
+	    border-radius: 3px;
+	    margin-bottom: 16px;
+	}
+
+	& p{
+		margin-bottom: 16px;
+	}
+}
+
+
+
+// Dialog title style
+.mdl-dialog__title{
+	padding: 15px 24px 0;
+	margin: 0;
+	font-size: 24px;
+	color: #{$text-color-accent};
+}
+
+// Delete action hover behavior
+.material-icons._danger:hover,
+.mdl-menu__item._danger{
+	color: #d82727;
+}
+
+// Header style for small screen
+@media screen and (max-width: 1024px) {
+	.mdl-layout__header {
+		display: block;
+	}
+}

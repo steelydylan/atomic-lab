@@ -1,0 +1,50 @@
+// ------------------------------
+// grid
+// ------------------------------
+@mixin make-grid($name,$grid-name,$number){
+	@for $i from 1 through $number{
+		@if $grid-name{
+			.#{$name}-#{$grid-name}-#{$i}{
+				@if $i != $number {
+					float: left;
+				} @else{
+					float: none;
+				}
+				width: percentage($i / $number);
+			}
+		} @else {
+			.#{$name}-#{$i}{
+				@if $i != $number {
+					float: left;
+				} @else{
+					float: none;
+				}
+				width: percentage($i / $number);
+			}
+		}
+	}
+}
+
+.mod-title{
+	text-align:center;
+	font-size:24px;
+	margin-bottom:20px;
+}
+
+.exp-area{
+	background-color: red;
+	color:#FFFFFF;
+	border-right:5px solid #FFFFFF;
+	border-left:5px solid #FFFFFF;
+	padding:10px;
+	margin-bottom:10px;
+}
+
+@include make-grid(mod,col,12);
+
+
+.mod-clearfix:after{
+	content:"";
+	display:block;
+	clear:both;
+}
