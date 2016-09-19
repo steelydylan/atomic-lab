@@ -1207,14 +1207,18 @@ jQuery(function($) {
 				if (location.hash) {
 					var zip = new JSZip();
 					var hash = location.hash
-					var strings = JSZip.base64.decode(hash);
-					strings = JSZip.compressions.DEFLATE.uncompress(strings);
-					strings = decodeURI(strings);
-					var data = JSON.parse(strings);
-					this.data.components = data.components;
-					this.data.styling = data.styling;
-					this.data.markup = data.markup;
-					location.hash = "";
+					try{
+						var strings = JSZip.base64.decode(hash);
+						strings = JSZip.compressions.DEFLATE.uncompress(strings);
+						strings = decodeURI(strings);
+						var data = JSON.parse(strings);
+						this.data.components = data.components;
+						this.data.styling = data.styling;
+						this.data.markup = data.markup;
+						location.hash = "";
+					}catch(err){
+						console.log(err);
+					}
 					this.applyMethod("applyData");
 					//json_enable=trueならローカルフォルダのproject.jsonからデータを復元
 				} else if (config.read_from_local_file) {
