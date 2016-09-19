@@ -10,6 +10,7 @@ jQuery(function($) {
 	var parser = require("./templateParser.js");
 	var compiler = require("./compiler.js");
 	var slackWidget = require("./slack-widget.js");
+	var Prism = require("./prism.js");
 	var editor = {};
 	var i18n = jQuery.i18n.browserLang();
 	var lang;
@@ -189,6 +190,10 @@ jQuery(function($) {
 				if (this.data.editMode != "preview") {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
+				$(".js-note code").each(function(){
+					console.log($(this)[0]);
+					Prism.highlightElement($(this)[0]);
+				});
 			},
 			showAlert: function(msg) {
 				var $alert = $("<div class='sourceCopied'>" + msg + "</div>");

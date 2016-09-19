@@ -6,7 +6,6 @@ var normalize = require("./normalize.js");
 module.exports = {
 	util:{
 		addNormalizeCss:function(source){
-			console.log(normalize);
 			return normalize+source;
 		},
 		addParentSelectorToAll:function(source,addClass){
@@ -79,7 +78,6 @@ module.exports = {
 		},
 		haml:function(txt){
 			try{
-				console.log("test");
 				console.log(haml.render(txt));
 				return haml.render(txt);
 			}catch(err){

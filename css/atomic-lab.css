@@ -409,6 +409,32 @@ body {
     .atomicLabCard-title > i {
       vertical-align: bottom; }
 
+.atomicLabNote h1 {
+  font-size: 32px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 16px; }
+
+.atomicLabNote h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 16px; }
+
+.atomicLabNote ul {
+  margin-top: 0;
+  margin-bottom: 16px; }
+
+.atomicLabNote pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+  margin-bottom: 16px; }
+
+.atomicLabNote p {
+  margin-bottom: 16px; }
+
 .mdl-dialog__title {
   padding: 15px 24px 0;
   margin: 0;
