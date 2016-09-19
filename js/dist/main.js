@@ -1688,6 +1688,17 @@ jQuery(function($) {
 				project.onEdit = "true";
 				this.update("html", "css_collections");
 			},
+			updateProjectUrl: function(i) {
+				var self = this;
+				var collections = this.data.collections
+				var index = collections.length - i - 1;
+				var project = collections[index];
+				self.applyMethod("getShortenedUrl")
+					.then(function(){
+						project.shortenedUrl = self.data.shortenedUrl;
+						self.update("html","css_collections");
+					});
+			},
 			/*
 
 			 Project Contorl

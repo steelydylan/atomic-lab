@@ -350,6 +350,10 @@ body {
     cursor: pointer; }
     .atomicLabProjectsDialog-shareIcon img {
       width: 100%; }
+  .atomicLabProjectsDialog-update {
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle; }
   .atomicLabProjectsDialog-close {
     position: absolute;
     top: 30px;

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="./css/material-customized.css" />
     <link rel="stylesheet" href="./css/atomic-lab.css">
     <link rel="stylesheet" href="./css/prism.css">
+    <link rel="stylesheet" href="./css/dialog-polyfill.css">
     <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
   </head>
   <body>
@@ -118,7 +119,7 @@
                                 <i class="material-icons">folder</i>
                             </td>
                             <td class="atomicLabProjectsDialog-name">
-                                <!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})">{projectName}</span><!-- END onEdit:touchnot#true -->
+                                <!-- BEGIN onEdit:touchnot#true --><span data-action="renameProject({i})" style="cursor:pointer">{projectName}</span><!-- END onEdit:touchnot#true -->
                                 <!-- BEGIN onEdit:touch#true -->
                                 <input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;">
 
@@ -130,6 +131,7 @@
 
                             </td>
                             <td class="atomicLabProjectsDialog-url">
+                            		<i data-action="updateProjectUrl({i})" class="material-icons atomicLabProjectsDialog-update">update</i>
                                 <a href="{shortenedUrl}">{shortenedUrl}</a>
                             </td>
                             <td class="atomicLabProjectsDialog-share">
