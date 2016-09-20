@@ -1,11 +1,11 @@
 {
-  "name": "gulpfile_generator",
-  "version": "1.1.0",
-  "description": "This is a genarator for gulpfile and package.json",
+  "name": "atomic-lab",
+  "version": "0.0.2",
+  "description": "component guide generator",
   "author": "steelydylan",
   "url": "http://horicdesign.com",
   "license": "MIT License",
-  "keywords": "gulp",
+  "keywords": "atomic-design",
   "devDependencies": {
     "browser-sync": "*",
     "ejs": "*",
@@ -21,7 +21,13 @@
     "hamljs": "*",
     "jade": "*",
     "url": "*",
-    "css": "*",
-    "atomic-generator": "^1.1.5"
+    "css": "*"
+  },
+	"dependencies":{
+  	"findit":"*",
+  	"promise":"*",
+    "mkdirp":"*",
+    "extend":"*",
+    "fs-extra":"*"
   }
 }
