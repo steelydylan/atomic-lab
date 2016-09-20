@@ -1,6 +1,6 @@
 {
   "name": "atomic-lab",
-  "version": "0.0.9",
+  "version": "0.0.12",
   "description": "component guide generator",
   "author": "steelydylan",
   "url": "http://horicdesign.com",
@@ -11,8 +11,7 @@
   	"name":"steelaxe"
   },
   "bin":{
-  	"atomic-init":"./bin/init.js",
-  	"atomic-build":"./bin/build.js"
+  	"atomic-lab":"./bin/index.js"
   },
   "readmeFilename": "README.md",
   "repository": {
@@ -41,6 +40,7 @@
   	"promise":"*",
     "mkdirp":"*",
     "extend":"*",
-    "fs-extra":"*"
+    "fs-extra":"*",
+    "yargs": "^4.3.2"
   }
 }

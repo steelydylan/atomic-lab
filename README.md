@@ -14,8 +14,8 @@ Template sharing and coding environment based on atomic design
 
 ```
 npm install atomic-lab
-./node_modules/.bin/atomic-init
-./node_modules/.bin/atomic-build
+./node_modules/.bin/atomic-lab init
+./node_modules/.bin/atomic-lab build
 ```
 
 ## Use with gulp
@@ -51,6 +51,16 @@ gulp.task('default', function () {
 ```
 
 ## Usage
+
+
+### document
+```html
+<!--@doc
+# @category atom
+# @name common
+# @css ./common.sass
+-->
+```
 
 ### preview
 ```html
