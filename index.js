@@ -2,7 +2,7 @@ var path = require('path');
 var atomicBuilder = {};
 var find = require('findit');
 var Promise = require('promise');
-var fs = require('fs');
+var fs = require('fs-extra');
 var process_path = process.cwd();
 var mkdirp = require('mkdirp');
 var getDirName = path.dirname;
@@ -112,6 +112,31 @@ atomicBuilder.build = function(opt){
 		});
 		return pjson;
 	});
+}
+
+atomicBuilder.init = function(opt){
+	var dist = opt.dist;
+	var p1 = new Promise(function(resolve,reject){
+		fs.copy("./css",path.resolve(process_path,dist,"./css"),function(err){
+			resolve();
+		});
+	});
+	var p2 = new Promise(function(resolve,reject){
+		fs.copy("./js",path.resolve(process_path,dist,"./js"),function(err){
+			resolve();
+		});
+	});
+	var p3 = new Promise(function(resolve,reject){
+		fs.copy("./images",path.resolve(process_path,dist,"./images"),function(err){
+			resolve();
+		});
+	});
+	var p4 = new Promise(function(resolve,reject){
+		fs.copy("./index.html",path.resolve(process_path,dist,"./index.html"),function(err){
+			resolve();
+		});
+	});
+	return Promise.all([p1, p2, p3, p4, p4]);
 }
 
 module.exports = atomicBuilder;

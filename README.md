@@ -10,6 +10,37 @@ Template sharing and coding environment based on atomic design
 - You can use css preprocessors like scss, less and stylus
 - You can share components you have created with others by sharing shortened URL
 
+## Installation
+
+```
+npm install atomic-lab
+```
+
+## Use with gulp
+
+```js
+var gulp = require('gulp');
+var atomic = require('atomic-lab');
+var bs = require('browser-sync').create();
+
+gulp.task('atomic-init', function(){
+		bs.init({
+        server: "./styleguide"
+    });
+		atomic.init({
+			dist:"styleguide"
+		}).then(bs.reload());
+});
+
+gulp.task('atomic', function(){
+		atomic.build({
+			src:"./",
+			dist:"./styleguide/resources/setting.json",
+			markup:"ejs"
+		}).then(bs.reload());
+});
+```
+
 ## Usage
 
 ### preview
