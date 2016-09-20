@@ -5,7 +5,7 @@ exports.builder = {
   d:{
   	alias: 'dist',
   	describe: 'set styleguide directory',
-  	default:"resources/setting.json"
+  	default:"styleguide/resources/setting.json"
   },
   m:{
   	alias: 'markup',
@@ -19,12 +19,15 @@ exports.builder = {
   },
   sample:{
   	default:true
+  },
+  server:{
+  	default:"styleguide"
   }
 }
 
 exports.handler = function (argv) {
 	bs.init({
-    server: "./styleguide"
+    server: argv.server
 	});
 	atomic.build({
 		src:argv.source,
