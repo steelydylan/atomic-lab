@@ -14,6 +14,8 @@ Template sharing and coding environment based on atomic design
 
 ```
 npm install atomic-lab
+./node_modules/.bin/atomic-init
+./node_modules/.bin/atomic-build
 ```
 
 ## Use with gulp

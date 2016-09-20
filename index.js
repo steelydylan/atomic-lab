@@ -116,27 +116,53 @@ atomicBuilder.build = function(opt){
 
 atomicBuilder.init = function(opt){
 	var dist = opt.dist;
+	var sample = opt.sample;
 	var p1 = new Promise(function(resolve,reject){
-		fs.copy("./css",path.resolve(process_path,dist,"./css"),function(err){
+		fs.copy(__dirname+"/css",path.resolve(process_path,dist,"./css"),function(err){
+			console.log(err);
 			resolve();
 		});
 	});
 	var p2 = new Promise(function(resolve,reject){
-		fs.copy("./js",path.resolve(process_path,dist,"./js"),function(err){
+		fs.copy(__dirname+"/js",path.resolve(process_path,dist,"./js"),function(err){
 			resolve();
 		});
 	});
 	var p3 = new Promise(function(resolve,reject){
-		fs.copy("./images",path.resolve(process_path,dist,"./images"),function(err){
+		fs.copy(__dirname+"/images",path.resolve(process_path,dist,"./images"),function(err){
 			resolve();
 		});
 	});
 	var p4 = new Promise(function(resolve,reject){
-		fs.copy("./index.html",path.resolve(process_path,dist,"./index.html"),function(err){
+		fs.copy(__dirname+"/index.html",path.resolve(process_path,dist,"./index.html"),function(err){
 			resolve();
 		});
 	});
-	return Promise.all([p1, p2, p3, p4, p4]);
+	var p5 = new Promise(function(resolve,reject){
+		fs.copy(__dirname+"/ace",path.resolve(process_path,dist,"./ace"),function(err){
+			resolve();
+		});
+	});
+	var p6 = new Promise(function(resolve,reject){
+		if(sample){
+			fs.copy(__dirname+"/components",path.resolve(process_path,dist,"./components"),function(err){
+				resolve();
+			});
+		}else{
+			resolve();
+		}
+	});
+	var p7 = new Promise(function(resolve,reject){
+		if(sample){
+			fs.copy(__dirname+"/resources/setting.json",path.resolve(process_path,dist,"./resources/setting.json"),function(err){
+				resolve();
+			});
+		}else{
+			resolve();
+		}
+	});
+
+	return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
 }
 
 module.exports = atomicBuilder;

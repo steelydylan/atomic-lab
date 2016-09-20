@@ -1,9 +1,7 @@
-var atomic = require('./index.js');
-var bs = require('browser-sync').create();
+#! /usr/bin/env node
+var atomic = require('../index.js');
 
-bs.init({
-    server: "./styleguide"
-});
 atomic.init({
-	dist:"styleguide"
-}).then(bs.reload());
+	dist:"styleguide",
+	sample:true
+});
