@@ -1,22 +1,144 @@
-.Hero{
-  padding: 40px;
-  background-color: #78909C;
+*{
+  box-sizing: border-box;
 }
 
-.Hero-copy{
-  text-align: right;
-  color: #fff;
-}
-.Hero-copy-main{
-  font-size: 40px;
 
-}
-.Hero-copy-sub{
-  font-size: 30px;
-  line-height: 1.6em;
+body {
+  font-family: 'Roboto-regular', sans-serif;
+  color: #3B4F59;
+  line-height: 1.5em;
 }
 
-.wrapper{
+.wrapper-l {
   width: 800px;
   margin: 0 auto;
+}
+
+.wrapper-m {
+  width: 635px;
+  margin: 0 auto;
+}
+
+.Hero {
+  text-align: center;
+}
+
+.Hero-copy {
+  width: 548px;
+  height: 91px;
+  margin: 85px auto 300px auto;
+  background: url(images/Hero-copyBg.png) no-repeat;
+  font-size: 27px;
+  line-height: 1.5em;
+}
+
+.Feature {
+  background-color: #D5DFE5;
+  position: relative;
+  padding: 350px 0 60px 0;
+  text-align: center;
+}
+
+.Feature-browser {
+  display: block;
+  position: absolute;
+  top: -125px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  box-shadow: 0px 0px 8px 0px #d6d6d6;
+  -moz-box-shadow: 0px 0px 8px 0px #d6d6d6;
+  -webkit-box-shadow: 0px 0px 8px 0px #d6d6d6;
+}
+
+.Feature-text {
+  line-height: 1.8em;
+  font-size: 27px;
+  margin-bottom: 20px;
+}
+
+
+/* Section */
+.Section{
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  margin: 130px 0;
+}
+.Section-heading{
+  font-size: 30px;
+  line-height: 1.5em;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+.Section-text{
+  color: #808080;
+  font-family: 'Roboto-light';
+  font-size: 16px;
+  line-height: 1.9em;
+}
+.Section-column{
+  flex-grow: 1;
+}
+
+
+/* Section 1 */
+.Section._atomicDesign .Section-img{
+  margin-left: 20px;
+  margin-right: 30px;
+}
+.Section._atomicDesign .Section-heading{
+  margin-top: 40px;
+  font-weight: normal;
+}
+
+/* Section 2 */
+.Section._share .Section-img{
+  margin-top: 40px;
+}
+/* Section 3 */
+.Section._exportAndImport .Section-img{
+  margin-left: 80px;
+  margin-right: 100px;
+}
+.Section._exportAndImport .Section-heading{
+ margin-top: 40px;
+}
+
+
+/* Button */
+.Button {
+  margin: 30px auto;
+  display: inline-block;
+  background: #18CFBE;
+  border-radius: 26px;
+  font-family: 'Roboto-Medium';
+  font-size: 18px;
+  color: #FFFFFF;
+  padding: 15px 30px;
+  text-decoration: none;
+  transition: 0.2s;
+  letter-spacing: 1.5px;
+}
+.Button:hover{
+  transition: 0.2s;
+  background-color: #efefef;
+  color: #18CFBE;
+}
+
+/* Utility */
+.u-tac{
+  text-align: center;
+}
+.u-tar{
+  text-align: right;
+}
+
+::selection {
+    background: rgba(24, 207, 190, 0.5);
+}
+
+::-moz-selection {
+    background: rgba(24, 207, 190, 0.5);
 }
