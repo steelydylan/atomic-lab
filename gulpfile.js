@@ -6,7 +6,7 @@ var browserify = require('gulp-browserify');
 var uglify = require('gulp-uglify');
 var notify = require('gulp-notify');
 var sass = require('gulp-sass');
-var atomic = require('atomic-generator');
+var atomic = require('./index.js');
 var bs = require('browser-sync').create();
 
 gulp.task('sass', function () {
