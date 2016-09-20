@@ -1,18 +1,25 @@
 {
   "name": "atomic-lab",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "component guide generator",
   "author": "steelydylan",
   "url": "http://horicdesign.com",
   "license": "MIT License",
   "keywords": "atomic-design",
   "main":"index.js",
+  "author": {
+  	"name":"steelaxe"
+  },
+  "bin":{
+  	"atomic-init":"./bin/init.js",
+  	"atomic-build":"./bin/build.js"
+  },
+  "readmeFilename": "README.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/steelydylan/atomic-lab.git"
   },
   "devDependencies": {
-    "browser-sync": "*",
     "ejs": "*",
     "gulp": "*",
     "gulp-browserify": "*",
@@ -29,6 +36,7 @@
     "css": "*"
   },
 	"dependencies":{
+		"browser-sync": "*",
   	"findit":"*",
   	"promise":"*",
     "mkdirp":"*",

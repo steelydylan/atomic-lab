@@ -2,7 +2,7 @@
 Template sharing and coding environment based on atomic design
 
 ## Screenshot
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/screenshot.png"></img>
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/about/images/Feature-browser.png"></img>
 
 ## Features
 
