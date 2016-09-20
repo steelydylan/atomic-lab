@@ -25,8 +25,8 @@ var bs = require('browser-sync').create();
 
 gulp.task('atomic-init', function(){
 		bs.init({
-        server: "./styleguide"
-    });
+			server: "./styleguide"
+		});
 		atomic.init({
 			dist:"styleguide"
 		}).then(bs.reload());
@@ -34,10 +34,17 @@ gulp.task('atomic-init', function(){
 
 gulp.task('atomic', function(){
 		atomic.build({
-			src:"./",
+			src:"./components",
 			dist:"./styleguide/resources/setting.json",
 			markup:"ejs"
 		}).then(bs.reload());
+});
+
+gulp.task('default', function () {
+    bs.init({
+        server: "./"
+    });
+    gulp.watch('components/**',['atomic']);
 });
 ```
 
