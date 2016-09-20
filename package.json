@@ -6,6 +6,11 @@
   "url": "http://horicdesign.com",
   "license": "MIT License",
   "keywords": "atomic-design",
+  "main":"index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steelydylan/atomic-lab.git"
+  },
   "devDependencies": {
     "browser-sync": "*",
     "ejs": "*",
