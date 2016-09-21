@@ -6,7 +6,7 @@ var browserify = require('gulp-browserify');
 var uglify = require('gulp-uglify');
 var notify = require('gulp-notify');
 var sass = require('gulp-sass');
-var atomic = require('atomic-generator');
+var atomic = require('./index.js');
 var bs = require('browser-sync').create();
 
 gulp.task('sass', function () {
@@ -42,10 +42,19 @@ gulp.task('js', function () {
         .pipe(notify('js task finished'))
 });
 
+gulp.task('atomic-init', function(){
+		bs.init({
+        server: "./styleguide"
+    });
+		atomic.init({
+			dist:"styleguide"
+		}).then(bs.reload());
+});
+
 gulp.task('atomic', function(){
 		atomic.build({
 			src:"components/",
-			dist:"resources/setting.json",
+			dist:"./resources/setting.json",
 			markup:"ejs"
 		}).then(bs.reload());
 });
