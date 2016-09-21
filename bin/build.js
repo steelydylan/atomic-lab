@@ -15,7 +15,7 @@ exports.builder = {
   s:{
   	alias: 'source',
   	describe: 'set component directory',
-  	default:"styleguide/components/"
+  	default:"components/"
   },
   sample:{
   	default:true

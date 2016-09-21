@@ -116,6 +116,7 @@ atomicBuilder.build = function(opt){
 
 atomicBuilder.init = function(opt){
 	var dist = opt.dist;
+	var src = opt.src;
 	var sample = opt.sample;
 	var p1 = new Promise(function(resolve,reject){
 		fs.copy(__dirname+"/css",path.resolve(process_path,dist,"./css"),function(err){
@@ -145,7 +146,7 @@ atomicBuilder.init = function(opt){
 	});
 	var p6 = new Promise(function(resolve,reject){
 		if(sample){
-			fs.copy(__dirname+"/components",path.resolve(process_path,dist,"./components"),function(err){
+			fs.copy(__dirname+"/components",path.resolve(process_path,src),function(err){
 				resolve();
 			});
 		}else{
