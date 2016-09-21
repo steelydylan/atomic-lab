@@ -1,7 +1,6 @@
-*{
+* {
   box-sizing: border-box;
 }
-
 
 body {
   font-family: 'Roboto-regular', sans-serif;
@@ -16,6 +15,11 @@ body {
 
 .wrapper-m {
   width: 635px;
+  margin: 0 auto;
+}
+
+.wrapper-s {
+  width: 500px;
   margin: 0 auto;
 }
 
@@ -51,14 +55,14 @@ body {
 }
 
 .Feature-text {
-  line-height: 1.8em;
+  line-height: 1.6em;
   font-size: 27px;
   margin-bottom: 20px;
+  font-family: 'Roboto-light';
 }
-
-
 /* Section */
-.Section{
+
+.Section {
   display: -webkit-flex;
   display: -moz-flex;
   display: -ms-flex;
@@ -66,48 +70,108 @@ body {
   display: flex;
   margin: 130px 0;
 }
-.Section-heading{
+
+.Section-heading {
   font-size: 30px;
   line-height: 1.5em;
   margin-bottom: 25px;
   font-weight: bold;
 }
-.Section-text{
+
+.Section-text {
   color: #808080;
   font-family: 'Roboto-light';
   font-size: 16px;
   line-height: 1.9em;
 }
-.Section-column{
+
+.Section-column {
   flex-grow: 1;
 }
-
-
 /* Section 1 */
-.Section._atomicDesign .Section-img{
+
+.Section._atomicDesign .Section-img {
   margin-left: 20px;
   margin-right: 30px;
 }
-.Section._atomicDesign .Section-heading{
+
+.Section._atomicDesign .Section-heading {
   margin-top: 40px;
   font-weight: normal;
 }
-
 /* Section 2 */
-.Section._share .Section-img{
+
+.Section._share .Section-img {
   margin-top: 40px;
 }
 /* Section 3 */
-.Section._exportAndImport .Section-img{
+
+.Section._exportAndImport .Section-img {
   margin-left: 80px;
   margin-right: 100px;
 }
-.Section._exportAndImport .Section-heading{
- margin-top: 40px;
+
+.Section._exportAndImport .Section-heading {
+  margin-top: 40px;
+}
+/* Section 4 */
+
+.Section._metaLangs .Section-img {
+  margin-top: 70px;
+}
+/* CreditSection */
+
+.CreditSection {
+  margin-bottom: 50px;
 }
 
+.CreditSection._github p {
+  margin-bottom: 5px;
+}
 
+.CreditSection-heading {
+  font-family: 'Roboto-Medium';
+  font-size: 35px;
+}
+
+.CreditSection-githubMark {
+  margin: 40px 0 20px 0;
+}
+
+.CreditSection-accent {
+  font-size: 25px;
+  font-family: 'Roboto-Medium';
+}
+
+.CreditSection-text {
+  font-size: 15px;
+}
+/* Profile Card */
+
+.Profile {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  padding: 30px 0;
+}
+
+.Profile-heading {
+  font-size: 25px;
+  margin: 0 0 5px 0;
+}
+
+.Profile-img {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.Profile-text {
+  font-family: 'Roboto-light';
+}
 /* Button */
+
 .Button {
   margin: 30px auto;
   display: inline-block;
@@ -121,24 +185,59 @@ body {
   transition: 0.2s;
   letter-spacing: 1.5px;
 }
-.Button:hover{
+
+.Button:hover {
   transition: 0.2s;
   background-color: #efefef;
   color: #18CFBE;
 }
+/* footer */
+
+.Footer {
+  background-color: #EDEEEF;
+  color: #7C7C7C;
+  margin-top: 150px;
+  padding: 40px 0;
+  font-family: 'Roboto-light';
+}
+
+.Footer a {
+  display: inline-block;
+  color: #7C7C7C;
+  text-decoration: none;
+  margin-left: 20px;
+}
+.Footer a:hover {
+  color: #ffffff;
+}
+
+
+.Footer-row{
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+}
+.Footer-column{
+  flex-grow: 1;
+}
+
 
 /* Utility */
-.u-tac{
+
+.u-tac {
   text-align: center;
 }
-.u-tar{
+
+.u-tar {
   text-align: right;
 }
 
 ::selection {
-    background: rgba(24, 207, 190, 0.5);
+  background: rgba(24, 207, 190, 0.5);
 }
 
 ::-moz-selection {
-    background: rgba(24, 207, 190, 0.5);
+  background: rgba(24, 207, 190, 0.5);
 }
