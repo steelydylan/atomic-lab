@@ -2,7 +2,7 @@
 Template sharing and coding environment based on atomic design
 
 ## Screenshot
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/screenshot.png"></img>
+<img src="https://raw.github.com/steelydylan/atomic-lab/master/about/images/Feature-browser.png"></img>
 
 ## Features
 
@@ -14,6 +14,8 @@ Template sharing and coding environment based on atomic design
 
 ```
 npm install atomic-lab
+./node_modules/.bin/atomic-lab init
+./node_modules/.bin/atomic-lab build
 ```
 
 ## Use with gulp
@@ -25,8 +27,8 @@ var bs = require('browser-sync').create();
 
 gulp.task('atomic-init', function(){
 		bs.init({
-        server: "./styleguide"
-    });
+			server: "./styleguide"
+		});
 		atomic.init({
 			dist:"styleguide"
 		}).then(bs.reload());
@@ -34,14 +36,31 @@ gulp.task('atomic-init', function(){
 
 gulp.task('atomic', function(){
 		atomic.build({
-			src:"./",
+			src:"./components",
 			dist:"./styleguide/resources/setting.json",
 			markup:"ejs"
 		}).then(bs.reload());
 });
+
+gulp.task('default', function () {
+    bs.init({
+        server: "./"
+    });
+    gulp.watch('components/**',['atomic']);
+});
 ```
 
 ## Usage
+
+
+### document
+```html
+<!--@doc
+# @category atom
+# @name common
+# @css ./common.sass
+-->
+```
 
 ### preview
 ```html
