@@ -635,6 +635,7 @@ jQuery(function($) {
 						self.data.collections.push(obj);
 						self.saveData(storageName);
 						self.update("html", "css_collections");
+						self.update("html", "css_project");
 						self.applyMethod("showAlert", "プロジェクトをコレクションに追加しました。");
 					});
 			},
@@ -642,6 +643,7 @@ jQuery(function($) {
 				var index = this.data.collections.length - i - 1;
 				this.data.collections.splice(index, 1);
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 				this.saveData(storageName);
 			},
 			updateCollection: function(i) {
@@ -650,6 +652,7 @@ jQuery(function($) {
 				var project = collections[index];
 				project.onEdit = "false";
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 			},
 			renameProject: function(i) {
 				var collections = this.data.collections
@@ -657,6 +660,7 @@ jQuery(function($) {
 				var project = collections[index];
 				project.onEdit = "true";
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 			},
 			updateProjectUrl: function(i) {
 				var self = this;
@@ -667,6 +671,7 @@ jQuery(function($) {
 					.then(function(){
 						project.shortenedUrl = self.data.shortenedUrl;
 						self.update("html","css_collections");
+						self.update("html","css_project");
 					});
 			},
 			/*

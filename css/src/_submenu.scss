@@ -72,7 +72,6 @@
     position: absolute;
     z-index: 3;
     width: 280px;
-    height: 250px;
     box-sizing: border-box;
     padding: 20px;
     top: 60px;
@@ -96,7 +95,7 @@
       margin: 0;
       padding: 0;
       overflow: auto;
-      height: 170px;
+      max-height: 170px;
 
       li{
         font-size: 18px;
