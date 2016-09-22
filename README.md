@@ -50,6 +50,22 @@ gulp.task('default', function () {
 });
 ```
 
+## Structure
+You have to watch your html/php files via gulp or anything like that and after that you have to make setting.json via method `atomic.build()` so that you can update the components info on atomic-lab page.
+
+
+###Example
+
+```
+Your Project/
+├── atomic-lab/
+│   └── resource/
+│       └── setting.json
+│
+├── themes or components here (like WordPress theme)/
+│   └── ** (You have to watch here)
+```
+
 ## Usage
 
 
