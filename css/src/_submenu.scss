@@ -62,7 +62,7 @@
 .atomicLabProjectDropdown{
 
     position: absolute;
-    z-index: 2;
+    z-index: 3;
     width: 280px;
     height: 250px;
     box-sizing: border-box;
@@ -73,6 +73,10 @@
     background-color: #fff;
     box-shadow: 2px 3px 4px 0px rgba(0,0,0,0.20);
     border-radius: 2px;
+    transform: scale(0);
+    transition: 0.1s;
+    opacity: 0;
+    transform-origin: top center;
 
     &-list{
       display: block;

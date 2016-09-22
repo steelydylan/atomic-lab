@@ -69,7 +69,34 @@
               <li><a href="#"><i class="material-icons">folder</i> Project4</a></li>
             </ul>
             <span class="atomicLabProjectDropdown-newProject"><a href="#">+ Make a new project</a></span>
+
           </div>
+          <script>
+          $(".atomicLabProjectControl-title").click(function(){
+
+            var dropdown = $(".atomicLabProjectDropdown");
+
+
+              if ( dropdown.hasClass("js-open") == false) {
+
+                dropdown.addClass("js-open");
+                dropdown.css({
+                  "transform": "scale(1)",
+                  "opacity": 1
+                });
+                $("#mask-dropdown-cancel").show();
+
+            }else{
+
+                dropdown.removeClass("js-open");
+                dropdown.css({
+                  "transform": "scale(0)",
+                  "opacity": 0
+                });
+                $("#mask-dropdown-cancel").hide();
+            }
+          });
+          </script>
 
 
           <p class="atomicLabProjectControl-shotDescription">
@@ -608,6 +635,7 @@
       dialog_projects.close();
     });
   </script>
+
 </body>
 
 </html>
