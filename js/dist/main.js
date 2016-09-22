@@ -5804,7 +5804,7 @@ var removeSelf = function(text,self){
 }
 
 var getImports = function(text){
-	var match = text.match(/<!--@import items="(.*?)" -->/);
+	var match = text.match(/<!--@import parts="(.*?)" -->/);
 	if(!match){
 		return "";
 	}
