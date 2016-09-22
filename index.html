@@ -296,18 +296,21 @@
           <div class="atomicLabProjectControl-title">
             <i class="material-icons">folder</i>
             <!-- BEGIN projectOnEdit:touchnot#true --><span data-action="editProjectName()">{projectName}</span><!-- END projectOnEdit:touchnot#true -->
-            <!-- BEGIN projectOnEdit:touch#true --><input type="text" data-bind="projectName" placeholder="Project Name"> <button data-action="changeProjectName()">保存</button><!-- END projectOnEdit:touch#true -->
+            <!-- BEGIN projectOnEdit:touch#true -->
+	            <input type="text" data-bind="projectName" placeholder="Project Name" class="mdl-textfield__input atomicLabProjectControl-input">
+	            <button data-action="changeProjectName()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
+	          <!-- END projectOnEdit:touch#true -->
             <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
           </div>
           <p class="atomicLabProjectControl-shotDescription">
             <!-- BEGIN projectDescOnEdit:touchnot#true -->
-            <span data-action="editProjectDesc()">
+            <span data-action="editProjectDesc()" style="cursor:pointer;">
             {projectDescription}
             <!-- BEGIN projectDescription:empty -->
             You can write description here
             <!-- END projectDescription:empty -->
             </span><!-- END projectDescOnEdit:touchnot#true -->
-            <!-- BEGIN projectDescOnEdit:touch#true --><textarea data-bind="projectDescription" rows="3"></textarea> <button data-action="changeProjectDesc()">保存</button><!-- END projectDescOnEdit:touch#true -->
+            <!-- BEGIN projectDescOnEdit:touch#true --><textarea data-bind="projectDescription" rows="3" class="mdl-textfield__input atomicLabProjectControl-textarea"></textarea> <button data-action="changeProjectDesc()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button><!-- END projectDescOnEdit:touch#true -->
           </p>
           <!-- Project actions -->
           <nav class="atomicLabProjectControl-actions">

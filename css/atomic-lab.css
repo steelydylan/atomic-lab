@@ -71,6 +71,12 @@ body {
         padding: 10px; }
         .atomicLabProjectControl-actions > ul > li i:hover {
           color: #454545; }
+  .atomicLabProjectControl-input {
+    display: inline-block;
+    width: 150px; }
+  .atomicLabProjectControl-textarea {
+    display: inline-block;
+    width: 230px; }
 
 .atomicLabProjectDropdown {
   position: absolute;

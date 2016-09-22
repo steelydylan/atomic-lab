@@ -56,6 +56,14 @@
 
         }
     }
+    &-input{
+    	display: inline-block;
+    	width: 150px;
+    }
+    &-textarea{
+    	display: inline-block;
+    	width: 230px;
+    }
 }
 
 // project Dropdown
