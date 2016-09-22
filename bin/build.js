@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 var atomic = require('../index.js');
-var bs = require('browser-sync').create();
 exports.builder = {
   d:{
   	alias: 'dist',
@@ -16,19 +15,13 @@ exports.builder = {
   	alias: 'src',
   	describe: 'set component directory',
   	default:"components/"
-  },
-  server:{
-  	default:"atomic-lab"
   }
 }
 
 exports.handler = function (argv) {
-	bs.init({
-    server: argv.server
-	});
 	atomic.build({
 		src:argv.src,
 		dist:argv.dist,
 		markup:argv.markup
-	}).then(bs.reload());
+	});
 };

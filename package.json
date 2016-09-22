@@ -1,6 +1,6 @@
 {
   "name": "atomic-lab",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "component guide generator",
   "author": "steelydylan",
   "url": "http://horicdesign.com",
@@ -19,6 +19,7 @@
     "url": "https://github.com/steelydylan/atomic-lab.git"
   },
   "devDependencies": {
+  	"browser-sync": "*",
     "ejs": "*",
     "gulp": "*",
     "gulp-browserify": "*",
@@ -35,7 +36,6 @@
     "css": "*"
   },
 	"dependencies":{
-		"browser-sync": "*",
   	"findit":"*",
   	"promise":"*",
     "mkdirp":"*",
