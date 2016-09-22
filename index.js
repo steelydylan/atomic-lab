@@ -145,6 +145,11 @@ atomicBuilder.init = function(opt){
 		});
 	});
 	var p6 = new Promise(function(resolve,reject){
+		fs.copy(__dirname+"/config.js",path.resolve(process_path,dist,"./config.js"),function(err){
+			resolve();
+		});
+	});
+	var p7 = new Promise(function(resolve,reject){
 		if(sample){
 			fs.copy(__dirname+"/components",path.resolve(process_path,src),function(err){
 				resolve();
@@ -153,7 +158,7 @@ atomicBuilder.init = function(opt){
 			resolve();
 		}
 	});
-	var p7 = new Promise(function(resolve,reject){
+	var p8 = new Promise(function(resolve,reject){
 		if(sample){
 			fs.copy(__dirname+"/resources/setting.json",path.resolve(process_path,dist,"./resources/setting.json"),function(err){
 				resolve();
@@ -163,7 +168,7 @@ atomicBuilder.init = function(opt){
 		}
 	});
 
-	return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
+	return Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]);
 }
 
 module.exports = atomicBuilder;
