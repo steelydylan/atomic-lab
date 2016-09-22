@@ -344,9 +344,11 @@
         <div class="atomicLabComponentList">
           <script id="css_search_result" type="text/template">
           <ul>
-            <li class="atomicLabComponentList-category _atom">
-              <span><img class="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="">Atom</span>
-              <ul>
+            <li class="atomicLabComponentList-category _atom js-list-parent<!-- BEGIN searchCategory.atom:empty --> js-closed<!-- END searchCategory.atom:empty -->">
+              <span data-action="toggleComponents(#js-list-atom,atom)"><img class="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="">Atom
+              	<i class="material-icons"><!-- BEGIN searchCategory.atom:exist -->remove<!-- END searchCategory.atom:exist --><!-- BEGIN searchCategory.atom:empty -->add<!-- END searchCategory.atom:empty --></i>
+              </span>
+              <ul id="js-list-atom"<!-- BEGIN searchCategory.atom:empty --> style="height:0px;"<!-- END searchCategory.atom:empty -->>
                 <!-- BEGIN atomSearchResults:loop -->
                 <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
                 <span><i class="material-icons">insert_drive_file</i>
@@ -358,9 +360,11 @@
               <!-- END atomSearchResults:loop -->
             </ul>
           </li>
-          <li class="atomicLabComponentList-category _molecule">
-            <span><img class="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="">Molecule</span>
-            <ul>
+          <li class="atomicLabComponentList-category _molecule js-list-parent<!-- BEGIN searchCategory.molecule:empty --> js-closed<!-- END searchCategory.molecule:empty -->">
+            <span data-action="toggleComponents(#js-list-molecule,molecule)"><img class="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="">Molecule
+            	<i class="material-icons"><!-- BEGIN searchCategory.molecule:exist -->remove<!-- END searchCategory.molecule:exist --><!-- BEGIN searchCategory.molecule:empty -->add<!-- END searchCategory.molecule:empty --></i>
+            </span>
+            <ul id="js-list-molecule"<!-- BEGIN searchCategory.molecule:empty --> style="height:0px;"<!-- END searchCategory.molecule:empty -->>
               <!-- BEGIN moleculeSearchResults:loop -->
               <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
               <span><i class="material-icons">insert_drive_file</i>
@@ -372,9 +376,11 @@
             <!-- END atomSearchResults:loop -->
           </ul>
         </li>
-        <li class="atomicLabComponentList-category _organism">
-          <span><img class="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="">Organism</span>
-          <ul>
+        <li class="atomicLabComponentList-category _organism js-list-parent<!-- BEGIN searchCategory.organism:empty --> js-closed<!-- END searchCategory.organism:empty -->">
+          <span data-action="toggleComponents(#js-list-organism,organism)"><img class="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="">Organism
+          	<i class="material-icons"><!-- BEGIN searchCategory.organism:exist -->remove<!-- END searchCategory.organism:exist --><!-- BEGIN searchCategory.organism:empty -->add<!-- END searchCategory.organism:empty --></i>
+          </span>
+          <ul id="js-list-organism"<!-- BEGIN searchCategory.organism:empty --> style="height:0px;"<!-- END searchCategory.organism:empty -->>
             <!-- BEGIN organismSearchResults:loop -->
             <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
             <span><i class="material-icons">insert_drive_file</i>
@@ -386,9 +392,11 @@
           <!-- END organismSearchResults:loop -->
         </ul>
       </li>
-      <li class="atomicLabComponentList-category _template">
-        <span><img class="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="">Template</span>
-        <ul>
+      <li class="atomicLabComponentList-category _template js-list-parent<!-- BEGIN searchCategory.template:empty --> js-closed<!-- END searchCategory.template:empty -->">
+        <span data-action="toggleComponents(#js-list-template,template)"><img class="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="">Template
+        	<i class="material-icons"><!-- BEGIN searchCategory.template:exist -->remove<!-- END searchCategory.template:exist --><!-- BEGIN searchCategory.template:empty -->add<!-- END searchCategory.template:empty --></i>
+        </span>
+        <ul id="js-list-template"<!-- BEGIN searchCategory.template:empty --> style="height:0px;"<!-- END searchCategory.template:empty -->>
           <!-- BEGIN templateSearchResults:loop -->
           <li class="atomicLabComponentList-item<!-- BEGIN id:touch#{id} --> selected<!-- END id:touch#{id} -->" data-action="editComp({id})">
           <span><i class="material-icons">insert_drive_file</i>

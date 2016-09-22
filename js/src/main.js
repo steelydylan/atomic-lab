@@ -26,7 +26,7 @@ jQuery(function($) {
 		organism: 2,
 		template: 3
 	};
-	var cssLab = new aTemplate.View({
+	var atomicLab = new aTemplate.View({
 		templates: [
 			"css_preview",
 			"css_edit",
@@ -61,7 +61,12 @@ jQuery(function($) {
 			markup: "ejs",
 			styling: "sass",
 			search: "",
-			searchCategory: ["true", "true", "true", "true"],
+			searchCategory: {
+				atom:true,
+				molecule:true,
+				organism:true,
+				template:true
+			},
 			searchStatus: "inactive",
 			cheatCategory: "",
 			cheatAbout: "",
@@ -144,12 +149,20 @@ jQuery(function($) {
 			applyData: function() {
 				var comp = this.data.components[0];
 				if (comp) {
-					this.data.id = comp.id
-					this.data.html = comp.html;
-					this.data.css = comp.css;
-					this.data.category = comp.category;
-					this.data.name = comp.name;
-					this.data.description = comp.description;
+					this.setData({
+						id:comp.id,
+						html:comp.html,
+						css:comp.css,
+						category:comp.category,
+						name:comp.name,
+						description:comp.description,
+						searchCategory: {
+							atom:true,
+							molecule:true,
+							organism:true,
+							template:true
+						}
+					});
 				}
 				this.update();
 				return this;
@@ -321,6 +334,23 @@ jQuery(function($) {
 			searchComponents: function() {
 				this.data.searchStatus = "active";
 				this.update("html", "css_search_result");
+			},
+			toggleComponents: function(target,category){
+				var self = this.e.target;
+				var searchCategory = this.data.searchCategory;
+				var $target = $(target);
+				var status = searchCategory[category];
+				if(status === true){
+					$("i",self).text("add");
+					$(self).parents(".js-list-parent").addClass("js-closed");
+					searchCategory[category] = false;
+					$target.animate({"height": "0px"}, 120);
+				}else{
+					$("i",self).text("remove");
+					$(self).parents(".js-list-parent").removeClass("js-closed");
+					searchCategory[category] = true;
+					$target.css({"height": ""});
+				}
 			},
 			convertCompToHtml: function(word) {
 				var data = this.data.components;
@@ -653,7 +683,6 @@ jQuery(function($) {
 		convert: {
 			preview: function(text) {
 				var components = this.getComputedProp("sortByCategory");
-				console.log(components);
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				preview = compiler.markup[this.data.markup](preview);
@@ -706,7 +735,6 @@ jQuery(function($) {
 						css += comp.css;
 					}
 				}
-				console.log(css);
 				css = compiler.styling[this.data.styling](css);
 				css = compiler.util.addParentSelectorToAll(css,".js-preview");
 				preview += "<style>" + css + "</style>";
@@ -763,6 +791,6 @@ jQuery(function($) {
 	});
 	$(".js-add-category").click(function() {
 		var category = $(this).data("category");
-		cssLab.applyMethod("openDialog", category);
+		atomicLab.applyMethod("openDialog", category);
 	});
 });
