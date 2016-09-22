@@ -42,15 +42,6 @@ gulp.task('js', function () {
         .pipe(notify('js task finished'))
 });
 
-gulp.task('atomic-init', function(){
-		bs.init({
-        server: "./styleguide"
-    });
-		atomic.init({
-			dist:"styleguide"
-		}).then(bs.reload());
-});
-
 gulp.task('atomic', function(){
 		atomic.build({
 			src:"components/",

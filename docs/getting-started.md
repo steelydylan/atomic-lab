@@ -56,7 +56,7 @@ gulp.task('atomic', function(){
 
 gulp.task('default', function () {
     bs.init({
-        server: "./"
+        server: "./atomic-lab/"
     });
     gulp.watch('components/**',['atomic']);
 });
