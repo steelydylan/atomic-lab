@@ -83,9 +83,9 @@ jQuery(function($) {
 				var components = this.data.components;
 				return components.sort(function(a,b){
 					if(material[a.category] >= material[b.category]){
-						return -1;
-					}else{
 						return 1;
+					}else{
+						return -1;
 					}
 				})
 			},
@@ -653,6 +653,7 @@ jQuery(function($) {
 		convert: {
 			preview: function(text) {
 				var components = this.getComputedProp("sortByCategory");
+				console.log(components);
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				preview = compiler.markup[this.data.markup](preview);
@@ -705,6 +706,7 @@ jQuery(function($) {
 						css += comp.css;
 					}
 				}
+				console.log(css);
 				css = compiler.styling[this.data.styling](css);
 				css = compiler.util.addParentSelectorToAll(css,".js-preview");
 				preview += "<style>" + css + "</style>";
