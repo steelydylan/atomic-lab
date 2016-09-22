@@ -1,3 +1,5 @@
+# Others
+
 ## Config
 You can update settings via config.js
 
