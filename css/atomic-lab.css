@@ -82,7 +82,6 @@ body {
   position: absolute;
   z-index: 3;
   width: 280px;
-  height: 250px;
   box-sizing: border-box;
   padding: 20px;
   top: 60px;
@@ -95,12 +94,15 @@ body {
   transition: 0.1s;
   opacity: 0;
   transform-origin: top center; }
+  .atomicLabProjectDropdown.js-open {
+    transform: scale(1);
+    opacity: 1; }
   .atomicLabProjectDropdown-list {
     display: block;
     margin: 0;
     padding: 0;
     overflow: auto;
-    height: 170px; }
+    max-height: 170px; }
     .atomicLabProjectDropdown-list li {
       font-size: 18px;
       margin: 15px 0; }

@@ -300,7 +300,16 @@
 	            <input type="text" data-bind="projectName" placeholder="Project Name" class="mdl-textfield__input atomicLabProjectControl-input">
 	            <button data-action="changeProjectName()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
 	          <!-- END projectOnEdit:touch#true -->
-            <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+            <i class="material-icons atomicLabProjectControl-arrow" data-action="toggleProjectList()">arrow_drop_down</i>
+          </div>
+
+          <div class="atomicLabProjectDropdown js-dropdown<!-- BEGIN projectOnDrop:touch#true --> js-open<!-- END projectOnDrop:touch#true -->">
+            <ul class="atomicLabProjectDropdown-list">
+            <!-- BEGIN collectionsReverse:loop -->
+              <li><a href="{shortenedUrl}"><i class="material-icons">folder</i> {projectName}</a></li>
+            <!-- END collectionsReverse:loop -->
+            </ul>
+            <span class="atomicLabProjectDropdown-newProject" data-action="makeNewProject()"><a href="#">+ Make a new project</a></span>
           </div>
           <p class="atomicLabProjectControl-shotDescription">
             <!-- BEGIN projectDescOnEdit:touchnot#true -->
