@@ -557,6 +557,46 @@
 # About {newName}
 -->
 </script>
+<script type="text/template" id="package_json">
+{
+  "name": "atomic-lab",
+  "version": "1.0.0",
+  "description": "static html generator based on atomic design",
+  "devDependencies":{
+  	"gulp":"*",
+  	"browser-sync":"*",
+    "atomic-lab":"*"
+  },
+  "author": "steelaxe",
+  "license": "MIT"
+}
+</script>
+<script type="text/template" id="gulpfile_js">
+var gulp = require('gulp');
+var atomic = require('atomic-lab');
+var bs = require('browser-sync').create();
+
+gulp.task('atomic', function(){
+		atomic.build({
+			src:"./components",
+			dist:"./atomic-lab/resources/setting.json",
+			markup:"{markup}"
+		}).then(bs.reload());
+});
+
+gulp.task('atomic-init', function(){
+		atomic.init({
+			dist:"./atomic-lab"
+		});
+});
+
+gulp.task('default', function () {
+    bs.init({
+        server: "./atomic-lab/"
+    });
+    gulp.watch('components/**',['atomic']);
+});
+</script>
 <script src="./config.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/sass.js/0.4.0/sass.min.js"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js"></script>

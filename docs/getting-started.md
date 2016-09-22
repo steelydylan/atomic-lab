@@ -19,11 +19,6 @@ Options:
   --sample Whether You want to get some sample components or not [boolean]
 ```
 
-example.
-```sh
-$ $(npm bin)/atomic-lab init --dist atomic-lab
-```
-
 #### 3. Build Your Project:
 
 ##### via command line
@@ -36,7 +31,6 @@ $ $(npm bin)/atomic-lab build
 Options:
   --src Theme/Components directory (this directory will be compiled to the dist directory) [string]
   --dist The directory Where Atomic Lab page will be created [string]
-  --server The directory Where you want to check on the browser [string]
   --markup You can choose from html/ejs/jade/haml [string]
 ```
 
@@ -57,8 +51,22 @@ gulp.task('atomic', function(){
 
 gulp.task('default', function () {
     bs.init({
-        server: "./"
+        server: "./atomic-lab/"
     });
     gulp.watch('components/**',['atomic']);
 });
 ```
+
+#### 4. Make sure that your Project looks like this:
+
+```
+Your Project/
+├── atomic-lab/
+│   └── resource/
+│       └── setting.json
+│
+├── themes or components here (like WordPress theme)/
+│   └── ** (You have to watch here)
+```
+
+Through gulp, You have to update setting.json so that you can make new components to appear on `atomic-lab` pages
