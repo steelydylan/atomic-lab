@@ -488,18 +488,22 @@
 <!-- BEGIN editMode:touch#preview -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
   <div class="atomicLabPreview">
+  	<!-- BEGIN hasPreview:exist -->
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
       <div class="js-preview">
         {html}[preview]
       </div>
     </div>
+    <!-- END hasPreview:exist -->
+    <!-- BEGIN hasNote:exist -->
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">insert_drive_file</i> Note</div>
 				<div class="atomicLabNote js-note">
       		{html}[note]
       	</div>
     </div>
+    <!-- END hasNote:exist -->
   </div>
   <!-- END editMode:touch#preview -->
 </div>
