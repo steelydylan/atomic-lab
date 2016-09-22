@@ -36,7 +36,6 @@ $ $(npm bin)/atomic-lab build
 Options:
   --src Theme/Components directory (this directory will be compiled to the dist directory) [string]
   --dist The directory Where Atomic Lab page will be created [string]
-  --server The directory Where you want to check on the browser [string]
   --markup You can choose from html/ejs/jade/haml [string]
 ```
 
