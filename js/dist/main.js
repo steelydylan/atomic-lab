@@ -153,9 +153,8 @@
 			}
 			this.data.aTemplate_id = text;
 		},
-		getDataByString:function(s){
-			var o = this.data;
-			s = s.replace(/\[(\w+)\]/g, '.$1');  // convert indexes to properties
+		getDataFromObj:function(s,o){
+			s = s.replace(/\[([a-zA-Z0-9._-]+)\]/g, '.$1');  // convert indexes to properties
 			s = s.replace(/^\./, ''); // strip leading dot
 			var a = s.split('.');
 			while (a.length) {
@@ -167,6 +166,10 @@
 				}
 			}
 			return o;
+		},
+		getDataByString:function(s){
+			var o = this.data;
+			return this.getDataFromObj(s,o);
 		},
 		updateDataByString:function(path,newValue){
 			var object = this.data;
@@ -191,19 +194,19 @@
 		},
 		resolveBlock:function(html,item,i){
 			var that = this;
-			var touchs = html.match(/<!-- BEGIN (\w+):touch#(\w+) -->/g);
-			var touchnots = html.match(/<!-- BEGIN (\w+):touchnot#(\w+) -->/g);
-			var exists = html.match(/<!-- BEGIN (\w+):exist -->/g);
-			var empties = html.match(/<!-- BEGIN (\w+):empty -->/g);
+			var touchs = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+) -->/g);
+			var touchnots = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+) -->/g);
+			var exists = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):exist -->/g);
+			var empties = html.match(/<!-- BEGIN ([a-zA-Z0-9._-]+):empty -->/g);
 			/*タッチブロック解決*/
 			if(touchs){
 				for(var k = 0,n = touchs.length; k < n; k++){
 					var start = touchs[k];
-					start = start.replace(/(\w+):touch#(\w+)/,"($1):touch#($2)");
+					start = start.replace(/([a-zA-Z0-9._-]+):touch#([a-zA-Z0-9._-]+)/,"($1):touch#($2)");
 					var end = start.replace(/BEGIN/,"END");
 					var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 					html = html.replace(reg,function(m,key2,val,next){
-						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 						if(itemkey == val){
 							return next;
 						}else{
@@ -216,11 +219,11 @@
 			if(touchnots){
 				for(var k = 0,n = touchnots.length; k < n; k++){
 					var start = touchnots[k];
-					start = start.replace(/(\w+):touchnot#(\w+)/,"($1):touchnot#($2)");
+					start = start.replace(/([a-zA-Z0-9._-]+):touchnot#([a-zA-Z0-9._-]+)/,"($1):touchnot#($2)");
 					var end = start.replace(/BEGIN/,"END");
 					var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 					html = html.replace(reg,function(m,key2,val,next){
-						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 						if(itemkey != val){
 							return next;
 						}else{
@@ -233,11 +236,11 @@
 			if(exists){
 				for(var k = 0,n = exists.length; k < n; k++){
 					var start = exists[k];
-					start = start.replace(/(\w+):exist/,"($1):exist");
+					start = start.replace(/([a-zA-Z0-9._-]+):exist/,"($1):exist");
 					var end = start.replace(/BEGIN/,"END");
 					var reg = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 					html = html.replace(reg,function(m,key2,next){
-						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 						if(itemkey){
 							return next;
 						}else{
@@ -250,11 +253,11 @@
 			if(empties){
 				for(var k = 0,n = empties.length; k < n; k++){
 					var start = empties[k];
-					start = start.replace(/(\w+):empty/,"($1):empty");
+					start = start.replace(/([a-zA-Z0-9._-]+):empty/,"($1):empty");
 					var end = start.replace(/BEGIN/,"END");
 					var empty = new RegExp(start+"(([\\n\\r\\t]|.)*?)"+end,"g");
 					html = html.replace(empty,function(m,key2,next){
-						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : item[key2];
+						var itemkey = typeof item[key2] === "function" ? item[key2].apply(that) : that.getDataFromObj(key2,item);
 						if(!itemkey){
 							return next;
 						}else{
@@ -264,7 +267,7 @@
 				}
 			}
 			/*変数解決*/
-			html = html.replace(/{(\w+)}(\[(\w+)\])*/g,function(n,key3,key4,converter){
+			html = html.replace(/{([a-zA-Z0-9._-]+)}(\[([a-zA-Z0-9._-]+)\])*/g,function(n,key3,key4,converter){
 				var data;
 				if(key3 == "i"){
 					data = i;
@@ -316,7 +319,7 @@
 			return html;
 		},
 		resolveWith:function(html){
-			var width = /<!-- BEGIN (\w+):with -->(([\n\r\t]|.)*?)<!-- END (\w+):with -->/g;
+			var width = /<!-- BEGIN ([a-zA-Z0-9._-]+):with -->(([\n\r\t]|.)*?)<!-- END ([a-zA-Z0-9._-]+):with -->/g;
 			html = html.replace(width,function(m,key,val){
 				m = m.replace(/data\-bind=['"](.*?)['"]/g,"data-bind='"+key+".$1'");
 				return m;
@@ -394,6 +397,9 @@
 			var html = this.getHtml();
 			var templates = this.templates;
 			var renderWay = txt || "html";
+			if(this.method.beforeUpdated){
+				this.applyMethod("beforeUpdated");
+			}
 			for(var i = 0,n = templates.length; i < n; i++){
 				var tem = templates[i];
 				var selector = "#"+tem;
@@ -1138,7 +1144,7 @@ jQuery(function($) {
 		organism: 2,
 		template: 3
 	};
-	var cssLab = new aTemplate.View({
+	var atomicLab = new aTemplate.View({
 		templates: [
 			"css_preview",
 			"css_edit",
@@ -1173,7 +1179,12 @@ jQuery(function($) {
 			markup: "ejs",
 			styling: "sass",
 			search: "",
-			searchCategory: ["true", "true", "true", "true"],
+			searchCategory: {
+				atom:true,
+				molecule:true,
+				organism:true,
+				template:true
+			},
 			searchStatus: "inactive",
 			cheatCategory: "",
 			cheatAbout: "",
@@ -1256,12 +1267,20 @@ jQuery(function($) {
 			applyData: function() {
 				var comp = this.data.components[0];
 				if (comp) {
-					this.data.id = comp.id
-					this.data.html = comp.html;
-					this.data.css = comp.css;
-					this.data.category = comp.category;
-					this.data.name = comp.name;
-					this.data.description = comp.description;
+					this.setData({
+						id:comp.id,
+						html:comp.html,
+						css:comp.css,
+						category:comp.category,
+						name:comp.name,
+						description:comp.description,
+						searchCategory: {
+							atom:true,
+							molecule:true,
+							organism:true,
+							template:true
+						}
+					});
 				}
 				this.update();
 				return this;
@@ -1433,6 +1452,23 @@ jQuery(function($) {
 			searchComponents: function() {
 				this.data.searchStatus = "active";
 				this.update("html", "css_search_result");
+			},
+			toggleComponents: function(target,category){
+				var self = this.e.target;
+				var searchCategory = this.data.searchCategory;
+				var $target = $(target);
+				var status = searchCategory[category];
+				if(status === true){
+					$("i",self).text("add");
+					$(self).parents(".js-list-parent").addClass("js-closed");
+					searchCategory[category] = false;
+					$target.animate({"height": "0px"}, 120);
+				}else{
+					$("i",self).text("remove");
+					$(self).parents(".js-list-parent").removeClass("js-closed");
+					searchCategory[category] = true;
+					$target.css({"height": ""});
+				}
 			},
 			convertCompToHtml: function(word) {
 				var data = this.data.components;
@@ -1765,7 +1801,6 @@ jQuery(function($) {
 		convert: {
 			preview: function(text) {
 				var components = this.getComputedProp("sortByCategory");
-				console.log(components);
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				preview = compiler.markup[this.data.markup](preview);
@@ -1818,7 +1853,6 @@ jQuery(function($) {
 						css += comp.css;
 					}
 				}
-				console.log(css);
 				css = compiler.styling[this.data.styling](css);
 				css = compiler.util.addParentSelectorToAll(css,".js-preview");
 				preview += "<style>" + css + "</style>";
@@ -1875,7 +1909,7 @@ jQuery(function($) {
 	});
 	$(".js-add-category").click(function() {
 		var category = $(this).data("category");
-		cssLab.applyMethod("openDialog", category);
+		atomicLab.applyMethod("openDialog", category);
 	});
 });
 
