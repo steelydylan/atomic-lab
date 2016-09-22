@@ -61,3 +61,17 @@ gulp.task('default', function () {
     gulp.watch('components/**',['atomic']);
 });
 ```
+
+#### 4. Make sure that your Project looks like this:
+
+```
+Your Project/
+├── atomic-lab/
+│   └── resource/
+│       └── setting.json
+│
+├── themes or components here (like WordPress theme)/
+│   └── ** (You have to watch here)
+```
+
+Through gulp, You have to update setting.json so that you can make new components to appear on `atomic-lab` pages
