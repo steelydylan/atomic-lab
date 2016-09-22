@@ -27,17 +27,17 @@ var bs = require('browser-sync').create();
 
 gulp.task('atomic-init', function(){
 		bs.init({
-			server: "./styleguide"
+			server: "./atomic-lab"
 		});
 		atomic.init({
-			dist:"styleguide"
+			dist:"atomic-lab"
 		}).then(bs.reload());
 });
 
 gulp.task('atomic', function(){
 		atomic.build({
 			src:"./components",
-			dist:"./styleguide/resources/setting.json",
+			dist:"./atomic-lab/resources/setting.json",
 			markup:"ejs"
 		}).then(bs.reload());
 });
@@ -51,7 +51,7 @@ gulp.task('default', function () {
 ```
 
 ## Structure
-You have to watch your html/php files via gulp or anything like that and after that you have to make setting.json via method `atomic.build()` so that you can update the components info on atomic-lab page.
+You have to watch your html/php files via `gulp` or anything like that and after that you have to make setting.json via method `atomic.build()` so that you can update the components info on `atomic-lab` page.
 
 
 ###Example
