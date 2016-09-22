@@ -6,8 +6,8 @@ var process_path = process.cwd();
 exports.builder = {
   d:{
   	alias: 'dist',
-  	describe: 'set styleguide directory',
-  	default:"styleguide"
+  	describe: 'set atomic-lab directory',
+  	default:"atomic-lab"
   },
   s:{
   	alias: 'src',
