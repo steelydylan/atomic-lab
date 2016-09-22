@@ -13,7 +13,7 @@ exports.builder = {
   	default:"html"
   },
   s:{
-  	alias: 'source',
+  	alias: 'src',
   	describe: 'set component directory',
   	default:"components/"
   },
@@ -27,7 +27,7 @@ exports.handler = function (argv) {
     server: argv.server
 	});
 	atomic.build({
-		src:argv.source,
+		src:argv.src,
 		dist:argv.dist,
 		markup:argv.markup
 	}).then(bs.reload());
