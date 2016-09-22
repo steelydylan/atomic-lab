@@ -2,592 +2,612 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<title>AtomicLab (Static)</title>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="/css/material-customized.css" />
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="/css/atomic-lab.css">
-	<link rel="stylesheet" href="css/dialog-polyfill.css">
-	<script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
-	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <meta charset="UTF-8">
+  <title>AtomicLab (Static)</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="/css/material-customized.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="/css/atomic-lab.css">
+  <link rel="stylesheet" href="css/dialog-polyfill.css">
+  <script defer src="https://code.getmdl.io/1.2.0/material.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 </head>
 
 <body>
-	<div class="mdl-layout">
+  <div class="mdl-layout">
 
-		<!-- Header -->
-		<header class="mdl-layout__header atomicLabHeader">
-			<div class="mdl-layout__header-row atomicLabHeader-row">
-				<!-- Title -->
-				<span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
-				<!-- Add spacer, to align navigation to the right -->
-				<div class="mdl-layout-spacer"></div>
-				<!-- Navigation -->
-				<nav class="mdl-navigation">
-					<!-- Place this tag where you want the button to render. -->
-					<a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
+    <!-- Header -->
+    <header class="mdl-layout__header atomicLabHeader">
+      <div class="mdl-layout__header-row atomicLabHeader-row">
+        <!-- Title -->
+        <span class="mdl-layout-title mdl-layout-logo">Atomic Lab</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+        <!-- Navigation -->
+        <nav class="mdl-navigation">
+          <!-- Place this tag where you want the button to render. -->
+          <a class="mdl-navigation__link" href="#" data-action="openAboutDialog">About</a>
 
-					<a id="openDialog-projects" class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
+          <a id="openDialog-projects" class="mdl-navigation__link" href="#" data-action="openCollectionsDialog">Projects</a>
 
-					<a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
-					<div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
-						<br>exported JSON</div>
+          <a id="Navi-upload" class="mdl-navigation__link" href="#">Upload</a>
+          <div class="mdl-tooltip" data-mdl-for="Navi-upload">You can import
+            <br>exported JSON</div>
 
-					<a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
-					</a>
-					<div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
-						<br>Please star on GitHub! ;D</div>
-				</nav>
-			</div>
-		</header>
+          <a id="Navi-github" class="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img class="atomicLabHeader-gitHubMark" src="/images/githubMark.png" alt="GitHub">
+          </a>
+          <div class="mdl-tooltip" data-mdl-for="Navi-github">If you like this,
+            <br>Please star on GitHub! ;D</div>
+        </nav>
+      </div>
+    </header>
 
-		<div class="mdl-layout__content">
+    <div class="mdl-layout__content">
 
-			<!-- Side Menu -->
-			<div class="atomicLabSideMenu">
+      <!-- Side Menu -->
+      <div class="atomicLabSideMenu">
 
-				<div class="atomicLabProjectControl">
+        <div class="atomicLabProjectControl">
 
-					<!-- Project title -->
-					<div class="atomicLabProjectControl-title">
-						<i class="material-icons">folder</i> My Website
-						<i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
-					</div>
-					<p class="atomicLabProjectControl-shotDescription">
-						Keep your eyes on the stars, and your feet on the ground.
-					</p>
+          <!-- Project title -->
+          <div class="atomicLabProjectControl-title">
+            <i class="material-icons">folder</i>
+            <span class="atomicLabProjectControl-projectName">My Website</span>
+            <i class="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
+          </div>
 
-					<!-- Project actions -->
-					<nav class="atomicLabProjectControl-actions">
-						<ul>
-							<li>
-								<i id="projectAction-share" class="material-icons">share</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
-							</li>
-							<li>
-								<i id="projectAction-save" class="material-icons">save</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
-							</li>
-							<li>
-								<i id="projectAction-download" class="material-icons">file_download</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
-									<br>(included Export JSON data)</div>
-							</li>
-							<li>
-								<i id="projectAction-settings" class="material-icons">settings</i>
-								<div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
-							</li>
-						</ul>
-					</nav>
+          <!-- Project Dropdown -->
+          <div class="atomicLabProjectDropdown">
 
-				</div>
-
-				<!-- Component list -->
-				<div class="atomicLabComponentList">
-					<ul>
-						<!-- Atom -->
-						<li class="atomicLabComponentList-category _atom">
-							<span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom
-							<i class="material-icons">remove</i></span>
-							<ul>
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Button1
-									<i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
-									</span>
-								</li>
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Heading1
-									<i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
-									</span>
-								</li>
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Profile Icon
-									<i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
-									</span>
-								</li>
-
-							</ul>
-						</li>
-
-						<!-- Molecule -->
-						<li class="atomicLabComponentList-category _molecule">
-							<span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule
-							<i class="material-icons">remove</i></span>
-							<ul>
-
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Profile Card
-									<i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
-									</span>
-								</li>
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Search Box
-									<i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
-									</span>
-								</li>
-
-							</ul>
-						</li>
-
-						<!-- Organism -->
-						<li class="atomicLabComponentList-category _organism">
-							<span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism
-							<i class="material-icons">remove</i></span>
-							<ul>
-
-								<li class="atomicLabComponentList-item">
-									<span><i class="material-icons">insert_drive_file</i>
-									Entry Summary
-									<i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
-									<div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
-									</span>
-								</li>
-
-							</ul>
-						</li>
-
-						<!-- Template -->
-						<li class="atomicLabComponentList-category _template">
-							<span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template
-							<i class="material-icons">remove</i></span>
-							<ul></ul>
-						</li>
-					</ul>
-
-					<script>
-						$(".atomicLabComponentList-category > span").click(function () {
-
-							var cat_btn = $(this).closest(".atomicLabComponentList-category");
-							console.log(cat_btn);
-
-							// アニメーションあとから変えるかも...
-							if (cat_btn.hasClass("js-closed") == false) {
-								// close
-								cat_btn.addClass("js-closed");
-								$("ul", cat_btn)
-									.animate({
-										"height": "0px"
-									}, 120);
-								$("i", this).text("add");
-
-							} else {
-								// open
-								cat_btn.removeClass("js-closed");
-								$("ul", cat_btn)
-									.css({"height": ""});
-								$("i", this).text("remove");
-							}
-						});
-					</script>
-
-				</div>
+            <ul class="atomicLabProjectDropdown-list">
+              <li><a href="#"><i class="material-icons">folder</i> Project1</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Projecaaaaaaaaaaaaaaaaaaaaat2</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Project3</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Project4</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Project4</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Project4</a></li>
+              <li><a href="#"><i class="material-icons">folder</i> Project4</a></li>
+            </ul>
+            <span class="atomicLabProjectDropdown-newProject"><a href="#">+ Make a new project</a></span>
+          </div>
 
 
-				<!-- Search box -->
+          <p class="atomicLabProjectControl-shotDescription">
+            Keep your eyes on the stars, and your feet on the ground.
+          </p>
 
-				<div id="mask-search-cancel"></div>
+          <!-- Project actions -->
+          <nav class="atomicLabProjectControl-actions">
+            <ul>
+              <li>
+                <i id="projectAction-share" class="material-icons">share</i>
+                <div class="mdl-tooltip" data-mdl-for="projectAction-share">Share</div>
+              </li>
+              <li>
+                <i id="projectAction-save" class="material-icons">save</i>
+                <div class="mdl-tooltip" data-mdl-for="projectAction-save">Save this project to collection</div>
+              </li>
+              <li>
+                <i id="projectAction-download" class="material-icons">file_download</i>
+                <div class="mdl-tooltip" data-mdl-for="projectAction-download">Download this project as zip
+                  <br>(included Export JSON data)</div>
+              </li>
+              <li>
+                <i id="projectAction-settings" class="material-icons">settings</i>
+                <div class="mdl-tooltip" data-mdl-for="projectAction-settings">Settings</div>
+              </li>
+            </ul>
+          </nav>
 
-				<div class="atomicLabSearchBox">
-					<div class="atomicLabSearchBox-floatingCard">
+        </div>
 
-						<!-- Filter settings -->
-						<div class="atomicLabSearchBox-expandContent">
+        <!-- Component list -->
+        <div class="atomicLabComponentList">
+          <ul>
+            <!-- Atom -->
+            <li class="atomicLabComponentList-category _atom">
+              <span><img class="atomicLabComponentList-category-icon" src="/images/iconAtom-s.png" alt="">Atom
+              <i class="material-icons">remove</i></span>
+              <ul>
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Button1
+                  <i id="copySnippet1" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet1">Copy snippet</div>
+                  </span>
+                </li>
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Heading1
+                  <i id="copySnippet2" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet2">Copy snippet</div>
+                  </span>
+                </li>
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Profile Icon
+                  <i id="copySnippet3" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet3">Copy snippet</div>
+                  </span>
+                </li>
 
-							<span class="atomicLabSearchBox-title">Category filter</span>
-							<label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-atom">
-								<input type="checkbox" id="filter-atom" class="mdl-checkbox__input" checked>
-								<span class="mdl-checkbox__label">Atom</span>
-							</label>
-							<label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-molecule">
-								<input type="checkbox" id="filter-molecule" class="mdl-checkbox__input" checked>
-								<span class="mdl-checkbox__label">Molecule</span>
-							</label>
-							<label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-organism">
-								<input type="checkbox" id="filter-organism" class="mdl-checkbox__input" checked>
-								<span class="mdl-checkbox__label">Organism</span>
-							</label>
-							<label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-template">
-								<input type="checkbox" id="filter-template" class="mdl-checkbox__input" checked>
-								<span class="mdl-checkbox__label">Template</span>
-							</label>
+              </ul>
+            </li>
 
-						</div>
+            <!-- Molecule -->
+            <li class="atomicLabComponentList-category _molecule">
+              <span><img class="atomicLabComponentList-category-icon" src="/images/iconMolecule-s.png" alt="">Molecule
+              <i class="material-icons">remove</i></span>
+              <ul>
 
-						<div class="atomicLabSearchBox-main">
-							<i class="material-icons">search</i>
-							<input class="atomicLabSearchBox-input" type="text" placeholder="Search">
-						</div>
-					</div>
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Profile Card
+                  <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                  </span>
+                </li>
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Search Box
+                  <i id="copySnippet5" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                  </span>
+                </li>
+
+              </ul>
+            </li>
+
+            <!-- Organism -->
+            <li class="atomicLabComponentList-category _organism">
+              <span><img class="atomicLabComponentList-category-icon" src="/images/iconOrganism-s.png" alt="">Organism
+              <i class="material-icons">remove</i></span>
+              <ul>
+
+                <li class="atomicLabComponentList-item">
+                  <span><i class="material-icons">insert_drive_file</i>
+                  Entry Summary
+                  <i id="copySnippet4" class="atomicLabComponentList-item-subAction material-icons">code</i>
+                  <div class="mdl-tooltip" data-mdl-for="copySnippet5">Copy snippet</div>
+                  </span>
+                </li>
+
+              </ul>
+            </li>
+
+            <!-- Template -->
+            <li class="atomicLabComponentList-category _template">
+              <span><img class="atomicLabComponentList-category-icon" src="/images/iconTemplate-s.png" alt="">Template
+              <i class="material-icons">remove</i></span>
+              <ul></ul>
+            </li>
+          </ul>
+
+          <script>
+            $(".atomicLabComponentList-category > span").click(function () {
+
+              var cat_btn = $(this).closest(".atomicLabComponentList-category");
+              console.log(cat_btn);
+
+              // アニメーションあとから変えるかも...
+              if (cat_btn.hasClass("js-closed") == false) {
+                // close
+                cat_btn.addClass("js-closed");
+                $("ul", cat_btn)
+                  .animate({
+                    "height": "0px"
+                  }, 120);
+                $("i", this).text("add");
+
+              } else {
+                // open
+                cat_btn.removeClass("js-closed");
+                $("ul", cat_btn)
+                  .css({
+                    "height": ""
+                  });
+                $("i", this).text("remove");
+              }
+            });
+          </script>
+
+        </div>
 
 
-<!--
-					<script>
-						$(".atomicLabSearchBox-input").focus(function () {
+        <!-- Search box -->
 
-							if ($(".atomicLabSearchBox").hasClass("is-open") == false) {
+        <div id="mask-search-cancel"></div>
 
-								$(".atomicLabSearchBox").addClass("is-open");
+        <div class="atomicLabSearchBox">
+          <div class="atomicLabSearchBox-floatingCard">
 
-								$(".atomicLabSearchBox-expandContent").animate({
-									"height": "200px",
-									"opacity": 1
-								}, 180);
+            <!-- Filter settings -->
+            <div class="atomicLabSearchBox-expandContent">
 
-								$("#mask-search-cancel").show();
-							}
-						});
+              <span class="atomicLabSearchBox-title">Category filter</span>
+              <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-atom">
+                <input type="checkbox" id="filter-atom" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label">Atom</span>
+              </label>
+              <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-molecule">
+                <input type="checkbox" id="filter-molecule" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label">Molecule</span>
+              </label>
+              <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-organism">
+                <input type="checkbox" id="filter-organism" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label">Organism</span>
+              </label>
+              <label class="atomicLabSearchBox-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="filter-template">
+                <input type="checkbox" id="filter-template" class="mdl-checkbox__input" checked>
+                <span class="mdl-checkbox__label">Template</span>
+              </label>
 
-						$("#mask-search-cancel").click(function () {
+            </div>
 
-							$(".atomicLabSearchBox").removeClass("is-open");
+            <div class="atomicLabSearchBox-main">
+              <i class="material-icons">search</i>
+              <input class="atomicLabSearchBox-input" type="text" placeholder="Search">
+            </div>
+          </div>
 
-							$(".atomicLabSearchBox-expandContent").css({
-								"height": "0px",
-								"opacity": 0
-							});
 
-							$("#mask-search-cancel").hide();
+          <!--
+          <script>
+            $(".atomicLabSearchBox-input").focus(function () {
 
-						});
-					</script>
+              if ($(".atomicLabSearchBox").hasClass("is-open") == false) {
+
+                $(".atomicLabSearchBox").addClass("is-open");
+
+                $(".atomicLabSearchBox-expandContent").animate({
+                  "height": "200px",
+                  "opacity": 1
+                }, 180);
+
+                $("#mask-search-cancel").show();
+              }
+            });
+
+            $("#mask-search-cancel").click(function () {
+
+              $(".atomicLabSearchBox").removeClass("is-open");
+
+              $(".atomicLabSearchBox-expandContent").css({
+                "height": "0px",
+                "opacity": 0
+              });
+
+              $("#mask-search-cancel").hide();
+
+            });
+          </script>
 -->
 
-				</div>
+        </div>
 
 
-			</div>
-			<!-- / Side menu -->
+      </div>
+      <!-- / Side menu -->
 
-			<!-- Main panel -->
-			<main class="atomicLabMain">
+      <!-- Main panel -->
+      <main class="atomicLabMain">
 
-				<div class="atomicLabTabs mdl-tabs mdl-js-tabs">
+        <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 
-					<div class="atomicLabComponentControl mdl-shadow--2dp">
+          <div class="atomicLabComponentControl mdl-shadow--2dp">
 
-						<!-- Actions -->
-						<div class="atomicLabComponentControl-actions">
-							<nav>
-								<ul>
-									<li>
-										<i id="componentAction-delete" class="material-icons">delete</i>
-										<div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
-									</li>
-									<li>
-										<i id="componentAction-settings" class="material-icons">settings</i>
-										<div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
-									</li>
-								</ul>
-							</nav>
-						</div>
+            <!-- Actions -->
+            <div class="atomicLabComponentControl-actions">
+              <nav>
+                <ul>
+                  <li>
+                    <i id="componentAction-delete" class="material-icons">delete</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-delete">Dalete</div>
+                  </li>
+                  <li>
+                    <i id="componentAction-settings" class="material-icons">settings</i>
+                    <div class="mdl-tooltip" data-mdl-for="componentAction-settings">Settings</div>
+                  </li>
+                </ul>
+              </nav>
+            </div>
 
-						<!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
-						<div class="atomicLabComponentControl-icon">
-							<img src="/images/iconAtom-l.png" alt="">
-						</div>
+            <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
+            <div class="atomicLabComponentControl-icon">
+              <img src="/images/iconAtom-l.png" alt="">
+            </div>
 
-						<!-- Component title -->
-						<div class="atomicLabComponentControl-texts">
-							<div class="atomicLabComponentControl-title">
-								My Primary Button 1
-							</div>
-							<p class="atomicLabComponentControl-description">
-								Short description of the component. This is common button.
-							</p>
-						</div>
-
-
-						<!-- Tabs -->
-						<div class="atomicLabTabs-bar mdl-tabs__tab-bar">
-							<a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
-							<a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
-							<a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
-						</div>
-
-					</div>
-
-					<!-- Tab panels -->
-					<div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
-						<p>Tab 1 Content</p>
-
-					</div>
-					<div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
-						<p>Tab 2 Content</p>
-					</div>
-					<div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
-						<p>Tab 3 Content</p>
-					</div>
-				</div>
-
-			</main>
+            <!-- Component title -->
+            <div class="atomicLabComponentControl-texts">
+              <div class="atomicLabComponentControl-title">
+                My Primary Button 1
+              </div>
+              <p class="atomicLabComponentControl-description">
+                Short description of the component. This is common button.
+              </p>
+            </div>
 
 
+            <!-- Tabs -->
+            <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
+              <a href="#tab1-panel" class="atomicLabTabs-tab mdl-tabs__tab is-active">Preview</a>
+              <a href="#tab2-panel" class="atomicLabTabs-tab mdl-tabs__tab">HTML</a>
+              <a href="#tab3-panel" class="atomicLabTabs-tab mdl-tabs__tab">CSS</a>
+            </div>
 
-			<!-- Floating Action Button -->
-			<div class="AtomicLabFAB">
+          </div>
 
-				<button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-					<i class="material-icons">add</i>
-				</button>
-				<div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
+          <!-- Tab panels -->
+          <div class="atomicLabTabs-panel mdl-tabs__panel is-active" id="tab1-panel">
+            <p>Tab 1 Content</p>
 
-				<!-- sub actions -->
-				<ul class="AtomicLabFAB-subActionsList">
-					<li>
-						<button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-							<img src="/images/iconAtom-s.png" alt="Add Atom">
-						</button>
-						<div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
-					</li>
-					<li>
-						<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-							<img src="/images/iconMolecule-s.png" alt="Add Molecules">
-						</button>
-					</li>
-					<li>
-						<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-							<img src="/images/iconOrganism-s.png" alt="Add Organism">
-						</button>
-					</li>
-					<li>
-						<button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
-							<img src="/images/iconTemplate-s.png" alt="Add Template">
-						</button>
-					</li>
-				</ul>
-			</div>
+          </div>
+          <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab2-panel">
+            <p>Tab 2 Content</p>
+          </div>
+          <div class="atomicLabTabs-panel mdl-tabs__panel" id="tab3-panel">
+            <p>Tab 3 Content</p>
+          </div>
+        </div>
 
-			<script>
-				$(function () {
-
-					$(".AtomicLabFAB-main").click(function () {
-
-						if ($(this).hasClass("is-open") == false) {
-
-							$(this)
-								.css({
-									"transform": "rotate(45deg)"
-								})
-								.addClass("is-open");
-
-							$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-								$(this).css({
-									"transform": "scale(1) translateY(0px)",
-									"opacity": 1
-								});
-							});
-
-						} else {
-
-							$(this)
-								.css({
-									"transform": "rotate(0deg)"
-								})
-								.removeClass("is-open");
-
-							$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
-								$(this).css({
-									"transform": "scale(0) translateY(200px)",
-									"opacity": 0
-								});
-							});
-						}
-					});
-
-				});
-			</script>
-
-		</div>
-	</div>
-
-	<!-- Projects dialog -->
-	<dialog id="dialog-projects" class="atomicLabProjectsDialog mdl-dialog">
-		<h4 class="atomicLabProjectsDialog-title mdl-dialog__title">Projects Collection</h4>
-		<div class="mdl-dialog__content">
-
-			<i class="atomicLabProjectsDialog-close material-icons">close</i>
-
-			<table class="atomicLabProjectsDialog-table _header">
-				<tbody>
-					<tr>
-						<th class="atomicLabProjectsDialog-icon"></th>
-						<th class="atomicLabProjectsDialog-name">Name</th>
-						<th class="atomicLabProjectsDialog-url">URL</th>
-						<th class="atomicLabProjectsDialog-share">Share</th>
-						<th class="atomicLabProjectsDialog-icon"></th>
-					</tr>
-				</tbody>
-			</table>
-
-			<div class="atomicLabProjectsDialog-projectsContainer">
-				<table class="atomicLabProjectsDialog-table _projects">
-					<tbody>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-						<tr>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="material-icons">folder</i>
-							</td>
-							<td class="atomicLabProjectsDialog-name">
-								Steelaxe official site
-							</td>
-							<td class="atomicLabProjectsDialog-url">
-								<a href="#">http://goo.gl/Uv5b2e/</a>
-							</td>
-							<td class="atomicLabProjectsDialog-share">
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
-								<i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
-							</td>
-							<td class="atomicLabProjectsDialog-icon">
-								<i class="atomicLabProjectsDialog-delete material-icons">delete</i>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+      </main>
 
 
-			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
-				Save
-			</button>
-			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
-				Save As New
-			</button>
+
+      <!-- Floating Action Button -->
+      <div class="AtomicLabFAB">
+
+        <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button>
+        <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
+
+        <!-- sub actions -->
+        <ul class="AtomicLabFAB-subActionsList">
+          <li>
+            <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+              <img src="/images/iconAtom-s.png" alt="Add Atom">
+            </button>
+            <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
+          </li>
+          <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+              <img src="/images/iconMolecule-s.png" alt="Add Molecules">
+            </button>
+          </li>
+          <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+              <img src="/images/iconOrganism-s.png" alt="Add Organism">
+            </button>
+          </li>
+          <li>
+            <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab">
+              <img src="/images/iconTemplate-s.png" alt="Add Template">
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <script>
+        $(function () {
+
+          $(".AtomicLabFAB-main").click(function () {
+
+            if ($(this).hasClass("is-open") == false) {
+
+              $(this)
+                .css({
+                  "transform": "rotate(45deg)"
+                })
+                .addClass("is-open");
+
+              $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                $(this).css({
+                  "transform": "scale(1) translateY(0px)",
+                  "opacity": 1
+                });
+              });
+
+            } else {
+
+              $(this)
+                .css({
+                  "transform": "rotate(0deg)"
+                })
+                .removeClass("is-open");
+
+              $($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function () {
+                $(this).css({
+                  "transform": "scale(0) translateY(200px)",
+                  "opacity": 0
+                });
+              });
+            }
+          });
+
+        });
+      </script>
+
+    </div>
+  </div>
+
+  <!-- Projects dialog -->
+  <dialog id="dialog-projects" class="atomicLabProjectsDialog mdl-dialog">
+    <h4 class="atomicLabProjectsDialog-title mdl-dialog__title">Projects Collection</h4>
+    <div class="mdl-dialog__content">
+
+      <i class="atomicLabProjectsDialog-close material-icons">close</i>
+
+      <table class="atomicLabProjectsDialog-table _header">
+        <tbody>
+          <tr>
+            <th class="atomicLabProjectsDialog-icon"></th>
+            <th class="atomicLabProjectsDialog-name">Name</th>
+            <th class="atomicLabProjectsDialog-url">URL</th>
+            <th class="atomicLabProjectsDialog-share">Share</th>
+            <th class="atomicLabProjectsDialog-icon"></th>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="atomicLabProjectsDialog-projectsContainer">
+        <table class="atomicLabProjectsDialog-table _projects">
+          <tbody>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+            <tr>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="material-icons">folder</i>
+              </td>
+              <td class="atomicLabProjectsDialog-name">
+                Steelaxe official site
+              </td>
+              <td class="atomicLabProjectsDialog-url">
+                <a href="#">http://goo.gl/Uv5b2e/</a>
+              </td>
+              <td class="atomicLabProjectsDialog-share">
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconSlack-s.png" alt=""></i>
+                <i class="atomicLabProjectsDialog-shareIcon"><img src="/images/iconTwitter-s.png" alt=""></i>
+              </td>
+              <td class="atomicLabProjectsDialog-icon">
+                <i class="atomicLabProjectsDialog-delete material-icons">delete</i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
 
-		</div>
-	</dialog>
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
+        Save
+      </button>
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colerd">
+        Save As New
+      </button>
 
-	<script>
-		var dialog_projects = document.querySelector('#dialog-projects');
-		var showDialogButton = document.querySelector('#openDialog-projects');
-		if (!dialog_projects.showModal) {
-			dialogPolyfill.registerDialog(dialog_projects);
-		}
-		showDialogButton.addEventListener('click', function () {
-			dialog_projects.showModal();
-		});
-		dialog_projects.querySelector('.atomicLabProjectsDialog-close').addEventListener('click', function () {
-			dialog_projects.close();
-		});
-	</script>
+
+    </div>
+  </dialog>
+
+  <script>
+    var dialog_projects = document.querySelector('#dialog-projects');
+    var showDialogButton = document.querySelector('#openDialog-projects');
+    if (!dialog_projects.showModal) {
+      dialogPolyfill.registerDialog(dialog_projects);
+    }
+    showDialogButton.addEventListener('click', function () {
+      dialog_projects.showModal();
+    });
+    dialog_projects.querySelector('.atomicLabProjectsDialog-close').addEventListener('click', function () {
+      dialog_projects.close();
+    });
+  </script>
 </body>
 
 </html>

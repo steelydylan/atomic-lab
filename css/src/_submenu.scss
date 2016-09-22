@@ -11,6 +11,7 @@
 
 // Project Control
 .atomicLabProjectControl {
+    position: relative;
     border-bottom: 1px solid #{$line-color-default};
     padding: 20px 20px 0 20px;
     &-title {
@@ -57,6 +58,72 @@
     }
 }
 
+// project Dropdown
+.atomicLabProjectDropdown{
+
+    position: absolute;
+    z-index: 2;
+    width: 280px;
+    height: 250px;
+    box-sizing: border-box;
+    padding: 20px;
+    top: 60px;
+    left: 15px;
+    border: 1px solid #DBDBDB;
+    background-color: #fff;
+    box-shadow: 2px 3px 4px 0px rgba(0,0,0,0.20);
+    border-radius: 2px;
+
+    &-list{
+      display: block;
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+      height: 170px;
+
+      li{
+        font-size: 18px;
+        margin: 15px 0;
+
+        &:first-of-type{
+          margin-top: 0;
+        }
+      }
+
+      a{
+        display: inline-block;
+        color: #{$text-color-light};
+        text-decoration: none;
+        max-width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover{
+          color: #{$text-color-dark};
+        }
+        i{
+          vertical-align: bottom;
+        }
+
+      }
+    }
+
+    &-newProject{
+      display: block;
+      margin-top: 10px;
+
+      a{
+        display: inline-block;
+        color: #{$color-accent};
+        text-decoration: none;
+        font-size: 18px;
+        padding: 10px;
+      }
+
+    }
+
+}
 
 // Component list
 .atomicLabComponentList{
