@@ -25,5 +25,11 @@ $ $(npm bin)/atomic-lab build
 
 ## Attribution
 We use some icons created by http://patternlab.io/
+
+<img src="images/iconAtom-s.png"></img>
+<img src="images/iconMolecule-s.png"></img>
+<img src="images/iconOrganism-s.png"></img>
+<img src="images/iconTemplate-s.png"></img>
+
 ## License
 MIT License
