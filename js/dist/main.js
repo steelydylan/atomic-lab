@@ -1473,12 +1473,25 @@ jQuery(function($) {
 				}
 			},
 			toggleProjectList: function(){
-				if(this.data.projectOnDrop === "true"){
-					this.data.projectOnDrop = "false";
-				}else{
+        var $dropdown = $(".js-dropdown");
+        console.log(this.data.projectOnDrop);
+				if(this.data.projectOnDrop === "false"){
 					this.data.projectOnDrop = "true";
-				}
-				this.update("html","css_project");
+          $dropdown.addClass("js-open");
+          $dropdown.css({
+            "transform": "scale(1)",
+            "opacity": 1
+          });
+          $("#mask-dropdown-cancel").show();
+				}else{
+					this.data.projectOnDrop = "false";
+          $dropdown.removeClass("js-open");
+          $dropdown.css({
+            "transform": "scale(0)",
+            "opacity": 0
+          });
+          $("#mask-dropdown-cancel").hide();
+        }
 			},
 			makeNewProject: function(){
 				this.setData({

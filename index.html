@@ -302,8 +302,8 @@
 	          <!-- END projectOnEdit:touch#true -->
             <i class="material-icons atomicLabProjectControl-arrow" data-action="toggleProjectList()">arrow_drop_down</i>
           </div>
-          <!-- BEGIN projectOnDrop:touch#true -->
-          <div class="atomicLabProjectDropdown">
+
+          <div class="atomicLabProjectDropdown js-dropdown<!-- BEGIN projectOnDrop:touch#true --> js-open<!-- END projectOnDrop:touch#true -->">
             <ul class="atomicLabProjectDropdown-list">
             <!-- BEGIN collectionsReverse:loop -->
               <li><a href="{shortenedUrl}"><i class="material-icons">folder</i> {projectName}</a></li>
@@ -311,7 +311,6 @@
             </ul>
             <span class="atomicLabProjectDropdown-newProject" data-action="makeNewProject()"><a href="#">+ Make a new project</a></span>
           </div>
-          <!-- END projectOnDrop:touch#true -->
           <p class="atomicLabProjectControl-shotDescription">
             <!-- BEGIN projectDescOnEdit:touchnot#true -->
             <span data-action="editProjectDesc()" style="cursor:pointer;">

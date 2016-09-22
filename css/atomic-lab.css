@@ -95,6 +95,9 @@ body {
   transition: 0.1s;
   opacity: 0;
   transform-origin: top center; }
+  .atomicLabProjectDropdown.js-open {
+    transform: scale(1);
+    opacity: 1; }
   .atomicLabProjectDropdown-list {
     display: block;
     margin: 0;
