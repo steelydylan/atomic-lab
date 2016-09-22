@@ -26,7 +26,7 @@ jQuery(function($) {
 		organism: 2,
 		template: 3
 	};
-	var cssLab = new aTemplate.View({
+	var atomicLab = new aTemplate.View({
 		templates: [
 			"css_preview",
 			"css_edit",
@@ -61,12 +61,18 @@ jQuery(function($) {
 			markup: "ejs",
 			styling: "sass",
 			search: "",
-			searchCategory: ["true", "true", "true", "true"],
+			searchCategory: {
+				atom:true,
+				molecule:true,
+				organism:true,
+				template:true
+			},
 			searchStatus: "inactive",
 			cheatCategory: "",
 			cheatAbout: "",
 			cheatName: "",
 			fabState: "is-closed",
+			projectOnDrop: "false",
 			atomSearchResults: function() {
 				return this.applyMethod("getSearchResults", "atom");
 			},
@@ -83,9 +89,9 @@ jQuery(function($) {
 				var components = this.data.components;
 				return components.sort(function(a,b){
 					if(material[a.category] >= material[b.category]){
-						return -1;
-					}else{
 						return 1;
+					}else{
+						return -1;
 					}
 				})
 			},
@@ -144,12 +150,21 @@ jQuery(function($) {
 			applyData: function() {
 				var comp = this.data.components[0];
 				if (comp) {
-					this.data.id = comp.id
-					this.data.html = comp.html;
-					this.data.css = comp.css;
-					this.data.category = comp.category;
-					this.data.name = comp.name;
-					this.data.description = comp.description;
+					this.setData({
+						id:comp.id,
+						html:comp.html,
+						css:comp.css,
+						category:comp.category,
+						name:comp.name,
+						description:comp.description,
+						projectOnDrop: "false",
+						searchCategory: {
+							atom:true,
+							molecule:true,
+							organism:true,
+							template:true
+						}
+					});
 				}
 				this.update();
 				return this;
@@ -321,6 +336,56 @@ jQuery(function($) {
 			searchComponents: function() {
 				this.data.searchStatus = "active";
 				this.update("html", "css_search_result");
+			},
+			toggleComponents: function(target,category){
+				var self = this.e.target;
+				var searchCategory = this.data.searchCategory;
+				var $target = $(target);
+				var status = searchCategory[category];
+				if(status === true){
+					$("i",self).text("add");
+					$(self).parents(".js-list-parent").addClass("js-closed");
+					searchCategory[category] = false;
+					$target.animate({"height": "0px"}, 120);
+				}else{
+					$("i",self).text("remove");
+					$(self).parents(".js-list-parent").removeClass("js-closed");
+					searchCategory[category] = true;
+					$target.css({"height": ""});
+				}
+			},
+			toggleProjectList: function(){
+        var $dropdown = $(".js-dropdown");
+        console.log(this.data.projectOnDrop);
+				if(this.data.projectOnDrop === "false"){
+					this.data.projectOnDrop = "true";
+          $dropdown.addClass("js-open");
+          $dropdown.css({
+            "transform": "scale(1)",
+            "opacity": 1
+          });
+          $("#mask-dropdown-cancel").show();
+				}else{
+					this.data.projectOnDrop = "false";
+          $dropdown.removeClass("js-open");
+          $dropdown.css({
+            "transform": "scale(0)",
+            "opacity": 0
+          });
+          $("#mask-dropdown-cancel").hide();
+        }
+			},
+			makeNewProject: function(){
+				this.setData({
+					components:[],
+					projectName:"New Project",
+					projectDescription:"",
+					html:"",
+					css:"",
+					name:"",
+					projectOnDrop:"false"
+				});
+				this.update();
 			},
 			convertCompToHtml: function(word) {
 				var data = this.data.components;
@@ -570,6 +635,7 @@ jQuery(function($) {
 						self.data.collections.push(obj);
 						self.saveData(storageName);
 						self.update("html", "css_collections");
+						self.update("html", "css_project");
 						self.applyMethod("showAlert", "プロジェクトをコレクションに追加しました。");
 					});
 			},
@@ -577,6 +643,7 @@ jQuery(function($) {
 				var index = this.data.collections.length - i - 1;
 				this.data.collections.splice(index, 1);
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 				this.saveData(storageName);
 			},
 			updateCollection: function(i) {
@@ -585,6 +652,7 @@ jQuery(function($) {
 				var project = collections[index];
 				project.onEdit = "false";
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 			},
 			renameProject: function(i) {
 				var collections = this.data.collections
@@ -592,6 +660,7 @@ jQuery(function($) {
 				var project = collections[index];
 				project.onEdit = "true";
 				this.update("html", "css_collections");
+				this.update("html", "css_project");
 			},
 			updateProjectUrl: function(i) {
 				var self = this;
@@ -602,6 +671,7 @@ jQuery(function($) {
 					.then(function(){
 						project.shortenedUrl = self.data.shortenedUrl;
 						self.update("html","css_collections");
+						self.update("html","css_project");
 					});
 			},
 			/*
@@ -761,6 +831,6 @@ jQuery(function($) {
 	});
 	$(".js-add-category").click(function() {
 		var category = $(this).data("category");
-		cssLab.applyMethod("openDialog", category);
+		atomicLab.applyMethod("openDialog", category);
 	});
 });
