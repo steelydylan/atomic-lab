@@ -1,4 +1,5 @@
 #[Atomic Lab.](http://steelydylan.github.io/atomic-lab/)
+<img src="images/favicon.png"></img>
 Template sharing and coding environment based on atomic design
 
 ## Screenshot
