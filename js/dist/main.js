@@ -1215,6 +1215,8 @@ jQuery(function($) {
 						this.data.components = data.components;
 						this.data.styling = data.styling;
 						this.data.markup = data.markup;
+						this.data.projectName = data.projectName;
+						this.data.projectDescription = data.projectDescription;
 						location.hash = "";
 					}catch(err){
 						console.log(err);
@@ -1407,11 +1409,11 @@ jQuery(function($) {
 					zip.file(file2, comp.css);
 				});
 				zip.file("package.json", this.getHtml("#package_json"));
-				zip.file("index.js", this.getHtml("#index_js"));
+				zip.file("gulpfile.js", this.getHtml("#gulpfile_js"));
 				var content = zip.generate({
 					type: "blob"
 				});
-				saveAs(content, "css-lab.zip");
+				saveAs(content, "atomic-lab.zip");
 			},
 			searchComponents: function() {
 				this.data.searchStatus = "active";
@@ -1503,7 +1505,7 @@ jQuery(function($) {
 				}
 			},
 			changeMode: function(mode) {
-				if (this.data.editMode != "preview") {
+				if (this.data.editMode !== "preview") {
 					editor.destroy();
 				}
 				this.data.editMode = mode;
@@ -1797,9 +1799,10 @@ jQuery(function($) {
 				for (var i = 0, n = components.length; i < n; i++) {
 					var comp = components[i];
 					if (imports.indexOf(comp.name) !== -1 || this.data.id == comp.id) {
-						css += compiler.styling[this.data.styling](comp.css);
+						css += comp.css;
 					}
 				}
+				css = compiler.styling[this.data.styling](css);
 				css = compiler.util.addParentSelectorToAll(css,".js-preview");
 				preview += "<style>" + css + "</style>";
 				//todo delete
