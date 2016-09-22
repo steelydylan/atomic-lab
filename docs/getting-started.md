@@ -19,11 +19,6 @@ Options:
   --sample Whether You want to get some sample components or not [boolean]
 ```
 
-example.
-```sh
-$ $(npm bin)/atomic-lab init --dist atomic-lab
-```
-
 #### 3. Build Your Project:
 
 ##### via command line
