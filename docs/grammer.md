@@ -11,6 +11,7 @@ Following comment is necessary, so as to update `atomic-lab/resources/setting.js
 # @css ./common.sass
 -->
 ```
+After update above comment, you have to rerun `atomic.build()` to make `atomic-lab/resources/setting.json`
 
 ## Preview
 HTMLs Inside `preview tag` will be appeared on `Preview` panels
