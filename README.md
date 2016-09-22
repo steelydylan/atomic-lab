@@ -4,6 +4,11 @@ Template sharing and coding environment based on atomic design
 ## Screenshot
 <img src="about/images/Feature-browser.png">
 
+## Demo
+You can try it out from here
+
+[http://steelydylan.github.io/atomic-lab/](http://steelydylan.github.io/atomic-lab/)
+
 ## Features
 
 - You can use template engines like haml, ejs and jade.
