@@ -79,8 +79,24 @@ jQuery(function($) {
 			templateSearchResults: function() {
 				return this.applyMethod("getSearchResults", "template");
 			},
+			sortByCategory: function(){
+				var components = this.data.components;
+				return components.sort(function(a,b){
+					if(material[a.category] >= material[b.category]){
+						return 1;
+					}else{
+						return -1;
+					}
+				})
+			},
 			collectionsReverse: function() {
 				return this.data.collections.slice().reverse();
+			},
+			hasPreview: function(){
+				return parser.getPreview(this.data.html);
+			},
+			hasNote: function(){
+				return parser.getNote(this.data.html);
 			}
 		},
 		method: {
@@ -197,7 +213,6 @@ jQuery(function($) {
 					this.applyMethod("runEditor", this.data.editMode);
 				}
 				$(".js-note code").each(function(){
-					console.log($(this)[0]);
 					Prism.highlightElement($(this)[0]);
 				});
 			},
@@ -637,7 +652,8 @@ jQuery(function($) {
 		},
 		convert: {
 			preview: function(text) {
-				var components = this.data.components;
+				var components = this.getComputedProp("sortByCategory");
+				console.log(components);
 				//textからpreview取得
 				var preview = parser.getPreview(text);
 				preview = compiler.markup[this.data.markup](preview);
@@ -690,6 +706,7 @@ jQuery(function($) {
 						css += comp.css;
 					}
 				}
+				console.log(css);
 				css = compiler.styling[this.data.styling](css);
 				css = compiler.util.addParentSelectorToAll(css,".js-preview");
 				preview += "<style>" + css + "</style>";
