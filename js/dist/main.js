@@ -1190,6 +1190,7 @@ jQuery(function($) {
 			cheatAbout: "",
 			cheatName: "",
 			fabState: "is-closed",
+			projectOnDrop: "false",
 			atomSearchResults: function() {
 				return this.applyMethod("getSearchResults", "atom");
 			},
@@ -1274,6 +1275,7 @@ jQuery(function($) {
 						category:comp.category,
 						name:comp.name,
 						description:comp.description,
+						projectOnDrop: "false",
 						searchCategory: {
 							atom:true,
 							molecule:true,
@@ -1469,6 +1471,26 @@ jQuery(function($) {
 					searchCategory[category] = true;
 					$target.css({"height": ""});
 				}
+			},
+			toggleProjectList: function(){
+				if(this.data.projectOnDrop === "true"){
+					this.data.projectOnDrop = "false";
+				}else{
+					this.data.projectOnDrop = "true";
+				}
+				this.update("html","css_project");
+			},
+			makeNewProject: function(){
+				this.setData({
+					components:[],
+					projectName:"New Project",
+					projectDescription:"",
+					html:"",
+					css:"",
+					name:"",
+					projectOnDrop:"false"
+				});
+				this.update();
 			},
 			convertCompToHtml: function(word) {
 				var data = this.data.components;
