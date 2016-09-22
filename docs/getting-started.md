@@ -9,7 +9,7 @@ $ npm install atomic-lab
 #### 2. Initialize your project directory:
 
 ```sh
-$ $(npm bin)/atomic-lab/ init
+$ $(npm bin)/atomic-lab init
 ```
 
 ```

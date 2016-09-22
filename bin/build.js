@@ -16,12 +16,15 @@ exports.builder = {
   	alias: 'source',
   	describe: 'set component directory',
   	default:"components/"
+  },
+  server:{
+  	default:"atomic-lab"
   }
 }
 
 exports.handler = function (argv) {
 	bs.init({
-    server: argv.dist
+    server: argv.server
 	});
 	atomic.build({
 		src:argv.source,

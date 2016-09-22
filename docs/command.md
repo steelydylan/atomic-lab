@@ -5,7 +5,7 @@ $ $(npm bin)/atomic-lab -v
 
 #### 2. Initialize your Project:
 ```sh
-$ $(npm bin)/atomic-lab/ init
+$ $(npm bin)/atomic-lab init
 ```
 
 ```
