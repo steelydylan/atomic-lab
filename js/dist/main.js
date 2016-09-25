@@ -5817,6 +5817,9 @@ var getVars = function(text){
 }
 
 var getPreview = function(text){
+	if(!text){
+		return "";
+	}
 	var preview = text.match(/<!--@preview(([\n\r\t]|.)*?)-->/g);
 	if(!preview){
 		return "";
@@ -5828,6 +5831,9 @@ var getPreview = function(text){
 }
 
 var getNote = function(text){
+	if(!text){
+		return "";
+	}
 	var note = text.match(/<!--@note(([\n\r\t]|.)*?)-->/g);
 	if(!note){
 		return "";
@@ -5839,6 +5845,9 @@ var getNote = function(text){
 }
 
 var getTag = function(text,components){
+	if(!text){
+		return "";
+	}
 	var ret = text.match(/<(.*?)>/g);
 	var result = "";
 	if(!ret){
@@ -5859,12 +5868,18 @@ var getTag = function(text,components){
 }
 
 var getComponentName = function(text){
+	if(!text){
+		return "";
+	}
 	return text.replace(/<([a-zA-Z0-9._-]+)\s*\w*.*?>/g,function(comment,name){
 		return name;
 	});
 }
 
 var getTemplate = function(text){
+	if(!text){
+		return "";
+	}
 	var template = text.match(/<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->/g);
 	if(!template){
 		return "";

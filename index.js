@@ -54,40 +54,40 @@ var makeAtomicArray = function(files,markup,styling){
 		var length = paths.length
 		var extName = path.extname(file).replace(".","");
 		var baseName = path.basename(file,"."+markup);
-		if(extName === markup){
-      var html = fs.readFileSync(file,'utf8');
-      var css,js,category,name,cssMark;
-      var doc = getDoc(html);
-      if(!doc){
-      	continue;
+		if(extName !== markup){
+			continue;
+		}
+    var html = fs.readFileSync(file,'utf8');
+    var css,js,category,name,cssMark;
+    var doc = getDoc(html);
+    if(!doc){
+    	continue;
+    }
+    name = getMark("name",doc);
+    if(!name){
+    	continue;
+    }
+    category = getMark("category",doc) || "atom";
+    cssMark = getMark("css",doc);
+    if(cssMark){
+      var cssPath = path.resolve(file,'../',cssMark);
+      try{
+      	css = fs.readFileSync(cssPath,'utf8');
+      }catch(err){
+      	console.log(err);
       }
-      name = getMark("name",doc);
-      if(!name){
-      	continue;
-      }
-      category = getMark("category",doc) || "atom";
-      cssMark = getMark("css",doc);
-      if(cssMark){
-	      var cssPath = path.resolve(file,'../',cssMark);
-	      try{
-	      	css = fs.readFileSync(cssPath,'utf8');
-	      }catch(err){
-	      	console.log(err);
-	      }
-	    }
-	    var jsMark = getMark("js",doc);
-	    if(jsMark){
-	      var jsPath = path.resolve(file,'../',jsMark);
-	      try{
-      		js = fs.readFileSync(jsPath,'utf8');
-      	}catch(err){
-      		console.log(err);
-	      }
+    }
+    var jsMark = getMark("js",doc);
+    if(jsMark){
+      var jsPath = path.resolve(file,'../',jsMark);
+      try{
+    		js = fs.readFileSync(jsPath,'utf8');
+    	}catch(err){
+    		console.log(err);
       }
     }
     id++;
     components.push({category:category,name:name,html:html,css:css,js:js,id:id});
-
 	}
 	return components;
 }
