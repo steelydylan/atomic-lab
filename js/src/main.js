@@ -7,7 +7,6 @@ jQuery(function($) {
 	require("./jszip-deflate.js")(JSZip);
 	require("./jszip-inflate.js")(JSZip);
 	var marked = require("./marked.js");
-	var parser = require("./templateParser.js");
 	var compiler = require("./compiler.js");
 	var slackWidget = require("./slack-widget.js");
 	var Prism = require("./prism.js");
@@ -15,6 +14,8 @@ jQuery(function($) {
 	var i18n = jQuery.i18n.browserLang();
 	var lang;
 	var storageName = "atomic-lab";
+	var parser = require("./templateParser.js");
+	parser.init(config.parser);
 	if (i18n == 'ja') {
 		lang = "ja";
 	} else {
