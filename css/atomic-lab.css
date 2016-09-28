@@ -54,7 +54,16 @@ body {
       right: 5px; }
   .atomicLabProjectControl-shotDescription {
     line-height: 1.5em;
-    color: #848484; }
+    color: #848484;
+    width: 95%;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; }
+    .atomicLabProjectControl-shotDescription.is-editing {
+      height: auto;
+      overflow: auto; }
   .atomicLabProjectControl-actions {
     color: #848484;
     margin: 20px 0 10px 0; }

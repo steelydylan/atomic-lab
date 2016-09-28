@@ -7,11 +7,11 @@
     <meta name="description" content="Component Guide Generator Based on Atomic Design">
     <meta name="version" content="1.0.0">
     <meta property="og:type" content="website" />
-		<meta property="og:url" content="http://steelydylan.github.io/atomic-lab/" />
-		<meta property="og:title" content="AtomicLab" />
-		<meta property="og:description" content="Component Guide Generator Based on Atomic Design" />
-		<meta property="og:image" content="http://steelydylan.github.io/atomic-lab/images/ogp.png" />
-		<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+    <meta property="og:url" content="http://steelydylan.github.io/atomic-lab/" />
+    <meta property="og:title" content="AtomicLab" />
+    <meta property="og:description" content="Component Guide Generator Based on Atomic Design" />
+    <meta property="og:image" content="http://steelydylan.github.io/atomic-lab/images/ogp.png" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="./css/material-customized.css" />
     <link rel="stylesheet" href="./css/atomic-lab.css">
@@ -136,7 +136,7 @@
 
                             </td>
                             <td class="atomicLabProjectsDialog-url">
-                            		<i data-action="updateProjectUrl({i})" class="material-icons atomicLabProjectsDialog-update">update</i>
+                                <i data-action="updateProjectUrl({i})" class="material-icons atomicLabProjectsDialog-update">update</i>
                                 <a href="{shortenedUrl}">{shortenedUrl}</a>
                             </td>
                             <td class="atomicLabProjectsDialog-share">
@@ -299,12 +299,16 @@
         <div class="atomicLabProjectControl">
           <!-- Project title -->
           <div class="atomicLabProjectControl-title">
+
+
             <i class="material-icons">folder</i>
             <!-- BEGIN projectOnEdit:touchnot#true --><span data-action="editProjectName()">{projectName}</span><!-- END projectOnEdit:touchnot#true -->
+
             <!-- BEGIN projectOnEdit:touch#true -->
-	            <input type="text" data-bind="projectName" placeholder="Project Name" class="mdl-textfield__input atomicLabProjectControl-input">
-	            <button data-action="changeProjectName()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
-	          <!-- END projectOnEdit:touch#true -->
+              <input type="text" data-bind="projectName" placeholder="Project Name" class="mdl-textfield__input atomicLabProjectControl-input">
+              <button data-action="changeProjectName()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
+            <!-- END projectOnEdit:touch#true -->
+
             <i class="material-icons atomicLabProjectControl-arrow" data-action="toggleProjectList()">arrow_drop_down</i>
           </div>
 
@@ -316,7 +320,11 @@
             </ul>
             <span class="atomicLabProjectDropdown-newProject" data-action="makeNewProject()"><a href="#">+ Make a new project</a></span>
           </div>
-          <p class="atomicLabProjectControl-shotDescription">
+
+
+
+          <p class="atomicLabProjectControl-shotDescription <!-- BEGIN projectDescOnEdit:touch#true -->is-editing<!-- END projectDescOnEdit:touch#true -->">
+
             <!-- BEGIN projectDescOnEdit:touchnot#true -->
             <span data-action="editProjectDesc()" style="cursor:pointer;">
             {projectDescription}
@@ -324,7 +332,13 @@
             You can write description here
             <!-- END projectDescription:empty -->
             </span><!-- END projectDescOnEdit:touchnot#true -->
-            <!-- BEGIN projectDescOnEdit:touch#true --><textarea data-bind="projectDescription" rows="3" class="mdl-textfield__input atomicLabProjectControl-textarea"></textarea> <button data-action="changeProjectDesc()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button><!-- END projectDescOnEdit:touch#true -->
+
+
+            <!-- BEGIN projectDescOnEdit:touch#true -->
+            <textarea data-bind="projectDescription" rows="3" class="mdl-textfield__input atomicLabProjectControl-textarea"></textarea> <button data-action="changeProjectDesc()" class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">save</i></button>
+            <!-- END projectDescOnEdit:touch#true -->
+
+
           </p>
           <!-- Project actions -->
           <nav class="atomicLabProjectControl-actions">
@@ -363,7 +377,7 @@
           <ul>
             <li class="atomicLabComponentList-category _atom js-list-parent<!-- BEGIN searchCategory.atom:empty --> js-closed<!-- END searchCategory.atom:empty -->">
               <span data-action="toggleComponents(#js-list-atom,atom)"><img class="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="">Atom
-              	<i class="material-icons"><!-- BEGIN searchCategory.atom:exist -->remove<!-- END searchCategory.atom:exist --><!-- BEGIN searchCategory.atom:empty -->add<!-- END searchCategory.atom:empty --></i>
+                <i class="material-icons"><!-- BEGIN searchCategory.atom:exist -->remove<!-- END searchCategory.atom:exist --><!-- BEGIN searchCategory.atom:empty -->add<!-- END searchCategory.atom:empty --></i>
               </span>
               <ul id="js-list-atom"<!-- BEGIN searchCategory.atom:empty --> style="height:0px;"<!-- END searchCategory.atom:empty -->>
                 <!-- BEGIN atomSearchResults:loop -->
@@ -379,7 +393,7 @@
           </li>
           <li class="atomicLabComponentList-category _molecule js-list-parent<!-- BEGIN searchCategory.molecule:empty --> js-closed<!-- END searchCategory.molecule:empty -->">
             <span data-action="toggleComponents(#js-list-molecule,molecule)"><img class="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="">Molecule
-            	<i class="material-icons"><!-- BEGIN searchCategory.molecule:exist -->remove<!-- END searchCategory.molecule:exist --><!-- BEGIN searchCategory.molecule:empty -->add<!-- END searchCategory.molecule:empty --></i>
+              <i class="material-icons"><!-- BEGIN searchCategory.molecule:exist -->remove<!-- END searchCategory.molecule:exist --><!-- BEGIN searchCategory.molecule:empty -->add<!-- END searchCategory.molecule:empty --></i>
             </span>
             <ul id="js-list-molecule"<!-- BEGIN searchCategory.molecule:empty --> style="height:0px;"<!-- END searchCategory.molecule:empty -->>
               <!-- BEGIN moleculeSearchResults:loop -->
@@ -395,7 +409,7 @@
         </li>
         <li class="atomicLabComponentList-category _organism js-list-parent<!-- BEGIN searchCategory.organism:empty --> js-closed<!-- END searchCategory.organism:empty -->">
           <span data-action="toggleComponents(#js-list-organism,organism)"><img class="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="">Organism
-          	<i class="material-icons"><!-- BEGIN searchCategory.organism:exist -->remove<!-- END searchCategory.organism:exist --><!-- BEGIN searchCategory.organism:empty -->add<!-- END searchCategory.organism:empty --></i>
+            <i class="material-icons"><!-- BEGIN searchCategory.organism:exist -->remove<!-- END searchCategory.organism:exist --><!-- BEGIN searchCategory.organism:empty -->add<!-- END searchCategory.organism:empty --></i>
           </span>
           <ul id="js-list-organism"<!-- BEGIN searchCategory.organism:empty --> style="height:0px;"<!-- END searchCategory.organism:empty -->>
             <!-- BEGIN organismSearchResults:loop -->
@@ -411,7 +425,7 @@
       </li>
       <li class="atomicLabComponentList-category _template js-list-parent<!-- BEGIN searchCategory.template:empty --> js-closed<!-- END searchCategory.template:empty -->">
         <span data-action="toggleComponents(#js-list-template,template)"><img class="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="">Template
-        	<i class="material-icons"><!-- BEGIN searchCategory.template:exist -->remove<!-- END searchCategory.template:exist --><!-- BEGIN searchCategory.template:empty -->add<!-- END searchCategory.template:empty --></i>
+          <i class="material-icons"><!-- BEGIN searchCategory.template:exist -->remove<!-- END searchCategory.template:exist --><!-- BEGIN searchCategory.template:empty -->add<!-- END searchCategory.template:empty --></i>
         </span>
         <ul id="js-list-template"<!-- BEGIN searchCategory.template:empty --> style="height:0px;"<!-- END searchCategory.template:empty -->>
           <!-- BEGIN templateSearchResults:loop -->
@@ -470,7 +484,7 @@
 
   <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
   <div class="atomicLabComponentControl-icon">
-  	<!-- BEGIN category:touch#atom -->
+    <!-- BEGIN category:touch#atom -->
     <img src="./images/iconAtom-l.png" alt="">
     <!-- END category:touch#atom -->
     <!-- BEGIN category:touch#molecule -->
@@ -481,7 +495,7 @@
     <!-- END category:touch#organism -->
     <!-- BEGIN category:touch#template -->
     <img src="./images/iconTemplate-l.png" alt="">
-		<!-- END category:touch#template -->
+    <!-- END category:touch#template -->
   </div>
   <!-- Component title -->
   <div class="atomicLabComponentControl-texts">
@@ -513,7 +527,7 @@
 <!-- BEGIN editMode:touch#preview -->
 <div class="atomicLabTabs-panel mdl-tabs__panel is-active">
   <div class="atomicLabPreview">
-  	<!-- BEGIN hasPreview:exist -->
+    <!-- BEGIN hasPreview:exist -->
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">visibility</i> Preview</div>
       <div class="js-preview">
@@ -524,9 +538,9 @@
     <!-- BEGIN hasNote:exist -->
     <div class="atomicLabCard mdl-card mdl-shadow--2dp">
       <div class="atomicLabCard-title"><i class="material-icons">insert_drive_file</i> Note</div>
-				<div class="atomicLabNote js-note">
-      		{html}[note]
-      	</div>
+        <div class="atomicLabNote js-note">
+          {html}[note]
+        </div>
     </div>
     <!-- END hasNote:exist -->
   </div>
@@ -592,8 +606,8 @@
   "version": "1.0.0",
   "description": "static html generator based on atomic design",
   "devDependencies":{
-  	"gulp":"*",
-  	"browser-sync":"*",
+    "gulp":"*",
+    "browser-sync":"*",
     "atomic-lab":"*"
   },
   "author": "steelaxe",
@@ -606,17 +620,17 @@ var atomic = require('atomic-lab');
 var bs = require('browser-sync').create();
 
 gulp.task('atomic', function(){
-		atomic.build({
-			src:"./components",
-			dist:"./atomic-lab/resources/setting.json",
-			markup:"{markup}"
-		}).then(bs.reload());
+    atomic.build({
+      src:"./components",
+      dist:"./atomic-lab/resources/setting.json",
+      markup:"{markup}"
+    }).then(bs.reload());
 });
 
 gulp.task('atomic-init', function(){
-		atomic.init({
-			dist:"./atomic-lab"
-		});
+    atomic.init({
+      dist:"./atomic-lab"
+    });
 });
 
 gulp.task('default', function () {

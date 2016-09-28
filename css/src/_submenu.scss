@@ -32,6 +32,18 @@
     &-shotDescription {
         line-height: 1.5em;
         color: #{$text-color-light};
+        width: 95%;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+        &.is-editing{
+            height: auto;
+            overflow: auto;
+        }
+
     }
     &-actions {
         color: #{$text-color-light};
@@ -86,8 +98,8 @@
     transform-origin: top center;
 
     &.js-open{
-    	transform: scale(1);
-    	opacity: 1;
+      transform: scale(1);
+      opacity: 1;
     }
 
     &-list{
