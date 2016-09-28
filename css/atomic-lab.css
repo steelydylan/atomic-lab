@@ -45,13 +45,20 @@ body {
     vertical-align: middle;
     color: #009688;
     position: relative;
-    cursor: pointer;
     margin: 0 0 15px 0; }
+    .atomicLabProjectControl-title > span:hover {
+      cursor: text;
+      color: #0093d3;
+      background-color: #f5f2f0; }
     .atomicLabProjectControl-title i {
       vertical-align: bottom; }
     .atomicLabProjectControl-title .atomicLabProjectControl-arrow {
       position: absolute;
-      right: 5px; }
+      right: 5px;
+      cursor: pointer; }
+      .atomicLabProjectControl-title .atomicLabProjectControl-arrow:hover {
+        transform: scale(1.5);
+        transition: 0.1s; }
   .atomicLabProjectControl-shotDescription {
     line-height: 1.5em;
     color: #848484;
@@ -61,6 +68,10 @@ body {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; }
+    .atomicLabProjectControl-shotDescription > span:hover {
+      cursor: text;
+      color: #0077ab;
+      background-color: #f5f2f0; }
     .atomicLabProjectControl-shotDescription.is-editing {
       height: auto;
       overflow: auto; }
