@@ -9,7 +9,12 @@ module.exports = {
 			return normalize;
 		},
 		addParentSelectorToAll:function(source,addClass){
-			var parse = css.parse(source);
+			var parse;
+			try{
+				parse = css.parse(source);
+			}catch(e){
+				return source;
+			}
 			var rules = parse.stylesheet.rules;
 			if(!rules){
 				return source;

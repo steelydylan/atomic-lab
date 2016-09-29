@@ -1,3 +1,7 @@
+var conf;
+var init = function(data){
+	conf = data;
+}
 var getVars = function(text){
 	var vars = text.match(/(\w+)="(.*?)"/g);
 	var defs = {};
@@ -13,28 +17,37 @@ var getVars = function(text){
 }
 
 var getPreview = function(text){
-	var preview = text.match(/<!--@preview(([\n\r\t]|.)*?)-->/g);
+	if(!text){
+		return "";
+	}
+	var preview = text.match(conf.preview.body);
 	if(!preview){
 		return "";
 	}
 	preview = preview[0];
 	return preview
-		.replace(/<!--@preview/g,"")
-		.replace(/-->/g,"");
+		.replace(conf.preview.start,"")
+		.replace(conf.preview.end,"");
 }
 
 var getNote = function(text){
-	var note = text.match(/<!--@note(([\n\r\t]|.)*?)-->/g);
+	if(!text){
+		return "";
+	}
+	var note = text.match(conf.note.body);
 	if(!note){
 		return "";
 	}
 	note = note[0];
 	return note
-		.replace(/<!--@note/g,"")
-		.replace(/-->/g,"");
+		.replace(conf.note.start,"")
+		.replace(conf.note.end,"");
 }
 
 var getTag = function(text,components){
+	if(!text){
+		return "";
+	}
 	var ret = text.match(/<(.*?)>/g);
 	var result = "";
 	if(!ret){
@@ -55,13 +68,19 @@ var getTag = function(text,components){
 }
 
 var getComponentName = function(text){
+	if(!text){
+		return "";
+	}
 	return text.replace(/<([a-zA-Z0-9._-]+)\s*\w*.*?>/g,function(comment,name){
 		return name;
 	});
 }
 
 var getTemplate = function(text){
-	var template = text.match(/<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->/g);
+	if(!text){
+		return "";
+	}
+	var template = text.match(conf.template.body);
 	if(!template){
 		return "";
 	}
@@ -70,18 +89,20 @@ var getTemplate = function(text){
 }
 
 var getInnerHtmlFromTemplate = function(template){
-	return template.replace(/<!--@(\/)?template(.*?)-->/g,"");
+	return template
+		.replace(conf.template.start,"")
+		.replace(conf.template.end,"");
 }
 
 var getVarsFromTemplate = function(template){
 	var templateInside = getInnerHtmlFromTemplate(template);
-	var templateFirst = template.replace(templateInside,"").replace("<!--@/template(.*?)-->","");
+	var templateFirst = template.replace(templateInside,"").replace(conf.template.end,"");
 	return getVars(templateFirst);
 }
 
 var getRendered = function(template,defs,overrides){
 	var vars = $.extend({},defs,overrides);
-	return template.replace(/{(.*?)}/g,function(a,b){
+	return template.replace(conf.variable.mark,function(a,b){
 		return vars[b] || "";
 	});
 }
@@ -96,16 +117,16 @@ var removeSelf = function(text,self){
 }
 
 var getImports = function(text){
-	var match = text.match(/<!--@import parts="(.*?)" -->/);
+	var match = text.match(conf.import.body);
 	if(!match){
 		return "";
 	}
-	console.log(match);
 	return match[1];
 }
 
 
 module.exports = {
+	init:init,
 	getTag:getTag,
 	getPreview:getPreview,
 	getNote:getNote,

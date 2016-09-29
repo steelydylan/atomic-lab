@@ -19,19 +19,49 @@
         vertical-align: middle;
         color: #{$color-accent};
         position: relative;
-        cursor: pointer;
         margin: 0 0 15px 0;
+
+        > span:hover{
+          cursor: text;
+          color: #0093d3;
+          background-color: #f5f2f0;
+        }
+
         i {
             vertical-align: bottom;
         }
         .atomicLabProjectControl-arrow {
-            position: absolute;
-            right: 5px;
+          position: absolute;
+          right: 5px;
+          cursor: pointer;
+
+          &:hover{
+            transform: scale(1.5);
+            transition: 0.1s;
+          }
         }
     }
     &-shotDescription {
         line-height: 1.5em;
         color: #{$text-color-light};
+        width: 95%;
+        height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+
+      > span:hover {
+        cursor: text;
+        color: #0077ab;
+        background-color: #f5f2f0;
+      }
+
+        &.is-editing{
+            height: auto;
+            overflow: auto;
+        }
+
     }
     &-actions {
         color: #{$text-color-light};
@@ -86,8 +116,8 @@
     transform-origin: top center;
 
     &.js-open{
-    	transform: scale(1);
-    	opacity: 1;
+      transform: scale(1);
+      opacity: 1;
     }
 
     &-list{

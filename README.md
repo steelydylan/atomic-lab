@@ -1,6 +1,7 @@
 #[Atomic Lab.](http://steelydylan.github.io/atomic-lab/)
 Template sharing and coding environment based on atomic design
 <p><img src="images/favicon.png"></p>
+
 ## Screenshot
 <img src="about/images/Feature-browser.png">
 
