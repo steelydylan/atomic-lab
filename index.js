@@ -5,6 +5,7 @@ var Promise = require('promise');
 var fs = require('fs-extra');
 var process_path = process.cwd();
 var mkdirp = require('mkdirp');
+var extend = require('extend');
 var getDirName = path.dirname;
 
 var getFileInfo = function(dir){
@@ -20,15 +21,15 @@ var getFileInfo = function(dir){
   });
 };
 
-var getDoc = function(source){
-	var doc = source.match(/<!--@doc(([\n\r\t]|.)*?)-->/g);
+var getDoc = function(source,parser){
+	var doc = source.match(parser.body);
 	if(!doc){
 		return "";
 	}
 	doc = doc[0];
 	return doc
-		.replace(/<!--@doc/g,"")
-		.replace(/-->/g,"");
+		.replace(parser.start,"")
+		.replace(parser.end,"");
 }
 
 var getMark = function(mark,source){
@@ -45,7 +46,7 @@ var getMark = function(mark,source){
 
 
 
-var makeAtomicArray = function(files,markup,styling){
+var makeAtomicArray = function(files,markup,styling,parser){
 	var components = [];
 	var id = 0;
 	for(var i = 0,n = files.length; i < n; i++){
@@ -59,7 +60,7 @@ var makeAtomicArray = function(files,markup,styling){
 		}
     var html = fs.readFileSync(file,'utf8');
     var css,js,category,name,cssMark;
-    var doc = getDoc(html);
+    var doc = getDoc(html,parser);
     if(!doc){
     	continue;
     }
@@ -105,9 +106,14 @@ atomicBuilder.build = function(opt){
 	var dist = opt.dist;
 	var markup = opt.markup;
 	var styling = opt.styling;
+	var parser = extend({
+		start:/<!--@doc/g,
+		end:/-->/g,
+		body:/<!--@doc(([\n\r\t]|.)*?)-->/g
+	},opt.parser);
 	return getFileInfo(path.resolve(process_path,src))
 	.then(function(files){
-		var components = makeAtomicArray(files,markup,styling);
+		var components = makeAtomicArray(files,markup,styling,parser);
 		var json = JSON.stringify({components:components});
 		var pjson = new Promise(function(resolve,reject){
 			writeFile(path.resolve(process_path,dist),json,function(err){
