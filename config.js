@@ -20,6 +20,8 @@ var config = {
 	css_dependencies:[
 
 	],
+	markup:"ejs",//html,ejs,jade,haml
+	styling:"sass",//css,sass,less,stylus
 	parser:{
 		preview:{
 			start:/<!--@preview/g,

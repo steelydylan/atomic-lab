@@ -114,6 +114,8 @@ jQuery(function($) {
         this.data.use_url_shortener = config.use_url_shortener;
         this.data.title = config.title;
         this.data.css_dependencies = config.css_dependencies;
+        this.data.markup = config.markup;
+        this.data.styling = config.styling;
           //ハッシュタグがあればハッシュタグからデータを復元
         if (location.hash) {
           var zip = new JSZip();
