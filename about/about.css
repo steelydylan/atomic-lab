@@ -99,6 +99,17 @@ body {
   margin-top: 40px;
   font-weight: normal;
 }
+
+.Section._install .Section-heading{
+	margin-top: 40px;
+}
+
+.Section._install .Section-img {
+  margin-left: 80px;
+  margin-right: 100px;
+  margin-top: 90px;
+}
+
 /* Section 2 */
 
 .Section._share .Section-img {
