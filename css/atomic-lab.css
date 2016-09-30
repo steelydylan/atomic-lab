@@ -46,10 +46,16 @@ body {
     color: #009688;
     position: relative;
     margin: 0 0 15px 0; }
-    .atomicLabProjectControl-title > span:hover {
-      cursor: text;
-      color: #0093d3;
-      background-color: #f5f2f0; }
+    .atomicLabProjectControl-title > span {
+      width: 195px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block; }
+      .atomicLabProjectControl-title > span:hover {
+        cursor: text;
+        color: #0093d3;
+        background-color: #f5f2f0; }
     .atomicLabProjectControl-title i {
       vertical-align: bottom; }
     .atomicLabProjectControl-title .atomicLabProjectControl-arrow {
@@ -93,10 +99,17 @@ body {
           color: #454545; }
   .atomicLabProjectControl-input {
     display: inline-block;
-    width: 150px; }
+    width: 150px;
+    vertical-align: bottom;
+    border: 1px solid rgba(0, 0, 0, 0.12); }
   .atomicLabProjectControl-textarea {
     display: inline-block;
-    width: 230px; }
+    font-size: 14px;
+    width: 215px;
+    resize: none;
+    border: 1px solid rgba(0, 0, 0, 0.12); }
+  .atomicLabProjectControl-check {
+    vertical-align: baseline; }
 
 .atomicLabProjectDropdown {
   position: absolute;
