@@ -1274,7 +1274,7 @@ jQuery(function($) {
 				return this;
 			},
 			applyData: function() {
-				var comp = this.data.components[0];
+				var comp = this.applyMethod("getCompById",this.data.id) || this.data.components[0];
 				if (comp) {
 					this.setData({
 						id:comp.id,
