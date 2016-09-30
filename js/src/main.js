@@ -450,6 +450,7 @@ jQuery(function($) {
 				dialog.close();
 				this.data.components.push(obj);
 				this.data.newName = "";
+				this.applyMethod("editComp",id);
 				this.applyMethod("showAlert", "コンポーネントを追加しました。");
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
