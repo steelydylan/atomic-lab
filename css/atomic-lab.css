@@ -448,9 +448,15 @@ body {
     .atomicLabProjectsDialog-shareIcon img {
       width: 100%; }
   .atomicLabProjectsDialog-update {
-    display: inline-block;
+    float: left;
+    margin-right: 5px;
+    display: block;
     cursor: pointer;
-    vertical-align: middle; }
+    vertical-align: middle;
+    position: relative; }
+  .atomicLabProjectsDialog-check {
+    cursor: pointer;
+    vertical-align: bottom; }
   .atomicLabProjectsDialog-close {
     position: absolute;
     top: 30px;
@@ -545,6 +551,9 @@ body {
 .material-icons._danger:hover,
 .mdl-menu__item._danger {
   color: #d82727; }
+
+.mdl-menu__item._carefully {
+  color: #ffb100; }
 
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {

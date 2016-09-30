@@ -80,19 +80,31 @@
         }
     }
 
+    // Update icon
     &-update{
-    	display: inline-block;
-    	cursor: pointer;
-    	vertical-align: middle;
+      float: left;
+      margin-right: 5px;
+      display: block;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
     }
 
-    // Icons
+    // Check icon
+    &-check{
+      cursor: pointer;
+      vertical-align: bottom;
+    }
+
+    // Close icon
     &-close{
         position: absolute;
         top: 30px;
         right: 30px;
         cursor: pointer;
     }
+
+    // Icon hover
     &-delete, &-shareIcon{
         cursor: pointer;
             &:hover{

@@ -128,15 +128,20 @@
                                 <!-- BEGIN onEdit:touch#true -->
                                 <input type="text" data-bind="collections.{i}[reversedIndex].projectName" style="width:100px;">
 
-                                <button data-action="updateCollection({i})" class="cssLabRenameBtn">
-                                <!-- \BEGIN lang:touch#ja -->変更<!-- \END lang:touch#ja -->
-                                <!-- \BEGIN lang:touch#en -->Update<!-- \END lang:touch#en -->
-                                </button>
+                                <i class="material-icons atomicLabProjectsDialog-check" data-action="updateCollection({i})">check</i>
                                 <!-- END onEdit:touch#true -->
 
                             </td>
                             <td class="atomicLabProjectsDialog-url">
-                                <i data-action="updateProjectUrl({i})" class="material-icons atomicLabProjectsDialog-update">update</i>
+                                <i id="updateProject{i}" class="material-icons atomicLabProjectsDialog-update">autorenew</i>
+                                <div class="mdl-tooltip" data-mdl-for="updateProject{i}">Update this url
+                                <br>with current project contents.</div>
+                                <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+                                    for="updateProject{i}">
+                                  <li disabled class="mdl-menu__item">Do you really want?</li>
+                                  <li class="mdl-menu__item">Cancel</li>
+                                  <li class="mdl-menu__item _carefully" data-action="updateProjectUrl({i})">UPDATE</li>
+                                </ul>
                                 <a href="{shortenedUrl}">{shortenedUrl}</a>
                             </td>
                             <td class="atomicLabProjectsDialog-share">
@@ -147,6 +152,7 @@
                             </td>
                             <td class="atomicLabProjectsDialog-icon">
                                 <i id="removeCollection{i}" class="atomicLabProjectsDialog-delete material-icons _danger" >delete</i>
+                                <div class="mdl-tooltip" data-mdl-for="removeCollection{i}">Delete<br>from collection</div>
                                 <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                                     for="removeCollection{i}">
                                   <li disabled class="mdl-menu__item">Do you really want?</li>
