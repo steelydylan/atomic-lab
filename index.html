@@ -254,10 +254,6 @@
       <input type="text" data-bind="name" class="mdl-textfield__input" id="update-name">
       <label class="mdl-textfield__label" for="update-name">Component Name...</label>
     </div>
-    <div class="mdl-textfield mdl-textfield--search mdl-js-textfield" style="display:block;">
-      <input type="text" data-bind="description" class="mdl-textfield__input" id="update-description">
-      <label class="mdl-textfield__label" for="update-description">Short description...</label>
-    </div>
   </div>
   <div class="mdl-dialog__actions">
     <button class="mdl-button mdl-button--accent" data-action="doneEditDialog"><!-- BEGIN lang:touch#ja -->変更<!-- END lang:touch#ja --><!-- BEGIN lang:touch#en -->Update<!-- END lang:touch#en --></button>
@@ -505,7 +501,7 @@
       {name}
     </div>
     <p class="atomicLabComponentControl-description">
-      {description}
+      {html}[description]
     </p>
   </div>
   <!-- Tabs -->

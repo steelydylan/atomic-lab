@@ -38,6 +38,11 @@ var config = {
 			end:/<!--@\/template(.*?)-->/g,
 			body:/<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->/g
 		},
+		doc:{
+			start:/<!--@doc/g,
+			end:/-->/g,
+			body:/<!--@doc(([\n\r\t]|.)*?)-->/g
+		},
 		import:{
 			body:/<!--@import parts="(.*?)" -->/
 		},
