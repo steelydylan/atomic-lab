@@ -27,6 +27,8 @@
           white-space: nowrap;
           text-overflow: ellipsis;
           display: inline-block;
+          vertical-align: text-top;
+          font-size: 19px;
           &:hover{
             cursor: text;
             color: #0093d3;

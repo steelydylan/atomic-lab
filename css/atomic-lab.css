@@ -51,7 +51,9 @@ body {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      display: inline-block; }
+      display: inline-block;
+      vertical-align: text-top;
+      font-size: 19px; }
       .atomicLabProjectControl-title > span:hover {
         cursor: text;
         color: #0093d3;
