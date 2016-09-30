@@ -21,10 +21,19 @@
         position: relative;
         margin: 0 0 15px 0;
 
-        > span:hover{
-          cursor: text;
-          color: #0093d3;
-          background-color: #f5f2f0;
+        > span{
+          width: 195px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          display: inline-block;
+          vertical-align: text-top;
+          font-size: 19px;
+          &:hover{
+            cursor: text;
+            color: #0093d3;
+            background-color: #f5f2f0;
+          }
         }
 
         i {
@@ -89,10 +98,18 @@
     &-input{
       display: inline-block;
       width: 150px;
+      vertical-align: bottom;
+      border: 1px solid rgba(0,0,0, 0.12);
     }
     &-textarea{
       display: inline-block;
-      width: 230px;
+      font-size: 14px;
+      width: 215px;
+      resize: none;
+      border: 1px solid rgba(0,0,0, 0.12);
+    }
+    &-check{
+      vertical-align: baseline;
     }
 }
 
