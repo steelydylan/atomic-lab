@@ -308,7 +308,12 @@ jQuery(function($) {
 						break;
 					}
 				}
-				this.removeData(["html", "css", "name", "category"]);
+				if(comps[0]){
+					var id = comps[0].id;
+					this.applyMethod("editComp",id);
+				}else{
+					this.removeData(["html", "css", "name", "category"]);
+				}
 				this.update("html", "css_search_result");
 				this.update("html", "css_edit");
 				this.update("html", "css_preview");
