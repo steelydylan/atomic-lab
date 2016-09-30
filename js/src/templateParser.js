@@ -16,32 +16,41 @@ var getVars = function(text){
 	return defs;
 }
 
-var getPreview = function(text){
+var getCommentedArea = function(text,mark){
 	if(!text){
 		return "";
 	}
-	var preview = text.match(conf.preview.body);
-	if(!preview){
+	var text = text.match(mark.body);
+	if(!text){
 		return "";
 	}
-	preview = preview[0];
-	return preview
-		.replace(conf.preview.start,"")
-		.replace(conf.preview.end,"");
+	text = text[0];
+	return text
+		.replace(mark.start,"")
+		.replace(mark.end,"");
+}
+
+var getPreview = function(text){
+	return getCommentedArea(text,conf.preview);
 }
 
 var getNote = function(text){
-	if(!text){
+	return getCommentedArea(text,conf.note);
+}
+
+var getDoc = function(text){
+	return getCommentedArea(text,conf.doc);
+}
+
+var getMark = function(mark,source){
+	var pattern = '@'+mark+'(?:[\t 　]+)(.*)';
+	var regex = new RegExp(pattern,"i");
+	var match = source.match(regex);
+	if(match && match[1]){
+		return match[1];
+	}else{
 		return "";
 	}
-	var note = text.match(conf.note.body);
-	if(!note){
-		return "";
-	}
-	note = note[0];
-	return note
-		.replace(conf.note.start,"")
-		.replace(conf.note.end,"");
 }
 
 var getTag = function(text,components){
@@ -130,6 +139,8 @@ module.exports = {
 	getTag:getTag,
 	getPreview:getPreview,
 	getNote:getNote,
+	getDoc:getDoc,
+	getMark:getMark,
 	getComponentName:getComponentName,
 	getVars:getVars,
 	getTemplate:getTemplate,
