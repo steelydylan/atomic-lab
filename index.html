@@ -467,6 +467,7 @@
 <div class="atomicLabTabs mdl-tabs mdl-js-tabs">
 <div class="atomicLabComponentControl mdl-shadow--2dp">
   <!-- Actions -->
+  <!-- BEGIN enable_editing:exist -->
   <div class="atomicLabComponentControl-actions">
         <nav>
             <ul>
@@ -487,7 +488,7 @@
             </ul>
         </nav>
     </div>
-
+		<!-- END enable_editing:exist -->
   <!-- Icon of cetegory (Atom/Molecule/Organism/template) -->
   <div class="atomicLabComponentControl-icon">
     <!-- BEGIN category:touch#atom -->
@@ -513,11 +514,13 @@
     </p>
   </div>
   <!-- Tabs -->
+  <!-- BEGIN enable_editing:exist -->
   <div class="atomicLabTabs-bar mdl-tabs__tab-bar">
     <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#preview --> is-active<!-- END editMode:touch#preview -->" data-action="changeMode(preview)">Preview</a>
     <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#html --> is-active<!-- END editMode:touch#html -->" data-action="changeMode(html)">HTML</a>
     <a class="atomicLabTabs-tab mdl-layout__tab<!-- BEGIN editMode:touch#css --> is-active<!-- END editMode:touch#css -->" data-action="changeMode(css)">CSS</a>
   </div>
+  <!-- END enable_editing:exist -->
 </div>
 <!-- Tab panels -->
 <!-- BEGIN editMode:touch#css -->
@@ -552,40 +555,42 @@
   </div>
   <!-- END editMode:touch#preview -->
 </div>
-</script>
-</main>
 <!-- Floating Action Button -->
+<!-- BEGIN enable_editing:exist -->
 <div class="AtomicLabFAB">
-  <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+  <button id="addAction" class="AtomicLabFAB-main mdl-button mdl-js-button mdl-button--fab mdl-button--colored" data-action="openCategoryMenu">
   <i class="material-icons">add</i>
   </button>
   <div class="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
   <!-- sub actions -->
   <ul class="AtomicLabFAB-subActionsList">
     <li>
-      <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="atom">
+      <button id="addComponent-atom" class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-action="openDialog(atom)">
       <img src="./images/iconAtom-s.png" alt="Add Atom">
       </button>
       <div class="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
     </li>
     <li>
-      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="molecule">
+      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-action="openDialog(molecule)">
       <img src="./images/iconMolecule-s.png" alt="Add Molecules">
       </button>
     </li>
     <li>
-      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="organism">
+      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-action="openDialog(organism)">
       <img src="./images/iconOrganism-s.png" alt="Add Organism">
       </button>
     </li>
     <li>
-      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-category="template">
+      <button class="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" data-action="openDialog(template)">
       <img src="./images/iconTemplate-s.png" alt="Add Template">
       </button>
     </li>
   </ul>
 </div>
+<!-- END enable_editing:exist -->
 <!--/ Floating Action Button-->
+</script>
+</main>
 </div>
 </div>
 <script type="text/template" id="css_template">

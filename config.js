@@ -12,6 +12,7 @@ var config = {
 		run js on preview mode
 	*/
 	run_script:true,
+	enable_editing:true,
 	/*
 		used for Google URL shortener
 	*/
