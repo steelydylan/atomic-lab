@@ -1967,6 +1967,9 @@ jQuery(function($) {
 		var category = $(this).data("category");
 		atomicLab.applyMethod("openDialog", category);
 	});
+	$(window).on('beforeunload', function() {
+      return 'Changes you made may not be saved.\nAre you sure you want to leave?';
+  });
 });
 
 },{"./aTemplate.js":1,"./compiler.js":2,"./dialog-polyfill.js":3,"./fileSaver.min.js":5,"./jszip-deflate.js":6,"./jszip-inflate.js":7,"./jszip.min.js":8,"./marked.js":9,"./prism.js":11,"./slack-widget.js":12,"./templateParser.js":13,"url":51}],5:[function(require,module,exports){
