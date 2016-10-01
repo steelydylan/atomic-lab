@@ -1236,10 +1236,14 @@ jQuery(function($) {
 				this.loadData(storageName);
 				this.data.use_url_shortener = config.use_url_shortener;
 				this.data.title = config.title;
+				this.data.enable_editing = config.enable_editing;
 				this.data.css_dependencies = config.css_dependencies;
 				this.data.markup = config.markup;
 				this.data.styling = config.styling;
-					//ハッシュタグがあればハッシュタグからデータを復元
+				if(config.enable_editing === false){
+					this.data.editMode = "preview";
+				}
+				//ハッシュタグがあればハッシュタグからデータを復元
 				if (location.hash) {
 					var zip = new JSZip();
 					var hash = location.hash
@@ -1847,6 +1851,34 @@ jQuery(function($) {
 								break;
 						}
 					});
+			},
+			openCategoryMenu:function(){
+				var $self = $(".AtomicLabFAB-main");
+				if ($self.hasClass("is-open") == false) {
+					$self
+						.css({
+							"transform": "rotate(45deg)"
+						})
+						.addClass("is-open");
+					$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function() {
+						$(this).css({
+							"transform": "scale(1) translateY(0px)",
+							"opacity": 1
+						});
+					});
+				} else {
+					$self
+						.css({
+							"transform": "rotate(0deg)"
+						})
+						.removeClass("is-open");
+					$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function() {
+						$(this).css({
+							"transform": "scale(0) translateY(200px)",
+							"opacity": 0
+						});
+					});
+				}
 			}
 		},
 		convert: {
@@ -1936,37 +1968,6 @@ jQuery(function($) {
 		}
 	}).applyMethod("initialize");
 	/*ここから先はアニメーション関係*/
-	$(".AtomicLabFAB-main").click(function() {
-		if ($(this).hasClass("is-open") == false) {
-			$(this)
-				.css({
-					"transform": "rotate(45deg)"
-				})
-				.addClass("is-open");
-			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function() {
-				$(this).css({
-					"transform": "scale(1) translateY(0px)",
-					"opacity": 1
-				});
-			});
-		} else {
-			$(this)
-				.css({
-					"transform": "rotate(0deg)"
-				})
-				.removeClass("is-open");
-			$($(".AtomicLabFAB-subActionsList > li").get().reverse()).each(function() {
-				$(this).css({
-					"transform": "scale(0) translateY(200px)",
-					"opacity": 0
-				});
-			});
-		}
-	});
-	$(".js-add-category").click(function() {
-		var category = $(this).data("category");
-		atomicLab.applyMethod("openDialog", category);
-	});
 	$(window).on('beforeunload', function() {
       return 'Changes you made may not be saved.\nAre you sure you want to leave?';
   });
