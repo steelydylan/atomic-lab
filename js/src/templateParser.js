@@ -1,3 +1,7 @@
+var conf;
+var init = function(data){
+	conf = data;
+}
 var getVars = function(text){
 	var vars = text.match(/(\w+)="(.*?)"/g);
 	var defs = {};
@@ -12,33 +16,80 @@ var getVars = function(text){
 	return defs;
 }
 
-var getPreview = function(text){
-	var preview = text.match(/<!-- preview -->(([\n\r\t]|.)*?)<!-- \/preview -->/g);
-	if(!preview){
+var getCommentedArea = function(text,mark){
+	if(!text){
 		return "";
 	}
-	preview = preview[0];
-	return preview.replace(/<!-- (\/)?preview -->/g,"");
+	var text = text.match(mark.body);
+	if(!text){
+		return "";
+	}
+	text = text[0];
+	return text
+		.replace(mark.start,"")
+		.replace(mark.end,"");
 }
 
+var getPreview = function(text){
+	return getCommentedArea(text,conf.preview);
+}
 
-var getComment = function(text){
-	var ret = text.match(/<!--(.*?)-->/g);
-	if(ret){
-		return ret[0];
+var getNote = function(text){
+	return getCommentedArea(text,conf.note);
+}
+
+var getDoc = function(text){
+	return getCommentedArea(text,conf.doc);
+}
+
+var getMark = function(mark,source){
+	var pattern = '@'+mark+'(?:[\t 　]+)(.*)';
+	var regex = new RegExp(pattern,"i");
+	var match = source.match(regex);
+	if(match && match[1]){
+		return match[1];
 	}else{
 		return "";
 	}
 }
 
+var getTag = function(text,components){
+	if(!text){
+		return "";
+	}
+	var ret = text.match(/<(.*?)>/g);
+	var result = "";
+	if(!ret){
+		return "";
+	}
+	for(var i = 0, length = ret.length; i < length; i++){
+		var name = getComponentName(ret[i]);
+		components.forEach(function(comp){
+			if(name.indexOf(comp.name) !== -1){
+				result = ret[i];
+			}
+		});
+		if(result){
+			break;
+		}
+	}
+	return result;
+}
+
 var getComponentName = function(text){
-	return text.replace(/<!-- (\w+) (.*?)-->/g,function(comment,name){
+	if(!text){
+		return "";
+	}
+	return text.replace(/<([a-zA-Z0-9._-]+)\s*\w*.*?>/g,function(comment,name){
 		return name;
 	});
 }
 
 var getTemplate = function(text){
-	var template = text.match(/<!-- template(.*?)-->(([\n\r\t]|.)*?)<!-- \/template -->/g);
+	if(!text){
+		return "";
+	}
+	var template = text.match(conf.template.body);
 	if(!template){
 		return "";
 	}
@@ -47,18 +98,20 @@ var getTemplate = function(text){
 }
 
 var getInnerHtmlFromTemplate = function(template){
-	return template.replace(/<!-- (\/)?template(.*?) -->/g,"");
+	return template
+		.replace(conf.template.start,"")
+		.replace(conf.template.end,"");
 }
 
 var getVarsFromTemplate = function(template){
 	var templateInside = getInnerHtmlFromTemplate(template);
-	var templateFirst = template.replace(templateInside,"").replace("<!-- /template -->","");
+	var templateFirst = template.replace(templateInside,"").replace(conf.template.end,"");
 	return getVars(templateFirst);
 }
 
 var getRendered = function(template,defs,overrides){
 	var vars = $.extend({},defs,overrides);
-	return template.replace(/{(.*?)}/g,function(a,b){
+	return template.replace(conf.variable.mark,function(a,b){
 		return vars[b] || "";
 	});
 }
@@ -68,12 +121,12 @@ var removeScript = function(text){
 }
 
 var removeSelf = function(text,self){
-	var reg = new RegExp("<!-- "+self+"(.*?)-->");
+	var reg = new RegExp("<"+self+"(.*?)>");
 	return text.replace(reg,"");
 }
 
 var getImports = function(text){
-	var match = text.match(/<!-- import="(.*?)" -->/);
+	var match = text.match(conf.import.body);
 	if(!match){
 		return "";
 	}
@@ -82,8 +135,12 @@ var getImports = function(text){
 
 
 module.exports = {
-	getComment:getComment,
+	init:init,
+	getTag:getTag,
 	getPreview:getPreview,
+	getNote:getNote,
+	getDoc:getDoc,
+	getMark:getMark,
 	getComponentName:getComponentName,
 	getVars:getVars,
 	getTemplate:getTemplate,

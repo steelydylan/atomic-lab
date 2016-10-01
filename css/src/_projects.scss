@@ -1,0 +1,131 @@
+.atomicLabProjectsDialog{
+
+    $this: &;
+
+    width: 750px;
+
+    // Dialog title
+    &-title{
+        padding: 15px 24px 0;
+        margin: 0;
+        font-size: 24px;
+        color: #{$text-color-accent};
+    }
+
+    &-addProjectForm{
+        margin: 10px 0 50px 0;
+    }
+
+    // Content heading
+    &-heading{
+        display: block;
+        margin-bottom: 10px;
+        font-size: 17px;
+        color: #{$text-color-dark};
+    }
+    // Heading
+    &-input{
+        display: inline-block;
+        width: 500px;
+        font-size: 19px;
+        vertical-align: bottom;
+        margin-right: 10px;
+    }
+
+    // Table style
+    &-table{
+        width: 100%;
+        border-collapse: collapse;
+
+        th{
+            text-align: left;
+            border-bottom: 1px solid #979797;
+            padding: 5px 0;
+        }
+        td{
+            padding: 10px 0;
+            vertical-align: middle;
+        }
+        i{
+            color: #{$text-color-light};
+        }
+
+    }
+    &-icon{
+        width: 5%;
+        text-align: center;
+        color: #{$text-color-light};
+    }
+
+    // Table cells width
+    &-name{
+        width: 35%;
+    }
+    &-url{
+        width: 30%;
+    }
+    &-share{
+        width: 25%;
+    }
+    &-delete{
+        display: none;
+    }
+    &-shareIcon{
+        width: 22px;
+        display: inline-block;
+        margin-right: 5px;
+        cursor: pointer;
+        img{
+            width: 100%;
+        }
+    }
+
+    // Update icon
+    &-update{
+      float: left;
+      margin-right: 5px;
+      display: block;
+      cursor: pointer;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    // Check icon
+    &-check{
+      cursor: pointer;
+      vertical-align: bottom;
+    }
+
+    // Close icon
+    &-close{
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        cursor: pointer;
+    }
+
+    // Icon hover
+    &-delete, &-shareIcon{
+        cursor: pointer;
+            &:hover{
+                color: #{$text-color-default};
+        }
+    }
+
+    // Project list area (scrollable box)
+    &-projectsContainer{
+
+        height: 180px;
+        border-bottom: 1px solid #979797;
+        overflow: auto;
+        tr:hover{
+            background-color: #e2e2e2;
+
+            #{$this}-delete{
+                display: block;
+                position: relative;
+            }
+        }
+    }
+
+}

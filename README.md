@@ -1,8 +1,14 @@
 #[Atomic Lab.](http://steelydylan.github.io/atomic-lab/)
 Template sharing and coding environment based on atomic design
+<p><img src="images/favicon.png"></p>
 
 ## Screenshot
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/screenshot.png"></img>
+<img src="about/images/Feature-browser.png">
+
+## Demo
+You can try it out from here
+
+[http://steelydylan.github.io/atomic-lab/](http://steelydylan.github.io/atomic-lab/)
 
 ## Features
 
@@ -10,45 +16,26 @@ Template sharing and coding environment based on atomic design
 - You can use css preprocessors like scss, less and stylus
 - You can share components you have created with others by sharing shortened URL
 
-## Usage
+## Installation
 
-### preview
-```html
-<!-- preview -->
-code here
-<!-- /preview -->
+```
+$ npm install atomic-lab
+$ $(npm bin)/atomic-lab init
+$ $(npm bin)/atomic-lab build
 ```
 
-### make template
-
-define template
-```html
-<!-- template -->
-code here
-<!-- /template -->
-```
-
-set default variable
-```html
-<!-- template text="hoge" -->
-<p>{text}</p>
-<!-- /template -->
-```
-
-### use template
-supporse that component's name is "main-visual"
-```html
-<!-- import="main-visual,button" -->
-<!-- main-visual image="hoge.png" -->
-<!-- button -->
-```
+## Documentation
+1. [Getting Started](docs/getting-started.md)
+2. [Grammer](docs/grammer.md)
+3. [Others](docs/others.md)
 
 ## Attribution
-We use these icons created by http://patternlab.io/
+We use some icons created by http://patternlab.io/
 
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/atom.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/molucule.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/organism.svg">
-<img src="https://raw.github.com/steelydylan/atomic-lab/master/images/template.svg">
+<img src="images/iconAtom-s.png"></img>
+<img src="images/iconMolecule-s.png"></img>
+<img src="images/iconOrganism-s.png"></img>
+<img src="images/iconTemplate-s.png"></img>
+
 ## License
 MIT License

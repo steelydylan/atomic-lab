@@ -1,24 +1,46 @@
 {
-	"name": "gulpfile_generator",
-	"version": "1.1.0",
-	"description": "This is a genarator for gulpfile and package.json",
-	"author": "steelydylan",
-	"url": "http://horicdesign.com",
-	"license": "MIT License",
-	"keywords": "gulp",
-	"devDependencies":{
-		"gulp": "*",
-		"gulp-plumber": "*",
-		"gulp-rename": "*",
-		"gulp-browserify": "*",
-		"gulp-uglify": "*",
+  "name": "atomic-lab",
+  "version": "1.0.9",
+  "description": "component guide generator",
+  "author": "steelydylan",
+  "url": "http://horicdesign.com",
+  "license": "MIT License",
+  "keywords": "atomic-design",
+  "main":"index.js",
+  "author": {
+  	"name":"steelaxe"
+  },
+  "bin":{
+  	"atomic-lab":"./bin/index.js"
+  },
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steelydylan/atomic-lab.git"
+  },
+  "devDependencies": {
+  	"browser-sync": "*",
+    "ejs": "*",
+    "gulp": "*",
+    "gulp-browserify": "*",
     "gulp-jshint": "*",
-		"gulp-merge-media-queries": "*",
-		"browser-sync": "*",
-		"browser-sync": "*",
-		"gulp-notify": "*",
-		"hamljs":"*",
-		"ejs":"*",
-		"jade":"*"
-	}
+    "gulp-merge-media-queries": "*",
+    "gulp-notify": "*",
+    "gulp-plumber": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "*",
+    "hamljs": "*",
+    "jade": "*",
+    "url": "*",
+    "css": "*"
+  },
+	"dependencies":{
+  	"findit":"*",
+  	"promise":"*",
+    "mkdirp":"*",
+    "extend":"*",
+    "fs-extra":"*",
+    "yargs": "^4.3.2"
+  }
 }
