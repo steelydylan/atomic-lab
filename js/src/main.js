@@ -844,4 +844,7 @@ jQuery(function($) {
 		var category = $(this).data("category");
 		atomicLab.applyMethod("openDialog", category);
 	});
+	$(window).on('beforeunload', function() {
+      return 'Changes you made may not be saved.\nAre you sure you want to leave?';
+  });
 });
