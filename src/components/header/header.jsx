@@ -32,8 +32,6 @@ export default class Header extends React.Component {
           <span className="mdl-layout-title mdl-layout-logo">{config ? config.title : null}</span>
           <div className="mdl-layout-spacer"></div>
           <nav className="mdl-navigation">
-            <a className="mdl-navigation__link" href="https://steelydylan.github.io/atomic-lab/" target="_blank">About</a>
-            <a className="mdl-navigation__link" href="https://goo.gl/dfiFqH">Docs</a>
             <Tooltip label="If you like this,Please star on GitHub! ;D" position="bottom">
               <a id="Navi-github" className="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img className="atomicLabHeader-gitHubMark" src="./images/githubMark.png" alt="GitHub" /></a>
             </Tooltip>
