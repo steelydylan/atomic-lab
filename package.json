@@ -2,16 +2,15 @@
   "name": "atomic-lab",
   "version": "1.0.9",
   "description": "component guide generator",
-  "author": "steelydylan",
+  "author": {
+    "name": "steelaxe"
+  },
   "url": "http://horicdesign.com",
   "license": "MIT License",
   "keywords": "atomic-design",
-  "main":"index.js",
-  "author": {
-  	"name":"steelaxe"
-  },
-  "bin":{
-  	"atomic-lab":"./bin/index.js"
+  "main": "index.js",
+  "bin": {
+    "atomic-lab": "./bin/index.js"
   },
   "readmeFilename": "README.md",
   "repository": {
@@ -19,7 +18,8 @@
     "url": "https://github.com/steelydylan/atomic-lab.git"
   },
   "devDependencies": {
-  	"browser-sync": "*",
+    "browser-sync": "*",
+    "css": "*",
     "ejs": "*",
     "gulp": "*",
     "gulp-browserify": "*",
@@ -32,15 +32,15 @@
     "gulp-uglify": "*",
     "hamljs": "*",
     "jade": "*",
-    "url": "*",
-    "css": "*"
+    "url": "*"
   },
-	"dependencies":{
-  	"findit":"*",
-  	"promise":"*",
-    "mkdirp":"*",
-    "extend":"*",
-    "fs-extra":"*",
+  "dependencies": {
+    "a-template": "^0.2.0",
+    "extend": "*",
+    "findit": "*",
+    "fs-extra": "*",
+    "mkdirp": "*",
+    "promise": "*",
     "yargs": "^4.3.2"
   }
 }

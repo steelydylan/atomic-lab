@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var plumber = require('gulp-plumber');
 var rename = require('gulp-rename');
-var jshint = require('gulp-jshint');
 var browserify = require('gulp-browserify');
 var uglify = require('gulp-uglify');
 var notify = require('gulp-notify');
@@ -29,8 +28,6 @@ gulp.task('js', function () {
                 this.emit('end');
             }
         }))
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'))
         .pipe(browserify())
         .pipe(gulp.dest('js/dist'))
         .pipe(rename({

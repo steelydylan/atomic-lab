@@ -1,6 +1,6 @@
 jQuery(function($) {
 	var dialogPolyfill = require("./dialog-polyfill.js");
-	var aTemplate = require("./aTemplate.js");
+	var aTemplate = require("a-template");
 	var saveAs = require("./fileSaver.min.js").saveAs;
 	var JSZip = require("./jszip.min.js");
 	var urlParser = require("url");
@@ -27,7 +27,7 @@ jQuery(function($) {
 		organism: 2,
 		template: 3
 	};
-	var atomicLab = new aTemplate.View({
+	var atomicLab = new aTemplate({
 		templates: [
 			"css_preview",
 			"css_edit",
@@ -106,7 +106,6 @@ jQuery(function($) {
 				return parser.getNote(this.data.html);
 			}
 		},
-		method: {
 			initialize: function() {
 				var self = this;
 				var query = urlParser.parse(location.href, true).query;
@@ -842,7 +841,6 @@ jQuery(function($) {
 			reversedIndex: function(i) {
 				return this.data.collections.length - i - 1;
 			}
-		}
 	}).applyMethod("initialize");
 	/*ここから先はアニメーション関係*/
 	$(window).on('beforeunload', function() {
