@@ -20,8 +20,8 @@ exports.builder = {
 
 exports.handler = function (argv) {
 	atomic.build({
-		src:argv.src,
-		dist:argv.dist,
-		markup:argv.markup
+	src:argv.src,
+	dist:argv.dist,
+	markup:argv.markup
 	});
 };
