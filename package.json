@@ -50,7 +50,8 @@
     "react-remarkable": "^1.1.1",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",
-    "sass.js": "^0.10.4"
+    "sass.js": "^0.10.4",
+    "yargs": "^8.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.22.1",

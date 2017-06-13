@@ -7,6 +7,7 @@ const argv = require('yargs')
 	.alias('v', 'version')
   .version(function() { return require('../package').version; })
   .describe('v', 'show version information')
+  .detectLocale(false)
   .alias('h', 'help')
   .strict()
   .argv
