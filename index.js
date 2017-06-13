@@ -124,10 +124,9 @@ atomicBuilder.build = function (opt) {
 atomicBuilder.init = (opt) => {
   const dist = opt.dist;
   const src = opt.src;
-  const sample = opt.sample;
+  const examples = opt.examples;
   const p1 = new Promise((resolve) => {
     fs.copy(`${__dirname}/css`, path.resolve(processPath, dist, './css'), (err) => {
-      console.log(err);
       resolve();
     });
   });
@@ -147,13 +146,13 @@ atomicBuilder.init = (opt) => {
     });
   });
   const p5 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.js'), () => {
+    fs.copy(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json'), () => {
       resolve();
     });
   });
   const p6 = new Promise((resolve) => {
-    if (sample) {
-      fs.copy(`${__dirname}/components`, path.resolve(processPath, src), () => {
+    if (examples) {
+      fs.copy(`${__dirname}/components`, path.resolve(processPath, dist, './components'), () => {
         resolve();
       });
     } else {
@@ -161,7 +160,7 @@ atomicBuilder.init = (opt) => {
     }
   });
   const p7 = new Promise((resolve) => {
-    if (sample) {
+    if (examples) {
       fs.copy(`${__dirname}/resources/setting.json`, path.resolve(processPath, dist, './resources/setting.json'), () => {
         resolve();
       });
@@ -170,7 +169,7 @@ atomicBuilder.init = (opt) => {
     }
   });
   const p8 = new Promise((resolve) => {
-    if (sample) {
+    if (examples) {
       fs.copy(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), () => {
         resolve();
       });

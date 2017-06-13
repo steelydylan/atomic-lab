@@ -19,6 +19,10 @@ exports.builder = {
   m:{
   	alias: 'markup',
   	default:'html'
+  },
+  e:{
+    alias: 'examples',
+  	default:true
   }
 }
 
@@ -31,7 +35,7 @@ exports.handler = function (argv) {
   atomic.init({
     dist:argv.dist,
     src:argv.src,
-    sample:argv.sample
+    examples:argv.examples
   });
   fs.readFile(__dirname+"/_gulpfile.js", 'utf8', function (err, data) {
     if (err) throw err;
