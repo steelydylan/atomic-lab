@@ -1,3 +1,5 @@
+"use strict";
+
 const path = require('path');
 const find = require('findit');
 const Promise = require('promise');
@@ -145,16 +147,11 @@ atomicBuilder.init = (opt) => {
     });
   });
   const p5 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/ace`, path.resolve(processPath, dist, './ace'), () => {
+    fs.copy(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.js'), () => {
       resolve();
     });
   });
   const p6 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/config.js`, path.resolve(processPath, dist, './config.js'), () => {
-      resolve();
-    });
-  });
-  const p7 = new Promise((resolve) => {
     if (sample) {
       fs.copy(`${__dirname}/components`, path.resolve(processPath, src), () => {
         resolve();
@@ -163,7 +160,7 @@ atomicBuilder.init = (opt) => {
       resolve();
     }
   });
-  const p8 = new Promise((resolve) => {
+  const p7 = new Promise((resolve) => {
     if (sample) {
       fs.copy(`${__dirname}/resources/setting.json`, path.resolve(processPath, dist, './resources/setting.json'), () => {
         resolve();
@@ -173,7 +170,7 @@ atomicBuilder.init = (opt) => {
     }
   });
 
-  return Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]);
+  return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
 };
 
 module.exports = atomicBuilder;
