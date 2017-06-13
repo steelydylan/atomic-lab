@@ -132,7 +132,7 @@ atomicBuilder.init = (opt) => {
     });
   });
   const p2 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/js`, path.resolve(processPath, dist, './js'), () => {
+    fs.copy(`${__dirname}/src`, path.resolve(processPath, dist, './js'), () => {
       resolve();
     });
   });
@@ -169,8 +169,17 @@ atomicBuilder.init = (opt) => {
       resolve();
     }
   });
+  const p8 = new Promise((resolve) => {
+    if (sample) {
+      fs.copy(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), () => {
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
 
-  return Promise.all([p1, p2, p3, p4, p5, p6, p7]);
+  return Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]);
 };
 
 module.exports = atomicBuilder;
