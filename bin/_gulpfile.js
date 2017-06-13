@@ -1,6 +1,8 @@
-var gulp = require('gulp');
-var atomic = require('atomic-lab');
-var bs = require('browser-sync').create();
+"use strict";
+
+const gulp = require('gulp');
+const atomic = require('atomic-lab');
+const bs = require('browser-sync').create();
 
 gulp.task('atomic-init', () => {
   bs.init({

@@ -1,4 +1,6 @@
 #! /usr/bin/env node
+"use strict";
+
 const atomic = require('../index.js');
 exports.builder = {
   d:{

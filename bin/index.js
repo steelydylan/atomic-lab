@@ -1,4 +1,6 @@
 #! /usr/bin/env node
+"use strict";
+
 const argv = require('yargs')
 	.command('init','Copy template & theme & config file',require('./init.js'))
 	.command('build','update component guide',require('./build.js'))
