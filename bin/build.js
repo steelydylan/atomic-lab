@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-var atomic = require('../index.js');
+const atomic = require('../index.js');
 exports.builder = {
   d:{
   	alias: 'dist',

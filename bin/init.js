@@ -1,7 +1,7 @@
-var atomic = require('../index.js');
-var fs = require("fs");
-var path = require('path');
-var process_path = process.cwd();
+const atomic = require('../index.js');
+const fs = require("fs");
+const path = require('path');
+const processPath = process.cwd();
 
 exports.builder = {
   d:{
@@ -23,24 +23,24 @@ exports.builder = {
   }
 }
 
-var replace = function(str,before,after){
-	var regExp = new RegExp(before,"g");
+const replace = function(str,before,after){
+	const regExp = new RegExp(before,"g");
 	return str.replace(regExp,after);
 }
 
 exports.handler = function (argv) {
-	atomic.init({
-		dist:argv.dist,
-		src:argv.src,
-		sample:argv.sample
-	});
-	fs.readFile(__dirname+"/_gulpfile.js", 'utf8', function (err, data) {
-	  if (err) throw err;
-	  data = replace(data,"{src}",argv.src);
-	  data = replace(data,"{dist}",argv.dist);
-	  data = replace(data,"{markup}",argv.markup);
-	  fs.writeFile(path.resolve(process_path,"./_gulpfile.js"),data,function(err){
-	  	if (err) throw err;
-	  });
-	});
+  atomic.init({
+    dist:argv.dist,
+    src:argv.src,
+    sample:argv.sample
+  });
+  fs.readFile(__dirname+"/_gulpfile.js", 'utf8', function (err, data) {
+    if (err) throw err;
+    data = replace(data,"{src}",argv.src);
+    data = replace(data,"{dist}",argv.dist);
+    data = replace(data,"{markup}",argv.markup);
+    fs.writeFile(path.resolve(processPath,"./_gulpfile.js"),data,function(err){
+    if (err) throw err;
+    });
+  });
 };

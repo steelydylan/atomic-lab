@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-var argv = require('yargs')
+const argv = require('yargs')
 	.command('init','Copy template & theme & config file',require('./init.js'))
 	.command('build','update component guide',require('./build.js'))
 	.alias('v', 'version')
