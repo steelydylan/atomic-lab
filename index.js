@@ -126,7 +126,7 @@ atomicBuilder.init = (opt) => {
   const src = opt.src;
   const examples = opt.examples;
   const p1 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/css`, path.resolve(processPath, dist, './css'), (err) => {
+    fs.copy(`${__dirname}/css`, path.resolve(processPath, dist, './css'), () => {
       resolve();
     });
   });
@@ -152,7 +152,7 @@ atomicBuilder.init = (opt) => {
   });
   const p6 = new Promise((resolve) => {
     if (examples) {
-      fs.copy(`${__dirname}/components`, path.resolve(processPath, dist, './components'), () => {
+      fs.copy(`${__dirname}/components`, path.resolve(processPath, src), () => {
         resolve();
       });
     } else {
