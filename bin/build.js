@@ -11,7 +11,7 @@ exports.builder = {
   m:{
   	alias: 'markup',
   	describe: 'set template engine',
-  	default:"html"
+  	default:"ejs"
   },
   s:{
   	alias: 'src',
