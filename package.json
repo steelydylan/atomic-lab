@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.prod.js",
+    "lint": "eslint ./index.js --fix",
     "generate": "node ./bin/build.js",
     "dev": "open http://localhost:8080/webpack-dev-server/index.html && webpack-dev-server --progress --colors --watch"
   },
