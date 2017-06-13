@@ -23,6 +23,6 @@
     "no-irregular-whitespace": 0,
     "func-names": 0,
     "no-console": 0,
-    "no-extra-strict": 0
+    "strict": 0
   }
 }
