@@ -19,9 +19,6 @@ exports.builder = {
   m:{
   	alias: 'markup',
   	default:'html'
-  },
-  sample:{
-  	default:true
   }
 }
 
