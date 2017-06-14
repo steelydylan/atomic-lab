@@ -82,7 +82,7 @@ export default class AddBtn extends React.Component {
 
     return (
       <div>
-        <div className="AtomicLabFAB">
+        <div className={classNames("AtomicLabFAB",{"is-open":isOpen})}>
           <button className={classNames("AtomicLabFAB-main","mdl-button","mdl-js-button","mdl-button--fab","mdl-button--colored",{"is-open":isOpen})} style={{position:"absolute"}} onClick={this.toggleCategoryMenu.bind(this)}>
             <i className="material-icons">add</i>
           </button>

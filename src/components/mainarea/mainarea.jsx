@@ -1,12 +1,15 @@
 import React, { Component, PropTypes } from 'react';
+import SplitPane from 'react-split-pane';
 import { Menu, MenuItem, Tooltip, Icon } from 'react-mdl';
 import { Snackbar } from 'react-mdl';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import classNames from 'classnames';
 import Markdown from 'react-remarkable';
+import Frame from 'react-frame-component';
 import hljs from 'highlight.js';
 
+import 'react-resizable/css/styles.css';
 import 'highlight.js/styles/default.css';
 import 'highlight.js/styles/tomorrow.css';
 import './mainarea.scss';
@@ -17,6 +20,7 @@ import 'brace/theme/monokai';
 
 import Parser from '../../lib/parser.js';
 import compiler from '../../lib/compiler.js';
+import normalize from '../../lib/normalize.js';
 
 import AddBtn from '../addbtn/addbtn';
 import EditDialog from '../edit-dialog/edit-dialog';
@@ -181,6 +185,9 @@ export default class MainArea extends React.Component {
     });
     //textからpreview取得
     let preview = parser.getPreview(text);
+    if(!preview) {
+      return '';
+    }
     preview = compiler.markup[config.markup](preview);
     //previewからコメント文取得
     let imports = "" + parser.getImports(text);
@@ -232,9 +239,11 @@ export default class MainArea extends React.Component {
         css += comp.css;
       }
     }
-    css = compiler.styling[config.styling](css);
+   
+    css += compiler.styling[config.styling](css);
     if(css) {
-      preview += `<style>${css}</style>`;
+      css += `${normalize}`;
+      preview += `<style>${css}\n*{box-sizing:border-box;}</style>`;
     }
     if(config.run_script){
       return preview;
@@ -393,8 +402,16 @@ export default class MainArea extends React.Component {
                 {preview ?
                   <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                     <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview</div>
-                    <div dangerouslySetInnerHTML={{__html: preview}}>
-                    </div>
+                      <SplitPane split="vertical" minSize={320} defaultSize="calc(100% - 10px)">
+                        <div>
+                          <Frame style={{width:'100%',height:'500px'}}>
+                            <div dangerouslySetInnerHTML={{__html: preview}}>
+                            </div>
+                          </Frame>
+                        </div>
+                        <div>
+                        </div>
+                      </SplitPane>
                   </div>
                   :
                   null}

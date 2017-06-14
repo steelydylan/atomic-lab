@@ -1,143 +1,196 @@
 $text-color-default: #454545;
 $text-color-light: #848484;
 $text-color-dark: #454545;
-$text-color-accent: rgb(0,150,136);
-
-$line-color-default: #D7D7D7;
+$text-color-accent: rgb(0, 150, 136);
+$line-color-default: #d7d7d7;
 $line-color-light: #efefef;
-
-$color-primary: rgb(120,144,156);
-$color-accent: rgb(0,150,136);
+$color-primary: rgb(120, 144, 156);
+$color-accent: rgb(0, 150, 136);
 
 
 // Main panel
-.atomicLabMain{
-    box-sizing: border-box;
-    flex-grow: 1;
-    height: 100%;
-    overflow: auto;
-    background-color: #F6F6F6;
-    position: relative;
+.atomicLabMain {
+	box-sizing: border-box;
+	flex-grow: 1;
+	height: 100%;
+	overflow: auto;
+	background-color: #f6f6f6;
+	position: relative;
 }
 
+.atomicLabComponentControl {
+	box-sizing: border-box;
+	position: relative;
+	background-color: #fff;
+	width: 100%;
+	height: 200px;
+	//    position: fixed;
+	//    left: 0;
+	//    top: 0;
+	//    z-index: 2;
+	flex-grow: 0;
+	padding: 25px 40px 0 40px;
 
-.atomicLabComponentControl{
-    box-sizing: border-box;
-    position: relative;
-    background-color: #fff;
-    width: 100%;
-    height: 200px;
-//    position: fixed;
-//    left: 0;
-//    top: 0;
-//    z-index: 2;
-    flex-grow: 0;
-    padding: 25px 40px 0 40px;
+	&-icon {
+		float: left;
+		width: 100px;
 
-    &-icon{
-        float: left;
-        width: 100px;
-        img{
-            width: 100%;
-        }
-    }
-    &-texts{
-        float: left;
-        padding-left: 25px;
-    }
-    &-title{
-        font-size: 25px;
-        margin: 20px 0 10px 0;
-    }
-    &-description{
-        font-size: 17px;
-        color: #{$text-color-light};
-    }
+		img {
+			width: 100%;
+		}
+	}
 
+	&-texts {
+		float: left;
+		padding-left: 25px;
+	}
 
-    &-actions{
+	&-title {
+		font-size: 25px;
+		margin: 20px 0 10px 0;
+	}
 
-    }
+	&-description {
+		font-size: 17px;
+		color: #{$text-color-light};
+	}
 
-    // tab style adjust
-    .atomicLabTabs-bar{
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-    }
+	&-actions {
+	}
 
-    .atomicLabTabs-tab:after{
-        height: 2px;
-        width: 100%;
-        display: block;
-        content: " ";
-        bottom: 0px;
-        left: 0px;
-        position: absolute;
-        background: #FFFFFF;
-        animation: border-expand 0.2s cubic-bezier(0.4, 0, 0.4, 1) 0.01s alternate forwards;
-        transition: all 1s cubic-bezier(0.4, 0, 1, 1);
-    }
+	// tab style adjust
+	.atomicLabTabs-bar {
+		width: 100%;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+	}
 
-    .atomicLabTabs-tab{
-        color: rgba(0,0,0, 0.54);
-        cursor: pointer;
-        flex-grow: 1;
-    }
+	.atomicLabTabs-tab:after {
+		height: 2px;
+		width: 100%;
+		display: block;
+		content: " ";
+		bottom: 0px;
+		left: 0px;
+		position: absolute;
+		background: #ffffff;
+		animation: border-expand 0.2s cubic-bezier(0.4, 0, 0.4, 1) 0.01s alternate forwards;
+		transition: all 1s cubic-bezier(0.4, 0, 1, 1);
+	}
 
-    .atomicLabTabs-tab.is-actßive{
-            color: rgba(0,0,0, 0.87);
-    }
+	.atomicLabTabs-tab {
+		color: rgba(0, 0, 0, 0.54);
+		cursor: pointer;
+		flex-grow: 1;
+	}
 
+	.atomicLabTabs-tab.is-actßive {
+		color: rgba(0, 0, 0, 0.87);
+	}
 }
 
 
 // Tabs
-.atomicLabTabs{
+.atomicLabTabs {
+	position: relative;
 
-    position: relative;
+	.is-active:after {
+		height: 3px !important;
+		background: #{$color-accent} !important;
+	}
 
-    .is-active:after{
-        height: 3px !important;
-        background: #{$color-accent} !important;
-    }
-    &-tab{
-        flex-grow: 1;
-    }
+	&-tab {
+		flex-grow: 1;
+	}
 }
 
-.atomicLabComponentControl-actions{
-    position: absolute;
-    right: 50px;
-    top: 25px;
-    color: #{$text-color-light};
-    nav > ul,
-    nav > ul > li{
-        margin: 0;
-        padding: 0;
-        display: inline-block;
+.atomicLabComponentControl-actions {
+	position: absolute;
+	right: 50px;
+	top: 25px;
+	color: #{$text-color-light};
 
+	nav > ul,
+	nav > ul > li {
+		margin: 0;
+		padding: 0;
+		display: inline-block;
 
-        i{
-            padding: 5px;
-            cursor: pointer;
-            &:hover{
-                color: #{$text-color-dark};
-            }
-        }
+		i {
+			padding: 5px;
+			cursor: pointer;
 
-    }
-
+			&:hover {
+				color: #{$text-color-dark};
+			}
+		}
+	}
 }
 
-.atomicLabTabs-panel{
-    height: 450px;
+.atomicLabTabs-panel {
+	height: 450px;
 
-    &-editArea{
-        font-size: 20px;
-        width: 100%;
-        height: 100%;
-        border-radius: 5px;
-    }
+	&-editArea {
+		font-size: 20px;
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+	}
+}
+
+.SplitPane {
+	position: static !important;
+}
+
+.Resizer {
+	background: #000;
+	opacity: .2;
+	z-index: 1;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding;
+	background-clip: padding-box;
+}
+
+.Resizer:hover {
+	-webkit-transition: all 2s ease;
+	transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+	height: 11px;
+	margin: -5px 0;
+	border-top: 5px solid rgba(255, 255, 255, 0);
+	border-bottom: 5px solid rgba(255, 255, 255, 0);
+	cursor: row-resize;
+	width: 100%;
+}
+
+.Resizer.horizontal:hover {
+	border-top: 5px solid rgba(0, 0, 0, 0.5);
+	border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.vertical {
+	width: 30px;
+	margin: 0 -5px;
+	border-left: 5px solid rgba(255, 255, 255, 0);
+	border-right: 5px solid rgba(255, 255, 255, 0);
+	cursor: col-resize;
+}
+
+.Resizer.vertical:hover {
+	border-left: 5px solid rgba(0, 0, 0, 0.5);
+	border-right: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.disabled {
+	cursor: not-allowed;
+}
+
+.Resizer.disabled:hover {
+	border-color: transparent;
 }
