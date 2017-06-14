@@ -50,6 +50,7 @@
     "react-redux": "^5.0.1",
     "react-remarkable": "^1.1.1",
     "react-resizable": "^1.7.1",
+    "react-shadow": "^2.0.2",
     "react-split-pane": "^0.1.63",
     "redux": "^3.6.0",
     "redux-actions": "^1.2.1",

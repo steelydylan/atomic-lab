@@ -6,7 +6,7 @@ import AceEditor from 'react-ace';
 import brace from 'brace';
 import classNames from 'classnames';
 import Markdown from 'react-remarkable';
-import Frame from 'react-frame-component';
+import ShadowDOM from 'react-shadow';
 import hljs from 'highlight.js';
 
 import 'react-resizable/css/styles.css';
@@ -404,8 +404,12 @@ export default class MainArea extends React.Component {
                     <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview</div>
                       <SplitPane split="vertical" minSize={320} defaultSize="calc(100% - 10px)">
                         <div>
-                          <div dangerouslySetInnerHTML={{__html: preview}}>
-                          </div>
+                          <ShadowDOM>
+                            <div>
+                              <div dangerouslySetInnerHTML={{__html: preview}}>
+                              </div>
+                            </div>
+                          </ShadowDOM>
                         </div>
                         <div>
                         </div>
