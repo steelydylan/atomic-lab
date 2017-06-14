@@ -404,10 +404,8 @@ export default class MainArea extends React.Component {
                     <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview</div>
                       <SplitPane split="vertical" minSize={320} defaultSize="calc(100% - 10px)">
                         <div>
-                          <Frame style={{width:'100%',height:'500px'}}>
-                            <div dangerouslySetInnerHTML={{__html: preview}}>
-                            </div>
-                          </Frame>
+                          <div dangerouslySetInnerHTML={{__html: preview}}>
+                          </div>
                         </div>
                         <div>
                         </div>
