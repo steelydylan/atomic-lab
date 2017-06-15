@@ -248,7 +248,7 @@ export default class MainArea extends React.Component {
       const minNum = minMatched[1] ? parseInt(minMatched[1]) : 0;
       const maxNum = maxMatched[1] ? parseInt(maxMatched[1]) : 999999;
       const paneSize = this.state.paneSize;
-      if (paneSize > minNum && paneSize < maxNum){
+      if (paneSize >= minNum && paneSize <= maxNum){
         return b;
       }
       return '';
