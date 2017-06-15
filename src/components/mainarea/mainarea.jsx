@@ -74,7 +74,8 @@ export default class MainArea extends React.Component {
       hasNote: false,
       isRemoveDialogOpen: false,
       isEditDialogOpen: false,
-      isSnackbarActive: false
+      isSnackbarActive: false,
+      paneSize:800
     };
   }
 
@@ -240,11 +241,23 @@ export default class MainArea extends React.Component {
       }
     }
    
-    css += compiler.styling[config.styling](css);
+    css = compiler.styling[config.styling](css);
+    css = css.replace(/@media[^{]+\{([\s\S]+?\})\s*\}/gi,(a, b, c) => {
+      const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];
+      const maxMatched = a.match(/max\-width:[ ]?([0-9]+?)px/) || [];
+      const minNum = minMatched[1] ? parseInt(minMatched[1]) : 0;
+      const maxNum = maxMatched[1] ? parseInt(maxMatched[1]) : 999999;
+      const paneSize = this.state.paneSize;
+      if (paneSize > minNum && paneSize < maxNum){
+        return b;
+      }
+      return '';
+    })
+
     if(css) {
-      css += `${normalize}`;
-      preview += `<style>${css}\n*{box-sizing:border-box;}</style>`;
+      preview += `<style>${css}</style>`;
     }
+
     if(config.run_script){
       return preview;
     }else{
@@ -303,6 +316,12 @@ export default class MainArea extends React.Component {
     });
   }
 
+  onResized(size) {
+    this.setState({
+      paneSize:size
+    });
+  }
+
   render() {
     const state = this.state;
     const editMode = state.editMode;
@@ -315,6 +334,7 @@ export default class MainArea extends React.Component {
     const props = this.props;
     const enable_editing = props.config && props.config.enable_editing;
     const isEditDialogOpen = state.isEditDialogOpen;
+    const paneSize = state.paneSize;
     const lang = 'ja';
 
     return (
@@ -402,7 +422,8 @@ export default class MainArea extends React.Component {
                 {preview ?
                   <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                     <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview</div>
-                      <SplitPane split="vertical" minSize={320} defaultSize="calc(100% - 10px)">
+                      <span className="atomicLabCard-screenSize">{paneSize}px</span>
+                      <SplitPane split="vertical" minSize={320} defaultSize={paneSize} onChange={this.onResized.bind(this)} >
                         <div>
                           <ShadowDOM>
                             <div>
