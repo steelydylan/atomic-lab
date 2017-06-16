@@ -101,7 +101,7 @@ html {
 }
 
 .mdl-layout__header-row .mdl-button--icon {
-	margin: 0 0 0 20px;
+	margin: 0;
 }
 
 .mdl-layout-logo {

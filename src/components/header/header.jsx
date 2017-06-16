@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { Menu, MenuItem, Tooltip, Icon } from 'react-mdl';
 import ProjectDialog from '../project-dialog/project-dialog';
 
+import './header.scss';
+
 export default class Header extends React.Component {
 
   constructor() {
@@ -33,7 +35,7 @@ export default class Header extends React.Component {
           <div className="mdl-layout-spacer"></div>
           <nav className="mdl-navigation">
             <Tooltip label="If you like this,Please star on GitHub! ;D" position="bottom">
-              <a id="Navi-github" className="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><img className="atomicLabHeader-gitHubMark" src="./images/githubMark.png" alt="GitHub" /></a>
+              <a id="Navi-github" className="mdl-navigation__link" href="https://github.com/steelydylan/atomic-lab" target="_blank"><div className="atomicLabHeader-gitHubMark"></div></a>
             </Tooltip>
           </nav>
         </div>

@@ -31,14 +31,30 @@ $color-accent: rgb(0, 150, 136);
 	flex-grow: 0;
 	padding: 25px 40px 0 40px;
 
-	&-icon {
+	&-icon-wrap {
 		float: left;
 		width: 100px;
-
-		img {
-			width: 100%;
-		}
+    height: 100px;
 	}
+
+  &-icon {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    &.atom {
+      background-image:url(./images/iconAtom-l.png);
+    }
+    &.molecule {
+      background-image:url(./images/iconMolecule-l.png);
+    }
+    &.organism {
+      background-image:url(./images/iconOrganism-l.png);
+    }
+    &.template {
+      background-image:url(./images/iconTemplate-l.png);
+    }
+  }
+  
 
 	&-texts {
 		float: left;

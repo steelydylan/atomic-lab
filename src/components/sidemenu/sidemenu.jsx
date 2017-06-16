@@ -145,7 +145,7 @@ export default class ProjectDialog extends React.Component {
         <div className="atomicLabComponentList">
           <ul>
             <li className={classNames("atomicLabComponentList-category","_atom",{"js-closed":!state.showAtom})}>
-              <span onClick={this.toggleCategory.bind(this,'showAtom')}><img className="atomicLabComponentList-category-icon" src="./images/iconAtom-s.png" alt="" />Atom
+              <span onClick={this.toggleCategory.bind(this,'showAtom')}><div className="atomicLabComponentList-category-icon atom"></div>Atom
                 <i className="material-icons">{state.showAtom ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
@@ -155,7 +155,7 @@ export default class ProjectDialog extends React.Component {
               </ul>
             </li>
             <li className={classNames("atomicLabComponentList-category","_molecule",{"js-closed":!state.showMolecule})}>
-              <span onClick={this.toggleCategory.bind(this,'showMolecule')}><img className="atomicLabComponentList-category-icon" src="./images/iconMolecule-s.png" alt="" />Molecule
+              <span onClick={this.toggleCategory.bind(this,'showMolecule')}><div className="atomicLabComponentList-category-icon molecule"></div>Molecule
                 <i className="material-icons">{state.showMolecule ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
@@ -165,7 +165,7 @@ export default class ProjectDialog extends React.Component {
               </ul>
             </li>
             <li className={classNames("atomicLabComponentList-category","_organism",{"js-closed":!state.showOrganism})}>
-              <span onClick={this.toggleCategory.bind(this,'showOrganism')}><img className="atomicLabComponentList-category-icon" src="./images/iconOrganism-s.png" alt="" />Organism
+              <span onClick={this.toggleCategory.bind(this,'showOrganism')}><div className="atomicLabComponentList-category-icon organism"></div>Organism
                 <i className="material-icons">{state.showOrganism ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
@@ -175,7 +175,7 @@ export default class ProjectDialog extends React.Component {
               </ul>
             </li>
             <li className={classNames("atomicLabComponentList-category","_template",{"js-closed":!state.showTemplate})}>
-              <span onClick={this.toggleCategory.bind(this,'showTemplate')}><img className="atomicLabComponentList-category-icon" src="./images/iconTemplate-s.png" alt="" />Template
+              <span onClick={this.toggleCategory.bind(this,'showTemplate')}><div className="atomicLabComponentList-category-icon template"></div>Template
                 <i className="material-icons">{state.showTemplate ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>

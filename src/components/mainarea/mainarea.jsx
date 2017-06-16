@@ -365,9 +365,11 @@ export default class MainArea extends React.Component {
               </div>
               :
               null}
-            <div className="atomicLabComponentControl-icon">
-              <img src="./images/iconAtom-l.png" alt="" />
-            </div>
+              {component ?
+                <div className="atomicLabComponentControl-icon-wrap">
+                  <div className={classNames("atomicLabComponentControl-icon",component.category)}></div>
+                </div> : null
+              }
             <div className="atomicLabComponentControl-texts">
               <div className="atomicLabComponentControl-title">
                 {component ?

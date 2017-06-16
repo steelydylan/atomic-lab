@@ -240,7 +240,23 @@ $color-accent: rgb(0,150,136);
         }
         &-icon{
             width: 32px;
+            height: 32px;
             margin-right: 10px;
+            background-size: cover;
+            display: inline-block;
+            vertical-align: middle;
+            &.atom {
+                background-image:url(./images/iconAtom-s.png);
+            }
+            &.molecule {
+                background-image:url(./images/iconMolecule-s.png);
+            }
+            &.organism {
+                background-image:url(./images/iconOrganism-s.png);
+            }
+            &.template {
+                background-image:url(./images/iconTemplate-s.png);
+            }
         }
 
 

@@ -27,16 +27,6 @@ body {
 *::before {
   box-sizing: inherit;
 }
-
-.atomicLabHeader {
-  box-shadow: none;
-  &-row {
-    padding-left: 40px;
-  }
-  &-gitHubMark {
-    width: 34px;
-  }
-}
 .atomicLabContent{
   height: 100%;
   display: flex;
