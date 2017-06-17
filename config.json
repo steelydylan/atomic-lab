@@ -7,7 +7,9 @@
   "enable_editing": true,
   "use_url_shortener": true,
   "key": "AIzaSyDNu-_s700JSm7SXzLWVt3Rku5ZwbpaQZA",
-  "css_dependencies": [],
+  "css_dependencies": [
+    "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+  ],
   "markup": "ejs",
   "styling": "sass",
   "parser": {

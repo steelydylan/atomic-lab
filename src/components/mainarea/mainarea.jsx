@@ -174,6 +174,7 @@ export default class MainArea extends React.Component {
       return;
     }
     const config = this.props.config;
+    const css_dependencies = config.css_dependencies;
     const itemId = this.props.itemId;
     const parser = this.parser;
     const component = this.getComponent();
@@ -253,6 +254,12 @@ export default class MainArea extends React.Component {
       }
       return '';
     })
+
+    if(css_dependencies) {
+      css_dependencies.forEach((item) => {
+        preview += `<link rel="stylesheet" href="${item}" />`
+      })
+    }
 
     if(css) {
       preview += `<style>${css}</style>`;
