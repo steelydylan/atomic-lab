@@ -89,24 +89,19 @@ export default class AddBtn extends React.Component {
           <div className="mdl-tooltip mdl-tooltip--left" data-mdl-for="addAction">Add new component</div>
           <ul className={classNames("AtomicLabFAB-subActionsList",{"is-open":isOpen})}>
             <li>
-              <button id="addComponent-atom" className="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'atom')}>
-              <img src="./images/iconAtom-s.png" alt="Add Atom" />
-              </button>
-              <div className="mdl-tooltip mdl-tooltip--left" for="addComponent-atom"></div>
-            </li>
-            <li>
-              <button className="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'molecule')}>
-              <img src="./images/iconMolecule-s.png" alt="Add Molecules" />
+              <button className="AtomicLabFAB-miniFAB atom mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'atom')}>
               </button>
             </li>
             <li>
-              <button className="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'organism')}>
-              <img src="./images/iconOrganism-s.png" alt="Add Organism" />
+              <button className="AtomicLabFAB-miniFAB molecule mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'molecule')}>
               </button>
             </li>
             <li>
-              <button className="AtomicLabFAB-miniFAB mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'template')}>
-              <img src="./images/iconTemplate-s.png" alt="Add Template" />
+              <button className="AtomicLabFAB-miniFAB organism mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'organism')}>
+              </button>
+            </li>
+            <li>
+              <button className="AtomicLabFAB-miniFAB template mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab js-add-category" onClick={this.openDialog.bind(this,'template')}>
               </button>
             </li>
           </ul>

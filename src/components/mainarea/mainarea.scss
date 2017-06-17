@@ -216,3 +216,7 @@ $color-accent: rgb(0, 150, 136);
 .Resizer.disabled:hover {
 	border-color: transparent;
 }
+
+.SplitPane {
+  overflow: hidden;
+}

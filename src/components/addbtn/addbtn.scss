@@ -31,10 +31,21 @@
   }
   &-miniFAB{
     background-color: #D8D8D8 !important;
-    transition: 0.2s;
-    img{
-      margin-top: 2px;
-      width: 40px;
+    background-size: cover !important;
+    transition: all 0.2s;
+    width: 40px;
+    height: 40px;
+    &.atom {
+      background-image: url(./images/iconAtom-s.png);
+    }
+    &.molecule {
+      background-image: url(./images/iconMolecule-s.png);
+    }
+    &.organism {
+      background-image: url(./images/iconOrganism-s.png);
+    }
+    &.template {
+      background-image: url(./images/iconTemplate-s.png);
     }
     &:hover{
       transform: scale(1.15);
