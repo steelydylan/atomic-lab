@@ -106,29 +106,17 @@ export default class ProjectDialog extends React.Component {
 
   render() {
     const state = this.state;
-    const collectionsReverse = [];
     const components = this.props.components || [];
     const id = this.props.itemId;
     const config = this.props.config;
+    const props = this.props;
+    const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
+
     return (
       <div className="atomicLabSideMenu">
         <div className="atomicLabProjectControl">
-          <div className="atomicLabProjectControl-title">
-            {state.use_url_shortener ?
-              <i className="material-icons atomicLabProjectControl-arrow">arrow_drop_down</i>
-              :
-              null}
-          </div>
-          <div className="atomicLabProjectDropdown js-dropdown<!-- BEGIN projectOnDrop:touch#true --> js-open<!-- END projectOnDrop:touch#true -->">
-            <ul className="atomicLabProjectDropdown-list">
-              {collectionsReverse.map(item => {
-                <li><a href="{shortenedUrl}"><i className="material-icons">folder</i> {state.projectName}</a></li>
-              })}
-            </ul>
-            <span className="atomicLabProjectDropdown-newProject" data-action="makeNewProject()"><a href="#">+ Make a new project</a></span>
-          </div>
           <p className="atomicLabProjectControl-shotDescription <!-- BEGIN projectDescOnEdit:touch#true -->is-editing<!-- END projectDescOnEdit:touch#true -->">
-            <span data-action="editProjectDesc()">
+            <span>
               {config.description}
             </span>   
           </p>

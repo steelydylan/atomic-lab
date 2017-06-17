@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { Menu, MenuItem, Tooltip, Icon } from 'react-mdl';
-import ProjectDialog from '../project-dialog/project-dialog';
 
 import './header.scss';
 
@@ -8,22 +7,8 @@ export default class Header extends React.Component {
 
   constructor() {
     super();
-    this.state = {
-      is_open: false
-    };
   }
 
-  openDialog() {
-    this.setState({
-      is_open: true
-    })
-  }
-
-  closeDialog() {
-    this.setState({
-      is_open: false
-    })
-  }
 
   render() {
     const state = this.state;
@@ -39,7 +24,6 @@ export default class Header extends React.Component {
             </Tooltip>
           </nav>
         </div>
-        <ProjectDialog isOpen={state.is_open} onClose={this.closeDialog.bind(this)} />
       </header>);
   }
 }

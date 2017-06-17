@@ -342,7 +342,7 @@ export default class MainArea extends React.Component {
     const enable_editing = props.config && props.config.enable_editing;
     const isEditDialogOpen = state.isEditDialogOpen;
     const paneSize = state.paneSize;
-    const lang = 'ja';
+    const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
 
     return (
       <main className="atomicLabMain">
