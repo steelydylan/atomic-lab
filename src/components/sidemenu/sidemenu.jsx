@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { Menu, MenuItem, Tooltip, Icon } from 'react-mdl';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Menu, MenuItem, Tooltip, Icon, Button } from 'react-mdl';
 import classNames from 'classnames';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
@@ -26,7 +26,8 @@ export default class ProjectDialog extends React.Component {
       showMolecule:true,
       showOrganism:true,
       showTemplate:true,
-      search:''
+      search:'',
+      isConfingDialogOpen:false
     };
   }
 
@@ -104,6 +105,18 @@ export default class ProjectDialog extends React.Component {
     });
   }
 
+  openConfigDialog() {
+    this.setState({
+      isConfigDialogOpen:true
+    });
+  }
+
+  closeConfigDialog() {
+    this.setState({
+      isConfigDialogOpen:false
+    });
+  }
+
   render() {
     const state = this.state;
     const components = this.props.components || [];
@@ -114,6 +127,20 @@ export default class ProjectDialog extends React.Component {
 
     return (
       <div className="atomicLabSideMenu">
+        <Dialog open={this.state.isConfigDialogOpen}>
+          <DialogTitle>Config</DialogTitle>
+          <DialogContent>
+            <ul>
+              <li>Lang: {config.lang}</li>
+              <li>Styling: {config.styling}</li>
+              <li>Markup: {config.markup}</li>
+              <li>local_file_path: {config.local_file_path}</li>
+            </ul>
+          </DialogContent>
+          <DialogActions>
+            <Button type="button" onClick={this.closeConfigDialog.bind(this)}>Close</Button>
+          </DialogActions>
+        </Dialog>
         <div className="atomicLabProjectControl">
           <p className="atomicLabProjectControl-shotDescription <!-- BEGIN projectDescOnEdit:touch#true -->is-editing<!-- END projectDescOnEdit:touch#true -->">
             <span>
@@ -124,7 +151,12 @@ export default class ProjectDialog extends React.Component {
             <ul>
               <li onClick={this.exportAsZip.bind(this)}>
                 <Tooltip label="Download this project as zip (included Export JSON data)" position="bottom">
-                    <Icon name="file_download" />
+                  <Icon name="file_download" />
+                </Tooltip>
+              </li>
+              <li onClick={this.openConfigDialog.bind(this)}>
+                <Tooltip label="Open config dialog" position="bottom">
+                  <Icon name="list" />
                 </Tooltip>
               </li>
             </ul>
