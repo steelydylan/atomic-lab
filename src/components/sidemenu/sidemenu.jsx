@@ -1,6 +1,11 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Menu, MenuItem, Tooltip, Icon, Button } from 'react-mdl';
+import { 
+  Dialog, DialogTitle, DialogContent, DialogActions, 
+  Menu, MenuItem, 
+  Tooltip, Icon, Button, 
+  DataTable, TableHeader 
+} from 'react-mdl';
 import classNames from 'classnames';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
@@ -128,14 +133,44 @@ export default class ProjectDialog extends React.Component {
     return (
       <div className="atomicLabSideMenu">
         <Dialog open={this.state.isConfigDialogOpen}>
-          <DialogTitle>Config</DialogTitle>
+          <DialogTitle>config.json</DialogTitle>
           <DialogContent>
-            <ul>
-              <li>Lang: {config.lang}</li>
-              <li>Styling: {config.styling}</li>
-              <li>Markup: {config.markup}</li>
-              <li>local_file_path: {config.local_file_path}</li>
-            </ul>
+            <table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" style={{tableLayout:'fixed'}}>
+              <tr>
+                <td>Lang</td>
+                <td>{config.lang}</td>
+              </tr>
+              <tr>
+                <td>CSS</td>
+                <td>{config.styling}</td>
+              </tr>
+              <tr>
+                <td>HTML</td>
+                <td>{config.markup}</td>
+              </tr>
+              <tr>
+                <td>File Path</td>
+                <td><code>{config.local_file_path}</code></td>
+              </tr>
+              <tr>
+                <td>Allow Executing JavaScript</td>
+                <td>{config.run_script === true ? 'true' : 'false'}</td>
+              </tr>
+              <tr>
+                <td>Allow Browser Editing</td>
+                <td>{config.enable_editing === true ? 'true' : 'false'}</td>
+              </tr>
+              <tr>
+                <th colSpan="2">CSS Dependencies</th>
+              </tr>
+              <tr>
+                <td colSpan="2">
+                  <ul style={{whiteSpace:'normal'}}>
+                    {config.css_dependencies ? config.css_dependencies.map(item => <li>{item}</li>) : null}
+                  </ul>
+                </td>
+              </tr>
+            </table>
           </DialogContent>
           <DialogActions>
             <Button type="button" onClick={this.closeConfigDialog.bind(this)}>Close</Button>
