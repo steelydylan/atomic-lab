@@ -185,47 +185,39 @@ export default class MainArea extends React.Component {
       }
       return -1;
     });
-    //textからpreview取得
+
     let preview = parser.getPreview(text);
     if(!preview) {
       return '';
     }
     preview = compiler.markup[config.markup](preview);
-    //previewからコメント文取得
-    let imports = "" + parser.getImports(text);
-    // テンプレート取得
+
+
     while (1) {
       const comment = parser.getTag(preview, components);
       if (!comment) {
         break;
       }
-      //commentからコンポーネント名取得
+
       const name = parser.getComponentName(comment);
       let flag = false;
       for (let i = 0, n = components.length; i < n; i++) {
         const comp = components[i];
         if (name == comp.name) {
           flag = true;
-          //例えば、atomはmoleculeをincludeできない
-          imports += parser.getImports(comp.html);
+
           if (itemId !== comp.itemId && !this.isGreaterThan(comp.category)) {
             preview = preview.replace(comment, "");
             break;
           }
-          // importされてなければ使えない
-          if (itemId !== comp.itemId && imports.indexOf(name) == -1) {
-            preview = preview.replace(comment, "");
-            break;
-          }
+
           const template = parser.getTemplate(comp.html);
           let html = parser.getInnerHtmlFromTemplate(template);
-          //templateに自身が含まれていたら削除(無限ループ回避)
           html = parser.removeSelf(html, comp.name);
           const defs = parser.getVarsFromTemplate(template);
           const overrides = parser.getVars(comment);
           html = parser.getRendered(html, defs, overrides);
           preview = preview.replace(comment, compiler.markup[config.markup](html));
-          // preview = preview.replace(comment, html);
           break;
         }
       }
@@ -233,11 +225,10 @@ export default class MainArea extends React.Component {
         preview = preview.replace(comment, "");
       }
     }
-    //スタイルシート取得
 		let css = '';
     for (let i = 0, n = components.length; i < n; i++) {
       const comp = components[i];
-      if (imports.indexOf(comp.name) !== -1 || itemId === comp.itemId) {
+      if (this.isGreaterThan(comp.category) || itemId === comp.itemId) {
         css += comp.css;
       }
     }

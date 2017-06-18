@@ -31,9 +31,6 @@
       "end": "-->",
       "body": "<!--@doc(([\n\r\t]|.)*?)-->"
     },
-    "import": {
-      "body": "<!--@import parts=\"(.*?)\" -->"
-    },
     "variable": {
       "mark": "{(.*?)}"
     }

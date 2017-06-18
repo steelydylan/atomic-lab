@@ -130,13 +130,4 @@ export default class Parser {
     const reg = new RegExp("<" + self + "(.*?)>", "g");
     return text.replace(reg, "");
   }
-
-  getImports(text) {
-    const conf = this.conf;
-    const match = text.match(new RegExp(conf.import.body));
-    if (!match) {
-      return "";
-    }
-    return match[1];
-  }
 }
