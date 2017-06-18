@@ -460,7 +460,7 @@ export default class MainArea extends React.Component {
               updateComponent={this.props.updateComponent} 
               index={index} 
               component={component}
-              onClose={this.closeEditDialog.bind(this)}/>
+              onClose={this.closeEditDialog.bind(this)} {...props}/>
             :
             null}
         </div>
