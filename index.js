@@ -113,6 +113,11 @@ atomicBuilder.build = function (opt) {
   const dist = opt.dist;
   const markup = opt.markup;
   const styling = opt.styling;
+  const parser = extend({
+    start: /<!--@doc/g,
+    end: /-->/g,
+    body: /<!--@doc(([\n\r\t]|.)*?)-->/g
+  }, opt.parser);
   const build = () => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
@@ -128,14 +133,9 @@ atomicBuilder.build = function (opt) {
       });
       return pjson;
     });
-  }
-  const parser = extend({
-    start: /<!--@doc/g,
-    end: /-->/g,
-    body: /<!--@doc(([\n\r\t]|.)*?)-->/g
-  }, opt.parser);
-  if (!fs.pathExistsSync(path.resolve(processPath, dist))){
-    return atomicBuilder.init(Object.assign({}, opt, {examples: true})).then(() => build);
+  };
+  if (!fs.pathExistsSync(path.resolve(processPath, dist))) {
+    return atomicBuilder.init(Object.assign({}, opt, { examples: true })).then(() => build);
   }
   return build();
 };
