@@ -9,20 +9,20 @@ exports.builder = {
   d:{
   	alias: 'dist',
   	describe: 'set atomic-lab directory',
-  	default:"atomic-lab"
+  	default: 'styleguide'
   },
   s:{
   	alias: 'src',
   	describe: 'set your component\'s directory',
-  	default:"components"
+  	default: 'components'
   },
   m:{
   	alias: 'markup',
-  	default:'html'
+  	default: 'ejs'
   },
   e:{
     alias: 'examples',
-  	default:true
+  	default: true
   }
 }
 
@@ -33,17 +33,8 @@ const replace = function(str,before,after){
 
 exports.handler = function (argv) {
   atomic.init({
-    dist:argv.dist,
-    src:argv.src,
-    examples:argv.examples
-  });
-  fs.readFile(__dirname+"/_gulpfile.js", 'utf8', function (err, data) {
-    if (err) throw err;
-    data = replace(data,"{src}",argv.src);
-    data = replace(data,"{dist}",argv.dist);
-    data = replace(data,"{markup}",argv.markup);
-    fs.writeFile(path.resolve(processPath,"./_gulpfile.js"),data,function(err){
-    if (err) throw err;
-    });
+    dist: argv.dist,
+    src: argv.src,
+    examples: argv.examples
   });
 };

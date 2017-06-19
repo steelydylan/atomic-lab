@@ -97,88 +97,62 @@ const writeFile = function (filePath, contents, cb) {
   });
 };
 
+const copyPromise = (src, dist, skip) => {
+  if (skip) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    fs.copy(src, dist, () => {
+      resolve();
+    });
+  });
+};
+
 atomicBuilder.build = function (opt) {
   const src = opt.src;
   const dist = opt.dist;
   const markup = opt.markup;
   const styling = opt.styling;
-  const parser = extend({
-    start: /<!--@doc/g,
-    end: /-->/g,
-    body: /<!--@doc(([\n\r\t]|.)*?)-->/g
-  }, opt.parser);
-  return getFileInfo(path.resolve(processPath, src))
+  const build = () => {
+    getFileInfo(path.resolve(processPath, src))
     .then((files) => {
       const components = makeAtomicArray(files, markup, styling, parser);
       const json = JSON.stringify({ components });
       const pjson = new Promise((resolve) => {
-        writeFile(path.resolve(processPath, dist), json, (err) => {
-          console.log(err);
+        writeFile(path.resolve(processPath, dist, './components.json'), json, (err) => {
+          if (err) {
+            console.log(err);
+          }
           resolve();
         });
       });
       return pjson;
     });
+  }
+  const parser = extend({
+    start: /<!--@doc/g,
+    end: /-->/g,
+    body: /<!--@doc(([\n\r\t]|.)*?)-->/g
+  }, opt.parser);
+  if (!fs.pathExistsSync(path.resolve(processPath, dist))){
+    return atomicBuilder.init(Object.assign({}, opt, {examples: true})).then(() => build);
+  }
+  return build();
 };
 
 atomicBuilder.init = (opt) => {
   const dist = opt.dist;
   const src = opt.src;
   const examples = opt.examples;
-  const p1 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/css`, path.resolve(processPath, dist, './css'), () => {
-      resolve();
-    });
-  });
-  const p2 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/src`, path.resolve(processPath, dist, './js'), () => {
-      resolve();
-    });
-  });
-  const p3 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/images`, path.resolve(processPath, dist, './images'), () => {
-      resolve();
-    });
-  });
-  const p4 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html'), () => {
-      resolve();
-    });
-  });
-  const p5 = new Promise((resolve) => {
-    fs.copy(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json'), () => {
-      resolve();
-    });
-  });
-  const p6 = new Promise((resolve) => {
-    if (examples) {
-      fs.copy(`${__dirname}/components`, path.resolve(processPath, src), () => {
-        resolve();
-      });
-    } else {
-      resolve();
-    }
-  });
-  const p7 = new Promise((resolve) => {
-    if (examples) {
-      fs.copy(`${__dirname}/resources/setting.json`, path.resolve(processPath, dist, './resources/setting.json'), () => {
-        resolve();
-      });
-    } else {
-      resolve();
-    }
-  });
-  const p8 = new Promise((resolve) => {
-    if (examples) {
-      fs.copy(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), () => {
-        resolve();
-      });
-    } else {
-      resolve();
-    }
-  });
+  const promiseArray = [
+    copyPromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html'), false),
+    copyPromise(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json'), false),
+    copyPromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), false),
+    copyPromise(`${__dirname}/components.json`, path.resolve(processPath, dist, './components.json'), !examples),
+    copyPromise(`${__dirname}/components`, path.resolve(processPath, src), !examples)
+  ];
 
-  return Promise.all([p1, p2, p3, p4, p5, p6, p7, p8]);
+  return Promise.all(promiseArray);
 };
 
 module.exports = atomicBuilder;
