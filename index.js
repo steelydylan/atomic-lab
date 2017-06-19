@@ -97,7 +97,7 @@ const writeFile = function (filePath, contents, cb) {
   });
 };
 
-const copyPromise = (src, dist, skip) => {
+const copyPromise = (src, dist) => {
   if (fs.pathExistsSync(dist)) {
     return Promise.resolve();
   }
@@ -138,7 +138,6 @@ atomicBuilder.build = function (opt) {
 atomicBuilder.init = (opt) => {
   const dist = opt.dist;
   const src = opt.src;
-  const examples = opt.examples;
   const promiseArray = [
     copyPromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html')),
     copyPromise(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json')),
@@ -146,7 +145,6 @@ atomicBuilder.init = (opt) => {
     copyPromise(`${__dirname}/components.json`, path.resolve(processPath, dist, './components.json')),
     copyPromise(`${__dirname}/components`, path.resolve(processPath, src))
   ];
-
   return Promise.all(promiseArray);
 };
 
