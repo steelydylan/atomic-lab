@@ -43,7 +43,7 @@ const getMark = (mark, source) => {
   return '';
 };
 
-const makeAtomicArray = (files, markup, styling, parser) => {
+const makeAtomicArray = (files, markup, parser) => {
   const components = [];
   let id = 0;
   for (let i = 0, n = files.length; i < n; i += 1) {
@@ -98,7 +98,7 @@ const writeFile = function (filePath, contents, cb) {
 };
 
 const copyPromise = (src, dist, skip) => {
-  if (skip) {
+  if (fs.pathExistsSync(dist)) {
     return Promise.resolve();
   }
   return new Promise((resolve) => {
@@ -112,16 +112,15 @@ atomicBuilder.build = function (opt) {
   const src = opt.src;
   const dist = opt.dist;
   const markup = opt.markup;
-  const styling = opt.styling;
   const parser = extend({
     start: /<!--@doc/g,
     end: /-->/g,
     body: /<!--@doc(([\n\r\t]|.)*?)-->/g
   }, opt.parser);
-  const build = () => {
+  return atomicBuilder.init(opt).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
-      const components = makeAtomicArray(files, markup, styling, parser);
+      const components = makeAtomicArray(files, markup, parser);
       const json = JSON.stringify({ components });
       const pjson = new Promise((resolve) => {
         writeFile(path.resolve(processPath, dist, './components.json'), json, (err) => {
@@ -133,11 +132,7 @@ atomicBuilder.build = function (opt) {
       });
       return pjson;
     });
-  };
-  if (!fs.pathExistsSync(path.resolve(processPath, dist))) {
-    return atomicBuilder.init(Object.assign({}, opt, { examples: true })).then(() => build);
-  }
-  return build();
+  });
 };
 
 atomicBuilder.init = (opt) => {
@@ -145,11 +140,11 @@ atomicBuilder.init = (opt) => {
   const src = opt.src;
   const examples = opt.examples;
   const promiseArray = [
-    copyPromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html'), false),
-    copyPromise(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json'), false),
-    copyPromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), false),
-    copyPromise(`${__dirname}/components.json`, path.resolve(processPath, dist, './components.json'), !examples),
-    copyPromise(`${__dirname}/components`, path.resolve(processPath, src), !examples)
+    copyPromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html')),
+    copyPromise(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json')),
+    copyPromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js')),
+    copyPromise(`${__dirname}/components.json`, path.resolve(processPath, dist, './components.json')),
+    copyPromise(`${__dirname}/components`, path.resolve(processPath, src))
   ];
 
   return Promise.all(promiseArray);

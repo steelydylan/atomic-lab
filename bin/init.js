@@ -19,10 +19,6 @@ exports.builder = {
   m:{
   	alias: 'markup',
   	default: 'ejs'
-  },
-  e:{
-    alias: 'examples',
-  	default: true
   }
 }
 
@@ -34,7 +30,6 @@ const replace = function(str,before,after){
 exports.handler = function (argv) {
   atomic.init({
     dist: argv.dist,
-    src: argv.src,
-    examples: argv.examples
+    src: argv.src
   });
 };
