@@ -37,6 +37,7 @@ export default class ProjectDialog extends React.Component {
   }
 
   selectItem(itemId) {
+    location.hash = `${itemId}`;
     this.props.selectItem(itemId);
   }
 

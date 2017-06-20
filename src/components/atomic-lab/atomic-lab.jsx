@@ -23,10 +23,17 @@ export default class AtomicLab extends React.Component {
 
   setComponents() {
     const config = this.props.config;
+    const hash = location.hash;
     axios.get(config.local_file_path).then(item => {
       this.props.setComponents(item.data.components);
       if(item.data.components.length >= 1) {
-        this.props.selectItem(item.data.components[0].itemId);
+        let itemId = item.data.components[0].itemId;
+        this.props.components.forEach((item, i) => {
+          if (`#${item.itemId}` === hash) {
+            itemId = item.itemId;
+          }
+        });
+        this.props.selectItem(itemId);
       }
     });
   }
