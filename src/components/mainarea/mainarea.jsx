@@ -234,7 +234,7 @@ export default class MainArea extends React.Component {
         css += comp.css;
       }
     }
-    console.log(css);
+
     css = compiler.styling[config.styling](css);
     css = css.replace(/@media[^{]+\{([\s\S]+?\})\s*\}/gi,(a, b, c) => {
       const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];
