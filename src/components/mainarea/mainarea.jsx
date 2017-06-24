@@ -58,10 +58,12 @@ const option = {
 }
 
 const material = {
-  atom: 0,
-  molecule: 1,
-  organism: 2,
-  template: 3
+  variable: 0,
+  mixin: 1,
+  atom: 2,
+  molecule: 3,
+  organism: 4,
+  template: 5
 };
 
 export default class MainArea extends React.Component {
@@ -232,7 +234,7 @@ export default class MainArea extends React.Component {
         css += comp.css;
       }
     }
-   
+    console.log(css);
     css = compiler.styling[config.styling](css);
     css = css.replace(/@media[^{]+\{([\s\S]+?\})\s*\}/gi,(a, b, c) => {
       const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];

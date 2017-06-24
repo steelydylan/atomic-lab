@@ -27,6 +27,7 @@ export default class ProjectDialog extends React.Component {
   constructor() {
     super();
     this.state = {
+      showVariable:true,
       showAtom:true,
       showMolecule:true,
       showOrganism:true,

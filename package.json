@@ -8,7 +8,7 @@
     "build": "webpack --config webpack.config.prod.js",
     "lint": "eslint ./index.js --fix",
     "styleguide:init": "node ./bin/index.js init --dist ./",
-    "styleguide:build": "node ./bin/index.js build",
+    "styleguide:build": "node ./bin/index.js build --dist ./",
     "dev": "open http://localhost:8080/webpack-dev-server/index.html && webpack-dev-server --progress --colors --watch",
     "patch": "npm run test && npm version patch && npm run build && node ./tools/index.js",
     "minor": "npm run test && npm version minor && npm run build && node ./tools/index.js",
