@@ -45,18 +45,27 @@ export default class ProjectDialog extends React.Component {
 
   getPackage() {
     return `{
-      "name": "atomic-lab",
-      "version": "1.0.0",
-      "description": "static html generator based on atomic design",
-      "scripts" : {
-        "start": "atomic-lab build"
-      },
-      "devDependencies":{
-        "atomic-lab":"1.0.0"
-      },
-      "author": "steelaxe",
-      "license": "MIT"
-    }`;
+  "name": "styleguide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "onchange \\"components/\\" -- npm run build",
+    "sync": "browser-sync start --server './' --files './styleguide/components.json' --startPath ./styleguide/index.html",
+    "build": "npm-run-all -p build:guide",
+    "build:guide": "atomic-lab build --markup html",
+    "start": "npm-run-all -p watch sync"
+  },
+  "author": "steelydylan",
+  "license": "MIT",
+  "devDependencies": {
+    "atomic-lab": "^1.3.4",
+    "browser-sync": "^2.18.12",
+    "node-sass": "^4.5.3",
+    "npm-run-all": "^4.0.2",
+    "onchange": "^3.2.1"
+  }
+}`;
   }
 
   getCategorizedItems(components, category) {
@@ -81,12 +90,15 @@ export default class ProjectDialog extends React.Component {
     const zip = new JSZip();
     const comps = this.props.components;
     const config = this.props.config;
-    zip.file("setting.json", JSON.stringify({
+    zip.file("styleguide/config.json", JSON.stringify({
       components: comps
     }));
     comps.forEach(function(comp) {
-      const file1 = "components/" + comp.category + "/" + comp.name + "/" + comp.name + "." + config.markup;
-      const file2 = "components/" + comp.category + "/" + comp.name + "/" + comp.name + "." + config.styling;
+      if(!comp.name){
+        return;
+      }
+      const file1 = `components/${comp.name}/${comp.name}.${config.markup}`;
+      const file2 = `components/${comp.name}/${comp.name}.${config.styling}`;
       zip.file(file1, comp.html);
       zip.file(file2, comp.css);
     });
