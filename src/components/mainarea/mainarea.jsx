@@ -445,7 +445,7 @@ export default class MainArea extends React.Component {
                       </div>
                       <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview <span className="atomicLabCard-screenSize">{paneSize}px</span></div>
                       <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
-                        <div>
+                        <div className="atomicLabShadowContainer">
                           <ShadowDOM>
                             <div>
                               <div dangerouslySetInnerHTML={{__html: preview}}>
