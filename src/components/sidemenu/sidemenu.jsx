@@ -215,7 +215,7 @@ export default class ProjectDialog extends React.Component {
         <div className="atomicLabComponentList">
           <ul>
             <li className={classNames("atomicLabComponentList-category","_variable",{"js-closed":!state.showVariable})}>
-              <span onClick={this.toggleCategory.bind(this,'showVariable')}><div className="atomicLabComponentList-category-icon atom"></div>Variable
+              <span onClick={this.toggleCategory.bind(this,'showVariable')}>Variable
                 <i className="material-icons">{state.showVariable ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
@@ -225,7 +225,7 @@ export default class ProjectDialog extends React.Component {
               </ul>
             </li>
             <li className={classNames("atomicLabComponentList-category","_mixin",{"js-closed":!state.showMixin})}>
-              <span onClick={this.toggleCategory.bind(this,'showMixin')}><div className="atomicLabComponentList-category-icon atom"></div>Mixin
+              <span onClick={this.toggleCategory.bind(this,'showMixin')}>Mixin
                 <i className="material-icons">{state.showMixin ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>

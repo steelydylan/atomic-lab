@@ -201,8 +201,7 @@ $color-accent: rgb(0,150,136);
 // Component list
 .atomicLabComponentList{
 
-    height: -webkit-calc(100vh - 300px);
-    height: calc(100vh - 300px);
+    height: calc(100vh - 260px);
     overflow: auto;
 
     ul,li{
@@ -219,6 +218,7 @@ $color-accent: rgb(0,150,136);
         > span{
             display: block;
             padding: 15px 25px;
+            height: 62px;
             position: relative;
             cursor: pointer;
 

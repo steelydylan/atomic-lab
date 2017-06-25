@@ -381,7 +381,7 @@ export default class MainArea extends React.Component {
               </div>
               :
               null}
-              {component ?
+              {component && component.category !== 'mixin' && component.category !== 'variable' ?
                 <div className="atomicLabComponentControl-icon-wrap">
                   <div className={classNames("atomicLabComponentControl-icon",component.category)}></div>
                 </div> : null
