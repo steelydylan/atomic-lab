@@ -325,7 +325,16 @@ export default class MainArea extends React.Component {
 
   expandPreview() {
     const expanded = this.state.expanded;
-    this.setState({expanded:!expanded});
+    if(expanded === true) {
+      this.setState({
+        expanded:false,
+        paneSize:800
+      });
+    } else {
+      this.setState({
+        expanded:true
+      });
+    }
   }
 
   render() {
@@ -435,7 +444,7 @@ export default class MainArea extends React.Component {
                         <Icon name="open_with" onClick={this.expandPreview.bind(this)}/>
                       </div>
                       <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview <span className="atomicLabCard-screenSize">{paneSize}px</span></div>
-                      <SplitPane split="vertical" minSize={320} defaultSize={paneSize} onChange={this.onResized.bind(this)} >
+                      <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
                         <div>
                           <ShadowDOM>
                             <div>
