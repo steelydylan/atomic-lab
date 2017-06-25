@@ -34,27 +34,30 @@ $color-accent: rgb(0, 150, 136);
 	&-icon-wrap {
 		float: left;
 		width: 100px;
-    height: 100px;
+		height: 100px;
 	}
 
-  &-icon {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    &.atom {
-      background-image:url(./images/iconAtom-l.png);
-    }
-    &.molecule {
-      background-image:url(./images/iconMolecule-l.png);
-    }
-    &.organism {
-      background-image:url(./images/iconOrganism-l.png);
-    }
-    &.template {
-      background-image:url(./images/iconTemplate-l.png);
-    }
-  }
-  
+	&-icon {
+		width: 100%;
+		height: 100%;
+		background-size: cover;
+
+		&.atom {
+			background-image: url(./images/iconAtom-l.png);
+		}
+
+		&.molecule {
+			background-image: url(./images/iconMolecule-l.png);
+		}
+
+		&.organism {
+			background-image: url(./images/iconOrganism-l.png);
+		}
+
+		&.template {
+			background-image: url(./images/iconTemplate-l.png);
+		}
+	}
 
 	&-texts {
 		float: left;
@@ -155,14 +158,19 @@ $color-accent: rgb(0, 150, 136);
 	}
 }
 
+.atomicLabCard {
+	display: block !important;
+  transition: all .3s;
+}
+
 .atomicLabCard-screenSize {
-  display: inline-block;
-  margin: 10px 5px;
+	font-size: 12px;
+	display: inline-block;
+	margin-left: 5px;
 }
 
 .SplitPane {
 	position: static !important;
-
 }
 
 .Resizer {
@@ -218,5 +226,5 @@ $color-accent: rgb(0, 150, 136);
 }
 
 .SplitPane {
-  overflow: hidden;
+	overflow: hidden;
 }

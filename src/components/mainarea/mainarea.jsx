@@ -77,6 +77,7 @@ export default class MainArea extends React.Component {
       isRemoveDialogOpen: false,
       isEditDialogOpen: false,
       isSnackbarActive: false,
+      expanded: false,
       paneSize:800
     };
   }
@@ -322,6 +323,11 @@ export default class MainArea extends React.Component {
     });
   }
 
+  expandPreview() {
+    const expanded = this.state.expanded;
+    this.setState({expanded:!expanded});
+  }
+
   render() {
     const state = this.state;
     const editMode = state.editMode;
@@ -336,6 +342,7 @@ export default class MainArea extends React.Component {
     const isEditDialogOpen = state.isEditDialogOpen;
     const paneSize = state.paneSize;
     const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
+    const expanded = state.expanded;
 
     return (
       <main className="atomicLabMain">
@@ -422,9 +429,12 @@ export default class MainArea extends React.Component {
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
               <div className="atomicLabPreview">
                 {preview ?
-                  <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                    <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview</div>
-                      <span className="atomicLabCard-screenSize">{paneSize}px</span>
+                  <div className={classNames('atomicLabCard','mdl-card','mdl-shadow--2dp',{'atomicLabCardExpanded':expanded})}>
+                    <div className="atomicLabCardInner">
+                      <div style={{float:'right', cursor:'pointer'}}>
+                        <Icon name="open_with" onClick={this.expandPreview.bind(this)}/>
+                      </div>
+                      <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview <span className="atomicLabCard-screenSize">{paneSize}px</span></div>
                       <SplitPane split="vertical" minSize={320} defaultSize={paneSize} onChange={this.onResized.bind(this)} >
                         <div>
                           <ShadowDOM>
@@ -437,6 +447,7 @@ export default class MainArea extends React.Component {
                         <div>
                         </div>
                       </SplitPane>
+                    </div>
                   </div>
                   :
                   null}
