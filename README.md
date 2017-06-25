@@ -19,9 +19,12 @@ You can try it out from here
 ## Installation
 
 ```
-$ npm install atomic-lab
-$ $(npm bin)/atomic-lab init
-$ $(npm bin)/atomic-lab build
+$ npm install atomic-lab --save-dev
+```
+
+## Build Styleguid
+```
+$ atomic-lab build
 ```
 
 ## Documentation
