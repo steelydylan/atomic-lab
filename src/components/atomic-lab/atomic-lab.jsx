@@ -1,4 +1,5 @@
 import React from 'react';
+import SplitPane from 'react-split-pane';
 import Header from '../header/header';
 import SideMenu from '../sidemenu/sidemenu';
 import MainArea from '../mainarea/mainarea';
@@ -12,6 +13,9 @@ import axios from 'axios';
 export default class AtomicLab extends React.Component {
   constructor() {
     super();
+    this.state = {
+      paneSize:320
+    }
   }
 
   componentDidMount() {
@@ -40,13 +44,15 @@ export default class AtomicLab extends React.Component {
 
   render() {
     const props = this.props;
+    const paneSize = this.state.paneSize;
+    
     return (
       <div className="mdl-layout">
         <Header {...props} />
-        <div className="mdl-layout__content atomicLabContent">
+        <SplitPane split="vertical" minSize={100} defaultSize={paneSize} className="mdl-layout__content atomicLabContent">
           <SideMenu {...props} />
           <MainArea {...props} />
-        </div>
+        </SplitPane>
       </div>
     );
   }
