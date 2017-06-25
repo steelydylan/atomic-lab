@@ -1,5 +1,5 @@
 # [Atomic Lab.](http://steelydylan.github.io/atomic-lab/)
-Template sharing and coding environment based on atomic design
+Styleguide generator based on atomic design built with React, Redux
 <p><img src="images/favicon.png"></p>
 
 ## Screenshot
