@@ -22,7 +22,7 @@ You can try it out from here
 $ npm install atomic-lab --save-dev
 ```
 
-## Build Styleguid
+## Build Styleguide
 ```
 $ atomic-lab build
 ```
