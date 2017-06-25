@@ -400,6 +400,7 @@ export default class MainArea extends React.Component {
             {enable_editing ?
               <div className="atomicLabTabs-bar mdl-tabs__tab-bar">
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "preview" })} onClick={this.changeMode.bind(this, 'preview')}>Preview</a>
+                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>HTML</a>
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>CSS</a>
               </div>
@@ -460,6 +461,13 @@ export default class MainArea extends React.Component {
                   </div>
                   :
                   null}
+              </div>
+            </div>
+            :
+            null}
+          {editMode === 'note' ?
+            <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
+              <div className="atomicLabPreview">
                 {note ?
                   <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                     <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
