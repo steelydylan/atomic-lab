@@ -27,7 +27,8 @@ export default class ProjectDialog extends React.Component {
   constructor() {
     super();
     this.state = {
-      showVariable:true,
+      showVariable:false,
+      showMixin:false,
       showAtom:true,
       showMolecule:true,
       showOrganism:true,
@@ -48,7 +49,7 @@ export default class ProjectDialog extends React.Component {
       "version": "1.0.0",
       "description": "static html generator based on atomic design",
       "scripts" : {
-        "styleguide": "atomic-lab build"
+        "start": "atomic-lab build"
       },
       "devDependencies":{
         "atomic-lab":"1.0.0"
@@ -201,6 +202,26 @@ export default class ProjectDialog extends React.Component {
         </div>
         <div className="atomicLabComponentList">
           <ul>
+            <li className={classNames("atomicLabComponentList-category","_variable",{"js-closed":!state.showVariable})}>
+              <span onClick={this.toggleCategory.bind(this,'showVariable')}><div className="atomicLabComponentList-category-icon atom"></div>Variable
+                <i className="material-icons">{state.showVariable ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
+              </span>
+              <ul>
+                {this.getCategorizedItems(components,'variable').map(item =>
+                  <SidemenuItem parent={this} item={item} id={id} />
+                )}
+              </ul>
+            </li>
+            <li className={classNames("atomicLabComponentList-category","_mixin",{"js-closed":!state.showMixin})}>
+              <span onClick={this.toggleCategory.bind(this,'showMixin')}><div className="atomicLabComponentList-category-icon atom"></div>Mixin
+                <i className="material-icons">{state.showMixin ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
+              </span>
+              <ul>
+                {this.getCategorizedItems(components,'mixin').map(item =>
+                  <SidemenuItem parent={this} item={item} id={id} />
+                )}
+              </ul>
+            </li>
             <li className={classNames("atomicLabComponentList-category","_atom",{"js-closed":!state.showAtom})}>
               <span onClick={this.toggleCategory.bind(this,'showAtom')}><div className="atomicLabComponentList-category-icon atom"></div>Atom
                 <i className="material-icons">{state.showAtom ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>

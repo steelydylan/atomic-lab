@@ -11,13 +11,6 @@ module.exports = {
     extensions: ['', '.js', '.jsx']
   },
   module: {
-    // preLoaders: [
-    //   {
-    //     test: /\.(js|jsx)$/,
-    //     exclude: /node_modules/,
-    //     loader: 'eslint-loader'
-    //   }
-    // ],
     loaders: [
       {
         test: /\.(js|jsx)$/,
@@ -39,5 +32,14 @@ module.exports = {
         loader: 'url-loader'
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+      },
+    }),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.DedupePlugin(),
+  ],
 }
