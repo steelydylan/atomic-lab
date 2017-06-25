@@ -1,5 +1,8 @@
 module.exports = {
 	styling:{
+		scss:function(txt) {
+			return Sass.compile(txt);
+		},
 		sass:function(txt){
 			return Sass.compile(txt);
 		},

@@ -9,7 +9,7 @@
   ],
   "lang": "en",
   "markup": "ejs",
-  "styling": "sass",
+  "styling": "scss",
   "parser": {
     "preview": {
       "start": "<!--@preview",
