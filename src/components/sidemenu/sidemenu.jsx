@@ -90,9 +90,6 @@ export default class ProjectDialog extends React.Component {
     const zip = new JSZip();
     const comps = this.props.components;
     const config = this.props.config;
-    zip.file("styleguide/config.json", JSON.stringify({
-      components: comps
-    }));
     comps.forEach(function(comp) {
       if(!comp.name){
         return;
