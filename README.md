@@ -12,9 +12,9 @@ You can try it out from here
 
 ## Features
 
-- You can use template engines like haml, ejs and jade.
-- You can use css preprocessors like scss, less and stylus
-- You can share components you have created with others by sharing shortened URL
+- it supports haml, ejs and jade.
+- it supports scss, less and stylus
+- define custom-element by enclosing with template tags
 
 ## Installation
 
