@@ -236,7 +236,6 @@ export default class MainArea extends React.Component {
       }
     }
 
-    css = compiler.styling[config.styling](css);
     css = css.replace(/@media[^{]+\{([\s\S]+?\})\s*\}/gi,(a, b, c) => {
       const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];
       const maxMatched = a.match(/max\-width:[ ]?([0-9]+?)px/) || [];
@@ -248,6 +247,7 @@ export default class MainArea extends React.Component {
       }
       return '';
     })
+    css = compiler.styling[config.styling](css);
 
     if(css_dependencies) {
       css_dependencies.forEach((item) => {
