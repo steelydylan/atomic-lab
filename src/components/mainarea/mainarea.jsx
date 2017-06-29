@@ -407,38 +407,34 @@ export default class MainArea extends React.Component {
               :
               null}
           </div>
-          {editMode === 'css' ?
+          {editMode === 'css' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
-              {component ?
+              {component &&
                 <AceEditor value={component.css} mode='css' theme="monokai"
                   setOptions={{
                     enableBasicAutocompletion: true,
                     enableSnippets: true,
                     enableLiveAutocompletion: true
                   }} onLoad={this.aceOnload.bind(this)}/>
-                :
-                null}
+              }
             </div>
-            :
-            null}
-          {editMode === 'html' ?
+          }
+          {editMode === 'html' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
-              {component ?
+              {component &&
                 <AceEditor value={component.html} mode='html' theme="monokai"
                   setOptions={{
                     enableBasicAutocompletion: true,
                     enableSnippets: true,
                     enableLiveAutocompletion: true
                   }} onLoad={this.aceOnload.bind(this)}/>
-                :
-                null}
+              }
             </div>
-            :
-            null}
-          {editMode === 'preview' ?
+          }
+          {editMode === 'preview' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
               <div className="atomicLabPreview">
-                {preview ?
+                {preview &&
                   <div className={classNames('atomicLabCard','mdl-card','mdl-shadow--2dp',{'atomicLabCardExpanded':expanded})}>
                     <div className="atomicLabCardInner">
                       <div style={{float:'right', cursor:'pointer'}}>
@@ -459,26 +455,22 @@ export default class MainArea extends React.Component {
                       </SplitPane>
                     </div>
                   </div>
-                  :
-                  null}
+                }
               </div>
             </div>
-            :
-            null}
-          {editMode === 'note' ?
+          }
+          {editMode === 'note' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
               <div className="atomicLabPreview">
-                {note ?
+                {note &&
                   <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                     <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
                     <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
                   </div>
-                  :
-                  null}
+                }
               </div>
             </div>
-            :
-            null}
+          }
           {enable_editing && this.props.addBtn}
           {state.isEditDialogOpen &&
             Object.assign({},this.props.editDialog,

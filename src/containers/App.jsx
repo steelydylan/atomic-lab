@@ -23,9 +23,8 @@ class App extends React.Component {
         sideMenu={<SideMenu {...props} />}
         mainArea={
           <MainArea {...props}
-          addBtn={<AddBtn {...props} />} 
-          editDialog={<EditDialog {...props} />} />
-        } 
+            addBtn={<AddBtn {...props} />} 
+            editDialog={<EditDialog {...props} />} />} 
       />
     );
   }
