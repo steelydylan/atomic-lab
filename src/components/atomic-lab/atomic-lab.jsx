@@ -1,8 +1,5 @@
 import React from 'react';
 import SplitPane from 'react-split-pane';
-import Header from '../header/header';
-import SideMenu from '../sidemenu/sidemenu';
-import MainArea from '../mainarea/mainarea';
 import 'react-mdl/extra/material.css';
 import 'react-mdl/extra/material.js';
 import '../../../css/style.css';
@@ -48,10 +45,10 @@ export default class AtomicLab extends React.Component {
     
     return (
       <div className="mdl-layout">
-        <Header {...props} />
+        {this.props.header}
         <SplitPane split="vertical" minSize={100} defaultSize={paneSize} className="mdl-layout__content atomicLabContent">
-          <SideMenu {...props} />
-          <MainArea {...props} />
+          {this.props.sideMenu}
+          {this.props.mainArea}
         </SplitPane>
       </div>
     );

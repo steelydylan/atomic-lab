@@ -479,20 +479,19 @@ export default class MainArea extends React.Component {
             </div>
             :
             null}
-          {enable_editing ?
-            <AddBtn {...props} />
-            :
-            null}
-          {state.isEditDialogOpen ?
-            <EditDialog 
-              category={component.category} 
-              name={component.name} 
-              updateComponent={this.props.updateComponent} 
-              index={index} 
-              component={component}
-              onClose={this.closeEditDialog.bind(this)} {...props}/>
-            :
-            null}
+          {enable_editing && this.props.addBtn}
+          {state.isEditDialogOpen &&
+            Object.assign({},this.props.editDialog,
+            {props:{
+              category:component.category,
+              name:component.name,
+              updateComponent:this.props.updateComponent,
+              index:index,
+              component:component,
+              onClose:this.closeEditDialog.bind(this)
+              }
+            })
+          }
         </div>
         <Snackbar
           active={state.isSnackbarActive}
