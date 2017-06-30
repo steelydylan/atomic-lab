@@ -15,35 +15,14 @@ import './sidemenu.scss';
 
 const SidemenuItem = ({parent, item, id}) => {
   return (
-  <li className={classNames("atomicLabComponentList-item", { "selected": item.itemId === id })} onClick={parent.selectItem.bind(parent, item.itemId)}>
+  <li className={classNames("atomicLabComponentList-item", { "selected": item.itemId === id })} onClick={parent.selectItem.bind(parent, item.itemId, item.name)}>
     <span><i className="material-icons">insert_drive_file</i>
       {item.name}
     </span>
   </li>);
 }
 
-export default class ProjectDialog extends React.Component {
-
-  constructor() {
-    super();
-    this.state = {
-      showVariable:false,
-      showMixin:false,
-      showAtom:true,
-      showMolecule:true,
-      showOrganism:true,
-      showTemplate:true,
-      search:'',
-      isConfingDialogOpen:false
-    };
-  }
-
-  selectItem(itemId) {
-    location.hash = `${itemId}`;
-    this.props.selectItem(itemId);
-  }
-
-  getPackage() {
+const getPackage = () => {
     return `{
   "name": "styleguide",
   "version": "1.0.0",
@@ -66,6 +45,27 @@ export default class ProjectDialog extends React.Component {
     "onchange": "^3.2.1"
   }
 }`;
+}
+
+export default class ProjectDialog extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      showVariable:false,
+      showMixin:false,
+      showAtom:true,
+      showMolecule:true,
+      showOrganism:true,
+      showTemplate:true,
+      search:'',
+      isConfingDialogOpen:false
+    };
+  }
+
+  selectItem(itemId, name) {
+    location.hash = `${name}`;
+    this.props.selectItem(itemId);
   }
 
   getCategorizedItems(components, category) {
@@ -99,7 +99,7 @@ export default class ProjectDialog extends React.Component {
       zip.file(file1, comp.html);
       zip.file(file2, comp.css);
     });
-    zip.file("package.json", this.getPackage());
+    zip.file("package.json", getPackage());
     zip.generateAsync({
       type: "blob"
     }).then((content) => {

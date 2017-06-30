@@ -28,7 +28,7 @@ class App extends React.Component {
       if(item.data.components.length >= 1) {
         let itemId = item.data.components[0].itemId;
         this.props.components.forEach((item, i) => {
-          if (`#${item.itemId}` === hash) {
+          if (`#${item.name}` === hash) {
             itemId = item.itemId;
           }
         });
