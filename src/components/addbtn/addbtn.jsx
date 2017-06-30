@@ -4,18 +4,18 @@ import classNames from 'classnames';
 import { Textfield, RadioGroup, Radio } from 'react-mdl';
 import './addbtn.scss';
 
-const defaultHtml = 
+const getHtml = (category, name, styling) =>
 `<!--@doc
-# @category atom
-# @name aaa
-# @css ./aaa.sass
+# @category ${category}
+# @name ${name}
+# @css ./${name}.${styling}
 -->
 <!--@template-->
 <!--@/template-->
 <!--@preview
 -->
 <!--@note
-# About aaa
+# About ${name}
 -->`;
 
 export default class AddBtn extends React.Component {
@@ -62,11 +62,12 @@ export default class AddBtn extends React.Component {
 
   addComponent() {
     const state = this.state;
-    const itemId = this.props.components.length + 1
+    const itemId = this.props.components.length + 1;
+    const html = getHtml(state.category,state.name,this.props.config.styling);
     this.props.addComponent({
       name:state.name,
       category:state.category,
-      html:defaultHtml,
+      html:html,
       css:'',
       itemId: itemId
     });
