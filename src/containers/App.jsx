@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import axios from 'axios';
 import React from 'react';
 import * as Actions from '../actions';
 
@@ -11,8 +12,29 @@ import AddBtn from '../components/addbtn/addbtn';
 import EditDialog from '../components/edit-dialog/edit-dialog';
 
 class App extends React.Component {
-  constructor() {
-    super();
+
+  componentDidMount() {
+    axios.get('./config.json').then(item => {
+      this.props.setConfig(item.data);
+      this.setComponents();
+    });
+  }
+
+  setComponents() {
+    const config = this.props.config;
+    const hash = location.hash;
+    axios.get(config.local_file_path).then(item => {
+      this.props.setComponents(item.data.components);
+      if(item.data.components.length >= 1) {
+        let itemId = item.data.components[0].itemId;
+        this.props.components.forEach((item, i) => {
+          if (`#${item.itemId}` === hash) {
+            itemId = item.itemId;
+          }
+        });
+        this.props.selectItem(itemId);
+      }
+    });
   }
 
   render() {
@@ -24,7 +46,9 @@ class App extends React.Component {
         mainArea={
           <MainArea {...props}
             addBtn={<AddBtn {...props} />} 
-            editDialog={<EditDialog {...props} />} />} 
+            editDialog={<EditDialog {...props} />} 
+          />
+        } 
       />
     );
   }
