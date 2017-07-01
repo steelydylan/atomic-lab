@@ -178,6 +178,7 @@ export default class MainArea extends React.Component {
     }
     const config = this.props.config;
     const css_dependencies = config.css_dependencies;
+    const enable_borderbox = config.enable_borderbox;
     const itemId = this.props.itemId;
     const parser = this.parser;
     const component = this.getComponent();
@@ -247,7 +248,7 @@ export default class MainArea extends React.Component {
       }
       return '';
     });
-    console.log(css);
+
     css = compiler.styling[config.styling](css);
 
     if(css_dependencies) {
@@ -255,11 +256,12 @@ export default class MainArea extends React.Component {
         preview += `<link rel="stylesheet" href="${item}" />`
       })
     }
-
+    if (enable_borderbox) {
+      css += `*,*:before,*:after {box-sizing:border-box}`;
+    }
     if(css) {
       preview += `<style>${css}</style>`;
     }
-
     if(config.run_script){
       return preview;
     }else{
