@@ -231,12 +231,12 @@ export default class MainArea extends React.Component {
 		let css = '';
     for (let i = 0, n = components.length; i < n; i++) {
       const comp = components[i];
-      if (this.isGreaterThan(comp.category) || itemId === comp.itemId) {
+      if(comp.css & this.isGreaterThan(comp.category) || itemId === comp.itemId) {
         css += comp.css;
       }
     }
 
-    css = css.replace(/@media[^{]+\{([\s\S]+?\})\s*\}/gi,(a, b, c) => {
+    css = css.replace(/@media[^{]+\{([\s\S]+?})\s*}/g,(a, b, c) => {
       const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];
       const maxMatched = a.match(/max\-width:[ ]?([0-9]+?)px/) || [];
       const minNum = minMatched[1] ? parseInt(minMatched[1]) : 0;
@@ -246,7 +246,7 @@ export default class MainArea extends React.Component {
         return b;
       }
       return '';
-    })
+    });
     css = compiler.styling[config.styling](css);
 
     if(css_dependencies) {
