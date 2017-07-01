@@ -231,7 +231,7 @@ export default class MainArea extends React.Component {
 		let css = '';
     for (let i = 0, n = components.length; i < n; i++) {
       const comp = components[i];
-      if(comp.css & this.isGreaterThan(comp.category) || itemId === comp.itemId) {
+      if(comp.css) {
         css += comp.css;
       }
     }
@@ -247,6 +247,7 @@ export default class MainArea extends React.Component {
       }
       return '';
     });
+    console.log(css);
     css = compiler.styling[config.styling](css);
 
     if(css_dependencies) {
