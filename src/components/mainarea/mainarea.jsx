@@ -441,7 +441,13 @@ export default class MainArea extends React.Component {
                       <div style={{float:'right', cursor:'pointer'}}>
                         <Icon name="open_with" onClick={this.expandPreview.bind(this)}/>
                       </div>
-                      <div className="atomicLabCard-title"><i className="material-icons">visibility</i> Preview <span className="atomicLabCard-screenSize">{paneSize}px</span></div>
+                      <div className="atomicLabCard-title">
+                        Preview 
+                        <span className="atomicLabCard-screenSize">{paneSize}px</span>
+                        <Icon name="icon_smartphone" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,480)}/>
+                        <Icon name="icon_tablet_mac" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,768)}/>
+                        <Icon name="icon_laptop" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,1024)}/>
+                      </div>
                       <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
                         <div className="atomicLabShadowContainer">
                           <ShadowDOM>
