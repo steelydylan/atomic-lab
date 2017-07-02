@@ -349,6 +349,8 @@ export default class MainArea extends React.Component {
     const description = this.getDescription();
     const note = this.getNote();
     const preview = this.getPreview();
+    const source = preview ? preview.replace(/^([\t ])*\n/gm,"") : '';
+    const snippets = `\`\`\`html\n${source}\n\`\`\``;
     const props = this.props;
     const enable_editing = props.config && props.config.enable_editing;
     const isEditDialogOpen = state.isEditDialogOpen;
@@ -478,6 +480,12 @@ export default class MainArea extends React.Component {
                     <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
                   </div>
                 }
+                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Snippets</div>
+                  <div className="atomicLabNote">
+                    <Markdown source={snippets} options={option} />
+                  </div>
+                </div>
               </div>
             </div>
           }

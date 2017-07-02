@@ -4,7 +4,7 @@
   "local_file_path": "./components.json",
   "run_script": true,
   "enable_editing": true,
-  "enable_borderbox": true,
+  "enable_borderbox": false,
   "css_dependencies": [
     "//cdn.kokush.in/units/1.0.0-beta/units.min.css"
   ],
