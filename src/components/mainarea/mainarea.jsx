@@ -6,7 +6,7 @@ import AceEditor from 'react-ace';
 import brace from 'brace';
 import classNames from 'classnames';
 import Markdown from 'react-remarkable';
-import ShadowDOM from 'react-shadow';
+import Frame from 'react-frame-component';
 import hljs from 'highlight.js';
 
 import 'react-resizable/css/styles.css';
@@ -450,18 +450,19 @@ export default class MainArea extends React.Component {
                         <Icon name="icon_tablet_mac" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,768)}/>
                         <Icon name="icon_laptop" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,1024)}/>
                       </div>
-                      <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
-                        <div className="atomicLabShadowContainer">
-                          <ShadowDOM>
-                            <div>
-                              <div dangerouslySetInnerHTML={{__html: preview}}>
-                              </div>
+                      <div className="atomicLabPaneWrap">
+                        <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
+                          <div className="atomicLabIframeContainer">
+                            <div className="atomicLabShadowContainer">
+                              <Frame style={{width:'100%',height:'100%',border:'none'}}>
+                                  <div dangerouslySetInnerHTML={{__html: preview}}>
+                                  </div>
+                              </Frame>
                             </div>
-                          </ShadowDOM>
-                        </div>
-                        <div>
-                        </div>
-                      </SplitPane>
+                          </div>
+                          <div></div>
+                        </SplitPane>
+                      </div>
                     </div>
                   </div>
                 }
