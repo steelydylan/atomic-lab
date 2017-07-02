@@ -4,7 +4,11 @@
   "local_file_path": "./components.json",
   "run_script": true,
   "enable_editing": true,
-  "enable_borderbox": false,
+  "breakpoint": {
+    "pc": 1024,
+    "tablet": 768,
+    "smartphone": 480
+  },
   "css_dependencies": [
     "//cdn.kokush.in/units/1.0.0-beta/units.min.css"
   ],

@@ -341,8 +341,11 @@ export default class MainArea extends React.Component {
     const enable_editing = props.config && props.config.enable_editing;
     const isEditDialogOpen = state.isEditDialogOpen;
     const paneSize = state.paneSize;
-    const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
+    const lang =props.config && props.config.lang ? props.config.lang : 'ja';
     const expanded = state.expanded;
+    const pc = props.config && props.config.breakpoint && props.config.breakpoint.pc ? props.config.breakpoint.pc : 1024;
+    const tablet = props.config && props.config.breakpoint && props.config.breakpoint.tablet ? props.config.breakpoint.tablet : 768;
+    const smartphone = props.config && props.config.breakpoint && props.config.breakpoint.smartphone ? props.config.breakpoint.smartphone : 768;
 
     return (
       <main className="atomicLabMain">
@@ -444,9 +447,9 @@ export default class MainArea extends React.Component {
                       <div className="atomicLabCard-title">
                         Preview 
                         <span className="atomicLabCard-screenSize">{paneSize}px</span>
-                        <Icon name="icon_smartphone" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,480)}/>
-                        <Icon name="icon_tablet_mac" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,768)}/>
-                        <Icon name="icon_laptop" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,1024)}/>
+                        <Icon name="icon_smartphone" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,smartphone)}/>
+                        <Icon name="icon_tablet_mac" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,tablet)}/>
+                        <Icon name="icon_laptop" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,pc)}/>
                       </div>
                       <div className="atomicLabPaneWrap">
                         <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
