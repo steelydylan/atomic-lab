@@ -392,13 +392,15 @@ export default class MainArea extends React.Component {
           </div>
           {editMode === 'css' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
-              {component &&
-                <AceEditor value={component.css} mode='css' theme="monokai"
-                  setOptions={{
-                    enableBasicAutocompletion: true,
-                    enableSnippets: true,
-                    enableLiveAutocompletion: true
-                  }} onLoad={this.aceOnload.bind(this)}/>
+              {component && component.css &&
+                <div className="atomicLabPreview">
+                  <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+                    <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> CSS</div>
+                    <div className="atomicLabNote">
+                      <Markdown source={`\`\`\`css\n${component.css}\n\`\`\`\``} options={option} />
+                    </div>
+                  </div>
+                </div>                
               }
             </div>
           }
