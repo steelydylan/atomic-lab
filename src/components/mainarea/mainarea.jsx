@@ -328,7 +328,7 @@ export default class MainArea extends React.Component {
     const preview = this.getPreview();
     const source = preview ? preview.replace(/^([\t ])*\n/gm,"") : '';
     const html = this.appendLinksToCustom(preview);
-    const snippets = `\`\`\`html\n${source}\n\`\`\``;
+    const snippets = `\`\`\`html\n${source}\`\`\``;
     const props = this.props;
     const enable_editing = props.config && props.config.enable_editing;
     const isEditDialogOpen = state.isEditDialogOpen;
