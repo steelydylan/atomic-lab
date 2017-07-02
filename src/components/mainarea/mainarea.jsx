@@ -177,8 +177,6 @@ export default class MainArea extends React.Component {
       return;
     }
     const config = this.props.config;
-    const css_dependencies = config.css_dependencies;
-    const enable_borderbox = config.enable_borderbox;
     const itemId = this.props.itemId;
     const parser = this.parser;
     const component = this.getComponent();
@@ -229,44 +227,23 @@ export default class MainArea extends React.Component {
         preview = preview.replace(comment, "");
       }
     }
-		let css = '';
-    for (let i = 0, n = components.length; i < n; i++) {
-      const comp = components[i];
-      if(comp.css) {
-        css += comp.css;
-      }
+    if(config.run_script){
+      return preview;
+    }else{
+      return parser.removeScript(preview);
     }
+  }
 
-    css = css.replace(/@media[^{]+\{([\s\S]+?})\s*}/g,(a, b, c) => {
-      const minMatched = a.match(/min\-width:[ ]?([0-9]+?)px/) || [];
-      const maxMatched = a.match(/max\-width:[ ]?([0-9]+?)px/) || [];
-      const minNum = minMatched[1] ? parseInt(minMatched[1]) : 0;
-      const maxNum = maxMatched[1] ? parseInt(maxMatched[1]) : 999999;
-      const paneSize = this.state.paneSize;
-      if (paneSize >= minNum && paneSize <= maxNum){
-        return b;
-      }
-      return '';
-    });
-
-    css = compiler.styling[config.styling](css);
+  appendLinksToCustom(preview) {
+    const config = this.props.config;
+    const css_dependencies = config.css_dependencies;
 
     if(css_dependencies) {
       css_dependencies.forEach((item) => {
         preview += `<link rel="stylesheet" href="${item}" />`
       })
     }
-    if (enable_borderbox) {
-      css += `*,*:before,*:after {box-sizing:border-box}`;
-    }
-    if(css) {
-      preview += `<style>${css}</style>`;
-    }
-    if(config.run_script){
-      return preview;
-    }else{
-      return parser.removeScript(preview);
-    }
+    return preview;
   }
 
   openRemoveDialog() {
@@ -350,6 +327,7 @@ export default class MainArea extends React.Component {
     const note = this.getNote();
     const preview = this.getPreview();
     const source = preview ? preview.replace(/^([\t ])*\n/gm,"") : '';
+    const html = this.appendLinksToCustom(preview);
     const snippets = `\`\`\`html\n${source}\n\`\`\``;
     const props = this.props;
     const enable_editing = props.config && props.config.enable_editing;
@@ -457,7 +435,7 @@ export default class MainArea extends React.Component {
                           <div className="atomicLabIframeContainer">
                             <div className="atomicLabShadowContainer">
                               <Frame style={{width:'100%',height:'100%',border:'none'}}>
-                                  <div dangerouslySetInnerHTML={{__html: preview}}>
+                                  <div dangerouslySetInnerHTML={{__html: html}}>
                                   </div>
                               </Frame>
                             </div>
