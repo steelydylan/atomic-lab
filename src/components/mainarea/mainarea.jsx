@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import SplitPane from 'react-split-pane';
-import { Menu, MenuItem, Tooltip, Icon } from 'react-mdl';
+import { Menu, MenuItem, Tooltip, Icon, Button } from 'react-mdl';
 import { Snackbar } from 'react-mdl';
 import AceEditor from 'react-ace';
 import brace from 'brace';
 import classNames from 'classnames';
 import Markdown from 'react-remarkable';
 import Frame from 'react-frame-component';
+import CopyToClipboard from 'react-copy-to-clipboard';
 import hljs from 'highlight.js';
 
 import 'react-resizable/css/styles.css';
@@ -77,6 +78,7 @@ export default class MainArea extends React.Component {
       isRemoveDialogOpen: false,
       isEditDialogOpen: false,
       isSnackbarActive: false,
+      isCopiedSnackbarActive: false,
       expanded: false,
       paneSize:800
     };
@@ -297,6 +299,12 @@ export default class MainArea extends React.Component {
     });
   }
 
+  hideCopiedSnackbar(){
+    this.setState({
+      isCopiedSnackbarActive:false
+    });
+  }
+
   onResized(size) {
     this.setState({
       paneSize:size
@@ -395,7 +403,13 @@ export default class MainArea extends React.Component {
               {component && component.css &&
                 <div className="atomicLabPreview">
                   <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                    <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> CSS</div>
+                    <div className="atomicLabCard-title">
+                      <i className="material-icons">insert_drive_file</i> 
+                        CSS
+                        <CopyToClipboard text={component.css} onCopy={()=>{this.setState({isCopiedSnackbarActive:true})}}>
+                          <Button primary style={{float:'right'}}>Copy to clipboard</Button>
+                        </CopyToClipboard>
+                    </div>
                     <div className="atomicLabNote">
                       <Markdown source={`\`\`\`css\n${component.css}\n\`\`\`\``} options={option} />
                     </div>
@@ -454,19 +468,26 @@ export default class MainArea extends React.Component {
           {editMode === 'note' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
               <div className="atomicLabPreview">
-                {note &&
-                  <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                    <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
-                    <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
-                  </div>
-                }
                 <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Snippets</div>
+                  <div className="atomicLabCard-title">
+                    <i className="material-icons">insert_drive_file</i> 
+                    Snippets
+                    <CopyToClipboard text={snippets} onCopy={()=>{this.setState({isCopiedSnackbarActive:true})}}>
+                      <Button primary style={{float:'right'}}>Copy to clipboard</Button>
+                    </CopyToClipboard>
+                  </div>
+                  
                   <div className="atomicLabNote">
                     <Markdown source={snippets} options={option} />
                   </div>
                 </div>
               </div>
+              {note &&
+                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
+                  <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
+                </div>
+              }
             </div>
           }
           {enable_editing && this.props.addBtn}
@@ -486,7 +507,13 @@ export default class MainArea extends React.Component {
         <Snackbar
           active={state.isSnackbarActive}
           onTimeout={this.hideSnackbar.bind(this)}
-          action="Undo" onClick={this.hideSnackbar.bind(this)} timeout={2000}>Saved.</Snackbar>
+          onClick={this.hideSnackbar.bind(this)} timeout={2000}>Saved.</Snackbar>
+        <Snackbar
+          active={state.isCopiedSnackbarActive}
+          onTimeout={this.hideCopiedSnackbar.bind(this)}
+          onClick={this.hideCopiedSnackbar.bind(this)} timeout={2000}
+        >Copied.
+        </Snackbar>
       </main>
     );
   }
