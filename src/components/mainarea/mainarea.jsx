@@ -452,7 +452,7 @@ export default class MainArea extends React.Component {
                         <Icon name="icon_laptop" style={{cursor:'pointer'}} onClick={this.onResized.bind(this,pc)}/>
                       </div>
                       <div className="atomicLabPaneWrap">
-                        <SplitPane split="vertical" minSize={320} defaultSize={paneSize} size={paneSize} onChange={this.onResized.bind(this)} >
+                        <SplitPane split="vertical" minSize={320} defaultSize={paneSize + 22} size={paneSize + 22} onChange={this.onResized.bind(this)} >
                           <div className="atomicLabIframeContainer">
                             <div className="atomicLabShadowContainer">
                               <Frame style={{width:'100%',height:'100%',border:'none'}}>
