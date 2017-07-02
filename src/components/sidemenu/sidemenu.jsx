@@ -141,6 +141,13 @@ export default class ProjectDialog extends React.Component {
     const config = this.props.config;
     const props = this.props;
     const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
+    const variables = this.getCategorizedItems(components,'variable');
+    const mixins = this.getCategorizedItems(components,'mixin');
+    const atoms = this.getCategorizedItems(components,'atom');
+    const molecules = this.getCategorizedItems(components,'molecule');
+    const organisms = this.getCategorizedItems(components,'organism');
+    const templates = this.getCategorizedItems(components,'template');
+
 
     return (
       <div className="atomicLabSideMenu">
@@ -211,66 +218,78 @@ export default class ProjectDialog extends React.Component {
         </div>
         <div className="atomicLabComponentList">
           <ul>
+            {variables.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_variable",{"js-closed":!state.showVariable})}>
               <span onClick={this.toggleCategory.bind(this,'showVariable')}>Variable
                 <i className="material-icons">{state.showVariable ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'variable').map(item =>
+                {variables.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
+            {mixins.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_mixin",{"js-closed":!state.showMixin})}>
               <span onClick={this.toggleCategory.bind(this,'showMixin')}>Mixin
                 <i className="material-icons">{state.showMixin ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'mixin').map(item =>
+                {mixins.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
+            {atoms.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_atom",{"js-closed":!state.showAtom})}>
               <span onClick={this.toggleCategory.bind(this,'showAtom')}><div className="atomicLabComponentList-category-icon atom"></div>Atom
                 <i className="material-icons">{state.showAtom ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'atom').map(item =>
+                {atoms.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
+            {molecules.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_molecule",{"js-closed":!state.showMolecule})}>
               <span onClick={this.toggleCategory.bind(this,'showMolecule')}><div className="atomicLabComponentList-category-icon molecule"></div>Molecule
                 <i className="material-icons">{state.showMolecule ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'molecule').map(item =>
+                {molecules.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
+            {organisms.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_organism",{"js-closed":!state.showOrganism})}>
               <span onClick={this.toggleCategory.bind(this,'showOrganism')}><div className="atomicLabComponentList-category-icon organism"></div>Organism
                 <i className="material-icons">{state.showOrganism ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'organism').map(item =>
+                {organisms.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
+            {templates.length >= 1 &&
             <li className={classNames("atomicLabComponentList-category","_template",{"js-closed":!state.showTemplate})}>
               <span onClick={this.toggleCategory.bind(this,'showTemplate')}><div className="atomicLabComponentList-category-icon template"></div>Template
                 <i className="material-icons">{state.showTemplate ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
               </span>
               <ul>
-                {this.getCategorizedItems(components,'template').map(item =>
+                {templates.map(item =>
                   <SidemenuItem parent={this} item={item} id={id} />
                 )}
               </ul>
             </li>
+            }
           </ul>
         </div>
         <div id="mask-search-cancel"></div>
