@@ -155,6 +155,6 @@ atomicLab.update = (opt) => {
       resolve();
     });
   });
-}
+};
 
 module.exports = atomicLab;
