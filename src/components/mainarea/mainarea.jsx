@@ -11,12 +11,12 @@ import hljs from 'highlight.js';
 
 import 'react-resizable/css/styles.css';
 import 'highlight.js/styles/default.css';
-import 'highlight.js/styles/tomorrow.css';
+import 'highlight.js/styles/github.css';
 import './mainarea.scss';
 
 import 'brace/mode/html';
 import 'brace/mode/css';
-import 'brace/theme/monokai';
+import 'brace/theme/github';
 
 import Parser from '../../lib/parser.js';
 import compiler from '../../lib/compiler.js';
