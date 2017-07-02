@@ -477,7 +477,7 @@ export default class MainArea extends React.Component {
                   <div className="atomicLabCard-title">
                     <i className="material-icons">insert_drive_file</i> 
                     Snippets
-                    <CopyToClipboard text={snippets} onCopy={()=>{this.setState({isCopiedSnackbarActive:true})}}>
+                    <CopyToClipboard text={source} onCopy={()=>{this.setState({isCopiedSnackbarActive:true})}}>
                       <Button primary style={{float:'right'}}>Copy to clipboard</Button>
                     </CopyToClipboard>
                   </div>
