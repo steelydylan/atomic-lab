@@ -7,20 +7,11 @@ exports.builder = {
   	alias: 'dist',
   	describe: 'set atomic-lab directory',
   	default: 'styleguide'
-  },
-  s:{
-  	alias: 'src',
-  	describe: 'set your component\'s directory',
-  	default: 'components'
-  },
-  m:{
-  	alias: 'markup',
-  	default: 'ejs'
   }
 }
 
 exports.handler = function (argv) {
-  atomic.init({
+  atomic.update({
     dist: argv.dist,
     src: argv.src
   });

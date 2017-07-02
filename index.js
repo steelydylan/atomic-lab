@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const mkdirp = require('mkdirp');
 const extend = require('extend');
 
-const atomicBuilder = {};
+const atomicLab = {};
 const getDirName = path.dirname;
 const processPath = process.cwd();
 
@@ -108,7 +108,7 @@ const copyPromise = (src, dist) => {
   });
 };
 
-atomicBuilder.build = function (opt) {
+atomicLab.build = function (opt) {
   const src = opt.src;
   const dist = opt.dist;
   const markup = opt.markup;
@@ -117,7 +117,7 @@ atomicBuilder.build = function (opt) {
     end: /-->/g,
     body: /<!--@doc(([\n\r\t]|.)*?)-->/g
   }, opt.parser);
-  return atomicBuilder.init(opt).then(() => {
+  return atomicLab.init(opt).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
       const components = makeAtomicArray(files, markup, parser);
@@ -135,7 +135,7 @@ atomicBuilder.build = function (opt) {
   });
 };
 
-atomicBuilder.init = (opt) => {
+atomicLab.init = (opt) => {
   const dist = opt.dist;
   const src = opt.src;
   const promiseArray = [
@@ -148,4 +148,13 @@ atomicBuilder.init = (opt) => {
   return Promise.all(promiseArray);
 };
 
-module.exports = atomicBuilder;
+atomicLab.update = (opt) => {
+  const dist = opt.dist;
+  return new Promise((resolve) => {
+    fs.copy(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), () => {
+      resolve();
+    });
+  });
+}
+
+module.exports = atomicLab;
