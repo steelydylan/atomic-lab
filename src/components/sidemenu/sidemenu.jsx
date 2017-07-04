@@ -90,11 +90,13 @@ export default class ProjectDialog extends React.Component {
         if (index === 0) {
           return;
         }
+        location.hash = `${components[index - 1].name}`;
         this.props.selectItem(components[index - 1].itemId);
       } else if (code === 'down') {
         if (index === length -2) {
           return;
         }
+        location.hash = `${components[index + 1].name}`;
         this.props.selectItem(components[index + 1].itemId);
       }
     });
