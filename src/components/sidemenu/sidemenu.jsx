@@ -9,6 +9,7 @@ import {
 import classNames from 'classnames';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
+import keycode from 'keycode';
 
 import './sidemenu.scss';
 
@@ -66,6 +67,37 @@ export default class ProjectDialog extends React.Component {
   selectItem(itemId, name) {
     location.hash = `${name}`;
     this.props.selectItem(itemId);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown',(e) => {
+      e.preventDefault();
+      const components = this.props.components;
+      const length = components.length;
+      const itemId = this.props.itemId;
+      const code = keycode(e);
+      let nextId = -1;
+      let index = -1;
+      components.forEach((item, i) => {
+        if (item.itemId === itemId) {
+          index = i;
+        }
+      });
+      if (index === -1) {
+        return;
+      }
+      if (code === 'up') {
+        if (index === 0) {
+          return;
+        }
+        this.props.selectItem(components[index - 1].itemId);
+      } else if (code === 'down') {
+        if (index === length -2) {
+          return;
+        }
+        this.props.selectItem(components[index + 1].itemId);
+      }
+    });
   }
 
   getCategorizedItems(components, category) {
