@@ -10,7 +10,7 @@
     "smartphone": 480
   },
   "css_dependencies": [
-    "//cdn.kokush.in/units/1.0.0-beta/units.min.css"
+    "//cdn.kokush.in/units/1.0.1-beta/units.min.css"
   ],
   "lang": "en",
   "markup": "ejs",

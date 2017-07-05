@@ -44,7 +44,6 @@ export default class MainArea extends React.Component {
     const props = this.props;
     const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
     const component = props.component;
-    console.log(lang);
     return (
       <dialog className="mdl-dialog js-new-dialog AtomicLabCategoryDialog" open>
         <h4 className="atomicLabProjectsDialog-title mdl-dialog__title">{lang === 'ja' ? 'コンポーネントの編集' : 'Edit Component'}</h4>
