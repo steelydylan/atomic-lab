@@ -71,7 +71,6 @@ export default class ProjectDialog extends React.Component {
 
   componentDidMount() {
     document.addEventListener('keydown',(e) => {
-      e.preventDefault();
       const components = this.props.components;
       const length = components.length;
       const itemId = this.props.itemId;
@@ -90,12 +89,14 @@ export default class ProjectDialog extends React.Component {
         if (index === 0) {
           return;
         }
+        e.preventDefault();
         location.hash = `${components[index - 1].name}`;
         this.props.selectItem(components[index - 1].itemId);
       } else if (code === 'down') {
         if (index === length -2) {
           return;
         }
+        e.preventDefault();
         location.hash = `${components[index + 1].name}`;
         this.props.selectItem(components[index + 1].itemId);
       }
