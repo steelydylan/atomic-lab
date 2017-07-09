@@ -14,7 +14,11 @@ export default class Parser {
     }
     vars.forEach(function (item) {
       const key = item.replace(/=.*/, "");
-      const value = item.replace(/.*=/, "").replace(/"/g, "");
+      let value = item.replace(/.*=/, "").replace(/"/g, "");
+      if (value.match(/^\[(.*?)\]$/g)) {
+        value = JSON.parse(value);
+      }
+      console.log(value);
       defs[key] = value;
     });
     return defs;

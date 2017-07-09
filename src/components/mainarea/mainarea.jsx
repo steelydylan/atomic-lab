@@ -20,8 +20,9 @@ import 'brace/mode/css';
 import 'brace/theme/github';
 
 import Parser from '../../lib/parser.js';
-import compiler from '../../lib/compiler.js';
+import * as compiler from '../../lib/compiler.js';
 import normalize from '../../lib/normalize.js';
+import extend from '../../lib/extend.js';
 
 import AddBtn from '../addbtn/addbtn';
 import EditDialog from '../edit-dialog/edit-dialog';
@@ -194,7 +195,8 @@ export default class MainArea extends React.Component {
     if(!preview) {
       return '';
     }
-    preview = compiler.markup[config.markup](preview);
+
+    preview = compiler[`${config.markup}Render`](preview);
 
 
     while (1) {
@@ -220,8 +222,8 @@ export default class MainArea extends React.Component {
           html = parser.removeSelf(html, comp.name);
           const defs = parser.getVarsFromTemplate(template);
           const overrides = parser.getVars(comment);
-          html = parser.getRendered(html, defs, overrides);
-          preview = preview.replace(comment, compiler.markup[config.markup](html));
+          const vars = extend({}, defs, overrides);
+          preview = preview.replace(comment, compiler[`${config.markup}Render`](html,vars));
           break;
         }
       }
