@@ -1,3 +1,6 @@
+import ejs from 'ejs/ejs.min.js';
+import haml from 'haml';
+import jade from 'jade';
 
 export const htmlRender = (txt) => {
 	return txt;

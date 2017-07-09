@@ -7,8 +7,6 @@
 <!--@preview
 <%
 var title = "Horic Design";
-%>
-<% 
 var cards = [
   {title:'title'},
   {title: 'title2'},
@@ -23,13 +21,13 @@ var cards = [
 <main class="uc-content content">
   <div class="uc-section">
     <div class="uc-grid _col-2 _small-col-full _gutter">
-      <% for (var i = 0, n = cards.length; i < n; i++) { %>
+      <% cards.forEach(function(item) { %>
       <div class="uc-grid-cell">
-        <uc-card title="<%= cards[i].title %>" />
+        <uc-card title="<%= item.title %>" />
       </div> 
-      <% } %>
+      <% }); %>
     </div>
   </div>
 </main>
-<uc-footer title="Horic Design" />
+<uc-footer title="<%= title %>" />
 -->
