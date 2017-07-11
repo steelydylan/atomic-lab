@@ -23,8 +23,17 @@ $ npm install atomic-lab --save-dev
 ```
 
 ## Build Styleguide
+
+via npx
+
 ```
-$ atomic-lab build
+$ npx atomic-lab build
+```
+
+or $(npm bin)
+
+```
+$ $(npm bin)/atomic-lab build
 ```
 
 ## Documentation
