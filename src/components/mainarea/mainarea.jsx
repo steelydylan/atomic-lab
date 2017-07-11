@@ -349,6 +349,8 @@ export default class MainArea extends React.Component {
     const pc = props.config && props.config.breakpoint && props.config.breakpoint.pc ? props.config.breakpoint.pc : 1024;
     const tablet = props.config && props.config.breakpoint && props.config.breakpoint.tablet ? props.config.breakpoint.tablet : 768;
     const smartphone = props.config && props.config.breakpoint && props.config.breakpoint.smartphone ? props.config.breakpoint.smartphone : 768;
+    const markup = props.config && props.config.markup ? props.config.markup : 'HTML';
+    const styling = props.config && props.config.styling ? props.config.styling : 'CSS';
 
     return (
       <main className="atomicLabMain">
@@ -399,9 +401,9 @@ export default class MainArea extends React.Component {
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "preview" })} onClick={this.changeMode.bind(this, 'preview')}>Preview</a>
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
                 {component && component.css &&
-                  <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>CSS</a>
+                  <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>{styling}</a>
                 }
-                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>HTML</a>
+                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>{markup}</a>
               </div>
               :
               null}
