@@ -28,9 +28,8 @@ $ atomic-lab build
 ```
 
 ## Documentation
-1. [Getting Started](docs/getting-started.md)
-2. [Grammer](docs/grammer.md)
-3. [Others](docs/others.md)
+1. [Getting Started](https://github.com/steelydylan/atomic-lab/wiki/Getting-Started)
+2. [Styleguide Rule](https://github.com/steelydylan/atomic-lab/wiki/Styleguide-Rule)
 
 ## Attribution
 We use some icons created by http://patternlab.io/
