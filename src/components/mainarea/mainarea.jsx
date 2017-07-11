@@ -223,6 +223,7 @@ export default class MainArea extends React.Component {
           const defs = parser.getVarsFromTemplate(template);
           const overrides = parser.getVars(comment);
           const vars = extend({}, defs, overrides);
+          preview = parser.getRendered(preview, defs, overrides);
           preview = preview.replace(comment, compiler[`${config.markup}Render`](html,vars));
           break;
         }
