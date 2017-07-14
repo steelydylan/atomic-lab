@@ -1,4 +1,4 @@
-import ejs from 'ejs/ejs.min.js';
+import ejs from 'ejs';
 import haml from 'haml';
 import jade from 'jade';
 
