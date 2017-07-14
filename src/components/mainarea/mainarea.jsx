@@ -81,7 +81,8 @@ export default class MainArea extends React.Component {
       isSnackbarActive: false,
       isCopiedSnackbarActive: false,
       expanded: false,
-      paneSize:800
+      paneSize:800,
+      timestamp: (+new Date).toString(36)
     };
   }
 
@@ -245,7 +246,7 @@ export default class MainArea extends React.Component {
 
     if(css_dependencies) {
       css_dependencies.forEach((item) => {
-        preview += `<link rel="stylesheet" href="${item}" />`
+        preview += `<link rel="stylesheet" href="${item}?v=${stamp}" />`
       })
     }
     return preview;
@@ -351,6 +352,7 @@ export default class MainArea extends React.Component {
     const smartphone = props.config && props.config.breakpoint && props.config.breakpoint.smartphone ? props.config.breakpoint.smartphone : 768;
     const markup = props.config && props.config.markup ? props.config.markup : 'HTML';
     const styling = props.config && props.config.styling ? props.config.styling : 'CSS';
+    const stamp = this.state.timestamp;
 
     return (
       <main className="atomicLabMain">
