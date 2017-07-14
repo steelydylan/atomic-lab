@@ -9,7 +9,7 @@
     "lint": "eslint ./index.js --fix",
     "styleguide:init": "node ./bin/index.js init --dist ./",
     "styleguide:build": "node ./bin/index.js build --dist ./",
-    "dev": "open http://localhost:8080/webpack-dev-server/index.html && webpack-dev-server --progress --colors --watch",
+    "dev": "open http://localhost:8080/webpack-dev-server/demo.html && webpack-dev-server --progress --colors --watch",
     "patch": "npm run test && npm version patch && npm run build && node ./tools/index.js",
     "minor": "npm run test && npm version minor && npm run build && node ./tools/index.js",
     "major": "npm run test && npm version major && npm run build && node ./tools/index.js",
