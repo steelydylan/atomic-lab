@@ -8,12 +8,12 @@
     "build": "webpack --config webpack.config.prod.js",
     "lint": "eslint ./index.js --fix",
     "styleguide:init": "node ./bin/index.js init --dist ./",
-    "styleguide:build": "node ./bin/index.js build --dist ./ markup haml",
+    "styleguide:build": "node ./bin/index.js build --dist ./",
     "dev": "open http://localhost:8080/webpack-dev-server/index.html && webpack-dev-server --progress --colors --watch",
     "patch": "npm run test && npm version patch && npm run build && node ./tools/index.js",
     "minor": "npm run test && npm version minor && npm run build && node ./tools/index.js",
     "major": "npm run test && npm version major && npm run build && node ./tools/index.js",
-    "deploy": "np"
+    "deploy": "np --no-cleanup"
   },
   "author": {
     "name": "steelaxe"
@@ -45,7 +45,6 @@
     "mkdirp": "^0.5.1",
     "normalize-css": "^2.3.1",
     "promise": "^7.1.1",
-    "pug": "^2.0.0-rc.2",
     "react": "^15.4.2",
     "react-ace": "^5.0.1",
     "react-addons-css-transition-group": "^15.4.1",
@@ -82,7 +81,6 @@
     "fs-extra": "^3.0.1",
     "gulp": "^3.9.1",
     "gulp-plumber": "^1.1.0",
-    "json-loader": "^0.5.4",
     "node-cmd": "^3.0.0",
     "node-sass": "^4.5.0",
     "np": "^2.16.0",

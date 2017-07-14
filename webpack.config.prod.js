@@ -10,6 +10,9 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
+  node: {
+    fs: "empty"
+  },
   module: {
     loaders: [
       {
@@ -30,6 +33,9 @@ module.exports = {
       }, {
         test: /\.(jpg|png)$/,
         loader: 'url-loader'
+      }, {
+        test: /\.json$/,
+        loader: 'json-loader'
       }
     ]
   },

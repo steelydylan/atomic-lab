@@ -14,13 +14,6 @@ module.exports = {
     fs: "empty"
   },
   module: {
-    // preLoaders: [
-    //   {
-    //     test: /\.(js|jsx)$/,
-    //     exclude: /node_modules/,
-    //     loader: 'eslint-loader'
-    //   }
-    // ],
     loaders: [
       {
         test: /\.(js|jsx)$/,
