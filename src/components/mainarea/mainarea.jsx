@@ -242,6 +242,7 @@ export default class MainArea extends React.Component {
 
   appendLinksToCustom(preview) {
     const config = this.props.config;
+    const stamp = this.state.timestamp;
     const css_dependencies = config.css_dependencies;
 
     if(css_dependencies) {
@@ -352,7 +353,6 @@ export default class MainArea extends React.Component {
     const smartphone = props.config && props.config.breakpoint && props.config.breakpoint.smartphone ? props.config.breakpoint.smartphone : 768;
     const markup = props.config && props.config.markup ? props.config.markup : 'HTML';
     const styling = props.config && props.config.styling ? props.config.styling : 'CSS';
-    const stamp = this.state.timestamp;
 
     return (
       <main className="atomicLabMain">
