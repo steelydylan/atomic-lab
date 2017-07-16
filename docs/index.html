@@ -49,7 +49,6 @@
       <div class="uc-sidebar-wrap">
         <div class="uc-sidebar-list">
           <p><strong>Getting Started</strong></p>
-          <a href="#">Install</a>
           <a href="#">Document</a>
           <a href="#">Template</a>
           <a href="#">Preview</a>
@@ -73,24 +72,42 @@
     </div>
 
     <div class="uc-grid-cell _col-fit">
-
-      <div class="uc-hero">
-        <div class="uc-hero-bg" style="background-image:url(https://source.unsplash.com/random)"></div>
-        <div class="uc-hero-title">Welcome to Atomic Lab</div>
-      </div>
       
 
       <main class="uc-content">
 
         <div class="uc-section">
-        <h2 class="uc-section-title">Getting Started</h2>
+        <h1 class="uc-section-title">Document</h1>
 
-<p>An interesting post about how it&#39;s going to be different this time around. I&#39;m going write a lot more nowadays and use this blog to improve my writing.</p>
+<p>To convert partial templates to component-styleguides, you should leave a comment tags like below.</p>
+<div class="uc-code-unit"><pre>
+<code class="shell">&lt;!--@doc
+# @category atom
+# @name card
+# @css ./card.scss
+# @desc it&#39;s just a card component
+--&gt;</code></pre></div>
+
+<h2 id="category">Category</h2>
+<p>There are 4 types of category in Atomic Lab</p>
+<div class="uc-list-unit _border">
+    <ul class="uc-list">
+        <li>atom</li>
+        <li>molecule</li>
+        <li>organism</li>
+        <li>template</li>
+    </ul>
+</div>
+
+
+<h3 id="atom">Atom</h3>
+<p>Premitive components such as labels, buttons, inputs etc.</p>
+<h4 id="molecule">Molecule</h4>
+<p>Mixed components built with several premitive components. </p>
 
         </div>
-
         <div class="uc-pager-unit">
-          <div class="uc-btn _primary"><a href="#">Install →</a></div>
+          <div class="uc-btn _primary"><a href="#">Template →</a></div>
         </div>
       </main>
     </div>
