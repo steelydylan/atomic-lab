@@ -19,16 +19,6 @@ To convert partial templates to component-styleguides, you should leave a commen
  
 There are 4 types of category in Atomic Lab
 
-<div class="uc-list-unit _border">
-    <ul class="uc-list">
-        <li>atom</li>
-        <li>molecule</li>
-        <li>organism</li>
-        <li>template</li>
-    </ul>
-</div>
-
-
 ### Atom
 
 Premitive components such as labels, buttons, inputs etc.
