@@ -9,11 +9,6 @@ exports.builder = {
   	describe: 'set atomic-lab directory',
   	default: 'styleguide/',
   },
-  m:{
-  	alias: 'markup',
-  	describe: 'set template engine',
-  	default: 'ejs'
-  },
   s:{
   	alias: 'src',
   	describe: 'set component directory',

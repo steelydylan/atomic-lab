@@ -12,10 +12,6 @@ exports.builder = {
   	alias: 'src',
   	describe: 'set your component\'s directory',
   	default: 'components'
-  },
-  m:{
-  	alias: 'markup',
-  	default: 'ejs'
   }
 }
 
