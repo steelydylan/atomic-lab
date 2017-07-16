@@ -11,3 +11,36 @@ p,
 	margin-right: auto;
 	margin-left: auto;
 }
+
+/* Document Page */
+
+.doc-component-box {
+  padding: 100px 0 0;
+  margin-top: 0;
+}
+.doc-component-box h3 {
+  margin-top: 0;
+}
+.doc-component-box .doc-component-preview {
+  margin: 40px -80px 0;
+  padding: 40px 80px;
+  background-color:#f2f2f2;
+}
+.doc-component-box .doc-component-preview-inner {
+  position: relative;
+}
+.doc-component-box .uc-code-unit {
+  margin: 0 -80px;
+  background-color: white;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.doc-component-box pre {
+  border-radius: 0;
+  margin: 0 80px;
+  padding: 40px 0;
+  background-color: white;
+}
+.doc-component-box pre > code {
+  color: black;
+  background-color: white;
+}

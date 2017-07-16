@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atomic Lab - component guide generator based on partial templates</title>
+  <meta name="description" content="Atomic Lab is a simple and beautiful CSS component set.">
+  <meta name="author" content="kokushin">
+
+  <meta property="og:site_name" content="Atomic Lab">
+  <meta property="og:title" content="Atomic Lab - Simple and beautiful CSS component set.">
+  <meta property="og:description" content="Atomic Lab is a simple and beautiful CSS component set.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kokushin.github.io/units/">
+  <meta property="og:image" content="https://kokushin.github.io/units/img/share.png">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@kokushing">
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/unitscss@latest/dist/units.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <header class="uc-header _black _fixed">
+  <div class="uc-header-logo"><a href="/">Atomic Lab</a></div>
+  <div class="uc-header-menu _small-hidden" role="navigation">
+    <a href="/">About</a>
+    <a href="/docs">Docs</a>
+    <a href="./demo.html">Demo</a>
+    <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
+  </div>
+  </header>
+
+  <nav class="uc-menu _slide _black" id="menu">
+    <div class="uc-menu-wrap">
+      <div class="uc-menu-list">
+        <a href="/ja/docs/" class="_is-current">Document</a>
+        <a href="#">Themes</a>
+        <a href="#">GitHub</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="uc-grid _nowrap">
+
+    <div class="uc-sidebar _slide uc-grid-cell" id="sidebar">
+      <div class="uc-sidebar-wrap">
+        <div class="uc-sidebar-list">
+          <p><strong>Getting Started</strong></p>
+          <a href="/docs/">Install</a>
+          <a href="/docs/">doc</a>
+          <a href="/docs/">template</a>
+          <a href="/docs/">preview</a>
+          <a href="/docs/">note</a>
+          <a href="/docs/">Config</a>
+        </div>
+        <div class="uc-sidebar-list">
+          <p><strong>CLI</strong></p>
+          <a href="/docs/">Install</a>
+        </div>
+        <div class="uc-sidebar-list">
+          <p><strong>JavaScript API</strong></p>
+          <a href="/docs/">Install</a>
+        </div>
+        <div class="uc-sidebar-list">
+          <p><strong>Links</strong></p>
+          <a href="/">Home</a>
+          <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="uc-grid-cell _col-fit">
+
+      <div class="uc-hero">
+        <div class="uc-hero-bg" style="background-image:url(https://source.unsplash.com/random)"></div>
+        <div class="uc-hero-title">Welcome to Atomic Lab</div>
+      </div>
+
+      <main class="uc-content">
+
+        <div class="uc-pager-unit">
+          <div class="uc-btn _primary"><a href="#">Install →</a></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <footer class="uc-footer _dark">
+    <div class="uc-footer-menu">
+      <a href="https://github.com/kokushin/units" target="_blank">Document</a>
+      <a href="https://github.com/kokushin/units" target="_blank">Demo</a>
+      <a href="https://github.com/kokushin/units" target="_blank">GitHub</a>
+      <a href="https://github.com/kokushin/units" target="_blank">Twitter</a>
+    </div>
+    <div class="uc-footer-logo"><cite>Atomic Lab</cite></div>
+    <p>Made by <a href="#" target="_blank">@kokushing</a>,
+    Licensed under MIT license.<br>
+    Inspired by <a href="https://material.io/guidelines/" target="_blank">Google Material Design.</a><br>
+    Photo by <a href="https://unsplash.com/" target="_blank">unsplash.com.</a></p>
+    <small>&copy; 2017 Atomic Lab v1.0.0-beta</small>
+  </footer>
+
+  <script src="/js/units.js"></script>
+</body>
+</html>
