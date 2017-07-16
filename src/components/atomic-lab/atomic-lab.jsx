@@ -2,8 +2,8 @@ import React from 'react';
 import SplitPane from 'react-split-pane';
 import 'react-mdl/extra/material.css';
 import 'react-mdl/extra/material.js';
-import '../../../css/style.css';
-import '../../../css/dialog-polyfill.css'
+import './style.css';
+import './dialog-polyfill.css'
 import './atomic-lab.scss';
 
 export default class AtomicLab extends React.Component {

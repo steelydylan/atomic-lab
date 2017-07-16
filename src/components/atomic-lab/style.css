@@ -1,0 +1,159 @@
+@charset "utf-8";
+
+html {
+	box-sizing: border-box;
+}
+
+*,
+*::after,
+*::before {
+	box-sizing: inherit;
+}
+
+.ace_editor{
+	width: auto !important;
+}
+
+.mdl-dialog {
+	z-index: 100;
+}
+
+.mdl-dialog--wide {
+	width: auto;
+	max-width: 600px;
+}
+
+.mdl-dialog__title {
+	font-size: 1.5em;
+	color: #888;
+}
+
+.mdl-radio {
+	margin-right: 20px;
+}
+
+.mdl-layout {
+	height: calc(100vh - 64px);
+}
+
+.mdl-layout__drawer {
+	width: 350px;
+}
+
+.mdl-layout--fixed-drawer > .mdl-layout__content {
+	margin-left: 350px;
+	padding: 10px;
+}
+
+.mdl-layout__tab-bar {
+	width: 100%;
+	height: auto;
+}
+
+.mdl-layout__tab {
+	cursor: pointer;
+}
+
+.mdl-data-table {
+	width: 100%;
+}
+
+.mdl-data-table td {
+	text-align: left;
+}
+
+.mdl-data-table .selected {
+	background-color: #eee;
+}
+
+.mdl-data-table tr {
+	cursor: pointer;
+}
+
+.mdl-data-table__name {
+	width: 200px;
+}
+
+.mdl-data-table td:first-of-type,
+.mdl-data-table th:first-of-type {
+	padding-left: 10px;
+}
+
+.mdl-textfield-wrap {
+	padding: 10px;
+}
+
+.mdl-textfield-wrap .mdl-checkbox {
+	width: auto;
+	margin-right: 20px;
+}
+
+.mdl-button--pull-right {
+	float: right;
+}
+
+.mdl-textfield--large {
+	width: 100%;
+}
+
+.mdl-layout__container {
+	height: auto;
+}
+
+.mdl-layout__header-row .mdl-button--icon {
+	margin: 0;
+}
+
+.mdl-layout-logo {
+	margin-right: 15px;
+}
+
+.mdl-navigation__link label {
+	cursor: pointer;
+}
+
+.mdl-data-table th{
+	text-align: left;
+}
+
+.mdl-button--float{
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: 1000;
+}
+
+.mdl-button--raised.mdl-button--trash{
+	background: rgb(255,64,129);
+	margin-right: 10px;
+}
+
+.mdl-data-table--about{
+	margin-bottom: 20px;
+}
+
+.ace_editor {
+	height: 100%;
+	margin-top: 0;
+}
+
+.mdl-dialog{
+	-webkit-transition: .3s opacity;
+	   -moz-transition: .3s opacity;
+	    -ms-transition: .3s opacity;
+	     -o-transition: .3s opacity;
+	        transition: .3s opacity;
+}
+
+.mdl-dialog.mdl-dialog--fade{
+	opacity: 0;
+}
+
+.mdl-dialog--superwide{
+	width: auto;
+	max-width: 700px;
+}
+
+.mdl-data-table--collection{
+	background-color: transparent;
+}
