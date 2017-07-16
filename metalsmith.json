@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "title": "Atomic Lab",
+    "description": "component guide generator based on partial templates"
+  },
+  "plugins": {
+    "metalsmith-collections": {
+      "posts": {
+        "pattern":"posts/*.md"
+      }
+    },
+    "metalsmith-markdown": {},
+    "metalsmith-permalinks": {
+      "pattern": ":title"
+    },
+    "metalsmith-templates": {
+      "engine": "ejs",
+      "directory": "templates"
+    }
+  },
+  "source": "./posts",
+  "destination": "./docs"
+}
