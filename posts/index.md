@@ -44,10 +44,21 @@ A website wireframe made with organism/molecule/atom components.
 You can give each component a name for your reference.
 By giving them names, you can easily find components.
 
+
+<div class="uc-photo _full">
+<img src="../images/name.png" />
+</div>
+
 ## css
 
 If you want to show css source of the component, you should write the path from the template file.
 
+<div class="uc-photo _full">
+<img src="../images/css-source.png" />
+</div>
+
 ## desc
 
 You can write a description of the component.
+
+<img src="../images/description.png" />
