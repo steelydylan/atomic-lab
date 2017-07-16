@@ -6,7 +6,7 @@ template: docs.ejs
 
 <h1 class="uc-section-title">Document</h1>
 
-To convert partial templates to component-styleguides, you should leave a comment tags like below.
+To convert partial templates to component-styleguides, you should leave a comment like below.
 <div class="uc-code-unit"><pre>
 <code class="shell">&lt;!--@doc
 # @category atom
