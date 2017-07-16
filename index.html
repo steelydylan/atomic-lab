@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400:500" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://cdn.kokush.in/units/1.0.1-beta/units.min.css">
-    <link rel="stylesheet" href="./about/css/style.css">
+    <link rel="stylesheet" href="./css/units.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
 </head>
-<body>
+<body class="_theme-light">
 <header class="uc-header _ghost">
 <div class="uc-header-logo"><a href="/">Atomic Lab</a></div>
 <div class="uc-header-menu _small-hidden" role="navigation">
@@ -19,22 +21,92 @@
   <a href="./demo.html">Demo</a>
   <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
 </div>
-<div class="uc-menu-btn _medium-hidden _large-hidden">
-  <button><i class="uc-menu-btn-icon"></i></button>
-</div>
 </header>
-<div class="uc-hero" style="background-color:#CCC">
-<div class="uc-hero-bg" style="background-image:url(https://source.unsplash.com/1600x900/?nature,water)"></div>
-<p><img src="./images/favicon.png" /></p>
+<div class="uc-hero _full" style="background-color:#CCC">
+<div class="uc-hero-bg" style="background-image:url(https://source.unsplash.com/9kbmpWBTk9A/1600x900/)"></div>
+<img src="./images/favicon.png" />
 <h1 class="uc-hero-title">Atomic Lab</h1>
 <p class="uc-hero-text">Component Guide Generator based on partial templates (ejs/jade/haml/html)</p>
 <p class="uc-btn"><a href="https://github.com/steelydylan/atomic-lab">View on Github</a></p>
 </div>
 <main class="uc-content content">
     <div class="uc-section">
-        <h2>About Atomic Lab</h2>
-        <p>Atomic Lab is component guide generator, you can build with Node.js environment</p>
-        <p><img src="./about/images/Feature-browser.png" /></p>
+        <div class="uc-section-inner" style="max-width:960px;">
+            <h2 class="uc-section-title">About Atomic Lab</h2>
+            <p>Atomic Lab is component guide generator, you can build with Node.js environment</p>
+            <div class="uc-photo-unit">
+                <figure class="uc-photo _full">
+                    <img src="./images/Feature-browser.png" style="background-color:#FFF"/>
+                </figure>
+            </div>
+        </div>
+    </div>
+    <div class="uc-section _gray">
+        <div class="uc-section-inner" style="max-width:960px">
+            <h2 class="uc-section-title">Install</h2>
+            <div class="uc-code-unit">
+                <pre><code class="shell">$ npm install atomic-lab --save</code></pre>
+            </div>
+        
+            <div class="uc-code-unit">
+                <h3> or install with yarn.</h3>
+                <pre><code class="shell">$ yarn add atomic-lab</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="uc-section">
+        <div class="uc-section-inner" style="max-width:960px">
+            <h2 class="uc-section-title">Build</h2>
+            
+            <div class="uc-code-unit">
+                <h3>Via npx</h3>
+                <pre><code class="shell">$ npx atomic-lab build</code></pre>
+            </div>
+            
+            <div class="uc-code-unit">
+                <h3>With $(npm bin)</h3>
+                <pre><code class="shell">$ $(npm bin)/atomic-lab build</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="uc-section _gray">
+        <div class="uc-section-inner" style="max-width:960px">
+            <h2 class="uc-section-title">Specify src/dist directory</h2>
+            <div class="uc-code-unit">
+                <h3>Via npx</h3>
+                <pre><code class="shell">$ npx atomic-lab build --src ./components --dist ./styleguide</code></pre>
+            </div>            
+        </div>
+    </div>
+    <div class="uc-section _gray">
+        <div class="uc-section-inner" style="max-width:960px">
+            <h2 class="uc-section-title">Syntax</h2>
+            <div class="uc-code-unit">
+                <h3></h3>
+                <pre><code class="html">&lt;!--@doc
+# @category organism
+# @name uc-header
+# @css ./uc-header.scss
+# @desc grid system and clearfix
+--&gt;
+
+&lt;!--@template tilte="Blog" --&gt;
+&lt;header class="uc-header _black"&gt;
+&lt;div class="uc-header-logo"&gt;&lt;a href="/"&gt;&lt;%= title %&gt;&lt;/a&gt;&lt;/div&gt;
+&lt;div class="uc-header-menu _small-hidden" role="navigation"&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+    &lt;a href="#"&gt;Portfolio&lt;/a&gt;
+    &lt;a href="#"&gt;GitHub&lt;/a&gt;
+&lt;/div&gt;
+&lt;div class="uc-menu-btn _medium-hidden _large-hidden"&gt;&lt;button&gt;&lt;i class="uc-menu-btn-icon"&gt;&lt;/i&gt;&lt;/button&gt;&lt;/div&gt;
+&lt;/header&gt;
+&lt;!--@/template --&gt;
+
+&lt;!--@preview
+&lt;uc-header title="Horic Design" /&gt;
+--&gt;</code></pre>
+            </div>            
+        </div>
     </div>
 </main>
 <footer class="uc-footer _dark">
