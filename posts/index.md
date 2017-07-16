@@ -53,3 +53,11 @@ A website wireframe made with organism/molecule/atom components.
 
 You can give each component a name for your reference.
 By giving them names, you can easily find components.
+
+## css
+
+If you want to show css source of the component, you should write the path from the template file.
+
+## desc
+
+You can write a description of the component.
