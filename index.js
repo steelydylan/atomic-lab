@@ -107,7 +107,6 @@ const copyPromise = (src, dist) => {
 atomicLab.build = function (opt) {
   const src = opt.src;
   const dist = opt.dist;
-  const markup = opt.markup;
   const parser = extend({
     start: /<!--@doc/g,
     end: /-->/g,
