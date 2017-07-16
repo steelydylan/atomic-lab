@@ -54,7 +54,7 @@ But, Do you really need those style guide generators? Actually I and some other 
             </div>
         
             <div class="uc-code-unit">
-                <h3> or install with yarn.</h3>
+                <p> or install with yarn.</p>
                 <pre><code class="shell">$ yarn add atomic-lab</code></pre>
             </div>
         </div>
@@ -64,12 +64,12 @@ But, Do you really need those style guide generators? Actually I and some other 
             <h2 class="uc-section-title">Build</h2>
             
             <div class="uc-code-unit">
-                <h3>Via npx</h3>
+                <p>Via npx</p>
                 <pre><code class="shell">$ npx atomic-lab build</code></pre>
             </div>
             
             <div class="uc-code-unit">
-                <h3>With $(npm bin)</h3>
+                <p>With $(npm bin)</p>
                 <pre><code class="shell">$ $(npm bin)/atomic-lab build</code></pre>
             </div>
             <div class="uc-code-unit">
@@ -90,18 +90,23 @@ But, Do you really need those style guide generators? Actually I and some other 
     </div>
     <div class="uc-section _gray">
         <div class="uc-section-inner" style="max-width:960px">
-            <h2 class="uc-section-title">Specify src/dist directory</h2>
+            <h2 class="uc-section-title">Options</h2>
+            <h3>Specify src/dist directory</h3>
             <div class="uc-code-unit">
-                <h3>Via npx</h3>
+                <p>Via npx</p>
                 <pre><code class="shell">$ npx atomic-lab build --src ./components --dist ./styleguide</code></pre>
-            </div>            
+            </div>        
+            <div class="uc-code-unit">
+                <p>or npm bin</p>
+                <pre><code class="shell">$ $(npm bin)/atomic-lab build --src ./components --dist ./styleguide</code></pre>
+            </div>     
         </div>
     </div>
     <div class="uc-section">
         <div class="uc-section-inner" style="max-width:960px">
             <h2 class="uc-section-title">Syntax</h2>
             <div class="uc-code-unit">
-                <h3>When you want to use with ejs</h3>
+                <p>When you want to use with ejs</p>
                 <pre><code class="html">&lt;!--@doc
 # @category organism
 # @name uc-header

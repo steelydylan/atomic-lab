@@ -2,3 +2,12 @@ p,
 .uc-section-title+p{
 	font-size: 1.125rem;
 }
+
+.uc-section-title {
+	text-align: center;
+}
+
+.uc-section-title:after {
+	margin-right: auto;
+	margin-left: auto;
+}
