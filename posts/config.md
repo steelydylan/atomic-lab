@@ -3,6 +3,8 @@ title: Config
 date: 2017-07-17
 template: docs.ejs
 url: config/
+next_url: docs/cli/
+next_label: Cli
 ---
 
 <h1 class="uc-section-title">Config</h1>
