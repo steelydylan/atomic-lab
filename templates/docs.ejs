@@ -8,29 +8,7 @@
 
   <div class="uc-grid _nowrap">
 
-    <div class="uc-sidebar _slide uc-grid-cell" id="sidebar">
-      <div class="uc-sidebar-wrap">
-        <div class="uc-sidebar-list">
-          <p><strong>Getting Started</strong></p>
-          <a href="<%= blog_url %>docs/">How it works</a>
-          <a href="<%= blog_url %>docs/document/">Document</a>
-          <a href="<%= blog_url %>docs/preview/">Preview</a>
-          <a href="<%= blog_url %>docs/note/">Note</a>
-          <a href="<%= blog_url %>docs/config/">Config</a>
-        </div>
-        <div class="uc-sidebar-list">
-          <p><strong>API</strong></p>
-          <a href="<%= blog_url %>docs/cli/">CLI</a>
-          <a href="<%= blog_url %>docs/javascript/">JavaScript</a>
-        </div>
-        <div class="uc-sidebar-list">
-          <p><strong>Links</strong></p>
-          <a href="<%= blog_url %>">Home</a>
-          <a href="https://www.npmjs.com/package/atomic-lab" target="_blank">npm</a>
-          <a href="https://github.com/steelydylan/atomic-lab" target="_blank">GitHub</a>
-        </div>
-      </div>
-    </div>
+    <%- include('./_partials/sidebar'); %>
 
     <div class="uc-grid-cell _col-fit">
       
@@ -38,6 +16,7 @@
       <main class="uc-content">
 
         <div class="uc-section">
+          
         <%- contents %>
         </div>
         <% if (typeof next_url !== 'undefined') { %>

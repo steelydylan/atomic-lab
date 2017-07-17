@@ -1,0 +1,23 @@
+<div class="uc-sidebar _slide uc-grid-cell" id="sidebar">
+    <div class="uc-sidebar-wrap">
+    <div class="uc-sidebar-list">
+        <p><strong>Getting Started</strong></p>
+        <a href="<%= blog_url %>docs/"<% if(url === '/') {%> class="_is-current"<%}%>>How it works</a>
+        <a href="<%= blog_url %>docs/document/"<% if(url === 'document/') {%> class="_is-current"<%}%>>Document</a>
+        <a href="<%= blog_url %>docs/preview/"<% if(url === 'preview/') {%> class="_is-current"<%}%>>Preview</a>
+        <a href="<%= blog_url %>docs/note/"<% if(url === 'note/') {%> class="_is-current"<%}%>>Note</a>
+        <a href="<%= blog_url %>docs/config/"<% if(url === 'config/') {%> class="_is-current"<%}%>>Config</a>
+    </div>
+    <div class="uc-sidebar-list">
+        <p><strong>API</strong></p>
+        <a href="<%= blog_url %>docs/cli/"<% if(url === 'cli/') {%> class="_is-current"<%}%>>CLI</a>
+        <a href="<%= blog_url %>docs/javascript/"<% if(url === 'javascript/') {%> class="_is-current"<%}%>>JavaScript</a>
+    </div>
+    <div class="uc-sidebar-list">
+        <p><strong>Links</strong></p>
+        <a href="<%= blog_url %>">Home</a>
+        <a href="https://www.npmjs.com/package/atomic-lab" target="_blank">npm</a>
+        <a href="https://github.com/steelydylan/atomic-lab" target="_blank">GitHub</a>
+    </div>
+    </div>
+</div>
