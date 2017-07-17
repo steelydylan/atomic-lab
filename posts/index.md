@@ -15,7 +15,7 @@ To convert partial templates to component-styleguides, you should leave a commen
 # @desc it's just a card component
 --&gt;</code></pre></div>
 
-## category
+## @category
  
 There are 4 types of category in Atomic Lab
 

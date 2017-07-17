@@ -52,7 +52,6 @@
           <p><strong>Getting Started</strong></p>
           <a href="#">Document</a>
           <a href="#">Template</a>
-          <a href="#">Preview</a>
           <a href="#">Note</a>
           <a href="#">Config</a>
         </div>
@@ -80,7 +79,17 @@
         <div class="uc-section">
         <h1 class="uc-section-title">Template</h1>
 
-
+<p>You may want to define how each component should be rendered in accordance with some variables.</p>
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@template title=&quot;Title&quot; lead=&quot;&quot; img=&quot;example.png&quot; --&gt;
+&lt;div class=&quot;uc-hero&quot;&gt;
+    &lt;div class=&quot;uc-hero-bg&quot; style=&quot;background-image:url(&lt;%= img %&gt;)&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;uc-hero-title&quot;&gt;&lt;%= title %&gt;&lt;/div&gt;
+    &lt;% if (lead) { %&gt;
+    &lt;p&gt;&lt;%= lead %&gt;&lt;/p&gt;
+    &lt;% } %&gt;
+&lt;/div&gt;
+&lt;!--@/template --&gt;</code></pre></div>
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>
