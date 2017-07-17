@@ -10,7 +10,7 @@ You neeed Node.js environment to use this styleguide. because this styleguide ge
 It is almost impossible to make json by manual. So You may want to use CLI or gulp to make json file. Below is the breief image how atomic-lab works.
 
 <div class="uc-photo _full" style="margin-top:20px;margin-bottom:30px;">
-  <img src="../../images/how_it_works.png" class="_shadow"/>
+  <img src="../images/how_it_works.png" class="_shadow"/>
 </div>
 
 ### components.json
