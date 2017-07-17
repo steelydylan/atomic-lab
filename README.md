@@ -1,9 +1,9 @@
 # [Atomic Lab.](http://steelydylan.github.io/atomic-lab/)
 Styleguide generator based on atomic design built with React, Redux
-<p><img src="images/favicon.png"></p>
+<p><img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/favicon.png"></p>
 
 ## Screenshot
-<img src="about/images/Feature-browser.png">
+<img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/Feature-browser.png">
 
 ## Demo
 You can try it out from here
@@ -42,10 +42,10 @@ $ $(npm bin)/atomic-lab build
 ## Attribution
 We use some icons created by http://patternlab.io/
 
-<img src="images/iconAtom-s.png"></img>
-<img src="images/iconMolecule-s.png"></img>
-<img src="images/iconOrganism-s.png"></img>
-<img src="images/iconTemplate-s.png"></img>
+<img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/iconAtom-s.png"></img>
+<img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/iconMolecule-s.png"></img>
+<img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/iconOrganism-s.png"></img>
+<img src="https://raw.githubusercontent.com/steelydylan/atomic-lab/master/images/iconTemplate-s.png"></img>
 
 ## License
 MIT License
