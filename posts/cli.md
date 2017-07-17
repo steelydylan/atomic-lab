@@ -3,7 +3,7 @@ title: Cli
 date: 2017-07-17
 template: docs.ejs
 url: cli/
-next_url: js/
+next_url: javascript/
 next_label: JavaScript
 ---
 

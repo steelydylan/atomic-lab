@@ -69,31 +69,39 @@
       <main class="uc-content">
 
         <div class="uc-section">
-        <h1 class="uc-section-title">Note</h1>
+        <h1 class="uc-section-title">JavaScript</h1>
 
-<p>Sometimes you may want to leave some explanation how to use components.
-Yes You can! by using <code>@note</code> comment.
-Markdown is also available.</p>
+<p>I think some people prefere to use JavaScript API to work with build tools such as gulp.
+So I have prepared JavaScript API you can <code>require()</code>;</p>
 <div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@note
-## grid system
-```scss
-@include make-grid(mod,col,12);
-```
-## clearfix
-```scss
-@include clearfix();
-``` 
---&gt;</code></pre></div>
+<code class="js">// import atomic-lab
+const atomic = require(&#39;atomic-lab&#39;);
 
-<p>is to be</p>
-<div class="uc-photo _full">
-  <img src="../../images/note.png" class="_shadow"/>
-</div>
-        </div>
-        
-        <div class="uc-pager-unit">
-          <div class="uc-btn _primary"><a href="https://steelydylan.github.io/atomic-lab/docs/config/">Config →</a></div>
+// build styleguide
+atomic.build({
+  src: &#39;components/&#39;,
+  dist: &#39;styleguide/&#39;
+});</code></pre></div>
+
+<h2 id="example-to-use-with-gulp-">Example to use with gulp.</h2>
+<div class="uc-code-unit"><pre>
+<code class="js">const gulp = require(&#39;gulp&#39;);
+const atomic = require(&#39;atomic-lab&#39;);
+
+gulp.task(&#39;atomic&#39;, function(){
+  atomic.build({
+    src: &#39;components/&#39;,
+    dist: &#39;styleguide/&#39;,
+    markup: &#39;html&#39;
+  });
+});
+
+gulp.task(&#39;watch&#39;,function(){
+  gulp.watch(&#39;components/<em>*/</em>.*&#39;,[&#39;atomic&#39;]);
+});</code></pre></div>
+
+
+
         </div>
         
       </main>
