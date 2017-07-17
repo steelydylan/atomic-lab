@@ -33,7 +33,7 @@ const getPackage = () => {
     "watch": "onchange \\"components/\\" -- npm run build",
     "sync": "browser-sync start --server './' --files './styleguide/components.json' --startPath ./styleguide/index.html",
     "build": "npm-run-all -p build:guide",
-    "build:guide": "atomic-lab build --markup html",
+    "build:guide": "atomic-lab build",
     "start": "npm-run-all -p watch sync"
   },
   "author": "steelydylan",
