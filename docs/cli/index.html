@@ -72,16 +72,26 @@
         <h1 class="uc-section-title">CLI</h1>
 
 <p>Atomic Lab supports cli to build styleguides.
-You can generate styleguide anywhere by installing <code>atomic-lab</code> globally 
-But I&#39;d rather recommend to install it locally and write some <code>npm scripts</code></p>
+You can generate styleguide anywhere by installing <code>atomic-lab</code> globally. </p>
+<div class="uc-code-unit"><pre>
+<code class="shell">npm install -g atomic-lab
+atomic-lab build --src ./components --dist ./styleguide</code></pre></div>
+
+<p>But I&#39;d rather recommend installing it locally and write some <code>npm scripts</code> like below.</p>
 <div class="uc-code-unit"><pre>
 <code class="json">&quot;scripts&quot;: {
   &quot;test&quot;: &quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;,
-  &quot;watch&quot;: &quot;onchange \&quot;components/\&quot; -- npm run build:guide&quot;,
-  &quot;sync&quot;: &quot;browser-sync start --server &#39;./&#39; --files &#39;./styleguide/components.json&#39; --startPath ./styleguide/index.html&quot;,
-  &quot;build:guide&quot;: &quot;atomic-lab build --src ./components --dist ./styleguide &quot;,
-  &quot;start&quot;: &quot;npm run build:guide &amp;&amp; npm-run-all -p watch sync&quot;
+  &quot;build:guide&quot;: &quot;atomic-lab build --src ./components --dist ./styleguide&quot;,
 },</code></pre></div>
+
+<p>I know that some peopole don&#39;t know much about <code>npm scripts</code>.<br/>
+so I prepared git repository that you can start <code>atomic-lab</code> easily.</p>
+<p><a href="https://github.com/steelydylan/atomic-lab-ejs-example">https://github.com/steelydylan/atomic-lab-ejs-example</a></p>
+<p>or If you have already installed <code>npx</code> you can execute local npm scripts with below command.</p>
+<div class="uc-code-unit"><pre>
+<code class="shell">npx atomic-lab build --src ./components --dist ./styleguide</code></pre></div>
+
+
 
 
         </div>
