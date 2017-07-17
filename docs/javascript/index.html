@@ -22,20 +22,36 @@
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" rel="stylesheet">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body class="_theme-light">
 
-  <header class="uc-header _black _fixed">
+<header class="uc-header _black _fixed">
+  <div class="uc-menu-btn _hide-medium _hide-large" data-open-target="#sidebar">
+    <button><i class="uc-menu-btn-icon"></i></button>
+  </div>
   <div class="uc-header-logo"><a href="https://steelydylan.github.io/atomic-lab/">Atomic Lab</a></div>
-  <div class="uc-header-menu _small-hidden" role="navigation">
+  <div class="uc-header-menu _hide-small" role="navigation">
     <a href="https://steelydylan.github.io/atomic-lab/">About</a>
     <a href="https://steelydylan.github.io/atomic-lab/docs/">Docs</a>
     <a href="https://steelydylan.github.io/atomic-lab/demo.html" target="_blank">Demo</a>
     <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
   </div>
-  </header>
-  
+  <div class="uc-menu-btn _text _hide-medium _hide-large" data-open-target="#menu">
+    <button>Menu</button>
+  </div>
+</header>
+
+
+<nav class="uc-menu _slide _black" id="menu">
+  <div class="uc-menu-wrap">
+    <div class="uc-menu-list">
+      <a href="https://steelydylan.github.io/atomic-lab/">About</a>
+      <a href="https://steelydylan.github.io/atomic-lab/docs/">Docs</a>
+      <a href="https://steelydylan.github.io/atomic-lab/demo.html" target="_blank">Demo</a>
+    </div>
+  </div>
+</nav>
+
 
   <div class="uc-grid _nowrap">
 
@@ -120,6 +136,7 @@ gulp.task(&#39;watch&#39;,function(){
   <small>© 2017 Atomic Lab</small>
   </footer>
 
-
+  <script src="https://unpkg.com/unitscss@latest/dist/units.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
