@@ -66,38 +66,27 @@
       <main class="uc-content">
 
         <div class="uc-section">
-        <h1 class="uc-section-title">Preview</h1>
+        <h1 class="uc-section-title">Note</h1>
 
-<h2 id="-preview">@preview</h2>
-<p>You can preview HTML by using <code>@preview</code> comment like below.</p>
+<p>Sometimes you may want to leave some explanation how to use components.
+Yes You can! by using <code>@note</code> comment.
+Markdown is also available.</p>
 <div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@preview
-&lt;p&gt;Hello world&lt;/p&gt;
---&gt;</code></pre></div>
-
-<h2 id="-template">@template</h2>
-<p>You can define original HTML tags to be rendered on preview screen.</p>
-<div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@template --&gt;
-code here
-&lt;!--@/template --&gt;</code></pre></div>
-
-<h3 id="define-default-variables">define default variables</h3>
-<p>You can also declare default variables when no parameters are found</p>
-<div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@template text=&quot;hoge&quot; --&gt;
-&lt;p&gt;{text}&lt;/p&gt;
-&lt;!--@/template --&gt;</code></pre></div>
-
-<p>Supporse that above component name is <code>main-visual</code>, You can call defined template via <code>@preview</code>.</p>
-<div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@preview 
-&lt;main-visual text=&quot;hello world&quot; /&gt;
+<code class="html">&lt;!--@note
+## grid system
+```scss
+@include make-grid(mod,col,12);
+```
+## clearfix
+```scss
+@include clearfix();
+``` 
 --&gt;</code></pre></div>
 
 <p>is to be</p>
-<div class="uc-code-unit"><pre>
-<code class="html">&lt;p&gt;hello world&lt;/p&gt;</code></pre></div>
+<div class="uc-photo _full">
+  <img src="../../images/note.png" class="_shadow"/>
+</div>
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>
