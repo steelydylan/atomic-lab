@@ -37,8 +37,7 @@ $ $(npm bin)/atomic-lab build
 ```
 
 ## Documentation
-1. [Getting Started](https://github.com/steelydylan/atomic-lab/wiki/Getting-Started)
-2. [Styleguide Rule](https://github.com/steelydylan/atomic-lab/wiki/Styleguide-Rule)
+[https://steelydylan.github.io/atomic-lab/docs/](https://steelydylan.github.io/atomic-lab/docs/)
 
 ## Attribution
 We use some icons created by http://patternlab.io/
