@@ -6,17 +6,17 @@
   <%- include('./_partials/header',{modifier:'_black _fixed', sidebar: true}); %>
 
 
-  <div class="uc-grid _nowrap">
+  <div class="uc-grid _small-col-full _nowrap">
 
     <%- include('./_partials/sidebar'); %>
 
     <div class="uc-grid-cell _col-fit">
-      
+
 
       <main class="uc-content">
 
         <div class="uc-section">
-          
+
         <%- contents %>
         </div>
         <% if (typeof next_url !== 'undefined') { %>
