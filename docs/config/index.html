@@ -19,7 +19,7 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400:500" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/unitscss@0.1.4/dist/units.min.css">
   <link rel="stylesheet" href="https://steelydylan.github.io/atomic-lab/css/style.css">
-  
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" rel="stylesheet">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
@@ -71,7 +71,50 @@
         <div class="uc-section">
         <h1 class="uc-section-title">Config</h1>
 
-
+<div class="uc-code-unit"><pre>
+<code class="json">{
+  &quot;title&quot;: &quot;Atomic Lab.&quot;,
+  &quot;description&quot;: &quot;this is an amazing styleguide generator&quot;,
+  &quot;local_file_path&quot;: &quot;./components.json&quot;,
+  &quot;run_script&quot;: true,
+  &quot;enable_editing&quot;: true,
+  &quot;breakpoint&quot;: {
+    &quot;pc&quot;: 1024,
+    &quot;tablet&quot;: 768,
+    &quot;smartphone&quot;: 480
+  },
+  &quot;css_dependencies&quot;: [
+    &quot;//cdn.kokush.in/units/1.0.1-beta/units.min.css&quot;
+  ],
+  &quot;lang&quot;: &quot;en&quot;,
+  &quot;markup&quot;: &quot;ejs&quot;,
+  &quot;styling&quot;: &quot;scss&quot;,
+  &quot;parser&quot;: {
+    &quot;preview&quot;: {
+      &quot;start&quot;: &quot;<!--@preview",
+      "end": "-->&quot;,
+      &quot;body&quot;: &quot;<a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x21;&#x2d;&#45;&#64;&#x70;&#114;&#x65;&#118;&#105;&#101;&#x77;&#40;&#40;&#91;&#92;&#x6e;&#x5c;&#114;&#x5c;&#x74;&#93;&#x7c;&#46;&#x29;&#42;&#63;&#x29;&#45;&#x2d;">&#x21;&#x2d;&#45;&#64;&#x70;&#114;&#x65;&#118;&#105;&#101;&#x77;&#40;&#40;&#91;&#92;&#x6e;&#x5c;&#114;&#x5c;&#x74;&#93;&#x7c;&#46;&#x29;&#42;&#63;&#x29;&#45;&#x2d;</a>&quot;
+    },
+    &quot;note&quot;: {
+      &quot;start&quot;: &quot;<!--@note",
+      "end": "-->&quot;,
+      &quot;body&quot;: &quot;<a href="&#109;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#33;&#x2d;&#45;&#64;&#110;&#x6f;&#x74;&#x65;&#40;&#x28;&#x5b;&#x5c;&#110;&#x5c;&#114;&#x5c;&#116;&#x5d;&#x7c;&#x2e;&#x29;&#42;&#x3f;&#x29;&#45;&#45;">&#33;&#x2d;&#45;&#64;&#110;&#x6f;&#x74;&#x65;&#40;&#x28;&#x5b;&#x5c;&#110;&#x5c;&#114;&#x5c;&#116;&#x5d;&#x7c;&#x2e;&#x29;&#42;&#x3f;&#x29;&#45;&#45;</a>&quot;
+    },
+    &quot;template&quot;: {
+      &quot;start&quot;: &quot;<a href="&#x6d;&#97;&#105;&#108;&#116;&#x6f;&#58;&#x21;&#x2d;&#45;&#64;&#116;&#x65;&#x6d;&#112;&#x6c;&#97;&#116;&#x65;&#40;&#46;&#x2a;&#63;&#41;&#x2d;&#x2d;">&#x21;&#x2d;&#45;&#64;&#116;&#x65;&#x6d;&#112;&#x6c;&#97;&#116;&#x65;&#40;&#46;&#x2a;&#63;&#41;&#x2d;&#x2d;</a>&quot;,
+      &quot;end&quot;: &quot;<a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#33;&#x2d;&#45;&#64;&#92;&#47;&#116;&#101;&#109;&#x70;&#x6c;&#x61;&#116;&#101;&#40;&#46;&#x2a;&#63;&#x29;&#45;&#x2d;">&#33;&#x2d;&#45;&#64;&#92;&#47;&#116;&#101;&#109;&#x70;&#x6c;&#x61;&#116;&#101;&#40;&#46;&#x2a;&#63;&#x29;&#45;&#x2d;</a>&quot;,
+      &quot;body&quot;: &quot;<a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#x3a;&#33;&#45;&#45;&#64;&#x74;&#x65;&#x6d;&#112;&#x6c;&#97;&#116;&#x65;&#40;&#x2e;&#x2a;&#x3f;&#x29;&#45;&#x2d;">&#33;&#45;&#45;&#64;&#x74;&#x65;&#x6d;&#112;&#x6c;&#97;&#116;&#x65;&#40;&#x2e;&#x2a;&#x3f;&#x29;&#45;&#x2d;</a>(([\n\r\t]|.)<em>?)&lt;!--@\/template(.</em>?)--&gt;&quot;
+    },
+    &quot;doc&quot;: {
+      &quot;start&quot;: &quot;<!--@doc",
+      "end": "-->&quot;,
+      &quot;body&quot;: &quot;<a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#x3a;&#33;&#45;&#x2d;&#x40;&#100;&#x6f;&#99;&#x28;&#40;&#91;&#92;&#110;&#x5c;&#114;&#92;&#116;&#93;&#x7c;&#46;&#x29;&#x2a;&#x3f;&#x29;&#45;&#45;">&#33;&#45;&#x2d;&#x40;&#100;&#x6f;&#99;&#x28;&#40;&#91;&#92;&#110;&#x5c;&#114;&#92;&#116;&#93;&#x7c;&#46;&#x29;&#x2a;&#x3f;&#x29;&#45;&#45;</a>&quot;
+    },
+    &quot;variable&quot;: {
+      &quot;mark&quot;: &quot;{(.*?)}&quot;
+    }
+  }
+}</code></pre></div>
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>
@@ -83,6 +126,7 @@
   <footer class="uc-footer _dark">
   <div class="uc-footer-menu">
       <a href="https://steelydylan.github.io/atomic-lab//">About</a>
+      <a href="https://steelydylan.github.io/atomic-lab//docs/">Demo</a>
       <a href="https://steelydylan.github.io/atomic-lab//demo.html" target="_blank">Demo</a>
       <a href="https://github.com/steelydylan/atomic-lab" target="_blank">GitHub</a>
   </div>
