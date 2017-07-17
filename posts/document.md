@@ -8,7 +8,7 @@ template: docs.ejs
 
 To convert partial templates to component-styleguides, you should leave a comment like below.
 <div class="uc-code-unit"><pre>
-<code class="shell">&lt;!--@doc
+<code class="html">&lt;!--@doc
 # @category atom
 # @name card
 # @css ./card.scss
