@@ -6,6 +6,9 @@ template: docs.ejs
 
 <h1 class="uc-section-title">Config</h1>
 
+You can change settings via config.json. For example, If you want to load more css files you should add the links to `css_dependencies`
+Below is the default config.json.
+
 <div class="uc-code-unit"><pre>
 <code class="json">{
   "title": "Atomic Lab.",
@@ -23,7 +26,6 @@ template: docs.ejs
   ],
   "lang": "en",
   "markup": "ejs",
-  "styling": "scss",
   "parser": {
     "preview": {
       "start": "<!--@preview",
@@ -50,3 +52,17 @@ template: docs.ejs
     }
   }
 }</code></pre></div>
+
+## title
+
+## description
+
+## enable_editing
+
+## breakpoint
+
+## css_dependencies
+
+## markup
+
+## parser
