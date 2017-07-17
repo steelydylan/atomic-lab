@@ -1,6 +1,7 @@
 {
   "metadata": {
-    "title": "Atomic Lab",
+    "blog_title": "Atomic Lab",
+    "blog_url": "https://steelydylan.github.io/atomic-lab/",
     "description": "component guide generator based on partial templates"
   },
   "plugins": {

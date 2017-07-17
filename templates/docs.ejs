@@ -18,31 +18,20 @@
 
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400:500" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/unitscss@0.1.4/dist/units.min.css">
-  <link rel="stylesheet" href="http://steelydylan.github.io/atomic-lab/css/style.css">
+  <link rel="stylesheet" href="<%= blog_url %>css/style.css">
 </head>
 <body class="_theme-light">
 
   <header class="uc-header _black _fixed">
-  <div class="uc-header-logo"><a href="/">Atomic Lab</a></div>
+  <div class="uc-header-logo"><a href="<%= blog_url %>"><%= blog_title %></a></div>
   <div class="uc-header-menu _small-hidden" role="navigation">
-    <a href="../">About</a>
-    <a href="./">Docs</a>
-    <a href="../demo.html">Demo</a>
+    <a href="<%= blog_url %>">About</a>
+    <a href="<%= blog_url %>docs/">Docs</a>
+    <a href="<%= blog_url %>demo.html">Demo</a>
     <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
   </div>
   </header>
   
-
-  <nav class="uc-menu _slide _black" id="menu">
-    <div class="uc-menu-wrap">
-      <div class="uc-menu-list">
-        <a href="/ja/docs/" class="_is-current">Document</a>
-        <a href="#">Themes</a>
-        <a href="#">GitHub</a>
-        <a href="#">Twitter</a>
-      </div>
-    </div>
-  </nav>
 
   <div class="uc-grid _nowrap">
 
@@ -50,10 +39,10 @@
       <div class="uc-sidebar-wrap">
         <div class="uc-sidebar-list">
           <p><strong>Getting Started</strong></p>
-          <a href="#">Document</a>
-          <a href="#">Template</a>
-          <a href="#">Note</a>
-          <a href="#">Config</a>
+          <a href="<%= blog_url %>docs/">Document</a>
+          <a href="<%= blog_url %>docs/preview/">Preview</a>
+          <a href="<%= blog_url %>docs/note/">Note</a>
+          <a href="<%= blog_url %>docs/config/">Config</a>
         </div>
         <div class="uc-sidebar-list">
           <p><strong>CLI</strong></p>

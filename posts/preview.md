@@ -1,9 +1,9 @@
 ---
-title: Template
+title: Preview
 date: 2017-07-17
 template: docs.ejs
 ---
-<h1 class="uc-section-title">Syntax</h1>
+<h1 class="uc-section-title">Preview</h1>
 
 ## @preview
 
@@ -32,11 +32,14 @@ You can also declare default variables when no parameters are found
 &lt;p&gt;{text}&lt;/p&gt;
 &lt;!--@/template --&gt;</code></pre></div>
 
-Supporse that component name is `main-visual` You can call defined template via `@preview`.
+Supporse that above component name is `main-visual`, You can call defined template via `@preview`.
 
 <div class="uc-code-unit"><pre>
 <code class="html">&lt;!--@preview 
 &lt;main-visual text="hello world" /&gt;
 --&gt;</code></pre></div>
 
+is to be
 
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;p&gt;hello world&lt;/p&gt;</code></pre></div>

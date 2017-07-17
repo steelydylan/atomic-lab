@@ -25,24 +25,13 @@
   <header class="uc-header _black _fixed">
   <div class="uc-header-logo"><a href="/">Atomic Lab</a></div>
   <div class="uc-header-menu _small-hidden" role="navigation">
-    <a href="../">About</a>
-    <a href="./">Docs</a>
-    <a href="../demo.html">Demo</a>
+    <a href="https://steelydylan.github.io/atomic-lab/">About</a>
+    <a href="https://steelydylan.github.io/atomic-lab/docs/">Docs</a>
+    <a href="https://steelydylan.github.io/atomic-lab/demo.html">Demo</a>
     <a href="https://github.com/steelydylan/atomic-lab">GitHub</a>
   </div>
   </header>
   
-
-  <nav class="uc-menu _slide _black" id="menu">
-    <div class="uc-menu-wrap">
-      <div class="uc-menu-list">
-        <a href="/ja/docs/" class="_is-current">Document</a>
-        <a href="#">Themes</a>
-        <a href="#">GitHub</a>
-        <a href="#">Twitter</a>
-      </div>
-    </div>
-  </nav>
 
   <div class="uc-grid _nowrap">
 
@@ -51,7 +40,7 @@
         <div class="uc-sidebar-list">
           <p><strong>Getting Started</strong></p>
           <a href="#">Document</a>
-          <a href="#">Template</a>
+          <a href="#">Preview</a>
           <a href="#">Note</a>
           <a href="#">Config</a>
         </div>
@@ -77,7 +66,7 @@
       <main class="uc-content">
 
         <div class="uc-section">
-        <h1 class="uc-section-title">Syntax</h1>
+        <h1 class="uc-section-title">Preview</h1>
 
 <h2 id="-preview">@preview</h2>
 <p>You can preview HTML by using <code>@preview</code> comment like below.</p>
@@ -100,14 +89,15 @@ code here
 &lt;p&gt;{text}&lt;/p&gt;
 &lt;!--@/template --&gt;</code></pre></div>
 
-<p>Supporse that component name is <code>main-visual</code> You can call defined template via <code>@preview</code>.</p>
+<p>Supporse that above component name is <code>main-visual</code>, You can call defined template via <code>@preview</code>.</p>
 <div class="uc-code-unit"><pre>
 <code class="html">&lt;!--@preview 
 &lt;main-visual text=&quot;hello world&quot; /&gt;
 --&gt;</code></pre></div>
 
-
-
+<p>is to be</p>
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;p&gt;hello world&lt;/p&gt;</code></pre></div>
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>
