@@ -69,27 +69,47 @@
       <main class="uc-content">
 
         <div class="uc-section">
-        <h1 class="uc-section-title">Note</h1>
+        <h1 class="uc-section-title">Document</h1>
 
-<p>Sometimes you may want to leave some explanation how to use components.
-Yes You can! by using <code>@note</code> comment.
-Markdown is also available.</p>
+<p>To convert partial templates to component-styleguides, you should leave a comment like below.</p>
 <div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@note
-## grid system
-```scss
-@include make-grid(mod,col,12);
-```
-## clearfix
-```scss
-@include clearfix();
-``` 
+<code class="shell">&lt;!--@doc
+# @category atom
+# @name card
+# @css ./card.scss
+# @desc it&#39;s just a card component
 --&gt;</code></pre></div>
 
-<p>is to be</p>
+<h2 id="-category">@category</h2>
+<p>There are 4 types of category in Atomic Lab</p>
+<h3 id="atom">Atom</h3>
+<p>Premitive components such as labels, buttons, inputs etc.
+These components can&#39;t be used without being mixed to be molecule/organism components.  </p>
+<h4 id="molecule">Molecule</h4>
+<p>Mixed components built with several premitive components. 
+eg) Form component built with label, button and input component.</p>
+<h3 id="organism">Organism</h3>
+<p>organisms are complex components several molucule/atom components joined together.
+eg) Header component built with logo, title and form component</p>
+<h3 id="template">Template</h3>
+<p>A website wireframe made with organism/molecule/atom components.</p>
+<h2 id="-name">@name</h2>
+<p>You can give each component a name for your reference.
+By giving them names, you can easily find components.</p>
 <div class="uc-photo _full">
-  <img src="../../images/note.png" class="_shadow"/>
+<img src="../images/name.png" class="_shadow"/>
 </div>
+
+<h2 id="-css">@css</h2>
+<p>If you want to show css source of the component, you should write the path from the template file.</p>
+<div class="uc-photo _full">
+<img src="../images/css-source.png" class="_shadow"/>
+</div>
+
+<h2 id="-desc">@desc</h2>
+<p>You can write a description of the component.</p>
+<p><img src="../images/description.png" class="_shadow"/></p>
+
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>

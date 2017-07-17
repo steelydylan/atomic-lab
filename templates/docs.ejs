@@ -19,6 +19,10 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400:500" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/unitscss@0.1.4/dist/units.min.css">
   <link rel="stylesheet" href="<%= blog_url %>css/style.css">
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" rel="stylesheet">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body class="_theme-light">
 
@@ -39,18 +43,16 @@
       <div class="uc-sidebar-wrap">
         <div class="uc-sidebar-list">
           <p><strong>Getting Started</strong></p>
-          <a href="<%= blog_url %>docs/">Document</a>
+          <a href="<%= blog_url %>docs/">How it works</a>
+          <a href="<%= blog_url %>docs/document/">Document</a>
           <a href="<%= blog_url %>docs/preview/">Preview</a>
           <a href="<%= blog_url %>docs/note/">Note</a>
           <a href="<%= blog_url %>docs/config/">Config</a>
         </div>
         <div class="uc-sidebar-list">
-          <p><strong>CLI</strong></p>
-          <a href="#">Build</a>
-        </div>
-        <div class="uc-sidebar-list">
-          <p><strong>JavaScript API</strong></p>
-          <a href="#">Build</a>
+          <p><strong>API</strong></p>
+          <a href="#">CLI</a>
+          <a href="#">JavaScript</a>
         </div>
         <div class="uc-sidebar-list">
           <p><strong>Links</strong></p>
