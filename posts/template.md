@@ -3,17 +3,40 @@ title: Template
 date: 2017-07-17
 template: docs.ejs
 ---
-<h1 class="uc-section-title">Template</h1>
+<h1 class="uc-section-title">Syntax</h1>
 
-You may want to define how each component should be rendered in accordance with some variables.
+## @preview
+
+You can preview HTML by using `@preview` comment like below.
 
 <div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@template title="Title" lead="" img="example.png" --&gt;
-&lt;div class="uc-hero"&gt;
-    &lt;div class="uc-hero-bg" style="background-image:url(<%= img %>)"&gt;&lt;/div&gt;
-    &lt;div class="uc-hero-title"&gt;&lt;%= title %&gt;&lt;/div&gt;
-    &lt;% if (lead) { %&gt;
-    &lt;p&gt;&lt;%= lead %&gt;&lt;/p&gt;
-    &lt;% } %&gt;
-&lt;/div&gt;
+<code class="html">&lt;!--@preview
+&lt;p&gt;Hello world&lt;/p&gt;
+--&gt;</code></pre></div>
+
+## @template
+
+You can define original HTML tags to be rendered on preview screen.
+
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@template --&gt;
+code here
 &lt;!--@/template --&gt;</code></pre></div>
+
+### define default variables
+
+You can also declare default variables when no parameters are found
+
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@template text="hoge" --&gt;
+&lt;p&gt;{text}&lt;/p&gt;
+&lt;!--@/template --&gt;</code></pre></div>
+
+Supporse that component name is `main-visual` You can call defined template via `@preview`.
+
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@preview 
+&lt;main-visual text="hello world" /&gt;
+--&gt;</code></pre></div>
+
+

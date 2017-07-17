@@ -77,19 +77,37 @@
       <main class="uc-content">
 
         <div class="uc-section">
-        <h1 class="uc-section-title">Template</h1>
+        <h1 class="uc-section-title">Syntax</h1>
 
-<p>You may want to define how each component should be rendered in accordance with some variables.</p>
+<h2 id="-preview">@preview</h2>
+<p>You can preview HTML by using <code>@preview</code> comment like below.</p>
 <div class="uc-code-unit"><pre>
-<code class="html">&lt;!--@template title=&quot;Title&quot; lead=&quot;&quot; img=&quot;example.png&quot; --&gt;
-&lt;div class=&quot;uc-hero&quot;&gt;
-    &lt;div class=&quot;uc-hero-bg&quot; style=&quot;background-image:url(&lt;%= img %&gt;)&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;uc-hero-title&quot;&gt;&lt;%= title %&gt;&lt;/div&gt;
-    &lt;% if (lead) { %&gt;
-    &lt;p&gt;&lt;%= lead %&gt;&lt;/p&gt;
-    &lt;% } %&gt;
-&lt;/div&gt;
+<code class="html">&lt;!--@preview
+&lt;p&gt;Hello world&lt;/p&gt;
+--&gt;</code></pre></div>
+
+<h2 id="-template">@template</h2>
+<p>You can define original HTML tags to be rendered on preview screen.</p>
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@template --&gt;
+code here
 &lt;!--@/template --&gt;</code></pre></div>
+
+<h3 id="define-default-variables">define default variables</h3>
+<p>You can also declare default variables when no parameters are found</p>
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@template text=&quot;hoge&quot; --&gt;
+&lt;p&gt;{text}&lt;/p&gt;
+&lt;!--@/template --&gt;</code></pre></div>
+
+<p>Supporse that component name is <code>main-visual</code> You can call defined template via <code>@preview</code>.</p>
+<div class="uc-code-unit"><pre>
+<code class="html">&lt;!--@preview 
+&lt;main-visual text=&quot;hello world&quot; /&gt;
+--&gt;</code></pre></div>
+
+
+
         </div>
         <div class="uc-pager-unit">
           <div class="uc-btn _primary"><a href="#">Template →</a></div>
