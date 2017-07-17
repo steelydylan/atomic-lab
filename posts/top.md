@@ -1,6 +1,6 @@
 ---
-title: Preview
+title: Top
 date: 2017-07-17
-template: docs.ejs
-url: ../
+template: top.ejs
+url: top/
 ---
