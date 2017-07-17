@@ -2,6 +2,9 @@
 title: Document
 date: 2017-07-16
 template: docs.ejs
+url: document/
+next_url: docs/preview/
+next_label: document
 ---
 
 <h1 class="uc-section-title">Document</h1>

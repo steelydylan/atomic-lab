@@ -1,7 +1,8 @@
 ---
-title: 
+title: How it works
 date: 2017-07-16
 template: docs.ejs
+url: /
 next_url: docs/document/
 next_label: document
 ---

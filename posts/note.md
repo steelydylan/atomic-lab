@@ -2,6 +2,9 @@
 title: Note
 date: 2017-07-17
 template: docs.ejs
+url: note/
+next_url: docs/config/
+next_label: Config
 ---
 
 <h1 class="uc-section-title">Note</h1>
