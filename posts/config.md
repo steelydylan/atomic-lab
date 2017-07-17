@@ -56,14 +56,43 @@ Below is the default config.json.
 
 ## title
 
+You can change the header title by `title` property.
+
+<div class="uc-photo _full">
+<img src="../../images/config_title.png" class="_shadow"/>
+</div>
+
 ## description
+
+You can add brief description under the title.
+
+<div class="uc-photo _full">
+<img src="../../images/config_description.png" class="_shadow"/>
+</div>
 
 ## enable_editing
 
+By set it true, you can edit components on browsers.
+
 ## breakpoint
+
+Define pc, tablet and smartphone size so to change preview screen width quickly
+
+<div class="uc-photo _full">
+<img src="../../images/config_breakpoint.png" class="_shadow"/>
+</div>
+
 
 ## css_dependencies
 
+Atomic lab uses iframe to render results, If you want to inject some styles to the iframe, You should declare path to the css files.
+
 ## markup
 
+Define the template engine you want to use, ejs is set by default.
+You can choose from ejs/jade/haml/html.
+
 ## parser
+
+Sometimes There are some situation where you should use css or other format to generate a styleguide, then you may want to change the parser.
+
