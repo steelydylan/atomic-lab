@@ -39,7 +39,7 @@ eg) Header component built with logo, title and form component
 A website wireframe made with organism/molecule/atom components.
 
 
-## name
+## @name
 
 You can give each component a name for your reference.
 By giving them names, you can easily find components.
@@ -49,7 +49,7 @@ By giving them names, you can easily find components.
 <img src="../images/name.png" class="_shadow"/>
 </div>
 
-## css
+## @css
 
 If you want to show css source of the component, you should write the path from the template file.
 
@@ -57,7 +57,7 @@ If you want to show css source of the component, you should write the path from 
 <img src="../images/css-source.png" class="_shadow"/>
 </div>
 
-## desc
+## @desc
 
 You can write a description of the component.
 
