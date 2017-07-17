@@ -46,7 +46,7 @@ By giving them names, you can easily find components.
 
 
 <div class="uc-photo _full">
-<img src="../images/name.png" class="_shadow"/>
+<img src="../../images/name.png" class="_shadow"/>
 </div>
 
 ## @css
@@ -54,11 +54,11 @@ By giving them names, you can easily find components.
 If you want to show css source of the component, you should write the path from the template file.
 
 <div class="uc-photo _full">
-<img src="../images/css-source.png" class="_shadow"/>
+<img src="../../images/css-source.png" class="_shadow"/>
 </div>
 
 ## @desc
 
 You can write a description of the component.
 
-<img src="../images/description.png" class="_shadow"/>
+<img src="../../images/description.png" class="_shadow"/>
