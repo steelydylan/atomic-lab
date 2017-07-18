@@ -181,6 +181,10 @@ body {
   color: #ffb100;
 }
 
+.mdl-layout__header {
+  background-color: #009688;
+}
+
 // Header style for small screen
 @media screen and (max-width: 1024px) {
   .mdl-layout__header {
