@@ -51,11 +51,11 @@ const makeAtomicArray = (files, parser, exts) => {
     const extName = path.extname(file).replace('.', '');
     let flag = false;
     exts.forEach((ext) => {
-      if(extName === ext) {
+      if (extName === ext) {
         flag = true;
       }
     });
-    if(!flag) {
+    if (!flag) {
       continue;
     }
     const html = fs.readFileSync(file, 'utf8');
