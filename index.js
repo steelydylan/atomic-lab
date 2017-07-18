@@ -43,11 +43,21 @@ const getMark = (mark, source) => {
   return '';
 };
 
-const makeAtomicArray = (files, parser) => {
+const makeAtomicArray = (files, parser, exts) => {
   const components = [];
   let id = 0;
   for (let i = 0, n = files.length; i < n; i += 1) {
     const file = files[i];
+    const extName = path.extname(file).replace('.', '');
+    let flag = false;
+    exts.forEach((ext) => {
+      if(extName === ext) {
+        flag = true;
+      }
+    });
+    if(!flag) {
+      continue;
+    }
     const html = fs.readFileSync(file, 'utf8');
     let css;
     let js;
@@ -107,6 +117,7 @@ const copyPromise = (src, dist) => {
 atomicLab.build = function (opt) {
   const src = opt.src;
   const dist = opt.dist;
+  const exts = opt.exts.split(',');
   const parser = extend({
     start: /<!--@doc/g,
     end: /-->/g,
@@ -115,7 +126,7 @@ atomicLab.build = function (opt) {
   return atomicLab.init(opt).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
-      const components = makeAtomicArray(files, parser);
+      const components = makeAtomicArray(files, parser, exts);
       const json = JSON.stringify({ components });
       const pjson = new Promise((resolve) => {
         writeFile(path.resolve(processPath, dist, './components.json'), json, (err) => {

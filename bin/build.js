@@ -13,6 +13,11 @@ exports.builder = {
     alias: 'src',
     describe: 'set component directory',
     default: 'components/'
+  },
+  e: {
+    alias: 'exts',
+    describe: 'set component directory',
+    default: 'html,ejs,jade,haml,pug,css,scss,less,txt,text'
   }
 }
 
@@ -20,6 +25,6 @@ exports.handler = function (argv) {
   atomic.build({
     src: argv.src,
     dist: argv.dist,
-    markup: argv.markup
+    exts: argv.exts
   });
 };
