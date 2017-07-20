@@ -114,19 +114,16 @@ const copyPromise = (src, dist) => {
   });
 };
 
-atomicLab.build = function (opt) {
-  const src = opt.src;
-  const dist = opt.dist;
-  const exts = opt.exts.split(',');
-  const parser = extend({
+atomicLab.build = ({src, dist, exts = 'html,ejs,jade,haml,pug,css,scss,less,txt,text', parser}) => {
+  const prs = extend({
     start: /<!--@doc/g,
     end: /-->/g,
     body: /<!--@doc(([\n\r\t]|.)*?)-->/g
-  }, opt.parser);
-  return atomicLab.init(opt).then(() => {
+  }, parser);
+  return atomicLab.init({src, dist}).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
-      const components = makeAtomicArray(files, parser, exts);
+      const components = makeAtomicArray(files, prs, exts);
       const json = JSON.stringify({ components });
       const pjson = new Promise((resolve) => {
         writeFile(path.resolve(processPath, dist, './components.json'), json, (err) => {
