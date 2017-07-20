@@ -114,13 +114,13 @@ const copyPromise = (src, dist) => {
   });
 };
 
-atomicLab.build = ({src, dist, exts = 'html,ejs,jade,haml,pug,css,scss,less,txt,text', parser}) => {
+atomicLab.build = ({ src, dist, exts = 'html,ejs,jade,haml,pug,css,scss,less,txt,text', parser }) => {
   const prs = extend({
     start: /<!--@doc/g,
     end: /-->/g,
     body: /<!--@doc(([\n\r\t]|.)*?)-->/g
   }, parser);
-  return atomicLab.init({src, dist}).then(() => {
+  return atomicLab.init({ src, dist }).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
       const components = makeAtomicArray(files, prs, exts);
