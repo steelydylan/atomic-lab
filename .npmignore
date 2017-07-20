@@ -1,0 +1,16 @@
+.DS_Store
+node_modules
+npm-debug.log
+styleguide/*
+docs/top/*
+css/*
+docs/*
+posts/*
+src/*
+tools/*
+templates/*
+index.html
+metalsmith.json
+webpack.config.json
+webpack.config.prod.js
+yarn.lock
