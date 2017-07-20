@@ -14,3 +14,8 @@ metalsmith.json
 webpack.config.js
 webpack.config.prod.js
 yarn.lock
+.eslintrc
+.node-version
+.editorconfig
+.gitattributes
+.node-version
