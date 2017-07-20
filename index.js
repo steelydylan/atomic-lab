@@ -123,7 +123,7 @@ atomicLab.build = ({ src, dist, exts = 'html,ejs,jade,haml,pug,css,scss,less,txt
   return atomicLab.init({ src, dist }).then(() => {
     getFileInfo(path.resolve(processPath, src))
     .then((files) => {
-      const components = makeAtomicArray(files, prs, exts);
+      const components = makeAtomicArray(files, prs, exts.split(','));
       const json = JSON.stringify({ components });
       const pjson = new Promise((resolve) => {
         writeFile(path.resolve(processPath, dist, './components.json'), json, (err) => {
