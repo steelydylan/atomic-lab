@@ -199,7 +199,6 @@ export default class MainArea extends React.Component {
 
     preview = compiler[`${config.markup}Render`](preview);
 
-
     while (1) {
       const comment = parser.getTag(preview, components);
       if (!comment) {
@@ -224,8 +223,8 @@ export default class MainArea extends React.Component {
           const defs = parser.getVarsFromTemplate(template);
           const overrides = parser.getVars(comment);
           const vars = extend({}, defs, overrides);
-          preview = parser.getRendered(preview, defs, overrides);
           preview = preview.replace(comment, compiler[`${config.markup}Render`](html,vars));
+          preview = parser.getRendered(preview, defs, overrides);
           break;
         }
       }
