@@ -7,7 +7,7 @@ css/*
 docs/*
 posts/*
 src/*
-tools/*
+tools/index.js
 templates/*
 index.html
 metalsmith.json
