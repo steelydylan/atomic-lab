@@ -11,6 +11,6 @@ tools/*
 templates/*
 index.html
 metalsmith.json
-webpack.config.json
+webpack.config.js
 webpack.config.prod.js
 yarn.lock
