@@ -12,6 +12,7 @@ import FileSaver from 'file-saver';
 import keycode from 'keycode';
 
 import './sidemenu.scss';
+import pkg from '../../../package.json';
 
 
 const SidemenuItem = ({parent, item, id}) => {
@@ -39,7 +40,7 @@ const getPackage = () => {
   "author": "steelydylan",
   "license": "MIT",
   "devDependencies": {
-    "atomic-lab": "^1.3.4",
+    "atomic-lab": "^${pkg.version}",
     "browser-sync": "^2.18.12",
     "node-sass": "^4.5.3",
     "npm-run-all": "^4.0.2",
