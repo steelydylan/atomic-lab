@@ -340,9 +340,8 @@ export default class MainArea extends React.Component {
               </div>}
             <div className="atomicLabComponentControl-texts">
               <div className="atomicLabComponentControl-title">
-                {component ?
+                {component &&
                   <span>{component.name}</span>
-                  : null
                 }
               </div>
               <p className="atomicLabComponentControl-description">
@@ -427,6 +426,18 @@ export default class MainArea extends React.Component {
           }
           {editMode === 'note' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
+              {component &&
+                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+                  <div className="atomicLabCard-title">Path</div>
+                  <div className="atomicLabNote"><pre>{component.path}</pre></div>
+                </div>
+              }
+              {note &&
+                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
+                  <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
+                </div>
+              }
               <div className="atomicLabPreview">
                 <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                   <div className="atomicLabCard-title">
@@ -442,12 +453,6 @@ export default class MainArea extends React.Component {
                   </div>
                 </div>
               </div>
-              {note &&
-                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
-                  <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
-                </div>
-              }
             </div>
           }
         </div>

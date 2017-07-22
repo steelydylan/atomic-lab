@@ -10,6 +10,7 @@ const extend = require('extend');
 const atomicLab = {};
 const getDirName = path.dirname;
 const processPath = process.cwd();
+const defaultExts = 'html,ejs,jade,haml,pug,css,scss,less,txt,text';
 
 const getFileInfo = dir => new Promise((resolve) => {
   const finder = find(dir);
@@ -45,10 +46,11 @@ const getMark = (mark, source) => {
 
 const makeAtomicArray = (files, parser, exts) => {
   const components = [];
-  let id = 0;
+  let itemId = 0;
   for (let i = 0, n = files.length; i < n; i += 1) {
     const file = files[i];
     const extName = path.extname(file).replace('.', '');
+    const pathName = file.replace(processPath,'');
     let flag = false;
     exts.forEach((ext) => {
       if (extName === ext) {
@@ -88,8 +90,8 @@ const makeAtomicArray = (files, parser, exts) => {
         console.log(err);
       }
     }
-    id += 1;
-    components.push({ category, name, html, css, js, itemId: id });
+    itemId += 1;
+    components.push({ category, name, html, css, js, itemId, path: pathName });
   }
   return components;
 };
@@ -114,7 +116,7 @@ const copyPromise = (src, dist) => {
   });
 };
 
-atomicLab.build = ({ src, dist, exts = 'html,ejs,jade,haml,pug,css,scss,less,txt,text', parser }) => {
+atomicLab.build = ({ src, dist, exts = defaultExts, parser }) => {
   const prs = extend({
     start: /<!--@doc/g,
     end: /-->/g,
@@ -153,11 +155,10 @@ atomicLab.init = (opt) => {
 
 atomicLab.update = (opt) => {
   const dist = opt.dist;
-  return new Promise((resolve) => {
-    fs.copy(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'), () => {
-      resolve();
-    });
-  });
+  const promiseArray = [
+    copyPromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js'))
+  ];
+  return Promise.all(promiseArray);
 };
 
 module.exports = atomicLab;
