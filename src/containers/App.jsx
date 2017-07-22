@@ -8,8 +8,6 @@ import AtomicLab from '../components/atomic-lab/atomic-lab';
 import Header from '../components/header/header';
 import SideMenu from '../components/sidemenu/sidemenu';
 import MainArea from '../components/mainarea/mainarea';
-import AddBtn from '../components/addbtn/addbtn';
-import EditDialog from '../components/edit-dialog/edit-dialog';
 
 class App extends React.Component {
 

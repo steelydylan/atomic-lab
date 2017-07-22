@@ -24,8 +24,6 @@ import * as compiler from '../../lib/compiler.js';
 import normalize from '../../lib/normalize.js';
 import extend from '../../lib/extend.js';
 
-import EditDialog from '../edit-dialog/edit-dialog';
-
 const option = {
   html: false,        // Enable HTML tags in source
   xhtmlOut: false,        // Use '/' to close single tags (<br />)
