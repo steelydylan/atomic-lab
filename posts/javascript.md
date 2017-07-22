@@ -30,12 +30,11 @@ gulp.task('atomic', function(){
   atomic.build({
     src: 'components/',
     dist: 'styleguide/',
-    markup: 'html'
+    exts: 'html,ejs,jade,haml,pug,css,scss,less,txt,text'
   });
 });
 
 gulp.task('watch',function(){
   gulp.watch('components/**/*.*',['atomic']);
 });</code></pre></div>
-
 

@@ -115,14 +115,13 @@ gulp.task(&#39;atomic&#39;, function(){
   atomic.build({
     src: &#39;components/&#39;,
     dist: &#39;styleguide/&#39;,
-    markup: &#39;html&#39;
+    exts: &#39;html,ejs,jade,haml,pug,css,scss,less,txt,text&#39;
   });
 });
 
 gulp.task(&#39;watch&#39;,function(){
   gulp.watch(&#39;components/<em>*/</em>.*&#39;,[&#39;atomic&#39;]);
 });</code></pre></div>
-
 
 
         </div>
