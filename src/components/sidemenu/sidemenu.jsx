@@ -53,13 +53,8 @@ export default class ProjectDialog extends React.Component {
   constructor() {
     super();
     this.state = {
-      showVariable:false,
-      showMixin:false,
-      showAtom:true,
-      showMolecule:true,
-      showOrganism:true,
-      showTemplate:true,
       search:'',
+      close: {},
       isConfingDialogOpen:false
     };
   }
@@ -67,6 +62,9 @@ export default class ProjectDialog extends React.Component {
   selectItem(itemId, name) {
     location.hash = `${name}`;
     this.props.selectItem(itemId);
+  }
+
+  componentWillReceiveProps(props) {
   }
 
   componentDidMount() {
@@ -122,20 +120,14 @@ export default class ProjectDialog extends React.Component {
   }
 
   getCategoryListFromItems(components) {
-    const list = [];
-    components.forEach((comp) => {
-      console.log(comp);
-      let flag = true;
-      list.forEach(item => {
-        if (item.category === comp.category) {
-          flag = false;
-        }
-      });
-      if (flag === true) {
-        list.push(comp.category);
-      }
+    const list = components
+    .filter((com) => {
+      return com.category;
+    })
+    .map((com) => {
+      return com.category;
     });
-    return list;
+    return list.filter((v,i) => list.indexOf(v) === i);
   }
 
   exportAsZip() {
@@ -194,7 +186,6 @@ export default class ProjectDialog extends React.Component {
     const props = this.props;
     const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
     const categories = this.getCategoryListFromItems(components);
-    console.log(categories);
     // const variables = this.getCategorizedItems(components,'variable');
     // const mixins = this.getCategorizedItems(components,'mixin');
     // const atoms = this.getCategorizedItems(components,'atom');
@@ -272,10 +263,10 @@ export default class ProjectDialog extends React.Component {
         </div>
         <div className="atomicLabComponentList">
           <ul>
-            {categories.map(category => {
-              <li className={classNames("atomicLabComponentList-category",`_${category}`,{"js-closed":!state.show[category]})}>
-                <span onClick={this.toggleCategory.bind(this,category)}>${category}
-                  <i className="material-icons">{state.show[category] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
+            {categories.map(category => 
+              <li className={classNames("atomicLabComponentList-category",`_${category}`,{"js-closed":this.state.close[category]})}>
+                <span onClick={this.toggleCategory.bind(this,category)}>{category}
+                  <i className="material-icons">{state.close[category] ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</i>
                 </span>
                 <ul>
                   {this.getCategorizedItems(components, category).map(item => 
@@ -283,7 +274,7 @@ export default class ProjectDialog extends React.Component {
                   )}
                 </ul>
               </li>
-            })}
+            )}
           </ul>
         </div>
         <div id="mask-search-cancel"></div>

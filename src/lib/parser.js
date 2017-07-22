@@ -18,7 +18,6 @@ export default class Parser {
       if (value.match(/^\[(.*?)\]$/g)) {
         value = JSON.parse(value);
       }
-      console.log(value);
       defs[key] = value;
     });
     return defs;
