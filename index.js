@@ -50,7 +50,7 @@ const makeAtomicArray = (files, parser, exts) => {
   for (let i = 0, n = files.length; i < n; i += 1) {
     const file = files[i];
     const extName = path.extname(file).replace('.', '');
-    const pathName = file.replace(processPath,'');
+    const pathName = file.replace(processPath, '');
     let flag = false;
     exts.forEach((ext) => {
       if (extName === ext) {
