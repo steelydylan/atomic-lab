@@ -22,11 +22,21 @@ class App extends React.Component {
 
   setComponents() {
     const config = this.props.config;
+    const order = config.order;
     const hash = location.hash;
     axios.get(config.local_file_path).then(item => {
-      this.props.setComponents(item.data.components);
-      if(item.data.components.length >= 1) {
-        let itemId = item.data.components[0].itemId;
+      const components = item.data.components;
+      if (order) {
+        components.sort((item_a,item_b) => {
+          if(order[item_a.category] > order[item_b.category] ) {
+            return 1;
+          }
+          return -1;
+        });
+      }
+      this.props.setComponents(components);
+      if(components.length >= 1) {
+        let itemId = components[0].itemId;
         this.props.components.forEach((item, i) => {
           if (`#${item.name}` === hash) {
             itemId = item.itemId;

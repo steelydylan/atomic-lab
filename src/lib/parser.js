@@ -83,6 +83,12 @@ export default class Parser {
     return result;
   }
 
+  getInclude(text, components, type) {
+    if (!text) {
+      return "";
+    }
+  }
+
   getComponentName(text) {
     if (!text) {
       return "";

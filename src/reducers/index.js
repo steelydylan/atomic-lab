@@ -14,7 +14,7 @@ export default (state = initialState, action) => {
     case types.SETCONFIG:
       return Object.assign({}, state, { config: action.config });
     case types.SETCOMPONENTS:
-      return Object.assign({}, state, { components: [...action.components,[]] });
+      return Object.assign({}, state, { components: [...action.components] });
     case types.SELECTITEM:
       return Object.assign({}, state, { itemId: action.itemId });
     case types.UPDATECOMPONENT:

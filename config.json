@@ -9,6 +9,12 @@
     "tablet": 768,
     "smartphone": 480
   },
+  "order": {
+    "atom" : 0,
+    "molecule": 1,
+    "organism": 2,
+    "template": 3
+  },
   "css_dependencies": [
     "//cdn.kokush.in/units/1.0.1-beta/units.min.css"
   ],

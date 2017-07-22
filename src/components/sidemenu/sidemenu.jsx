@@ -64,9 +64,6 @@ export default class ProjectDialog extends React.Component {
     this.props.selectItem(itemId);
   }
 
-  componentWillReceiveProps(props) {
-  }
-
   componentDidMount() {
     document.addEventListener('keydown',(e) => {
       const components = this.props.components;
@@ -91,7 +88,7 @@ export default class ProjectDialog extends React.Component {
         location.hash = `${components[index - 1].name}`;
         this.props.selectItem(components[index - 1].itemId);
       } else if (code === 'down') {
-        if (index === length -2) {
+        if (index === length - 1) {
           return;
         }
         e.preventDefault();
@@ -103,7 +100,7 @@ export default class ProjectDialog extends React.Component {
 
   getCategorizedItems(components, category) {
     const search = this.state.search;
-    return components
+    return [...components]
       .sort(function(a, b) {
         if (a.name > b.name) {
           return 1;
@@ -160,9 +157,11 @@ export default class ProjectDialog extends React.Component {
   }
 
   toggleCategory(category) {
-    const value = this.state[category];
+    const close = this.state.close;
+    const value = close[category];
+    const newClose = Object.assign({}, close, {[category]: !value});
     this.setState({
-      [category]: !value
+      close : newClose
     });
   }
 
@@ -186,13 +185,6 @@ export default class ProjectDialog extends React.Component {
     const props = this.props;
     const lang = props && props.config && props.config.lang ? props.config.lang : 'ja';
     const categories = this.getCategoryListFromItems(components);
-    // const variables = this.getCategorizedItems(components,'variable');
-    // const mixins = this.getCategorizedItems(components,'mixin');
-    // const atoms = this.getCategorizedItems(components,'atom');
-    // const molecules = this.getCategorizedItems(components,'molecule');
-    // const organisms = this.getCategorizedItems(components,'organism');
-    // const templates = this.getCategorizedItems(components,'template');
-
 
     return (
       <div className="atomicLabSideMenu">
