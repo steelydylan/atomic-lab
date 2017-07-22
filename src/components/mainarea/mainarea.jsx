@@ -24,7 +24,6 @@ import * as compiler from '../../lib/compiler.js';
 import normalize from '../../lib/normalize.js';
 import extend from '../../lib/extend.js';
 
-import AddBtn from '../addbtn/addbtn';
 import EditDialog from '../edit-dialog/edit-dialog';
 
 const option = {
@@ -337,35 +336,10 @@ export default class MainArea extends React.Component {
       <main className="atomicLabMain">
         <div className="atomicLabTabs mdl-tabs mdl-js-tabs">
           <div className="atomicLabComponentControl mdl-shadow--2dp">
-            {enable_editing ?
-              <div className="atomicLabComponentControl-actions">
-                <nav>
-                  <ul>
-                    <li>
-                      <Tooltip label="Edit component settings" position="bottom">
-                        <Icon name="edit" onClick={this.openEditDialog.bind(this)}/>
-                      </Tooltip>
-                    </li>
-                    <li style={{position:'relative'}}>
-                      <Tooltip label="Delete" position="bottom" id="componentAction-delete">
-                        <Icon name="delete" className='_danger'/>
-                      </Tooltip>
-                      <Menu target="componentAction-delete" align="right">
-                        <MenuItem disabled>Do you really want?</MenuItem>
-                        <MenuItem className="mdl-menu__item">Cancel</MenuItem>
-                        <MenuItem className="mdl-menu__item _danger" onClick={this.removeItem.bind(this)}>DELETE</MenuItem>
-                      </Menu>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-              :
-              null}
-              {component && component.category !== 'mixin' && component.category !== 'variable' ?
-                <div className="atomicLabComponentControl-icon-wrap">
-                  <div className={classNames("atomicLabComponentControl-icon",component.category)}></div>
-                </div> : null
-              }
+            {component && 
+              <div className="atomicLabComponentControl-icon-wrap">
+                <div className={classNames("atomicLabComponentControl-icon",component.category)}></div>
+              </div>}
             <div className="atomicLabComponentControl-texts">
               <div className="atomicLabComponentControl-title">
                 {component ?
@@ -377,17 +351,14 @@ export default class MainArea extends React.Component {
                 {description}
               </p>
             </div>
-            {enable_editing ?
-              <div className="atomicLabTabs-bar mdl-tabs__tab-bar">
-                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "preview" })} onClick={this.changeMode.bind(this, 'preview')}>Preview</a>
-                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
-                {component && component.css &&
-                  <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>{styling}</a>
-                }
-                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>{markup}</a>
-              </div>
-              :
-              null}
+            <div className="atomicLabTabs-bar mdl-tabs__tab-bar">
+              <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "preview" })} onClick={this.changeMode.bind(this, 'preview')}>Preview</a>
+              <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
+              {component && component.css &&
+                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>{styling}</a>
+              }
+              <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>{markup}</a>
+            </div>
           </div>
           {editMode === 'css' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
@@ -480,19 +451,6 @@ export default class MainArea extends React.Component {
                 </div>
               }
             </div>
-          }
-          {enable_editing && this.props.addBtn}
-          {state.isEditDialogOpen &&
-            Object.assign({},this.props.editDialog,
-            {props:{
-              category:component.category,
-              name:component.name,
-              updateComponent:this.props.updateComponent,
-              index:index,
-              component:component,
-              onClose:this.closeEditDialog.bind(this)
-              }
-            })
           }
         </div>
         <Snackbar

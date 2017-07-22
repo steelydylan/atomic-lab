@@ -53,12 +53,7 @@ class App extends React.Component {
       <AtomicLab {...props}
         header={<Header {...props} />} 
         sideMenu={<SideMenu {...props} />}
-        mainArea={
-          <MainArea {...props}
-            addBtn={<AddBtn {...props} />} 
-            editDialog={<EditDialog {...props} />} 
-          />
-        } 
+        mainArea={<MainArea {...props} />} 
       />
     );
   }
