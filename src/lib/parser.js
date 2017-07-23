@@ -1,4 +1,5 @@
 import extend from './extend.js';
+import path from 'path';
 
 export default class Parser {
 
@@ -7,14 +8,14 @@ export default class Parser {
   }
 
   getVars(text) {
-    const vars = text.match(/(\w+)="(.*?)"/g);
+    const vars = text.match(/(\w+)=["|'](.*?)["|']/g);
     const defs = {};
     if (!vars) {
       return defs;
     }
     vars.forEach(function (item) {
       const key = item.replace(/=.*/, "");
-      let value = item.replace(/.*=/, "").replace(/"/g, "");
+      let value = item.replace(/.*=/, "").replace(/"|'/g, "");
       if (value.match(/^\[(.*?)\]$/g)) {
         value = JSON.parse(value);
       }
@@ -60,6 +61,51 @@ export default class Parser {
     }
   }
 
+  include2Tag (text, selfPath, components, engine) {
+    if (!text) {
+      return "";
+    }
+    while(1) {
+      let toPath = "";
+      let tag = "";
+      let varsString = "";
+      let vars = "";
+      let match = "";
+      if (engine === 'ejs') {
+        const regex = /<%- include\s*\(['|"](.*?)['|"]\s*(\,\s*\{(.*?)\})\) %>/;
+        const strs = regex.exec(text);
+        if (strs && strs.length) {
+          match = strs[0];
+          toPath = strs[1];
+          varsString = strs[3];
+        }
+      }
+      if(!toPath) {
+        return text;
+      }
+      let finalPath = path.resolve(selfPath,'../',toPath);
+      if (toPath.charAt(0) === '/') {
+        finalPath = toPath;
+      }
+      let name = "";
+      components.forEach((component) => {
+        if (component.path === finalPath) {
+          name = component.name;
+        }
+      });
+      if (varsString) {
+        varsString = varsString.replace(/\s*/g,'');
+        const arr = varsString.split(/,/g);
+        arr.forEach(item => {
+          const splited = item.split(/:/g);
+          vars += `${splited[0]}=${splited[1]}`;
+        });
+        vars += ' ';
+      }
+      text = text.replace(match,`<${name} ${vars}/>`);
+    }
+  }
+
   getTag(text, components) {
     if (!text) {
       return "";
@@ -81,12 +127,6 @@ export default class Parser {
       }
     }
     return result;
-  }
-
-  getInclude(text, components, type) {
-    if (!text) {
-      return "";
-    }
   }
 
   getComponentName(text) {
@@ -127,7 +167,7 @@ export default class Parser {
     const conf = this.conf;
     const vars = extend({}, defs, overrides);
     return template.replace(new RegExp(conf.variable.mark, "g"), function (a, b) {
-      return vars[b] || "";
+      return vars[b] || a;
     });
   }
 

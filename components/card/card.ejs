@@ -8,7 +8,7 @@
 <div class="uc-card">
   <div class="uc-card-title"><%= title %></div>
   <p><%= text %></p>
-  <uc-btn text="Button" modifier="_primary" />
+  <%- include('../button/button.ejs', {text:'Button', modifier:'_primary'}) %>
 </div>
 <!--@/template -->
 

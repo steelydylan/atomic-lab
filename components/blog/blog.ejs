@@ -17,20 +17,20 @@ var cards = [
   {title: 'title6'}
 ]; 
 %>
-<uc-header title="<%= title %>" />
-<uc-hero title="<%= title %>" lead="<%= lead %>" />
+<%- include ('../header/header.ejs', {title:"<%= title %>"}) %>
+<%- include ('../hero/hero.ejs', {title:"<%= title %>", lead:"<%= lead %>"}) %>
 <main class="uc-content content">
   <div class="uc-section">
     <div class="uc-grid _col-2 _small-col-full _gutter">
       <% cards.forEach(function(item) { %>
       <div class="uc-grid-cell">
-        <uc-card title="<%= item.title %>" />
+        <%- include ('../card/card.ejs', {title:"<%= item.title %>"}) %>
       </div> 
       <% }); %>
     </div>
   </div>
 </main>
-<uc-footer title="<%= title %>" />
+<%- include ('../footer/footer.ejs', {title:"<%= title %>"}) %>
 <!--@/template -->
 
 <!--@preview
