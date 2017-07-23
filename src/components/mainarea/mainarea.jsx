@@ -354,10 +354,13 @@ export default class MainArea extends React.Component {
             </div>
             <div className="atomicLabTabs-bar mdl-tabs__tab-bar">
               <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "preview" })} onClick={this.changeMode.bind(this, 'preview')}>Preview</a>
-              <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
+              {note &&
+                <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "note" })} onClick={this.changeMode.bind(this, 'note')}>Note</a>
+              }
               {component && component.css &&
                 <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "css" })} onClick={this.changeMode.bind(this, 'css')}>{styling}</a>
               }
+              <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "info" })} onClick={this.changeMode.bind(this, 'info')}>Info</a>
               <a className={classNames("atomicLabTabs-tab", "mdl-layout__tab", { "is-active": editMode === "html" })} onClick={this.changeMode.bind(this, 'html')}>{markup}</a>
             </div>
           </div>
@@ -428,18 +431,12 @@ export default class MainArea extends React.Component {
               </div>
             </div>
           }
-          {editMode === 'note' &&
+          {editMode === 'info' &&
             <div className="atomicLabTabs-panel mdl-tabs__panel is-active">
               {component &&
                 <div className="atomicLabCard mdl-card mdl-shadow--2dp">
                   <div className="atomicLabCard-title">Path</div>
                   <div className="atomicLabNote"><pre>{component.path}</pre></div>
-                </div>
-              }
-              {note &&
-                <div className="atomicLabCard mdl-card mdl-shadow--2dp">
-                  <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
-                  <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
                 </div>
               }
               <div className="atomicLabPreview">
@@ -457,6 +454,12 @@ export default class MainArea extends React.Component {
                   </div>
                 </div>
               </div>
+            </div>
+          }
+          {editMode === 'note' && note &&
+            <div className="atomicLabCard mdl-card mdl-shadow--2dp">
+              <div className="atomicLabCard-title"><i className="material-icons">insert_drive_file</i> Note</div>
+              <div className="atomicLabNote"><Markdown source={note} options={option} /></div>
             </div>
           }
         </div>
