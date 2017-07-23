@@ -98,7 +98,11 @@ export default class Parser {
         const arr = varsString.split(/,/g);
         arr.forEach(item => {
           const splited = item.split(/:/g);
-          vars += `${splited[0]}=${splited[1]}`;
+          if (splited[1].match(/'|"/)) {
+            vars += `${splited[0]}=${splited[1]}`;
+          } else {
+            vars += `${splited[0]}="<%= ${splited[1]} %>"`;
+          }         
         });
         vars += ' ';
       }
