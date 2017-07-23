@@ -176,6 +176,7 @@ export default class MainArea extends React.Component {
     const components = this.props.components;
 
     let preview = parser.getPreview(text);
+
     if(!preview) {
       return '';
     }
@@ -184,6 +185,7 @@ export default class MainArea extends React.Component {
 
     while (1) {
       const comment = parser.getTag(preview, components);
+
       if (!comment) {
         break;
       }
@@ -192,7 +194,7 @@ export default class MainArea extends React.Component {
       let flag = false;
       for (let i = 0, n = components.length; i < n; i++) {
         const comp = components[i];
-        if (name == comp.name) {
+        if (name === comp.name) {
           flag = true;
           const template = parser.getTemplate(comp.html);
           let html = parser.getInnerHtmlFromTemplate(template);
@@ -200,7 +202,9 @@ export default class MainArea extends React.Component {
           const defs = parser.getVarsFromTemplate(template);
           const overrides = parser.getVars(comment);
           const vars = extend({}, defs, overrides);
-          preview = preview.replace(comment, compiler[`${config.markup}Render`](html,vars));
+          html = parser.include2Tag(html, comp.path, components, config.markup);
+          html = compiler[`${config.markup}Render`](html,vars);
+          preview = preview.replace(comment, html);
           preview = parser.getRendered(preview, defs, overrides);
           break;
         }
