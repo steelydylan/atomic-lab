@@ -72,7 +72,7 @@ export default class Parser {
       let vars = "";
       let match = "";
       if (engine === 'ejs') {
-        const regex = /<%- include\s*\(['|"](.*?)['|"]\s*(\,\s*\{(.*?)\})\) %>/;
+        const regex = /<%- include\s*\(['|"](.*?)['|"]\s*(\,\s*\{(.*?)\})?\) %>/;
         const strs = regex.exec(text);
         if (strs && strs.length) {
           match = strs[0];
