@@ -24,23 +24,19 @@
   "parser": {
     "preview": {
       "start": "<!--@preview",
-      "end": "-->",
-      "body": "<!--@preview(([\n\r\t]|.)*?)-->"
+      "end": "-->"
     },
     "note": {
       "start": "<!--@note",
-      "end": "-->",
-      "body": "<!--@note(([\n\r\t]|.)*?)-->"
+      "end": "-->"
     },
     "template": {
       "start": "<!--@template(.*?)-->",
-      "end": "<!--@\/template(.*?)-->",
-      "body": "<!--@template(.*?)-->(([\n\r\t]|.)*?)<!--@\/template(.*?)-->"
+      "end": "<!--@\/template(.*?)-->"
     },
     "doc": {
       "start": "<!--@doc",
-      "end": "-->",
-      "body": "<!--@doc(([\n\r\t]|.)*?)-->"
+      "end": "-->"
     },
     "variable": {
       "mark": "{(.*?)}"

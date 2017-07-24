@@ -28,7 +28,8 @@ export default class Parser {
     if (!text) {
       return "";
     }
-    const comments = text.match(new RegExp(mark.body, "g"));
+    const matchstr = `${mark.start}(([\n\r\t]|.)*?)${mark.end}`;
+    const comments = text.match(new RegExp(matchstr, "g"));
     if (!comments) {
       return "";
     }
@@ -152,7 +153,8 @@ export default class Parser {
     if (!text) {
       return "";
     }
-    const templates = text.match(new RegExp(conf.template.body, "g"));
+    const matchstr = `${conf.template.start}(([\n\r\t]|.)*?)${conf.template.end}`;
+    const templates = text.match(new RegExp(matchstr, "g"));
     if (!templates) {
       return "";
     }
