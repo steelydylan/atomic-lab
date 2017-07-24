@@ -87,6 +87,13 @@ export default class Parser {
           match = strs[0];
           toPath = strs[1];
         }
+      } else if (engine === 'html') {
+        const regex = /<!--\s*#include\s*file=["|'](.*?)["|']\s*-->/;
+        const strs = regex.exec(text);
+        if (strs && strs.length) {
+          match = strs[0];
+          toPath = strs[1];
+        }
       }
       if(!toPath) {
         return text;
