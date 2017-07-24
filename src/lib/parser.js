@@ -79,6 +79,13 @@ export default class Parser {
           toPath = strs[1];
           varsString = strs[3];
         }
+      } else if (engine === 'jade') {
+        const regex = /include\s+([a-zA-Z0-9\/._-]+)/;
+        const strs = regex.exec(text);
+        if (strs && strs.length) {
+          match = strs[0];
+          toPath = strs[1];
+        }
       }
       if(!toPath) {
         return text;
