@@ -36,6 +36,22 @@ or $(npm bin)
 $ $(npm bin)/atomic-lab build
 ```
 
+## Update Atomic Lab
+
+via yarn and npx
+
+```
+$ yarn add atomic-lab
+$ npx atomic-lab update
+```
+
+or $(npm bin)
+
+```
+$ npm install atomic-lab --save-dev
+$ $(npm bin)/atomic-lab update
+```
+
 ## Documentation
 [https://steelydylan.github.io/atomic-lab/docs/](https://steelydylan.github.io/atomic-lab/docs/)
 
