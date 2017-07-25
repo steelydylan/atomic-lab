@@ -165,9 +165,9 @@ atomicLab.init = (opt) => {
 };
 
 atomicLab.update = (opt) => {
+  const dist = opt.dist;
   const newConfig = require(`${__dirname}/config.json`);
   const oldConfig = require(path.resolve(processPath, dist, './config.json'));
-  const dist = opt.dist;
   const config = extend({}, newConfig, oldConfig);
   const str = jsonFormat(config, jsonConfig);
   const writePromise = new Promise((resolve, reject) => {
