@@ -7,11 +7,11 @@ const fs = require('fs-extra');
 const mkdirp = require('mkdirp');
 const extend = require('extend');
 const jsonFormat = require('json-format');
+
 const jsonConfig = {
   type: 'space',
   size: 2
-}
-
+};
 const atomicLab = {};
 const getDirName = path.dirname;
 const processPath = process.cwd();
@@ -121,13 +121,11 @@ const copyPromise = (src, dist) => {
   });
 };
 
-const overwritePromise = (src, dist) => {
-  return new Promise((resolve) => {
-    fs.copy(src, dist, () => {
-      resolve();
-    });
+const overwritePromise = (src, dist) => new Promise((resolve) => {
+  fs.copy(src, dist, () => {
+    resolve();
   });
-}
+});
 
 atomicLab.build = ({ src, dist, exts = defaultExts, parser }) => {
   const prs = extend({
@@ -167,9 +165,9 @@ atomicLab.init = (opt) => {
 };
 
 atomicLab.update = (opt) => {
-  const dist = opt.dist;
   const newConfig = require(`${__dirname}/config.json`);
   const oldConfig = require(path.resolve(processPath, dist, './config.json'));
+  const dist = opt.dist;
   const config = extend({}, newConfig, oldConfig);
   const str = jsonFormat(config, jsonConfig);
   const writePromise = new Promise((resolve, reject) => {
@@ -178,7 +176,7 @@ atomicLab.update = (opt) => {
         reject(err);
       }
       resolve();
-    })
+    });
   });
   const promiseArray = [
     overwritePromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js')),

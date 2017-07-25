@@ -23,6 +23,8 @@
     "no-irregular-whitespace": 0,
     "func-names": 0,
     "no-console": 0,
-    "strict": 0
+    "strict": 0,
+    "global-require": 0,
+    "import/no-dynamic-require": 0
   }
 }
