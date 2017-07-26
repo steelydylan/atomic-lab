@@ -8,7 +8,8 @@ Styleguide generator based on atomic design built with React, Redux
 ## Demo
 You can try it out from here
 
-[http://steelydylan.github.io/atomic-lab/](http://steelydylan.github.io/atomic-lab/)
+[demo with ejs](http://steelydylan.github.io/atomic-lab/demo/ejs/)
+[demo with html](http://steelydylan.github.io/atomic-lab/demo/html/)
 
 ## Features
 
