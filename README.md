@@ -9,6 +9,7 @@ Styleguide generator based on atomic design built with React, Redux
 You can try it out from here
 
 [demo with ejs](http://steelydylan.github.io/atomic-lab/demo/ejs/)
+
 [demo with html](http://steelydylan.github.io/atomic-lab/demo/html/)
 
 ## Features
