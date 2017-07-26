@@ -155,7 +155,7 @@ atomicLab.init = (opt) => {
   const dist = opt.dist;
   const src = opt.src;
   const promiseArray = [
-    copyPromise(`${__dirname}/demo.html`, path.resolve(processPath, dist, './index.html')),
+    copyPromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html')),
     copyPromise(`${__dirname}/config.json`, path.resolve(processPath, dist, './config.json')),
     copyPromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js')),
     copyPromise(`${__dirname}/components.json`, path.resolve(processPath, dist, './components.json')),
@@ -180,7 +180,7 @@ atomicLab.update = (opt) => {
   });
   const promiseArray = [
     overwritePromise(`${__dirname}/bundle.js`, path.resolve(processPath, dist, './bundle.js')),
-    overwritePromise(`${__dirname}/demo.html`, path.resolve(processPath, dist, './index.html')),
+    overwritePromise(`${__dirname}/index.html`, path.resolve(processPath, dist, './index.html')),
     writePromise
   ];
   return Promise.all(promiseArray);

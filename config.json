@@ -23,19 +23,19 @@
   "styling": "scss",
   "parser": {
     "preview": {
-      "start": "<!--@preview",
+      "start": "<!--\\s*@\\s*preview",
       "end": "-->"
     },
     "note": {
-      "start": "<!--@note",
+      "start": "<!--\\s*@\\s*note",
       "end": "-->"
     },
     "template": {
-      "start": "<!--@template(.*?)-->",
-      "end": "<!--@\/template(.*?)-->"
+      "start": "<!--\\s*@\\s*template(.*?)-->",
+      "end": "<!--\\s*@\\s*\/template(.*?)-->"
     },
     "doc": {
-      "start": "<!--@doc",
+      "start": "<!--\\s*@\\s*doc",
       "end": "-->"
     },
     "variable": {
