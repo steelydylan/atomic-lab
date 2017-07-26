@@ -1,0 +1,45 @@
+{
+  "title": "Atomic Lab.",
+  "description": "this is an amazing styleguide generator",
+  "local_file_path": "./components.json",
+  "run_script": true,
+  "enable_editing": true,
+  "breakpoint": {
+    "pc": 1024,
+    "tablet": 768,
+    "smartphone": 480
+  },
+  "order": {
+    "atom" : 0,
+    "molecule": 1,
+    "organism": 2,
+    "template": 3
+  },
+  "css_dependencies": [
+    "//cdn.kokush.in/units/1.0.1-beta/units.min.css"
+  ],
+  "lang": "en",
+  "markup": "ejs",
+  "styling": "scss",
+  "parser": {
+    "preview": {
+      "start": "<!--@preview",
+      "end": "-->"
+    },
+    "note": {
+      "start": "<!--@note",
+      "end": "-->"
+    },
+    "template": {
+      "start": "<!--@template(.*?)-->",
+      "end": "<!--@\/template(.*?)-->"
+    },
+    "doc": {
+      "start": "<!--@doc",
+      "end": "-->"
+    },
+    "variable": {
+      "mark": "{(.*?)}"
+    }
+  }
+}
