@@ -9,7 +9,6 @@ posts/*
 src/*
 tools/index.js
 templates/*
-index.html
 metalsmith.json
 webpack.config.js
 webpack.config.prod.js
